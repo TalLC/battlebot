@@ -18,7 +18,7 @@ class Storage(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get(self, pk: int):
+    def get(self, pk: int) -> dict:
         raise NotImplementedError
 
 

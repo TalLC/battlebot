@@ -16,9 +16,11 @@ def write_data(writer: Writer, data: str):
 
 if __name__ == "__main__":
     Memory().add({'pk': 1, 'name': 'John'})
+    Memory().add({'pk': 2, 'name': 'John2'})
     Persistent().add({'pk': 1, 'name': 'Jane'})
 
     print_storage_content(Memory(), 1)
+    print_storage_content(Memory(), 2)
     print_storage_content(Persistent(), 1)
 
     write_data(FileWriter(), "Hello world!")
