@@ -15,13 +15,10 @@ def write_data(writer: Writer, data: str):
 
 
 if __name__ == "__main__":
-    memory = Memory()
-    memory.add({'pk': 1, 'name': 'John'})
+    Memory().add({'pk': 1, 'name': 'John'})
+    Persistent().add({'pk': 1, 'name': 'Jane'})
 
-    persistent = Persistent()
-    persistent.add({'pk': 1, 'name': 'Jane'})
-
-    print_storage_content(memory, 1)
-    print_storage_content(persistent, 1)
+    print_storage_content(Memory(), 1)
+    print_storage_content(Persistent(), 1)
 
     write_data(FileWriter(), "Hello world!")
