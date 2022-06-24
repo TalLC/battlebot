@@ -1,13 +1,16 @@
 <mxfile host="65bd71144e">
     <diagram id="PZ_iV-Oot38G7R1ILAnA" name="Page-1">
-        <mxGraphModel dx="6584" dy="3404" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="3908" dy="2169" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
+                <mxCell id="1384" value="Consumer" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;strokeWidth=1;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="-1020" width="600" height="340" as="geometry"/>
+                </mxCell>
                 <mxCell id="1355" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://raw.githubusercontent.com/nrekretep/pikturr/master/output-file.png;" parent="1" vertex="1">
                     <mxGeometry x="170" y="-1094" width="2089.32" height="1121" as="geometry"/>
                 </mxCell>
-                <mxCell id="1385" value="Provider" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;strokeWidth=1;fillColor=#76608a;fontColor=#ffffff;strokeColor=#432D57;" parent="1" vertex="1">
+                <mxCell id="1385" value="Provider" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;strokeWidth=1;fillColor=#76608a;fontColor=#ffffff;strokeColor=#432D57;gradientColor=none;sketch=0;shadow=0;" parent="1" vertex="1">
                     <mxGeometry x="-2200" width="620" height="250" as="geometry"/>
                 </mxCell>
                 <mxCell id="1383" value="Business" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;strokeWidth=1;" parent="1" vertex="1">
@@ -497,9 +500,6 @@
                 </mxCell>
                 <mxCell id="1171" value="Team" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=1;" parent="1" vertex="1">
                     <mxGeometry x="-1460" y="405" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="1384" value="Consumer" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;strokeWidth=1;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
-                    <mxGeometry x="-1020" width="600" height="340" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
