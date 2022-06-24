@@ -2,16 +2,20 @@
 import os
 import pika
 import sys
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def main():
-    credentials = pika.PlainCredentials('guest', 'guest')
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost', port=49154, credentials=credentials)
-    )
-
+    credentials = pika.PlainCredentials('admin', 'admin')
+    print('co param')
+    co_param = pika.ConnectionParameters(host='localhost', port=5672, credentials=credentials)
+    print('connection')
+    connection = pika.BlockingConnection(co_param)
+    print('channel')
     channel = connection.channel()
-
+    print('queue_declare')
     channel.queue_declare(queue='hello')
 
     def callback(ch, method, properties, body):

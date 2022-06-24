@@ -69,7 +69,7 @@ class User():
         
     def subscribe(self, topic):
         def on_message(client, userdata, msg):
-            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+            print(f"{self.username} - Received `{msg.payload.decode()}` from `{msg.topic}` topic")
 
         self.__client.subscribe(topic)
         self.__client.on_message = on_message
@@ -175,33 +175,51 @@ class Publisher():
 
 
 if __name__ == '__main__':
+    userpass1 = "John"
     # USER 1
     user1 = User()
-    user1.username = 'admin'
-    user1.password = 'admin'
+    user1.username = userpass1
+    user1.password = userpass1
     user1.broker = 'localhost'
     user1.port = 1883
-    user1.topic = [("t_add.t_que", 0)]
-    
+    user1.topic = [("hello", 0)]
+
     # USER 2
-    # user2 = User()
-    # user2.username = 'John'
-    # user2.password = 'admin'
-    # user2.broker = 'localhost'
-    # user2.port = 1883
-    # user2.topic = [("general", 0), ('cli2', 0)]
+    userpass2 = "Fitz"
+    user2 = User()
+    user2.username = userpass2
+    user2.password = userpass2
+    user2.broker = 'localhost'
+    user2.port = 1883
+    user2.topic = [("hello", 0)]
+
+    # USER 3
+    userpass3 = "Gerald"
+    user3 = User()
+    user3.username = userpass3
+    user3.password = userpass3
+    user3.broker = 'localhost'
+    user3.port = 1883
+    user3.topic = [("hello", 0)]
 
     # PUBLISHER
+    userpass_pub = "admin"
     publisher = Publisher()
-    publisher.username = 'admin'
-    publisher.password = 'admin'
+    publisher.username = userpass_pub
+    publisher.password = userpass_pub
     publisher.broker = 'localhost'
     publisher.port = 1883
-    publisher.topic = 't_add.t_que'
+    publisher.topic = 'hello'
 
     # START
     user1_thread = threading.Thread(target=user1.run)
     user1_thread.start()
+
+    user2_thread = threading.Thread(target=user2.run)
+    user2_thread.start()
+
+    user3_thread = threading.Thread(target=user3.run)
+    user3_thread.start()
 
     # user2_thread = threading.Thread(target=user2.run)
     # user2_thread.start()
