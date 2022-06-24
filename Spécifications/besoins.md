@@ -37,6 +37,12 @@
 - Des équipes (whitelistées)
 
 
+### Pickups
+- Munitions
+- Boucliers
+- Boost de vitesse
+
+
 ## Equipe
 - Nom
 - Des robots (1 à X)
@@ -45,29 +51,81 @@
 ## Robot
 - Nom
 - 100 PV
+- Vitesse
 - Coordonnées
 - Heading
 - Champs de vision
 - 1 Arme
+- 1 Bouclier
 
 
-## Arme
+### Arme
 - Dégâts
 - Portée
+- Largeur
+- Temps de recharge
+- Munitions
 
+
+### Bouclier
+- 150 PV
+- % d'absorbtion
+- Bloque les mouvements
+- Peut casser
 
 
 ## Réflexion
-- respawn ?
-- armes différentes ? (changement d'arme)
-- Capteur de l'état de l'adversaire
-- armure
-- heal (dégats négatif)
-- boost vitesse
+- respawn => Non
+- armes différentes => 2 armes inclues
+- heal (dégats négatif) => Non
 - Faire une IA évolutive
 - 3D : PNG skin robot
 - Logo : PNG logo
 - Arène : Skin Urbain, Forêt, Glace, ...
+
+
+## Commandes (Synchrone/REST)
+
+### Générales
+- Avancer (jusqu'à arrêt)
+- S'arrêter
+- Tourner (Droite, Gauche à +/- 10°)
+- Tourner (définir l'angle final)
+- Tirer
+- Protéger
+
+
+### GPS
+- Bloque le robot
+- Renvoie coordonnées
+- Renvoie heading
+
+
+
+## Récupération permanente (MQTT)
+- Informations générales concernant le robot
+- Durée de vie max des messages pour éviter que le joueur ne récupère des messages obsolètes
+
+### Radar de vision
+- Champs de vision du Robot
+- Envoie tout ce qui est détecté dans un tableau d'objets
+- Objet :
+  - Angle
+  - Distance
+  - Type détecté (pickup, ennemie, mur)
+
+### Evenementiel
+- Evenements :
+  - Collision
+  - Tiré dessus
+  - Pickup ramassé
+
+## Récupération ponctuelle
+- Informations requêtées (on regarde les jauges)
+- 1 événement = 1 donnée renvoyée dans la file de type :
+  - "pv = x"
+  - "shield = x"
+- Le joueur doit requêter les éléments 1 à 1
 
 
 ------
