@@ -54,9 +54,14 @@
 - Vitesse
 - Coordonnées
 - Heading
-- Champs de vision
+- 1 Scanner
 - 1 Arme
 - 1 Bouclier
+
+
+### Scanner
+- Champs de vision
+- Distance de vision
 
 
 ### Arme
