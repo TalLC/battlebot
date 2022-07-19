@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import {OBJLoader} from 'three/examples/jsm/loaders/OBJLoader';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 
 // Scene
@@ -28,37 +29,59 @@ directionalLight.position.x = -10
 directionalLight.position.z =-10
 scene.add( directionalLight );
 
-// instantiate a loader
-const loader = new OBJLoader();
+// #### Load OBJ mesh file ####
+// Instantiates an obj loader
+const objloader = new OBJLoader();
 
-// load a resource
-loader.load(
+// Loads obj file
+objloader.load(
 	// resource URL
-	'./Bobby_1.obj',
+	'models/Bobby_1.obj',
+	
 	// called when resource is loaded
-	function ( object ) {
-
-		scene.add( object );
-
+	( obj ) => {
+		scene.add( obj );
 	},
+	
 	// called when loading is in progresses
-	function ( xhr ) {
-
+	( xhr ) => {
 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
 	},
+	
 	// called when loading has errors
-	function ( error ) {
-
+	( error ) => {
 		console.log( 'An error happened' );
+	}
+);
 
+// #### Load GLTF mesh file ####
+const gltfLoader = new GLTFLoader()
+
+// Loads gltf file
+gltfLoader.load(
+	// resource URL
+	'models/cube.gltf',
+	
+	// called when resource is loaded
+	( gltf ) => {
+		scene.add( gltf.scene );
+	},
+	
+	// called when loading is in progresses
+	( xhr ) => {
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+	},
+	
+	// called when loading has errors
+	( error ) => {
+		console.log( 'An error happened' );
 	}
 );
 
 
+
 function animate() {
     requestAnimationFrame( animate );
-
     renderer.render( scene, camera );
 };
 
