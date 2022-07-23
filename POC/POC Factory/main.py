@@ -1,5 +1,4 @@
-from ImageFactoryImpl import ImageFactoryImpl
-
+from ImageFactory.ImageFactoryImpl import ImageFactoryImpl
 #
 # ImageFactoryImpl est une classe qui implémente l'interface ImageFactory
 # ImageFactory est un Singleton

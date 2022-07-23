@@ -42,8 +42,11 @@ html = """
 			scene.add( cube );
 
 			camera.position.z = 5;
-
-			function animate(dep) {
+            let dep = ""
+            
+            cube.rotation.x +=1
+            
+			function animate() {
 				requestAnimationFrame( animate );
 				var cha = dep.split(":");
                 var val = parseFloat(cha[1]);
@@ -60,9 +63,10 @@ html = """
 			};
 			
 			ws.onmessage = function(event) {
-                var dep = event.data;
-                animate(dep);
+                dep = event.data;
             };
+            
+            animate()
 
 	</script>
 	</body>
@@ -81,12 +85,12 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         rand = random.randint(1, 5)
         if rand == 1:
-            await websocket.send_text("x:0.5")
+            await websocket.send_text("x:0.01")
         elif rand == 2:
-            await websocket.send_text("y:1")
+            await websocket.send_text("y:0.01")
         elif rand == 3:
-            await websocket.send_text("z:2.5")
+            await websocket.send_text("z:0.01")
         elif rand == 4:
-            await websocket.send_text("x:2.5")
+            await websocket.send_text("x:0.01")
         elif rand == 5:
-            await websocket.send_text("y:1.5")
+            await websocket.send_text("y:0.01")
