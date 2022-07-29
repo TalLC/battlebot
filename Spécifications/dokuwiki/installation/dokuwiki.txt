@@ -1,0 +1,29 @@
+# Installation du doku wiki via Docker
+
+Pré-requis :
+- Docker-compose
+
+* Si ce n'est pas déjà le cas : Installer Docker-desktop
+* Récupérer l'image du doku wiki : (Documentation disponible : [ici](https://hub.docker.com/r/linuxserver/dokuwiki))
+  * dans une console cmd ou powershell:
+
+```
+docker pull linuxserver/dokuwiki
+```
+
+* lancer un contenaire à partir de l'image récupérée en renseignant : le nom, les ports (443, 80), le chemin du répertoire commun du container sur le pc, le chemin du du répertoire commun du container sur le container
+* se rendre sur https://localhost:443/install.php pour configurer l'admin du serveur
+
+* ajouter les extensions : 
+  * Material Design Template by  ls
+  * markdowku Plugin by  Julian Fagir, Raphael Wimmer
+  * ImgPaste Plugin by  Andreas Gohr
+
+* dans "configuration manager" :
+  * changer la langue (en -> fr)
+  * le template (dokuwiki -> material)
+  * dans Editing, activer l'HTML
+
+* creer la page "start"
+
+* GG c'est terminé !
