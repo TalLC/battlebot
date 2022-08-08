@@ -6,12 +6,8 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 
 //Websocket
 
-var ws = new WebSocket("ws://localhost:8000/ws");
-
-ws.onmessage = function(event)
-{
-    console.log(event);
-};
+let ws = new WebSocket("ws://localhost:8000/ws");
+var bot_obj = {};
 
 // Scene
 const scene = new THREE.Scene();
@@ -30,7 +26,6 @@ camera.lookAt(0, 0, 0)
 // Render
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
-// renderer.setSize( 640, 480 );
 document.body.appendChild( renderer.domElement );
 
 // Controls
@@ -39,49 +34,24 @@ controls.update();
 
 // Light
 const light = new THREE.AmbientLight( 0x404040 , 1.5); // soft white light
-// scene.add( light );
+//scene.add( light );
 
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 directionalLight.position.x = -10
 directionalLight.position.z = -10
-// scene.add( directionalLight );
-
-// #### Load OBJ mesh file ####
-// Instantiates an obj loader
-// const objloader = new OBJLoader();
-
-// // Loads obj file
-// objloader.load(
-// 	// resource URL
-// 	'models/Bobby_1.obj',
-	
-// 	// called when resource is loaded
-// 	( obj ) => {
-// 		scene.add( obj );
-// 	},
-	
-// 	// called when loading is in progresses
-// 	( xhr ) => {
-// 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-// 	},
-	
-// 	// called when loading has errors
-// 	( error ) => {
-// 		console.log( 'An error happened' );
-// 	}
-// );
+//scene.add( directionalLight );
 
 // #### Load GLTF mesh file ####
-const gltfLoader = new GLTFLoader()
+const map = new GLTFLoader()
 
 // Loads gltf file
-gltfLoader.load(
+map.load(
 	// resource URL
-	'models/Arena_2.glb',
+	'./static/models/arena_1.glb',
 	
 	// called when resource is loaded
-	( gltf ) => {
-		scene.add( gltf.scene );
+	( map ) => {
+		scene.add( map.scene );
 	},
 	
 	// called when loading is in progresses
@@ -95,7 +65,51 @@ gltfLoader.load(
 	}
 );
 
+function create_bot(name, x, z){
+    const bot = new GLTFLoader()
 
+        // Loads gltf file
+    bot.load(
+	    // resource URL
+	    './static/models/robot_1.glb',
+
+        // called when resource is loaded
+        ( bot ) => {
+            bot.scene.position.x = x;
+            bot.scene.position.z = z;
+            bot_obj[name] = bot.scene;
+            scene.add(bot.scene);
+        },
+
+        // called when loading is in progresses
+        ( xhr ) => {
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+        },
+
+        // called when loading has errors
+        ( error ) => {
+            console.log( 'An error happened' );
+        }
+    );
+}
+create_bot('bot1', 6, -6)
+
+function update_bot(bot, move)
+{
+    if (bot)
+    {
+        bot.rotateY(parseFloat(move.rotateY));
+        bot.position.x = move.x;
+        bot.position.z = move.z;
+    }
+};
+
+ws.onmessage = function(event)
+{
+    var move = JSON.parse(event.data)
+    console.log(move)
+    update_bot(bot_obj['bot1'], move)
+};
 
 function animate() {
     requestAnimationFrame( animate );
