@@ -41,29 +41,88 @@ directionalLight.position.x = -10
 directionalLight.position.z = -10
 //scene.add( directionalLight );
 
-// #### Load GLTF mesh file ####
-const map = new GLTFLoader()
 
-// Loads gltf file
-map.load(
-	// resource URL
-	'./static/models/arena_1.glb',
-	
-	// called when resource is loaded
-	( map ) => {
-		scene.add( map.scene );
-	},
-	
-	// called when loading is in progresses
-	( xhr ) => {
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-	},
-	
-	// called when loading has errors
-	( error ) => {
-		console.log( 'An error happened' );
-	}
-);
+function create_sol_map(x,z){
+    // #### Load GLTF mesh file ####
+    const map = new GLTFLoader()
+
+    // Loads gltf file
+    map.load(
+        // resource URL
+        './static/models/wall_plain.glb',
+
+        // called when resource is loaded
+        ( map ) => {
+            map.scene.position.x = x
+            mapp.scene.position.z = z
+            scene.add( map.scene );
+        },
+
+        // called when loading is in progresses
+        ( xhr ) => {
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+        },
+
+        // called when loading has errors
+        ( error ) => {
+            console.log( 'An error happened' );
+        }
+    );
+}
+
+function create_big_tree(x, z){
+    const tree = new GLTFLoader()
+
+        // Loads gltf file
+    tree.load(
+	    // resource URL
+	    './static/models/tree_big.glb',
+
+        // called when resource is loaded
+        ( tree ) => {
+            tree.scene.position.x = x;
+            tree.scene.position.z = z;
+            scene.add(tree.scene);
+        },
+
+        // called when loading is in progresses
+        ( xhr ) => {
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+        },
+
+        // called when loading has errors
+        ( error ) => {
+            console.log( 'An error happened' );
+        }
+    );
+}
+
+function create_small_tree(x, z){
+    const tree = new GLTFLoader()
+
+        // Loads gltf file
+    tree.load(
+	    // resource URL
+	    './static/models/tree_small.glb',
+
+        // called when resource is loaded
+        ( tree ) => {
+            tree.scene.position.x = x;
+            tree.scene.position.z = z;
+            scene.add(tree.scene);
+        },
+
+        // called when loading is in progresses
+        ( xhr ) => {
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+        },
+
+        // called when loading has errors
+        ( error ) => {
+            console.log( 'An error happened' );
+        }
+    );
+}
 
 function create_bot(name, x, z){
     const bot = new GLTFLoader()
@@ -92,7 +151,7 @@ function create_bot(name, x, z){
         }
     );
 }
-create_bot('bot1', 6, -6)
+create_sol_map(6, -6)
 
 function update_bot(bot, move)
 {
