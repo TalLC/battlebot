@@ -24,7 +24,7 @@ const scene = new THREE.Scene();
 let width = window.innerWidth
 let height = window.innerHeight
 
-const camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, -10000, 100000 );
+const camera = new THREE.OrthographicCamera( width / - 50, width / 50, height / 50, height / - 50, -10000, 100000 );
 camera.position.set(2, 2, 2);
 camera.lookAt(0, 0, 0)
 
@@ -39,20 +39,20 @@ const controls = new OrbitControls( camera, renderer.domElement );
 controls.update();
 
 // Light
-const light = new THREE.AmbientLight( 0x404040 , 1.5); // soft white light
-//scene.add( light );
+const light = new THREE.AmbientLight( 0xffffff , 1.5); // soft white light
+scene.add( light );
 
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 directionalLight.position.x = -10
 directionalLight.position.z = -10
-//scene.add( directionalLight );
+scene.add( directionalLight );
 
 function create_object(name, x, z){
     // #### Load GLTF mesh file ####
     const map = new GLTFLoader()
 
     // Loads gltf file
-    object = './static/models/' + obj_list[name]
+    var object = './static/models/' + obj_list[name]
     map.load(
         // resource URL
         object,
@@ -105,6 +105,130 @@ function create_bot(name, x, z){
     );
 }
 create_object('sol' , 0, 0)
+create_object('sol' , 0, 2)
+create_object('sol' , 0, 4)
+create_object('sol' , 0, 6)
+create_object('sol' , 0, 8)
+create_object('sol' , 0, 10)
+create_object('sol' , 0, -2)
+create_object('sol' , 0, -4)
+create_object('sol' , 0, -6)
+create_object('sol' , 0, -8)
+create_object('sol' , 0, -10)
+create_object('sol' , 2, 0)
+create_object('sol' , 2, 2)
+create_object('sol' , 2, 4)
+create_object('sol' , 2, 6)
+create_object('sol' , 2, 8)
+create_object('sol' , 2, 10)
+create_object('sol' , 2, -2)
+create_object('sol' , 2, -4)
+create_object('sol' , 2, -6)
+create_object('sol' , 2, -8)
+create_object('sol' , 2, -10)
+create_object('sol' , 4, 0)
+create_object('sol' , 4, 2)
+create_object('sol' , 4, 4)
+create_object('sol' , 4, 6)
+create_object('sol' , 4, 8)
+create_object('sol' , 4, 10)
+create_object('sol' , 4, -2)
+create_object('sol' , 4, -4)
+create_object('sol' , 4, -6)
+create_object('sol' , 4, -8)
+create_object('sol' , 4, -10)
+create_object('sol' , 6, 0)
+create_object('sol' , 6, 2)
+create_object('sol' , 6, 4)
+create_object('sol' , 6, 6)
+create_object('sol' , 6, 8)
+create_object('sol' , 6, 10)
+create_object('sol' , 6, -2)
+create_object('sol' , 6, -4)
+create_object('sol' , 6, -6)
+create_object('sol' , 6, -8)
+create_object('sol' , 6, -10)
+create_object('sol' , 8, 0)
+create_object('sol' , 8, 2)
+create_object('sol' , 8, 4)
+create_object('sol' , 8, 6)
+create_object('sol' , 8, 8)
+create_object('sol' , 8, 10)
+create_object('sol' , 8, -2)
+create_object('sol' , 8, -4)
+create_object('sol' , 8, -6)
+create_object('sol' , 8, -8)
+create_object('sol' , 8, -10)
+create_object('sol' , 10, 0)
+create_object('sol' , 10, 2)
+create_object('sol' , 10, 4)
+create_object('sol' , 10, 6)
+create_object('sol' , 10, 8)
+create_object('sol' , 10, 10)
+create_object('sol' , 10, -2)
+create_object('sol' , 10, -4)
+create_object('sol' , 10, -6)
+create_object('sol' , 10, -8)
+create_object('sol' , 10, -10)
+create_object('sol' , -2, 0)
+create_object('sol' , -2, 2)
+create_object('sol' , -2, 4)
+create_object('sol' , -2, 6)
+create_object('sol' , -2, 8)
+create_object('sol' , -2, 10)
+create_object('sol' , -2, -2)
+create_object('sol' , -2, -4)
+create_object('sol' , -2, -6)
+create_object('sol' , -2, -8)
+create_object('sol' , -2, -10)
+create_object('sol' , -4, 0)
+create_object('sol' , -4, 2)
+create_object('sol' , -4, 4)
+create_object('sol' , -4, 6)
+create_object('sol' , -4, 8)
+create_object('sol' , -4, 10)
+create_object('sol' , -4, -2)
+create_object('sol' , -4, -4)
+create_object('sol' , -4, -6)
+create_object('sol' , -4, -8)
+create_object('sol' , -4, -10)
+create_object('sol' , -6, 0)
+create_object('sol' , -6, 2)
+create_object('sol' , -6, 4)
+create_object('sol' , -6, 6)
+create_object('sol' , -6, 8)
+create_object('sol' , -6, 10)
+create_object('sol' , -6, -2)
+create_object('sol' , -6, -4)
+create_object('sol' , -6, -6)
+create_object('sol' , -6, -8)
+create_object('sol' , -6, -10)
+create_object('sol' , -8, 0)
+create_object('sol' , -8, 2)
+create_object('sol' , -8, 4)
+create_object('sol' , -8, 6)
+create_object('sol' , -8, 8)
+create_object('sol' , -8, 10)
+create_object('sol' , -8, -2)
+create_object('sol' , -8, -4)
+create_object('sol' , -8, -6)
+create_object('sol' , -8, -8)
+create_object('sol' , -8, -10)
+create_object('sol' , -10, 0)
+create_object('sol' , -10, 2)
+create_object('sol' , -10, 4)
+create_object('sol' , -10, 6)
+create_object('sol' , -10, 8)
+create_object('sol' , -10, 10)
+create_object('sol' , -10, -2)
+create_object('sol' , -10, -4)
+create_object('sol' , -10, -6)
+create_object('sol' , -10, -8)
+create_object('sol' , -10, -10)
+create_object('big_tree' , -6, 2)
+
+
+create_bot('bot1', 6, -6)
 
 function update_bot(bot, move)
 {

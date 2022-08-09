@@ -421,6 +421,7 @@ async def websocket_endpoint(websocket: WebSocket):
     ]
 
     await websocket.accept()
+
     while True:
         for value in liste_event:
             sleep(1)
