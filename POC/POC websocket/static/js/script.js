@@ -109,6 +109,7 @@ function create_bot(name, x, z){
 
 create_bot('bot1', 6, -6)
 create_object('sol', 0, 0)
+create_object('eau', 0, 0)
 
 
 function update_bot(bot, move)
