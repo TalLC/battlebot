@@ -1,0 +1,33 @@
+[
+  {
+      "id": "734M_AZERTY",
+      "size": 3,
+      "name": "Blue team",
+      "color": "0000FF"
+  },
+  {
+      "size": 3,
+      "name": "Red team",
+      "color": "FF0000"
+  },
+  {
+      "size": 3,
+      "name": "Green team",
+      "color": "00FF00"
+  },
+  {
+      "size": 3,
+      "name": "Yellow team",
+      "color": "FFFF00"
+  },
+  {
+      "size": 3,
+      "name": "Black team",
+      "color": "000000"
+  },
+  {
+      "size": 3,
+      "name": "White team",
+      "color": "FFFFFF"
+  }
+]
