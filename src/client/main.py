@@ -25,20 +25,31 @@ def check_api() -> bool:
     return r.ok
 
 
-def check_connection(bot_id: str) -> dict:
+def request_connection(bot_id: str) -> bool:
     """
     Check MQTT and STOMP connections.
     """
-    r = requests.get(G_SERVER_URL + f"/check_connections?bot_id={bot_id}")
-    if r.ok:
-        return {
-            "stomp_id": r.json()["stomp_id"],
-            "mqtt_id": r.json()["mqtt_id"]
-        }
-    return dict()
+    r = requests.post(G_SERVER_URL + f"/check_connections?bot_id={bot_id}")
+    return r.ok
+
+
+def check_connection(bot_id: str, request_id: str, stomp_id: str, mqtt_id: str) -> bool:
+    """
+    Validate connection by sending all requested ids.
+    """
+    r = requests.post(G_SERVER_URL + f"/check_connections?bot_id={bot_id}"
+                                     f"&request_id={request_id}&stomp_id={stomp_id}&mqtt_id={mqtt_id}")
+    if not r.ok:
+        if 'detail' in r.json():
+            logging.error(r.json()['detail'])
+
+    return r.ok
 
 
 def enroll(team_id: str, bot_name: str) -> str:
+    """
+    Enroll a new bot in team.
+    """
     r = requests.post(G_SERVER_URL + f"/registration?team_id={team_id}&bot_name={bot_name}")
     if r.ok:
         if "bot_id" in r.json():
@@ -61,12 +72,9 @@ if __name__ == "__main__":
     logging.info(f"Bot {bot_id} has been enrolled")
 
     # Check MQTT and STOMP connections
-    connections = check_connection(bot_id)
-    if connections == dict() or connections is None:
-        raise "API did not send STOMP and MQTT messages"
+    if not request_connection(bot_id):
+        raise "API is not available"
 
-    mqtt_id = connections["mqtt_id"]
-    stomp_id = connections["stomp_id"]
     logging.info(f"MQTT and STOMP messages have been requested")
 
     # Check if we find the messages in the STOMP and MQTT queues

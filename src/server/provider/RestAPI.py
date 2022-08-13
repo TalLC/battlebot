@@ -1,9 +1,10 @@
 import logging
-from business.GameManager import GameManager
 from fastapi import FastAPI, HTTPException
+from common.Singleton import SingletonABCMeta
+from business.GameManager import GameManager
 
 
-class RestAPI:
+class RestAPI(metaclass=SingletonABCMeta):
 
     def __init__(self):
         self.app = None
@@ -15,6 +16,8 @@ class RestAPI:
     def __register_endpoints(self):
         self.__endpoint_root()
         self.__endpoint_registration()
+        self.__endpoint_request_connection()
+        self.__endpoint_check_connection()
         self.__endpoint_move()
         self.__endpoint_turn()
         self.__endpoint_fire()
@@ -33,23 +36,58 @@ class RestAPI:
             if not GameManager().does_team_exists(team_id):
                 raise HTTPException(status_code=500, detail="Unknown team")
 
-            bot_id = GameManager().register_bot(team_id, bot_name, bot_type)
-            if bot_id is None or bot_id == str():
+            bot = GameManager().add_bot(team_id, bot_name, bot_type)
+            if bot is None:
                 raise HTTPException(status_code=500, detail="Team is full")
 
-            return {"status": "ok", "message": "The bot has been successfully registered", "bot_id": bot_id}
+            return {"status": "ok", "message": "The bot has been successfully registered", "bot_id": bot.id}
 
-    def __endpoint_check_connections(self):
-        @self.app.post("/check_connections")
-        async def check_connections(bot_id: str):
+    def __endpoint_request_connection(self):
+        @self.app.post("/request_connection")
+        async def request_connection(bot_id: str):
 
-            # Check si robot existe
+            # Does bot exists
+            if not GameManager().does_bot_exists(bot_id):
+                raise HTTPException(status_code=500, detail="Unknown bot")
 
-            # MAJ les id de connectivité attendus par le robot
+            logging.info(f"Bot {bot_id} is requesting a connection")
 
-            # Envoyer un message sur STOMP et MQTT à récupérer par le client
-            # Envoyer l'ID STOMP et MQTT que le client devra lire dans les messages
-            return {"status": "ok", "message": "Messages sent from STOMP and MQTT", "stomp_id": "123", "mqtt_id": "456"}
+            bot = GameManager().get_bot(bot_id)
+            # 3 éléments au total doivent être envoyés au client et retournés via l'endpoint "check_connection" :
+            # - request_id : identifiant pour cette demande de connexion
+            # - stomp_id : identifiant pour le STOMP
+            # - mqtt_id : identifiant pour le MQTT
+
+            # DONE: Envoyer un id pour la requête REST
+            # TODO: Envoyer un message sur STOMP et MQTT à récupérer par le client
+            # TODO: Envoyer l'ID STOMP et MQTT que le client devra lire dans les messages :
+            bot.client_connection.source_mqtt_id
+            bot.client_connection.source_stomp_id
+
+            return {
+                "status": "ok",
+                "message": "Messages sent from STOMP and MQTT",
+                "request_id": bot.client_connection.source_request_id
+            }
+
+    def __endpoint_check_connection(self):
+        @self.app.post("/check_connection")
+        async def check_connection(bot_id, request_id: str, stomp_id: str, mqtt_id: str):
+            # Does bot exists
+            if not GameManager().does_bot_exists(bot_id):
+                raise HTTPException(status_code=500, detail="Unknown bot")
+
+            bot = GameManager().get_bot(bot_id)
+            if bot.client_connection.source_request_id != request_id:
+                raise HTTPException(status_code=500, detail="Invalid request ID")
+
+            if bot.client_connection.source_stomp_id != stomp_id:
+                raise HTTPException(status_code=500, detail="Invalid STOMP ID")
+
+            if bot.client_connection.source_mqtt_id != mqtt_id:
+                raise HTTPException(status_code=500, detail="Invalid MQTT ID")
+
+            return {"status": "ok", "message": "Your bot is successfully connected"}
 
     def __endpoint_move(self):
         @self.app.post("/move")

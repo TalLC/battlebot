@@ -1,8 +1,9 @@
 import logging
 from provider.RestAPI import RestAPI
+from common.Singleton import SingletonABCMeta
 
 
-class ProviderManager:
+class ProviderManager(metaclass=SingletonABCMeta):
     """
     Start all provider services.
     - Rest API

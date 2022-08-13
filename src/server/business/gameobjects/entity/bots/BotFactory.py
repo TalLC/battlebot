@@ -7,7 +7,10 @@ class BotFactory(metaclass=SingletonABCMeta):
 
     @staticmethod
     def create_bot(bot_name: str, bot_type: str) -> Bot:
+        """
+        Create a new bot and return the object.
+        """
         if bot_type.lower() == "warrior":
             return Warrior(bot_name)
-
-        return Bot(bot_name)
+        else:
+            return Warrior(bot_name)
