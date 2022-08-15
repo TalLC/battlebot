@@ -1,9 +1,23 @@
 {
   "team_id": "734M_AZERTY",
   "bot_name": "Test bot",
-  "server": {
-    "port": "8080",
+  "rest": {
+    "port": 8000,
     "host": "localhost",
     "protocol": "http"
+  },
+  "mqtt": {
+    "queue_head": "BATTLEBOT/BOT/",
+    "username": "user",
+    "password": "password",
+    "port": 1883,
+    "host": "localhost"
+  },
+  "stomp": {
+    "queue_head": "BATTLEBOT.BOT.",
+    "username": "user",
+    "password": "password",
+    "port": 61613,
+    "host": "localhost"
   }
 }

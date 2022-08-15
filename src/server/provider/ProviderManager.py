@@ -1,7 +1,7 @@
 import logging
 from provider.RestAPI import RestAPI
-from provider.MQTT import MQTT
-from provider.STOMP import STOMP
+from provider.MQTTClient import MQTTClient
+from provider.STOMPClient import STOMPClient
 from common.Singleton import SingletonABCMeta
 
 
@@ -27,11 +27,11 @@ class ProviderManager(metaclass=SingletonABCMeta):
 
     def __start_mqtt(self):
         logging.info("Starting MQTT")
-        self.mqtt_client = MQTT("localhost", 1883, "system", "manager")
+        self.mqtt_client = MQTTClient("localhost", 1883, "system", "manager")
 
     def __start_stomp(self):
         logging.info("Starting STOMP")
-        self.stomp_client = STOMP("localhost", 61613, "system", "manager")
+        self.stomp_client = STOMPClient("localhost", 61613, "system", "manager")
 
     def close(self):
         self.mqtt_client.close()

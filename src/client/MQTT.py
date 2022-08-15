@@ -37,12 +37,12 @@ class MQTT:
 
         # Waiting for connection to complete
         timeout = 5
-        while not mqtt.is_connected and timeout >= 0:
+        while not self.__client.is_connected and timeout > 0:
             sleep(1)
             timeout -= 1
 
         # Check if connection is successful
-        if not mqtt.is_connected:
+        if not self.__client.is_connected:
             raise Exception("Failed to connect to MQTT broker")
 
         # Starting internal thread to handle publish/subscribe operations
@@ -68,17 +68,36 @@ class MQTT:
         """
         logging.debug(f"Message id {mid} published")
 
-    def send_message(self, topic: str, message: str):
+    def on_message(self, func):
+        """
+        Register a callback function to be called when a message is received.
+        """
+        self.__client.on_message = func
+
+    def send_message(self, topic: str, message: str, retain: bool = False):
         """
         Send a message to a topic.
         """
-        res = self.__client.publish(topic, message)
+        res = self.__client.publish(topic, message, retain=retain)
         logging.debug(f"Sending message id {res.mid}")
 
         if res.rc == mqtt_client.MQTT_ERR_SUCCESS:
             logging.debug(f"Sent `{message}` to topic `{topic}`")
         else:
             logging.error(f"Failed to send message to topic {topic}")
+
+    def subscribe(self, topic: str):
+        """
+        Subscribe to a topic and receive incoming messages.
+        """
+        self.__client.subscribe(topic)
+        logging.info(f"Subscribed to topic {topic}")
+
+    def loop(self):
+        """
+        Run the MQTT client loop to read messages.
+        """
+        self.__client.loop()
 
     def close(self):
         """
@@ -90,6 +109,9 @@ class MQTT:
 
 
 if __name__ == '__main__':
+    def on_message(_client: mqtt_client, _userdata, msg: mqtt_client.MQTTMessage):
+        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+
     from time import sleep
 
     logging.basicConfig(level=logging.DEBUG)
@@ -109,3 +131,4 @@ if __name__ == '__main__':
     mqtt.send_message("BATTLEBOT/BOT/mqtttest", "test4")
 
     mqtt.close()
+

@@ -1,8 +1,13 @@
 import logging
 import stomp
+from stomp import ConnectionListener
+from stomp.utils import Frame
 
 
-class STOMP:
+class STOMPClient:
+    ConnectionListener = ConnectionListener
+    Frame = Frame
+
     @property
     def is_connected(self) -> bool:
         """
@@ -22,6 +27,7 @@ class STOMP:
         self.__connected = False
         self.__host = host
         self.__port = port
+        self.__subscription_id = 0
 
         # STOMP client
         self.__client = stomp.Connection(host_and_ports=[(self.__host, self.__port)])
@@ -35,6 +41,20 @@ class STOMP:
         Send a message to a topic.
         """
         self.__client.send(destination=topic, body=message)
+
+    def subscribe(self, destination: str):
+        """
+        Subscribe to a topic and receive incoming messages.
+        """
+        self.__subscription_id += 1
+        self.__client.subscribe(destination=destination, id=str(self.__subscription_id))
+        logging.info(f"Subscribed to queue {destination}")
+
+    def set_listener(self, name: str, listener: stomp.ConnectionListener):
+        """
+        Set a listener for the STOMP client.
+        """
+        self.__client.set_listener(name, listener)
 
     def close(self):
         """

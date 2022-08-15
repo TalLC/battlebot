@@ -1,4 +1,5 @@
 import logging
+import json
 from fastapi import FastAPI, HTTPException
 from common.Singleton import SingletonABCMeta
 from business.GameManager import GameManager
@@ -45,12 +46,13 @@ class RestAPI(metaclass=SingletonABCMeta):
     def __endpoint_request_connection(self):
         @self.app.post("/request_connection")
         async def request_connection(bot_id: str):
+            from provider.ProviderManager import ProviderManager
+
+            logging.info(f"Bot {bot_id} is requesting a connection")
 
             # Does bot exists
             if not GameManager().does_bot_exists(bot_id):
                 raise HTTPException(status_code=500, detail="Unknown bot")
-
-            logging.info(f"Bot {bot_id} is requesting a connection")
 
             bot = GameManager().get_bot(bot_id)
             # 3 éléments au total doivent être envoyés au client et retournés via l'endpoint "check_connection" :
@@ -58,11 +60,15 @@ class RestAPI(metaclass=SingletonABCMeta):
             # - stomp_id : identifiant pour le STOMP
             # - mqtt_id : identifiant pour le MQTT
 
-            # DONE: Envoyer un id pour la requête REST
-            # TODO: Envoyer un message sur STOMP et MQTT à récupérer par le client
-            # TODO: Envoyer l'ID STOMP et MQTT que le client devra lire dans les messages :
-            bot.client_connection.source_mqtt_id
-            bot.client_connection.source_stomp_id
+            ProviderManager().mqtt().send_message(
+                "BATTLEBOT/BOT/" + bot.id,
+                json.dumps({"mqtt_id": bot.client_connection.source_mqtt_id}),
+                True
+            )
+            ProviderManager().stomp().send_message(
+                "BATTLEBOT.BOT." + bot.id,
+                json.dumps({"stomp_id": bot.client_connection.source_stomp_id})
+            )
 
             return {
                 "status": "ok",
