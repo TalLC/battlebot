@@ -1,0 +1,8 @@
+{
+  "destination_head": "BATTLEBOT.BOT.",
+  "host": "localhost",
+  "port": "61613",
+  "username": "admin",
+  "password": "admin",
+  "timeout": 5
+}
