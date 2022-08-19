@@ -1,6 +1,7 @@
 import logging
 import json
 from pathlib import Path
+from utils.mqtt import mqtt
 from provider.ProviderManager import ProviderManager
 from business.GameManager import GameManager
 
@@ -36,3 +37,17 @@ for team in G_CONF_TEAMS:
 logging.info("Starting provider services")
 provider_manager = ProviderManager()  # Entry point for Uvicorn
 provider_manager.start_all()
+
+
+
+
+####
+
+try:
+    while True:
+        pass
+except KeyboardInterrupt:
+    pass
+finally:
+    # Closing services on exit
+    provider_manager.close()
