@@ -1,8 +1,13 @@
+import json
 import logging
+from pathlib import Path
 import stomp
 from stomp import ConnectionListener
 from stomp.utils import Frame
 
+
+__instance = None
+__config = json.loads(Path('..', 'conf', 'stomp.json').read_text())
 
 class STOMP:
     ConnectionListener = ConnectionListener
@@ -42,7 +47,7 @@ class STOMP:
         """
         self.__client.send(destination=topic, body=message)
 
-    def __subscribe(self, destination: str):
+    def subscribe(self, destination: str):
         """
         Subscribe to a topic and receive incoming messages.
         """
@@ -63,5 +68,18 @@ class STOMP:
         self.__client.disconnect()
         logging.info("STOMP client disconnected")
 
-    def do_subscribe(self, destination: str):
-        return self.__subscribe(destination=destination)
+
+def get() -> STOMP:
+    """
+    Get STOMP instanace.
+    """
+    global __instance
+
+    if __instance is None:
+        __instance = STOMP(
+            host=__config['host'],
+            port=__config['port'],
+            username=__config['username'],
+            password=__config['password']
+        )
+        return __instance

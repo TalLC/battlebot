@@ -12,7 +12,6 @@ class ProviderManager(metaclass=SingletonABCMeta):
     - Stomp
     - MQTT
     """
-    
     def __init__(self):
         self.rest_api: RestAPI = RestAPI()
 
@@ -35,7 +34,7 @@ class ProviderManager(metaclass=SingletonABCMeta):
 
     def close(self):
         self.mqtt_client.close()
-        self.stomp_client.close()
+        self.stomp_client().close()
 
     def rest(self):
         """
