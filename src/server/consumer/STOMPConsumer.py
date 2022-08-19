@@ -1,16 +1,17 @@
+from consumer.interfaces.IBrokerConsumer import IBrokerConsumer
 from utils import stomp
 
 
-class STOMPConsumer:
+class STOMPConsumer(IBrokerConsumer):
 
     def __init__(self):
         self.__client = stomp.get()
 
-    def send_message(self, topic: str, message: str):
+    def send_message(self, destination: str, message: str, retain: bool = False):
         """
         Send a message to a topic.
         """
-        self.__client.send_message(topic=topic, message=message)
+        self.__client.send_message(topic=destination, message=message)
 
     def close(self):
         """
