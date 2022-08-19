@@ -1,5 +1,4 @@
 from business.gameobjects.entity.bots.Bot import Bot
-from business.gameobjects.entity.bots.BotFactory import BotFactory
 from common.Generators import Generators
 
 
@@ -37,14 +36,13 @@ class Team:
         else:
             self._id = Generators().unique_team_id()
 
-    def add_bot(self, bot_name: str, bot_type: str) -> None | Bot:
+    def add_bot(self, bot: Bot) -> bool:
         """
-        Create a new bot and return its id.
+        Add an existing bot to the team.
         """
         if len(self._bots) < self._size:
-            bot = BotFactory().create_bot(bot_name, bot_type)
             self._bots.append(bot)
-            return bot
-        return None
+            return True
+        return False
 
 
