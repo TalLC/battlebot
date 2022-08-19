@@ -4,5 +4,5 @@
   "port": "1883",
   "username": "admin",
   "password": "admin",
-  "timeout": 5
+  "connect_timeout": 5
 }

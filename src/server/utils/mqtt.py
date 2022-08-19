@@ -46,7 +46,7 @@ class MQTT:
         self.__client.connect(self.__host, self.__port)
 
         # Waiting for connection to complete
-        timeout = __config['timeout']
+        timeout = __config['connect_timeout']
         while not self.__client.is_connected and timeout > 0:
             sleep(1)
             timeout -= 1
