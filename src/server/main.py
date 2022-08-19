@@ -27,7 +27,7 @@ G_CONF_TEAMS = json.loads(G_CONF_FILE_TEAMS.read_text())
 
 # # Adding Teams
 for team in G_CONF_TEAMS:
-    t = GameManager().add_team(team["size"], team["name"], team["color"], team["id"] if "id" in team else None)
+    t = GameManager().team_manager.add_team(team["size"], team["name"], team["color"], team["id"] if "id" in team else None)
     print(t)
 
 

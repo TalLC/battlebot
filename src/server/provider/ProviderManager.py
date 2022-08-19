@@ -27,11 +27,11 @@ class ProviderManager(metaclass=SingletonABCMeta):
 
     def __start_mqtt(self):
         logging.info("Starting MQTT")
-        self.mqtt_client = MQTTClient("localhost", 1883, "system", "manager")
+        self.mqtt_client = MQTTClient("localhost", 1883, "admin", "admin")
 
     def __start_stomp(self):
         logging.info("Starting STOMP")
-        self.stomp_client = STOMPClient("localhost", 61613, "system", "manager")
+        self.stomp_client = STOMPClient("localhost", 61613, "admin", "admin")
 
     def close(self):
         self.mqtt_client.close()
