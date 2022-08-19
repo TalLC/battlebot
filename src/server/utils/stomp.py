@@ -9,6 +9,7 @@ from stomp.utils import Frame
 __instance = None
 __config = json.loads(Path('..', 'conf', 'stomp.json').read_text())
 
+
 class STOMP:
     ConnectionListener = ConnectionListener
     Frame = Frame
@@ -71,7 +72,7 @@ class STOMP:
 
 def get() -> STOMP:
     """
-    Get STOMP instanace.
+    Get STOMP instance.
     """
     global __instance
 
@@ -82,4 +83,5 @@ def get() -> STOMP:
             username=__config['username'],
             password=__config['password']
         )
-        return __instance
+
+    return __instance
