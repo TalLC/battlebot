@@ -20,7 +20,7 @@ class MQTTProvider:
         """
         Subscribe to a topic and receive incoming messages.
         """
-        self.__client.subscribe(topic=destination)
+        self.__client.subscribe(destination=destination)
         logging.info(f"Subscribed to topic {destination}")
 
     def loop(self):
@@ -29,3 +29,8 @@ class MQTTProvider:
         """
         self.__client.loop()
 
+    def close(self):
+        """
+        Close the MQTT client.
+        """
+        self.__client.close()

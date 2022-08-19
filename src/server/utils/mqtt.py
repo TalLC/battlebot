@@ -1,6 +1,5 @@
 import logging
 import json
-from time import sleep
 from pathlib import Path
 
 from paho.mqtt import client as mqtt_client
@@ -29,6 +28,8 @@ class MQTT:
         return self.__port
 
     def __init__(self, host: str, port: int, username: str, password: str):
+        global __config
+
         self.__connected = False
         self.__host = host
         self.__port = port
@@ -45,7 +46,7 @@ class MQTT:
         self.__client.connect(self.__host, self.__port)
 
         # Waiting for connection to complete
-        timeout = 5
+        timeout = __config['timeout']
         while not self.__client.is_connected and timeout > 0:
             sleep(1)
             timeout -= 1
@@ -121,17 +122,17 @@ def get() -> MQTT:
     """
     Get MQTT instance.
     """
+    global __instance
+
     if __instance is None:
-        MQTT(
+        __instance = MQTT(
             host=__config['host'],
             port=__config['port'],
             username=__config['username'],
             password=__config['password']
         )
-    else:
-        return __instance
 
-
+    return __instance
 
 
 if __name__ == '__main__':
