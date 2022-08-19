@@ -13,8 +13,29 @@ class ProviderManager(metaclass=SingletonABCMeta):
     - MQTT
     """
 
+    @property
+    def rest(self):
+        """
+        Return the REST API instance.
+        """
+        return self.__rest_api
+
+    @property
+    def mqtt(self):
+        """
+        Return the MQTT client instance.
+        """
+        return self.__mqtt
+
+    @property
+    def stomp(self):
+        """
+        Return the STOMP client instance.
+        """
+        return self.__stomp
+
     def __init__(self):
-        self.rest_api: RestAPI = RestAPI()
+        self.__rest_api: RestAPI = RestAPI()
 
     def start_all(self):
         self.__start_mqtt()
@@ -23,34 +44,16 @@ class ProviderManager(metaclass=SingletonABCMeta):
 
     def __start_mqtt(self):
         logging.info("Starting MQTT")
-        self.mqtt = MQTTProvider()
+        self.__mqtt = MQTTProvider()
 
     def __start_stomp(self):
         logging.info("Starting STOMP")
-        self.stomp = STOMPProvider()
+        self.__stomp = STOMPProvider()
 
     def __start_rest_api(self):
         logging.info("Starting REST API")
-        self.rest_api.run()
+        self.__rest_api.run()
 
     def close(self):
-        self.mqtt.close()
-        self.stomp.close()
-
-    def rest(self):
-        """
-        Return the REST API instance.
-        """
-        return self.rest_api
-
-    def mqtt(self):
-        """
-        Return the MQTT client instance.
-        """
-        return self.mqtt
-
-    def stomp(self):
-        """
-        Return the STOMP client instance.
-        """
-        return self.stomp
+        self.__mqtt.close()
+        self.__stomp.close()

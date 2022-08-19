@@ -3,6 +3,7 @@ import json
 from fastapi import FastAPI, HTTPException
 from common.Singleton import SingletonABCMeta
 from business.GameManager import GameManager
+from consumer.ConsumerManager import ConsumerManager
 
 
 class RestAPI(metaclass=SingletonABCMeta):
@@ -52,8 +53,6 @@ class RestAPI(metaclass=SingletonABCMeta):
         """
         @self.app.post("/request_connection")
         async def request_connection(bot_id: str):
-            from provider.ProviderManager import ProviderManager
-
             logging.info(f"Bot {bot_id} is requesting a connection")
 
             # Does bot exists
@@ -64,12 +63,12 @@ class RestAPI(metaclass=SingletonABCMeta):
 
             # Sending 3 different ids to the client using 3 different channels
             # Rest, STOMP and MQTT
-            ProviderManager().mqtt().send_message(
+            ConsumerManager().mqtt.send_message(
                 "BATTLEBOT/BOT/" + bot.id,
                 json.dumps({"mqtt_id": bot.client_connection.source_mqtt_id}),
                 True
             )
-            ProviderManager().stomp().send_message(
+            ConsumerManager().stomp.send_message(
                 "BATTLEBOT.BOT." + bot.id,
                 json.dumps({"stomp_id": bot.client_connection.source_stomp_id})
             )

@@ -1,6 +1,7 @@
 import logging
 import json
 from pathlib import Path
+from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
 from business.GameManager import GameManager
 
@@ -32,6 +33,10 @@ for team in G_CONF_TEAMS:
 
 
 # Services
+# # Starting consumer services
+logging.info("Starting consumer services")
+ConsumerManager().start_all()
+
 # # Starting provider services
 logging.info("Starting provider services")
 provider_manager = ProviderManager()  # Entry point for Uvicorn
