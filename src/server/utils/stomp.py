@@ -7,7 +7,7 @@ from stomp.utils import Frame
 
 
 __instance = None
-__config = json.loads(Path('..', 'conf', 'stomp.json').read_text())
+__config = json.loads(Path('..', 'conf', '../conf/stomp.json').read_text())
 
 
 class STOMP:
@@ -37,7 +37,7 @@ class STOMP:
 
         # STOMP client
         self.__client = stomp.Connection(host_and_ports=[(self.__host, self.__port)])
-
+        self.__client.on_send(self.on_send)
         # Connecting client
         self.__client.connect(username=username, passcode=password, wait=True)  # Throw exception if failed to connect
         self.__connected = True

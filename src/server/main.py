@@ -1,7 +1,6 @@
 import logging
 import json
 from pathlib import Path
-from utils.mqtt import mqtt
 from provider.ProviderManager import ProviderManager
 from business.GameManager import GameManager
 
