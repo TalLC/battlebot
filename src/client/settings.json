@@ -8,15 +8,15 @@
   },
   "mqtt": {
     "queue_head": "BATTLEBOT/BOT/",
-    "username": "user",
-    "password": "password",
+    "username": "admin",
+    "password": "admin",
     "port": 1883,
     "host": "localhost"
   },
   "stomp": {
     "queue_head": "BATTLEBOT.BOT.",
-    "username": "user",
-    "password": "password",
+    "username": "admin",
+    "password": "admin",
     "port": 61613,
     "host": "localhost"
   }

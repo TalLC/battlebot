@@ -1,8 +1,16 @@
 import logging
+import json
+from time import sleep
+from pathlib import Path
+
 from paho.mqtt import client as mqtt_client
 
 
-class MQTTClient:
+__instance = None
+__config = json.loads(Path('..', 'conf', 'mqtt.json').read_text())
+
+
+class MQTT:
     MQTTMessage = mqtt_client.MQTTMessage
 
     @property
@@ -109,6 +117,23 @@ class MQTTClient:
         logging.info("MQTT client disconnected")
 
 
+def get() -> MQTT:
+    """
+    Get MQTT instance.
+    """
+    if __instance is None:
+        MQTT(
+            host=__config['host'],
+            port=__config['port'],
+            username=__config['username'],
+            password=__config['password']
+        )
+    else:
+        return __instance
+
+
+
+
 if __name__ == '__main__':
     def on_message(_client: mqtt_client, _userdata, msg: mqtt_client.MQTTMessage):
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
@@ -116,7 +141,7 @@ if __name__ == '__main__':
     from time import sleep
 
     logging.basicConfig(level=logging.DEBUG)
-    mqtt = MQTTClient("localhost", 1883, "system", "manager")
+    mqtt = MQTT("localhost", 1883, "admin", "admin")
 
     timeout = 5
     while not mqtt.is_connected and timeout > 0:
@@ -132,4 +157,3 @@ if __name__ == '__main__':
     mqtt.send_message("BATTLEBOT/BOT/mqtttest", "test4")
 
     mqtt.close()
-
