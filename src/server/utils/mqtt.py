@@ -6,7 +6,7 @@ from paho.mqtt import client as mqtt_client
 
 
 __instance = None
-__config = json.loads(Path('..', 'conf', 'mqtt.json').read_text())
+config = json.loads(Path('conf', 'mqtt.json').read_text())
 
 
 class MQTT:
@@ -46,7 +46,7 @@ class MQTT:
         self.__client.connect(self.__host, self.__port)
 
         # Waiting for connection to complete
-        timeout = __config['connect_timeout']
+        timeout = config['connect_timeout']
         while not self.__client.is_connected and timeout > 0:
             sleep(1)
             timeout -= 1
@@ -126,10 +126,10 @@ def get() -> MQTT:
 
     if __instance is None:
         __instance = MQTT(
-            host=__config['host'],
-            port=__config['port'],
-            username=__config['username'],
-            password=__config['password']
+            host=config['host'],
+            port=config['port'],
+            username=config['username'],
+            password=config['password']
         )
 
     return __instance

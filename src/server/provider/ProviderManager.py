@@ -1,8 +1,8 @@
 import logging
 from provider.RestAPI import RestAPI
 from common.Singleton import SingletonABCMeta
-from MQTTProvider import MQTTProvider
-from STOMPProvider import STOMPProvider
+from provider.MQTTProvider import MQTTProvider
+from provider.STOMPProvider import STOMPProvider
 
 
 class ProviderManager(metaclass=SingletonABCMeta):
