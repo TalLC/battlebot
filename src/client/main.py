@@ -166,11 +166,11 @@ if __name__ == "__main__":
 
     # MQTT
     read_mqtt_id()
-    logging.info(f"MQTT id {G_CONNECTION_STATUS['mqtt_id']} have been found")
+    logging.info(f"MQTT id {G_CONNECTION_STATUS['mqtt_id']} has been found")
 
     # STOMP
     read_stomp_id()
-    logging.info(f"STOMP id {G_CONNECTION_STATUS['stomp_id']} have been found")
+    logging.info(f"STOMP id {G_CONNECTION_STATUS['stomp_id']} has been found")
 
     # Check if we have all the messages
     send_ids_to_check(

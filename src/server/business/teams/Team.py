@@ -1,5 +1,5 @@
+import uuid
 from business.gameobjects.entity.bots.Bot import Bot
-from common.Generators import Generators
 
 
 class Team:
@@ -34,7 +34,7 @@ class Team:
         if team_id != str() and team_id is not None:
             self._id = team_id
         else:
-            self._id = Generators().unique_team_id()
+            self._id = str(uuid.uuid4())
 
     def add_bot(self, bot: Bot) -> bool:
         """

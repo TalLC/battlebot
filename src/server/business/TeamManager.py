@@ -28,9 +28,9 @@ class TeamManager(ITeamManager):
         """
         return list(self._TEAMS.values())
 
-    def add_team(self, size, name, color, team_id: str = None) -> str:
+    def create_team(self, size, name, color, team_id: str = None) -> str:
         """
-        Add a new team.
+        Create a new team.
         """
         t = Team(size, name, color, team_id)
         self._TEAMS[t.id] = t

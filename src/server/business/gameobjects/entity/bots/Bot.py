@@ -1,10 +1,10 @@
+import uuid
 from abc import ABC
 from business.gameobjects.entity.IEntity import IEntity
 from business.gameobjects.behaviour.IMoving import IMoving
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
-from common.Generators import Generators
 
 
 class Bot(OrientedGameObject, IEntity, IMoving, IDestructible, ABC):
@@ -29,7 +29,7 @@ class Bot(OrientedGameObject, IEntity, IMoving, IDestructible, ABC):
         self._ROLE = role
 
         # Generate a random id.
-        self._id = Generators().unique_bot_id()
+        self._id = str(uuid.uuid4())
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)

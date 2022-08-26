@@ -23,7 +23,7 @@ class ITeamManager(ABC):
         """
         raise NotImplementedError()
 
-    def add_team(self, size, name, color, team_id: str = None) -> str:
+    def create_team(self, size, name, color, team_id: str = None) -> str:
         """
         Add a new team.
         """
