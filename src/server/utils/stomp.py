@@ -29,10 +29,15 @@ class STOMP:
     def port(self) -> int:
         return self.__port
 
-    def __init__(self, host: str, port: int, username: str, password: str):
+    @property
+    def destination_root(self) -> str:
+        return self.__destination_root
+
+    def __init__(self, host: str, port: int, username: str, password: str, destination_root: str):
         self.__connected = False
         self.__host = host
         self.__port = port
+        self.__destination_root = destination_root
         self.__subscription_id = 0
 
         # STOMP client
@@ -81,7 +86,8 @@ def get() -> STOMP:
             host=config['host'],
             port=config['port'],
             username=config['username'],
-            password=config['password']
+            password=config['password'],
+            destination_root=config['destination_root']
         )
 
     return __instance

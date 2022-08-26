@@ -32,6 +32,9 @@ def request_connection(bot_id: str):
         if 'request_id' in r.json():
             G_CONNECTION_STATUS["request_id"] = r.json()['request_id']
 
+    print(r.ok)
+    print(r.content)
+
     if G_CONNECTION_STATUS["request_id"] in [str(), None]:
         raise Exception("Unable to find Rest 'request_id'")
 
@@ -147,12 +150,14 @@ def message_to_dict(msg: str, topic: str) -> dict:
 
 
 if __name__ == "__main__":
+    bot_id = ""
+
     # Logging
     logging.basicConfig(level=logging.DEBUG, datefmt='%d/%m/%Y %I:%M:%S',
                         format='[%(levelname)s] %(asctime)s - %(message)s')
 
     # Enroll bot and get bot ID
-    bot_id = enroll_new_bot(G_TEAM_ID, G_BOT_NAME)
+    bot_id = bot_id if bot_id not in [str(), None] else enroll_new_bot(G_TEAM_ID, G_BOT_NAME)
     logging.info(f"Bot {bot_id} has been enrolled")
 
     # Check Rest, MQTT and STOMP connections
