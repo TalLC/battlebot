@@ -142,7 +142,7 @@ if __name__ == '__main__':
     from time import sleep
 
     logging.basicConfig(level=logging.DEBUG)
-    mqtt = MQTT("localhost", 1883, "admin", "admin")
+    mqtt = MQTT("localhost", 1883, "system", "manager")
 
     timeout = 5
     while not mqtt.is_connected and timeout > 0:

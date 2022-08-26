@@ -83,7 +83,7 @@ class RestAPI(metaclass=SingletonABCMeta):
         @self.app.post("/check_connection")
         async def check_connection(bot_id, request_id: str, stomp_id: str, mqtt_id: str):
             # Does bot exists
-            if not GameManager().team_manager.does_bot_exists(bot_id):
+            if not GameManager().bot_manager.does_bot_exists(bot_id):
                 raise HTTPException(status_code=500, detail="Unknown bot")
 
             bot = GameManager().bot_manager.get_bot(bot_id)
