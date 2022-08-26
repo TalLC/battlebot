@@ -32,9 +32,6 @@ def request_connection(bot_id: str):
         if 'request_id' in r.json():
             G_CONNECTION_STATUS["request_id"] = r.json()['request_id']
 
-    print(r.ok)
-    print(r.content)
-
     if G_CONNECTION_STATUS["request_id"] in [str(), None]:
         raise Exception("Unable to find Rest 'request_id'")
 

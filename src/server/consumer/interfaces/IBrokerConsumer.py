@@ -1,14 +1,14 @@
 from abc import abstractmethod, ABC
-from consumer.actions.interfaces.IAction import IAction
+from consumer.messages.interfaces.IMessage import IMessage
 
 
 class IBrokerConsumer(ABC):
 
-    def send_action(self, action: IAction):
+    def send_message(self, message: IMessage):
         """
         Send an action to the correct topic or queue.
         """
-        self._send_message(self.get_destination(), action.get_message())
+        self._send_message(f'{self.get_destination()}{message.bot_id}', message.message, message.retain)
 
     @abstractmethod
     def get_destination(self) -> str:

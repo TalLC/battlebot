@@ -27,12 +27,17 @@ class MQTT:
     def port(self) -> int:
         return self.__port
 
-    def __init__(self, host: str, port: int, username: str, password: str):
-        global __config
+    @property
+    def destination_root(self) -> str:
+        return self.__destination_root
+
+    def __init__(self, host: str, port: int, username: str, password: str, destination_root: str):
+        global config
 
         self.__connected = False
         self.__host = host
         self.__port = port
+        self.__destination_root = destination_root
 
         # MQTT client
         self.__client = mqtt_client.Client()
@@ -84,11 +89,11 @@ class MQTT:
         """
         self.__client.on_message = func
 
-    def send_message(self, topic: str, message: str, retain: bool = False):
+    def send_message(self, topic: str, message: dict, retain: bool = False):
         """
         Send a message to a topic.
         """
-        res = self.__client.publish(topic, message, retain=retain)
+        res = self.__client.publish(topic=topic, payload=json.dumps(message), retain=retain)
         logging.debug(f"Sending message id {res.mid}")
 
         if res.rc == mqtt_client.MQTT_ERR_SUCCESS:
@@ -129,7 +134,8 @@ def get() -> MQTT:
             host=config['host'],
             port=config['port'],
             username=config['username'],
-            password=config['password']
+            password=config['password'],
+            destination_root=config['destination_root']
         )
 
     return __instance

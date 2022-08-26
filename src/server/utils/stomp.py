@@ -47,11 +47,13 @@ class STOMP:
         self.__client.connect(username=username, passcode=password, wait=True)  # Throw exception if failed to connect
         self.__connected = True
 
-    def send_message(self, topic: str, message: str):
+    def send_message(self, topic: str, message: dict):
         """
         Send a message to a topic.
         """
-        self.__client.send(destination=topic, body=message)
+        print(message)
+        print(json.dumps(message))
+        self.__client.send(destination=topic, body=json.dumps(message))
 
     def subscribe(self, destination: str):
         """
