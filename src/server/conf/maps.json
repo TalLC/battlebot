@@ -1,0 +1,164 @@
+{
+	"1": {
+		"name": "map1",
+		"width": 3,
+		"height": 3,
+		"data" : [
+	{
+		"tile": "ground",
+		"tile_object": "air",
+		"x": 0,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 1
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 2
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 1
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 2
+	}
+	]},
+  "2": {
+	  "name": "map2",
+	  "width": 3,
+	  "height": 3,
+	  "data" : [
+    {
+		"tile": "ground",
+		"tile_object": "air",
+		"x": 0,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 3,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 1
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 2
+	},
+    {
+		"tile": "ground",
+		"type": "air",
+		"x": 1,
+		"y": 3
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 1
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 2
+	},
+    {
+		"tile": "ground",
+		"type": "air",
+		"x": 2,
+		"y": 3
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 3,
+		"y": 0
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 3,
+		"y": 1
+	},
+	{
+		"tile": "ground",
+		"type": "air",
+		"x": 3,
+		"y": 2
+	},
+    {
+		"tile": "ground",
+		"type": "air",
+		"x": 3,
+		"y": 3
+	}
+  ]}
+}
