@@ -1,6 +1,5 @@
 import logging
 
-from business.GameManager import GameManager
 from business.interfaces.IBotManager import IBotManager
 from business.gameobjects.entity.bots.Bot import Bot
 from business.gameobjects.entity.bots.BotFactory import BotFactory

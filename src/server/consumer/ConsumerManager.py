@@ -1,15 +1,16 @@
 import logging
-from consumer.STOMPConsumer import STOMPConsumer
-from consumer.MQTTConsumer import MQTTConsumer
+from consumer.brokers.STOMPConsumer import STOMPConsumer
+from consumer.brokers.MQTTConsumer import MQTTConsumer
+from consumer.webservices.WebsocketConsumer import WebsocketConsumer
 from common.Singleton import SingletonABCMeta
 
 
 class ConsumerManager(metaclass=SingletonABCMeta):
     """
     Start all consumer services.
-    - Rest API
     - STOMP
     - MQTT
+    - Websocket
     """
 
     @property
@@ -26,9 +27,17 @@ class ConsumerManager(metaclass=SingletonABCMeta):
         """
         return self.__stomp
 
+    @property
+    def websocket(self):
+        """
+        Return the Websocket consumer instance.
+        """
+        return self.__websocket
+
     def start_all(self):
         self.__start_mqtt()
         self.__start_stomp()
+        self.__start_websocket()
 
     def __start_mqtt(self):
         logging.info("Starting MQTT")
@@ -37,6 +46,10 @@ class ConsumerManager(metaclass=SingletonABCMeta):
     def __start_stomp(self):
         logging.info("Starting STOMP")
         self.__stomp = STOMPConsumer()
+
+    def __start_websocket(self):
+        logging.info("Starting Websocket")
+        self.__websocket = WebsocketConsumer()
 
     def close(self):
         self.__mqtt.close()

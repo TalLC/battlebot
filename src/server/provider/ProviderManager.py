@@ -1,24 +1,22 @@
 import logging
-from provider.RestAPI import RestAPI
 from common.Singleton import SingletonABCMeta
-from provider.MQTTProvider import MQTTProvider
-from provider.STOMPProvider import STOMPProvider
+from provider.webservices.RestProvider import RestProvider
+from provider.webservices.WebsocketProvider import WebsocketProvider
+from provider.webservices.WebsiteProvider import WebsiteProvider
+from provider.brokers.MQTTProvider import MQTTProvider
+from provider.brokers.STOMPProvider import STOMPProvider
+from fastapi import FastAPI
 
 
 class ProviderManager(metaclass=SingletonABCMeta):
     """
     Start all provider services.
-    - Rest API
-    - Stomp
     - MQTT
+    - Stomp
+    - Website
+    - Websocket
+    - Rest
     """
-
-    @property
-    def rest(self):
-        """
-        Return the REST API instance.
-        """
-        return self.__rest_api
 
     @property
     def mqtt(self):
@@ -34,12 +32,35 @@ class ProviderManager(metaclass=SingletonABCMeta):
         """
         return self.__stomp
 
-    def __init__(self):
-        self.__rest_api: RestAPI = RestAPI()
+    @property
+    def website(self):
+        """
+        Return the REST API instance.
+        """
+        return self.__website
+
+    @property
+    def websocket(self):
+        """
+        Return the REST API instance.
+        """
+        return self.__websocket
+
+    @property
+    def rest(self):
+        """
+        Return the REST API instance.
+        """
+        return self.__rest_api
+
+    def __init__(self, app: FastAPI):
+        self.__app = app
 
     def start_all(self):
         self.__start_mqtt()
         self.__start_stomp()
+        self.__start_website()
+        self.__start_websocket()
         self.__start_rest_api()
 
     def __start_mqtt(self):
@@ -50,9 +71,17 @@ class ProviderManager(metaclass=SingletonABCMeta):
         logging.info("Starting STOMP")
         self.__stomp = STOMPProvider()
 
+    def __start_website(self):
+        logging.info("Starting Website")
+        self.__website = WebsiteProvider(self.__app)
+
+    def __start_websocket(self):
+        logging.info("Starting Websocket")
+        self.__websocket = WebsocketProvider(self.__app)
+
     def __start_rest_api(self):
         logging.info("Starting REST API")
-        self.__rest_api.run()
+        self.__rest_api = RestProvider(self.__app)
 
     def close(self):
         self.__mqtt.close()
