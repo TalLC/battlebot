@@ -7,6 +7,7 @@ from business.gameobjects.entity.bots.BotFactory import BotFactory
 
 
 class BotManager(IBotManager):
+
     _BOTS = dict()
 
     def does_bot_exists(self, bot_id):

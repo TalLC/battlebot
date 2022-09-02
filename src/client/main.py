@@ -147,12 +147,14 @@ def message_to_dict(msg: str, topic: str) -> dict:
 
 
 if __name__ == "__main__":
+    bot_id = ""
+
     # Logging
     logging.basicConfig(level=logging.DEBUG, datefmt='%d/%m/%Y %I:%M:%S',
                         format='[%(levelname)s] %(asctime)s - %(message)s')
 
     # Enroll bot and get bot ID
-    bot_id = enroll_new_bot(G_TEAM_ID, G_BOT_NAME)
+    bot_id = bot_id if bot_id not in [str(), None] else enroll_new_bot(G_TEAM_ID, G_BOT_NAME)
     logging.info(f"Bot {bot_id} has been enrolled")
 
     # Check Rest, MQTT and STOMP connections
@@ -164,11 +166,11 @@ if __name__ == "__main__":
 
     # MQTT
     read_mqtt_id()
-    logging.info(f"MQTT id {G_CONNECTION_STATUS['mqtt_id']} have been found")
+    logging.info(f"MQTT id {G_CONNECTION_STATUS['mqtt_id']} has been found")
 
     # STOMP
     read_stomp_id()
-    logging.info(f"STOMP id {G_CONNECTION_STATUS['stomp_id']} have been found")
+    logging.info(f"STOMP id {G_CONNECTION_STATUS['stomp_id']} has been found")
 
     # Check if we have all the messages
     send_ids_to_check(

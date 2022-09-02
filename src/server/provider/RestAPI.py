@@ -1,9 +1,10 @@
 import logging
-import json
 from fastapi import FastAPI, HTTPException
 from common.Singleton import SingletonABCMeta
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
+from consumer.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
+from consumer.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
 
 
 class RestAPI(metaclass=SingletonABCMeta):
@@ -63,15 +64,8 @@ class RestAPI(metaclass=SingletonABCMeta):
 
             # Sending 3 different ids to the client using 3 different channels
             # Rest, STOMP and MQTT
-            ConsumerManager().mqtt.send_message(
-                "BATTLEBOT/BOT/" + bot.id,
-                json.dumps({"mqtt_id": bot.client_connection.source_mqtt_id}),
-                True
-            )
-            ConsumerManager().stomp.send_message(
-                "BATTLEBOT.BOT." + bot.id,
-                json.dumps({"stomp_id": bot.client_connection.source_stomp_id})
-            )
+            ConsumerManager().mqtt.send_message(MQTTLoginMessage(bot.id, bot.client_connection.source_mqtt_id))
+            ConsumerManager().stomp.send_message(STOMPLoginMessage(bot.id, bot.client_connection.source_stomp_id))
 
             return {
                 "status": "ok",

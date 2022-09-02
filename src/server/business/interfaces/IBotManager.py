@@ -22,7 +22,7 @@ class IBotManager(ABC):
         """
         raise NotImplementedError()
 
-    def add_bot(self, team_id, bot_name, bot_type) -> None | Bot:
+    def create_bot(self, bot_name, bot_type) -> Bot:
         """
         Add a new bot to an existing team.
         """

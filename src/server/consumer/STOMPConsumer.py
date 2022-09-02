@@ -7,7 +7,13 @@ class STOMPConsumer(IBrokerConsumer):
     def __init__(self):
         self.__client = stomp.get()
 
-    def send_message(self, destination: str, message: str, retain: bool = False):
+    def get_destination(self) -> str:
+        """
+        Return the root path of the topics.
+        """
+        return stomp.get().destination_root
+
+    def _send_message(self, destination: str, message: dict, retain: bool = False):
         """
         Send a message to a topic.
         """

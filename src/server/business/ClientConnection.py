@@ -1,4 +1,4 @@
-from common.Generators import Generators
+import uuid
 
 
 class ClientConnection:
@@ -32,13 +32,13 @@ class ClientConnection:
     def __init__(self, bot_id: str):
         self._bot_id = bot_id
 
-        self._source_request_id = Generators().random_id()
+        self._source_request_id = str(uuid.uuid4())
         self._is_rest_connected = False
 
-        self._source_stomp_id = Generators().random_id()
+        self._source_stomp_id = str(uuid.uuid4())
         self._is_stomp_connected = False
 
-        self._source_mqtt_id = Generators().random_id()
+        self._source_mqtt_id = str(uuid.uuid4())
         self._is_mqtt_connected = False
 
     def connect(self, request_id: str, stomp_id: str, mqtt_id: str) -> bool:

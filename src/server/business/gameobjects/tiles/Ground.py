@@ -11,4 +11,4 @@ class Ground(Tile):
         return not self.tile_object.has_collision
 
     def __init__(self, x: int, z: int, tile_object: TileObject = Air()):
-        super().__init__(x, z, tile_object)
+        super().__init__(name=self._NAME, x=x, z=z, tile_object=tile_object)

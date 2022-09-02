@@ -26,16 +26,8 @@ G_CONF_DIR = "conf"
 G_CONF_FILE_TEAMS = Path(G_CONF_DIR, "teams.json")
 G_CONF_TEAMS = json.loads(G_CONF_FILE_TEAMS.read_text())
 
-ex = GameManager()
-
-# # Adding Map
-ex.map.generate_map("3")
-print(ex.map.name)
-print(ex.map.data)
-
-# # Adding Teams
 for team in G_CONF_TEAMS:
-    t = ex.team_manager.add_team(team["size"], team["name"], team["color"], team["id"] if "id" in team else None)
+    t = GameManager().team_manager.create_team(team["size"], team["name"], team["color"], team["id"] if "id" in team else None)
     print(t)
 
 # Services
