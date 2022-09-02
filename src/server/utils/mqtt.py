@@ -142,13 +142,13 @@ def get() -> MQTT:
 
 
 if __name__ == '__main__':
-    def on_message(_client: mqtt_client, _userdata, msg: mqtt_client.MQTTMessage):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-
     from time import sleep
-
     logging.basicConfig(level=logging.DEBUG)
-    mqtt = MQTT("localhost", 1883, "system", "manager")
+
+    def on_message(_client: mqtt_client, _userdata, msg: mqtt_client.MQTTMessage):
+        logging.info(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+
+    mqtt = MQTT("localhost", 1883, "system", "manager", "BATTLEBOT/BOT/")
 
     timeout = 5
     while not mqtt.is_connected and timeout > 0:
@@ -158,9 +158,9 @@ if __name__ == '__main__':
     if not mqtt.is_connected:
         raise Exception("Failed to connect to MQTT broker")
 
-    mqtt.send_message("BATTLEBOT/BOT/mqtttest", "test1")
-    mqtt.send_message("BATTLEBOT/BOT/mqtttest", "test2")
-    mqtt.send_message("BATTLEBOT/BOT/mqtttest", "test3")
-    mqtt.send_message("BATTLEBOT/BOT/mqtttest", "test4")
+    mqtt.send_message("mqtttest", {"data": "test1"})
+    mqtt.send_message("mqtttest", {"data": "test2"})
+    mqtt.send_message("mqtttest", {"data": "test3"})
+    mqtt.send_message("mqtttest", {"data": "test4"})
 
     mqtt.close()

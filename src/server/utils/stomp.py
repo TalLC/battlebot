@@ -51,8 +51,6 @@ class STOMP:
         """
         Send a message to a topic.
         """
-        print(message)
-        print(json.dumps(message))
         self.__client.send(destination=topic, body=json.dumps(message))
 
     def subscribe(self, destination: str):
