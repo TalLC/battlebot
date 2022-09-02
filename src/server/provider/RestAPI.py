@@ -3,8 +3,8 @@ from fastapi import FastAPI, HTTPException
 from common.Singleton import SingletonABCMeta
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
-from consumer.messages.MQTTLoginMessage import MQTTLoginMessage
-from consumer.messages.STOMPLoginMessage import STOMPLoginMessage
+from consumer.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
+from consumer.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
 
 
 class RestAPI(metaclass=SingletonABCMeta):
