@@ -6,6 +6,7 @@
 
 class GameObject:
 
-    def __init__(self, x: int = 0, z: int = 0):
+    def __init__(self, name: str = 'game_object', x: int = 0, z: int = 0):
+        self.name = name
         self.x = x
         self.z = z

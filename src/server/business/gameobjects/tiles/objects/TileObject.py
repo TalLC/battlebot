@@ -1,11 +1,12 @@
+from abc import ABC
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 
 
-class TileObject(OrientedGameObject, IDestructible):
+class TileObject(OrientedGameObject, IDestructible, ABC):
 
-    def __init__(self, x: int, z: int, heading: float = 0.0, health: int = 0, has_collision: bool = False):
-        OrientedGameObject.__init__(self, heading, x, z)
+    def __init__(self, name: str, x: int, z: int, heading: float = 0.0, health: int = 0, has_collision: bool = False):
+        OrientedGameObject.__init__(self, name, heading, x, z)
         IDestructible.__init__(self, health)
 
         self._HEALTH_MAX = health

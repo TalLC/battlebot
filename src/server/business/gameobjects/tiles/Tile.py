@@ -22,6 +22,6 @@ class Tile(GameObject, ABC):
     def is_walkable(self) -> bool:
         raise NotImplementedError()
 
-    def __init__(self, x: int, z: int, tile_object: TileObject):
+    def __init__(self, name: str, x: int, z: int, tile_object: TileObject):
         self.tile_object = tile_object
-        super().__init__(x, z)
+        super().__init__(name, x, z)
