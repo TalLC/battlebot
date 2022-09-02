@@ -9,8 +9,8 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 let ws = new WebSocket("ws://localhost:8000/ws");
 var bot_obj = {};
 var obj_list = {
-    'small_tree':'tree_small.glb',
-    'big_tree':'tree_big.glb',
+    'tree_small':'tree_small.glb',
+    'wall_plain':'wall_plain.glb',
     'sol':'sol.glb',
     'eau':'eau.glb'
 };
@@ -47,7 +47,7 @@ directionalLight.position.x = -10
 directionalLight.position.z = -10
 scene.add( directionalLight );
 
-function create_object(name, x, z){
+function create_object(name, x, y, z){
     // #### Load GLTF mesh file ####
     const map = new GLTFLoader()
     console.log(name)
@@ -61,8 +61,9 @@ function create_object(name, x, z){
 
         // called when resource is loaded
         ( map ) => {
-            map.scene.position.x = x
-            map.scene.position.z = z
+            map.scene.position.x = x;
+            map.scene.position.y = y;
+            map.scene.position.z = z;
             scene.add( map.scene );
         },
 
@@ -107,16 +108,11 @@ function create_bot(name, x, z){
     );
 }
 
-create_bot('bot1', 6, -6)
-create_object('sol', 0, 0)
-create_object('eau', 0, 0)
 
-
-function update_bot(bot, move)
-{
+function update_bot(bot, move){
     if (bot)
     {
-        bot.rotateY(parseFloat(move.rotateY));
+        bot.rotation.y = move.y;
         bot.position.x = move.x;
         bot.position.z = move.z;
     }
@@ -126,12 +122,12 @@ ws.onmessage = function(event)
 {
     var move = JSON.parse(event.data)
     console.log(move)
-    if (move.type == 'create') {
-        console.log('create')
-        create_object(move.name, move.x, move.z)
-    }
-    else if (move.type == 'move')
-        update_bot(bot_obj['bot1'], move)
+//    if (move.type == 'create') {
+//        console.log('create')
+//        create_object(move.name, move.x, move.y, move.z)
+//    }
+//    else if (move.type == 'move')
+//        update_bot(bot_obj['bot1'], move)
 };
 
 function animate() {
