@@ -1,4 +1,4 @@
-from consumer.messages.stomp.interfaces.IBotStatMessage import IBotStatMessage
+from consumer.brokers.messages.stomp.interfaces.IBotStatMessage import IBotStatMessage
 
 
 class BotDamageReceivedMessage(IBotStatMessage):

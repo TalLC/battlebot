@@ -1,5 +1,5 @@
 from typing import Any
-from consumer.messages.interfaces.IBotMessage import IBotMessage
+from consumer.brokers.messages.interfaces.IBotMessage import IBotMessage
 
 
 class IBotStatMessage(IBotMessage):

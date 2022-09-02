@@ -1,4 +1,4 @@
-from consumer.messages.mqtt.interfaces.IScannerMessage import IScannerMessage
+from consumer.brokers.messages.mqtt.interfaces.IScannerMessage import IScannerMessage
 
 
 class BotScannerDetectionMessage(IScannerMessage):

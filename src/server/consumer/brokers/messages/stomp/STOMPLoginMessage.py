@@ -1,4 +1,4 @@
-from consumer.messages.interfaces.IBrokerLoginMessage import IBrokerLoginMessage
+from consumer.brokers.messages.interfaces.IBrokerLoginMessage import IBrokerLoginMessage
 
 
 class STOMPLoginMessage(IBrokerLoginMessage):

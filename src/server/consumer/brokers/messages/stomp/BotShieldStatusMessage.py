@@ -1,4 +1,4 @@
-from consumer.messages.stomp.interfaces.IShieldMessage import IShieldMessage
+from consumer.brokers.messages.stomp.interfaces.IShieldMessage import IShieldMessage
 
 
 class BotScannerDetectionMessage(IShieldMessage):

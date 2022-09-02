@@ -1,6 +1,7 @@
 import logging
 import json
 from pathlib import Path
+from fastapi import FastAPI
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
 from business.GameManager import GameManager
@@ -39,5 +40,6 @@ ConsumerManager().start_all()
 
 # # Starting provider services
 logging.info("Starting provider services")
-provider_manager = ProviderManager()  # Entry point for Uvicorn
+app = FastAPI()  # Entry point for Uvicorn
+provider_manager = ProviderManager(app)
 provider_manager.start_all()
