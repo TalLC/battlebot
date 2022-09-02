@@ -1,0 +1,101 @@
+{
+	"1": {
+		"name": "map1",
+		"width": 3,
+		"height": 3,
+		"data": {
+			"0": {
+				"0": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"1": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"2": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"3": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"4": {
+					"tile": "",
+					"tile_object": ""
+				}
+				
+			},
+			"1": {
+				"0": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"1": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"2": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"3": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"4": {
+					"tile": "",
+					"tile_object": ""
+				}
+				
+			},
+			"2": {
+				"0": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"1": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"2": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"3": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"4": {
+					"tile": "",
+					"tile_object": ""
+				}
+				
+			},
+			"3": {
+				"0": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"1": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"2": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"3": {
+					"tile": "",
+					"tile_object": ""
+				},
+				"4": {
+					"tile": "",
+					"tile_object": ""
+				}
+				
+			}
+			
+		}
+	}

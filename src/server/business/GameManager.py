@@ -11,3 +11,4 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self.team_manager = TeamManager()
         self.bot_manager = BotManager()
         self.map = Map()
+

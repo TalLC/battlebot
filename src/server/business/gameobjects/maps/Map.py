@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 
 from common.Singleton import SingletonABCMeta
+from business.gameobjects.tiles.TileFactory import TileFactory
+from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 
 config = json.loads(Path('conf', '../conf/maps.json').read_text())
 
@@ -13,6 +15,12 @@ class Map(metaclass=SingletonABCMeta):
     _width: int
     _size: tuple
     _data: list
+    _matrice: list
+    # [0[0, 1, 2, 3]]
+    # [1[0, 1, 2, 3]]
+    # [2[0, 1, 2, 3]]
+    # [3[0, 1, 2, 3]]
+
 
     @property
     def id(self):
@@ -30,8 +38,24 @@ class Map(metaclass=SingletonABCMeta):
     def size(self):
         return self._size
 
+    @property
+    def infos(self):
+        return {
+            "id": self._id,
+            "name": self._name,
+            "height": self._height,
+            "width": self._width,
+            "size": self._size,
+            "data": self._data
+        }
+
+    @property
+    def matrice(self):
+        return self._matrice
+
     def __init__(self):
         self._data = []
+        self._matrice = []
 
     @staticmethod
     def does_map_exist(map_id):
@@ -60,6 +84,21 @@ class Map(metaclass=SingletonABCMeta):
             self._size = (self._height, self._width)
             self._data = config[id_map]['data']
 
+            for h in range(self._height):
+                current_line = []
+                for w in range(self._width):
+                    current_line.append(None)
+                self._matrice.append(current_line)
+
+            for d in self._data:
+                print(d)
+                self._matrice[d['x']][d['z']] = TileFactory.create_tile(tile_type=d['tile'],
+                                                                        x=d['x'],
+                                                                        z=d['z'],
+                                                                        tile_object=TileObjectFactory.create_tileobject(d['tile_object'], d['x'], d['z']))
+
+            print(self._matrice)
+
     def set_size_map(self):
         self._size = (self._height, self._width)
 
@@ -70,16 +109,13 @@ class Map(metaclass=SingletonABCMeta):
         self._width = width
         self.set_size_map()
 
-        x, y = 0, 0
         for h in range(self._height):
             for w in range(self._width):
                 self._data.append(
                     {
                         'tile': 'ground',
                         'tile_object': 'air',
-                        'x': x,
-                        'y': y
+                        'x': h,
+                        'y': w
                     }
                 )
-                x += 1
-            y += 1

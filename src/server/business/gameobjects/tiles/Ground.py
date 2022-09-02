@@ -8,7 +8,7 @@ class Ground(Tile):
 
     @property
     def is_walkable(self) -> bool:
-        return self.tile_object.has_collision
+        return not self.tile_object.has_collision
 
     def __init__(self, x: int, z: int, tile_object: TileObject = Air()):
         super().__init__(x, z, tile_object)
