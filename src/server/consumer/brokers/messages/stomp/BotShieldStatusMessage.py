@@ -1,7 +1,7 @@
 from consumer.brokers.messages.stomp.interfaces.IShieldMessage import IShieldMessage
 
 
-class BotScannerDetectionMessage(IShieldMessage):
+class BotShieldStatusMessage(IShieldMessage):
     _MESSAGE_TYPE = "shield_status"
 
     def __init__(self, bot_id: str, durability_percent: int):

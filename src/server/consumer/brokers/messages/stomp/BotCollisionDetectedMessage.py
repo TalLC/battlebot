@@ -1,8 +1,8 @@
-from consumer.brokers.messages.stomp.interfaces.IBotStatMessage import IBotStatMessage
+from consumer.brokers.messages.stomp.interfaces.IBotCollisionMessage import IBotCollisionMessage
 
 
-class BotCollisionDetectedMessage(IBotStatMessage):
+class BotCollisionDetectedMessage(IBotCollisionMessage):
     _MESSAGE_TYPE = "collision_detected"
 
-    def __init__(self, bot_id: str):
-        super().__init__(bot_id, self._MESSAGE_TYPE, True)
+    def __init__(self, bot_id: str, object_name: str):
+        super().__init__(bot_id, self._MESSAGE_TYPE, object_name)
