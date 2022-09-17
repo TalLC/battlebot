@@ -5,7 +5,7 @@ from business.teams.Team import Team
 class TeamManager(ITeamManager):
     _TEAMS = dict()
 
-    def does_team_exists(self, team_id):
+    def does_team_exists(self, team_id: str):
         """
         Check if a team exists.
         """
@@ -13,7 +13,7 @@ class TeamManager(ITeamManager):
             return True
         return False
 
-    def get_team(self, team_id) -> None | Team:
+    def get_team(self, team_id: str) -> None | Team:
         """
         Get a team by its id.
         """
@@ -22,13 +22,13 @@ class TeamManager(ITeamManager):
         else:
             return None
 
-    def get_teams(self) -> list[Team]:
+    def get_teams(self) -> [Team]:
         """
         Get all teams.
         """
         return list(self._TEAMS.values())
 
-    def create_team(self, size, name, color, team_id: str = None) -> str:
+    def create_team(self, size: int, name: str, color: str, team_id: str = None) -> str:
         """
         Create a new team.
         """
