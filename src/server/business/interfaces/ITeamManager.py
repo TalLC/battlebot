@@ -1,30 +1,33 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from business.teams.Team import Team
 
 
 class ITeamManager(ABC):
 
-    # TEAMS
-    def does_team_exists(self, team_id):
+    @abstractmethod
+    def does_team_exists(self, team_id: str):
         """
         Check if a team exists.
         """
         raise NotImplementedError()
 
-    def get_team(self, team_id) -> None | Team:
+    @abstractmethod
+    def get_team(self, team_id: str) -> None | Team:
         """
         Get a team by its id.
         """
         raise NotImplementedError()
 
-    def get_teams(self) -> list[Team]:
+    @abstractmethod
+    def get_teams(self) -> [Team]:
         """
         Get all teams.
         """
         raise NotImplementedError()
 
-    def create_team(self, size, name, color, team_id: str = None) -> str:
+    @abstractmethod
+    def create_team(self, size: int, name: str, color: str, team_id: str = None) -> str:
         """
-        Add a new team.
+        Create a new team.
         """
         raise NotImplementedError()
