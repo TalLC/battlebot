@@ -1,9 +1,9 @@
-import logging
 import asyncio
 from queue import SimpleQueue
+
 from fastapi import FastAPI, WebSocket
 from starlette import websockets
-from websockets.exceptions import ConnectionClosedOK
+from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
 from utils.webservices import Webservices
 import time
@@ -24,6 +24,11 @@ class WebsocketProvider:
             self.__webservices.add_ws_queue(queue)
             data_send = {}
 
+            display_client = GameManager().display_manager.create_client(
+                host=websocket.client.host,port=websocket.client.port, websocket_headers=websocket.headers
+            )
+            print(display_client)
+
             # while !GameManager().map.is_ready:
             #     await asyncio.sleep(1)
             #
@@ -40,8 +45,13 @@ class WebsocketProvider:
                         data = queue.get()
                         data_send[data.pop('name')] = data
                     await websocket.send_json(data_send)
-                    # await asyncio.sleep(1)
+                    await asyncio.sleep(1)
                 except ConnectionClosedOK:
                     break
+                except ConnectionClosedError:
+                    break
+
+            display_client.set_connection_closed()
+            print(display_client)
 
             self.__webservices.remove_ws_queue(queue)

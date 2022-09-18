@@ -5,43 +5,132 @@ from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
 from consumer.brokers.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
-from provider.webservices.rest.models.DisplayActionReadyModel import DisplayActionReadyModel
-from provider.webservices.rest.models.BotActionRegisterModel import BotActionRegisterModel
-from provider.webservices.rest.models.BotIdActionCheckConnectionModel import BotIdActionCheckConnectionModel
-from provider.webservices.rest.models.BotIdActionShootModel import BotIdActionShootModel
-from provider.webservices.rest.models.BotIdActionTurnModel import BotIdActionTurnModel
-from provider.webservices.rest.models.BotIdActionMoveModel import BotIdActionMoveModel
-from provider.webservices.rest.models.BotIdActionShieldRaiseModel import BotIdActionShieldRaiseModel
+from provider.webservices.rest.models.AdminBaseModel import AdminBaseModel
+from provider.webservices.rest.models.AdminDisplayClientsActionListModel import AdminDisplayClientsActionListModel
+from provider.webservices.rest.models.AdminDisplayClientsActionGetByIdModel import AdminDisplayClientsActionGetByIdModel
+from provider.webservices.rest.models.AdminDisplayClientsActionGetByTokenModel import AdminDisplayClientsActionGetByTokenModel
+from provider.webservices.rest.models.DisplayClientsActionReadyModel import DisplayClientsActionReadyModel
+from provider.webservices.rest.models.BotsActionRegisterModel import BotsActionRegisterModel
+from provider.webservices.rest.models.BotsIdActionCheckConnectionModel import BotsIdActionCheckConnectionModel
+from provider.webservices.rest.models.BotsIdActionShootModel import BotsIdActionShootModel
+from provider.webservices.rest.models.BotsIdActionTurnModel import BotsIdActionTurnModel
+from provider.webservices.rest.models.BotsIdActionMoveModel import BotsIdActionMoveModel
+from provider.webservices.rest.models.BotsIdActionShieldRaiseModel import BotsIdActionShieldRaiseModel
 
 
 class RestProvider:
 
-    def __init__(self, app: FastAPI):
+    def __init__(self, app: FastAPI, admin_password: str):
         self.__app = app
         self.__register_endpoints()
+        self.__admin_password = admin_password
 
     def __register_endpoints(self):
+        self.__admin_game_action_start()
+        self.__admin_display_clients_action_list()
+        self.__admin_display_clients_action_get_by_id()
+        self.__admin_display_clients_action_get_by_token()
         self.__display_action_ready()
-        self.__bot_action_register()
-        self.__bot_id_action_request_connection()
-        self.__bot_id_action_check_connection()
-        self.__bot_id_action_shoot()
-        self.__bot_id_action_turn()
-        self.__bot_id_action_move()
-        self.__bot_id_action_shield_raise()
+        self.__bots_action_register()
+        self.__bots_id_action_request_connection()
+        self.__bots_id_action_check_connection()
+        self.__bots_id_action_shoot()
+        self.__bots_id_action_turn()
+        self.__bots_id_action_move()
+        self.__bots_id_action_shield_raise()
         logging.info("All endpoints registered")
 
-    def __display_action_ready(self):
-        @self.__app.patch("/display/action/ready")
-        async def ready(model: DisplayActionReadyModel):
+    def __admin_game_action_start(self):
+        """
+        Start the current game.
+        """
+        @self.__app.patch("/game/action/start")
+        async def action(model: AdminBaseModel):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
             pass
 
-    def __bot_action_register(self):
+    def __display_action_ready(self):
+        """
+        Set the display client to ready if the tokens matches.
+        !!Do not use "client_token" as Path parameter to avoid clients to set ready for others!!
+        """
+        @self.__app.patch("/display/clients/action/ready")
+        async def action(model: DisplayClientsActionReadyModel):
+            # Checking if the token exists
+            if not GameManager().display_manager.does_client_token_exists(model.client_token):
+                ErrorCode.throw(DISPLAY_CLIENT_ID_DOES_NOT_EXISTS)
+
+            # Fetching corresponding display client
+            client = GameManager().display_manager.get_client_by_token(model.client_token)
+
+            # Setting client to Ready
+            client.set_ready()
+
+    def __admin_display_clients_action_list(self):
+        """
+        List all present and past display clients.
+        """
+        @self.__app.get("/display/clients/action/list")
+        async def action(model: AdminDisplayClientsActionListModel):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Fetching clients information
+            if model.connected_only:
+                clients = GameManager().display_manager.get_connected_clients_jsons()
+            else:
+                clients = GameManager().display_manager.get_all_clients_jsons()
+
+            return {'status': 'ok', 'clients': clients}
+
+    def __admin_display_clients_action_get_by_id(self):
+        """
+        Find a display client by its id.
+        """
+        @self.__app.get("/display/clients/action/get_by_id")
+        async def action(model: AdminDisplayClientsActionGetByIdModel):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Does display client exists
+            if not GameManager().display_manager.does_client_id_exists(model.client_id):
+                ErrorCode.throw(DISPLAY_CLIENT_ID_DOES_NOT_EXISTS)
+
+            # Fetching corresponding display client
+            client = GameManager().display_manager.get_client_by_id(model.client_id)
+
+            return {'status': 'ok', 'client': client.json()}
+
+    def __admin_display_clients_action_get_by_token(self):
+        """
+        Find a display client by its token.
+        """
+        @self.__app.get("/display/clients/action/get_by_token")
+        async def action(model: AdminDisplayClientsActionGetByTokenModel):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Does display client exists
+            if not GameManager().display_manager.does_client_token_exists(model.client_token):
+                ErrorCode.throw(DISPLAY_BAD_TOKEN)
+
+            # Fetching corresponding display client
+            client = GameManager().display_manager.get_client_by_token(model.client_token)
+
+            return {'status': 'ok', 'client': client.json()}
+
+    def __bots_action_register(self):
         """
         Create a new bot object and adds it to the specified team.
         """
-        @self.__app.post("/bot/action/register")
-        async def registration(model: BotActionRegisterModel):
+        @self.__app.post("/bots/action/register")
+        async def action(model: BotsActionRegisterModel):
             bot_type = model.bot_type.lower()
 
             # Does team exists?
@@ -58,14 +147,14 @@ class RestProvider:
 
             return {"status": "ok", "message": "The bot has been successfully registered", "bot_id": bot.id}
 
-    def __bot_id_action_request_connection(self):
+    def __bots_id_action_request_connection(self):
         """
         Request connection ids to validate the connection to all the services.
         It sends 3 ids to the client using Rest, STOMP and MQTT.
         The client must send back these ids to the server to validate the connection.
         """
-        @self.__app.get("/bot/{bot_id}/action/request_connection")
-        async def request_connection(bot_id: str):
+        @self.__app.get("/bots/{bot_id}/action/request_connection")
+        async def action(bot_id: str):
             logging.info(f"Bot {bot_id} is requesting a connection")
 
             # Does bot exists
@@ -86,13 +175,13 @@ class RestProvider:
                 "request_id": bot.client_connection.source_request_id
             }
 
-    def __bot_id_action_check_connection(self):
+    def __bots_id_action_check_connection(self):
         """
         Check if the ids found by the client are the expected ones in order to validate the client connection to all
         our services.
         """
-        @self.__app.patch("/bot/{bot_id}/action/check_connection")
-        async def check_connection(bot_id: str, model: BotIdActionCheckConnectionModel):
+        @self.__app.patch("/bots/{bot_id}/action/check_connection")
+        async def action(bot_id: str, model: BotsIdActionCheckConnectionModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -114,24 +203,24 @@ class RestProvider:
 
             return {"status": "ok", "message": "Your bot is successfully connected"}
 
-    def __bot_id_action_shoot(self):
+    def __bots_id_action_shoot(self):
         """
         Make the bot shoot to the desired relative angle.
         """
-        @self.__app.patch("/bot/{bot_id}/action/shoot")
-        async def fire(bot_id: str, model: BotIdActionShootModel):
+        @self.__app.patch("/bots/{bot_id}/action/shoot")
+        async def action(bot_id: str, model: BotsIdActionShootModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
 
             return {"status": "ok", "message": f"Fired at {model.angle}°"}
 
-    def __bot_id_action_turn(self):
+    def __bots_id_action_turn(self):
         """
         Start to turn the specified bot to its left or right.
         """
-        @self.__app.patch("/bot/{bot_id}/action/turn")
-        async def turn(bot_id: str, model: BotIdActionTurnModel):
+        @self.__app.patch("/bots/{bot_id}/action/turn")
+        async def action(bot_id: str, model: BotsIdActionTurnModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -141,12 +230,12 @@ class RestProvider:
             elif model.direction.lower() == 'stop':
                 return {"status": "ok", "message": "Bot has stopped turning"}
 
-    def __bot_id_action_move(self):
+    def __bots_id_action_move(self):
         """
         Start to move the specified bot forward.
         """
-        @self.__app.patch("/bot/{bot_id}/action/move")
-        async def move(bot_id: str, model: BotIdActionMoveModel):
+        @self.__app.patch("/bots/{bot_id}/action/move")
+        async def action(bot_id: str, model: BotsIdActionMoveModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -156,12 +245,12 @@ class RestProvider:
             elif model.action.lower() == 'stop':
                 return {"status": "ok", "message": "Bot has stopped moving"}
 
-    def __bot_id_action_shield_raise(self):
+    def __bots_id_action_shield_raise(self):
         """
         Raise or lower the shield of the specified bot.
         """
-        @self.__app.patch("/bot/{bot_id}/action/shield_raise")
-        async def shield_raise(bot_id: str, model: BotIdActionShieldRaiseModel):
+        @self.__app.patch("/bots/{bot_id}/action/shield_raise")
+        async def action(bot_id: str, model: BotsIdActionShieldRaiseModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
