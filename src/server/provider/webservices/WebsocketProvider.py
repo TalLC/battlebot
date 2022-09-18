@@ -9,7 +9,7 @@ from business.GameManager import GameManager
 from utils.webservices import Webservices
 import time
 
-# from provider.webservices.NetworkSecurity import antispam_websocket
+from provider.webservices.NetworkSecurity import NetworkSecurity, antispam_websocket
 
 
 class WebsocketProvider:
@@ -22,20 +22,8 @@ class WebsocketProvider:
     def __register_websocket(self):
 
         @self.__app.websocket("/ws")
+        @antispam_websocket
         async def websocket_endpoint(websocket: WebSocket):
-
-            # from provider.webservices.NetworkSecurity import NetworkSecurity
-            # logging.info(websocket.client.host)
-            # blacklisted = NetworkSecurity().update_ip(websocket.client.host, 'websocket')
-            # logging.info(blacklisted)
-            # if blacklisted is not None:
-            #     if blacklisted.definitive:
-            #         logging.info(f"You are DEFINITIVELY banned from using this service. Reason: {blacklisted.reason}")
-            #     else:
-            #         logging.info(f"You are temporary banned from using this service. Reason: {blacklisted.reason}")
-            #     return
-
-            await websocket.accept()
             queue = SimpleQueue()
             self.__webservices.add_ws_queue(queue)
             data_send = {}

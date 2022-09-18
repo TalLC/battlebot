@@ -143,5 +143,4 @@ class DisplayClient:
         gerund = WORDS_GERUNDS_LIST[r.randrange(0, len(WORDS_GERUNDS_LIST))]
         noun = WORDS_NOUNS_LIST[r.randrange(0, len(WORDS_NOUNS_LIST))]
 
-        print(f"{adjective.capitalize()}{gerund.capitalize()}{noun.capitalize()}")
         return f"{adjective.capitalize()}{gerund.capitalize()}{noun.capitalize()}"
