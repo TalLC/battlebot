@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class DisplayActionReadyModel(BaseModel):
+class DisplayClientsActionReadyModel(BaseModel):
     client_token: str

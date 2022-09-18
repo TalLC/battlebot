@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class BotIdActionShootModel(BaseModel):
+class BotsIdActionShootModel(BaseModel):
     angle: float
