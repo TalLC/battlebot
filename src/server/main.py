@@ -42,3 +42,12 @@ app = FastAPI()  # Entry point for Uvicorn
 provider_manager = ProviderManager(app)
 provider_manager.start_all()
 
+
+# @app.on_event('startup')
+# async def startup() -> None:
+#     ...
+#
+#
+# @app.on_event('shutdown')
+# async def shutdown() -> None:
+#     ...

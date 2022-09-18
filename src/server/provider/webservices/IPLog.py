@@ -1,10 +1,9 @@
+from datetime import datetime
 from dataclasses import dataclass
 
 
 @dataclass
-class BlacklistedIP:
+class IPLog:
     host: str
-    timestamp: str
+    timestamp: datetime
     source: str
-    reason: str
-    definitive: bool

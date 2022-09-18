@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from queue import SimpleQueue
 
 from fastapi import FastAPI, WebSocket
@@ -7,6 +8,8 @@ from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
 from utils.webservices import Webservices
 import time
+
+# from provider.webservices.NetworkSecurity import antispam_websocket
 
 
 class WebsocketProvider:
@@ -17,15 +20,28 @@ class WebsocketProvider:
         self.__register_websocket()
 
     def __register_websocket(self):
+
         @self.__app.websocket("/ws")
         async def websocket_endpoint(websocket: WebSocket):
+
+            # from provider.webservices.NetworkSecurity import NetworkSecurity
+            # logging.info(websocket.client.host)
+            # blacklisted = NetworkSecurity().update_ip(websocket.client.host, 'websocket')
+            # logging.info(blacklisted)
+            # if blacklisted is not None:
+            #     if blacklisted.definitive:
+            #         logging.info(f"You are DEFINITIVELY banned from using this service. Reason: {blacklisted.reason}")
+            #     else:
+            #         logging.info(f"You are temporary banned from using this service. Reason: {blacklisted.reason}")
+            #     return
+
             await websocket.accept()
             queue = SimpleQueue()
             self.__webservices.add_ws_queue(queue)
             data_send = {}
 
             display_client = GameManager().display_manager.create_client(
-                host=websocket.client.host,port=websocket.client.port, websocket_headers=websocket.headers
+                host=websocket.client.host, port=websocket.client.port, websocket_headers=websocket.headers
             )
             print(display_client)
 
