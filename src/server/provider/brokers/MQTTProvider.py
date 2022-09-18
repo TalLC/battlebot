@@ -1,5 +1,5 @@
 import logging
-from utils import mqtt
+from utils.mqtt import MQTT
 
 
 class MQTTProvider:
@@ -8,7 +8,7 @@ class MQTTProvider:
         return self.__client.is_connected
 
     def __init__(self):
-        self.__client = mqtt.get()
+        self.__client = MQTT()
 
     def on_message(self, func):
         """
