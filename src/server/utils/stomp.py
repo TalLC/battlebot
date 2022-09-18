@@ -6,13 +6,10 @@ from stomp import ConnectionListener
 from stomp.utils import Frame
 
 
-__instance = None
-config = json.loads(Path('conf', '../conf/stomp.json').read_text())
-
-
 class STOMP:
     ConnectionListener = ConnectionListener
     Frame = Frame
+    _CONFIG = json.loads(Path('conf', 'stomp.json').read_text())
 
     @property
     def is_connected(self) -> bool:
@@ -33,18 +30,18 @@ class STOMP:
     def destination_root(self) -> str:
         return self.__destination_root
 
-    def __init__(self, host: str, port: int, username: str, password: str, destination_root: str):
+    def __init__(self):
         self.__connected = False
-        self.__host = host
-        self.__port = port
-        self.__destination_root = destination_root
+        self.__host = self._CONFIG['host']
+        self.__port = self._CONFIG['port']
+        self.__destination_root = self._CONFIG['destination_root']
         self.__subscription_id = 0
 
         # STOMP client
         self.__client = stomp.Connection(host_and_ports=[(self.__host, self.__port)])
 
         # Connecting client
-        self.__client.connect(username=username, passcode=password, wait=True)  # Throw exception if failed to connect
+        self.__client.connect(username=self._CONFIG['username'], passcode=self._CONFIG['password'], wait=True)
         self.__connected = True
 
     def send_message(self, topic: str, message: dict):
@@ -73,21 +70,3 @@ class STOMP:
         """
         self.__client.disconnect()
         logging.info("STOMP client disconnected")
-
-
-def get() -> STOMP:
-    """
-    Get STOMP instance.
-    """
-    global __instance
-
-    if __instance is None:
-        __instance = STOMP(
-            host=config['host'],
-            port=config['port'],
-            username=config['username'],
-            password=config['password'],
-            destination_root=config['destination_root']
-        )
-
-    return __instance

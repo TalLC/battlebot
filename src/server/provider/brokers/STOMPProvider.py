@@ -1,5 +1,5 @@
 import logging
-from utils import stomp
+from utils.stomp import STOMP
 
 
 class STOMPProvider:
@@ -9,7 +9,7 @@ class STOMPProvider:
         return self.__client.is_connected
 
     def __init__(self):
-        self.__client = stomp.get()
+        self.__client = STOMP()
  
     def subscribe(self, destination: str):
         """
@@ -18,7 +18,7 @@ class STOMPProvider:
         self.__client.subscribe(destination=destination)
         logging.info(f"Subscribed to topic {destination}")
 
-    def set_listener(self, name: str, listener: stomp.ConnectionListener):
+    def set_listener(self, name: str, listener: STOMP.ConnectionListener):
         """
         Set a listener for the STOMP client.
         """

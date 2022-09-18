@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class BotIdActionTurnModel(BaseModel):
+class BotsIdActionTurnModel(BaseModel):
     direction: str

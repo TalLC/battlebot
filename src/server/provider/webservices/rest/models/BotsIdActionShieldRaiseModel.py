@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class BotIdActionMoveModel(BaseModel):
+class BotsIdActionShieldRaiseModel(BaseModel):
     action: str
