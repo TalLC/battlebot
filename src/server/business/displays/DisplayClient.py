@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 import starlette.datastructures
 from random import Random
-from common.config import DATETIME_STR_FORMAT, WORDS_GERUNDS_LIST, WORDS_ADJECTIVES_LIST, WORDS_NOUNS_LIST
+from common.config import DATETIME_STR_FORMAT, WORDS_GERUNDS_LIST, WORDS_COLORS_LIST, WORDS_ANIMALS_LIST
 
 
 class DisplayClient:
@@ -139,8 +139,8 @@ class DisplayClient:
     @staticmethod
     def __generate_name(seed: str) -> str:
         r = Random(x=seed)
-        adjective = WORDS_ADJECTIVES_LIST[r.randrange(0, len(WORDS_ADJECTIVES_LIST))]
         gerund = WORDS_GERUNDS_LIST[r.randrange(0, len(WORDS_GERUNDS_LIST))]
-        noun = WORDS_NOUNS_LIST[r.randrange(0, len(WORDS_NOUNS_LIST))]
+        color = WORDS_COLORS_LIST[r.randrange(0, len(WORDS_COLORS_LIST))]
+        animal = WORDS_ANIMALS_LIST[r.randrange(0, len(WORDS_ANIMALS_LIST))]
 
-        return f"{adjective.capitalize()}{gerund.capitalize()}{noun.capitalize()}"
+        return f"{gerund.capitalize()}{color.capitalize()}{animal.capitalize()}"
