@@ -1,8 +1,8 @@
 import logging
 import json
-from pathlib import Path
 from fastapi import FastAPI
 from common.Singleton import SingletonABCMeta
+from common.config import CONFIG_REST
 from provider.webservices.RestProvider import RestProvider
 from provider.webservices.WebsocketProvider import WebsocketProvider
 from provider.webservices.WebsiteProvider import WebsiteProvider
@@ -19,8 +19,6 @@ class ProviderManager(metaclass=SingletonABCMeta):
     - Websocket
     - Rest
     """
-
-    _CONF_ADMIN_PATH = Path('conf', 'admin.json')
 
     @property
     def mqtt(self):
@@ -85,8 +83,7 @@ class ProviderManager(metaclass=SingletonABCMeta):
 
     def __start_rest_api(self):
         logging.info("Starting REST API")
-        admin_conf = json.loads(self._CONF_ADMIN_PATH.read_text())
-        self.__rest_api = RestProvider(self.__app, admin_conf['api_password'])
+        self.__rest_api = RestProvider(self.__app, CONFIG_REST['admin_password'])
 
     def close(self):
         self.__mqtt.close()

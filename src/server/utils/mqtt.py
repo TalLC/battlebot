@@ -1,13 +1,12 @@
 import logging
 import json
 from time import sleep
-from pathlib import Path
 from paho.mqtt import client as mqtt_client
+from provider.brokers.config.MQTTConfig import MQTTConfig
 
 
 class MQTT:
     MQTTMessage = mqtt_client.MQTTMessage
-    _CONFIG = json.loads(Path('conf', 'mqtt.json').read_text())
 
     @property
     def is_connected(self) -> bool:
@@ -30,10 +29,10 @@ class MQTT:
 
     def __init__(self):
         self.__connected = False
-        self.__host = self._CONFIG['host']
-        self.__port = self._CONFIG['port']
-        self.__destination_root = self._CONFIG['destination_root']
-        self.__connect_timeout = self._CONFIG['connect_timeout']
+        self.__host = MQTTConfig.host
+        self.__port = MQTTConfig.port
+        self.__destination_root = MQTTConfig.destination_root
+        self.__connect_timeout = MQTTConfig.connect_timeout
 
         # MQTT client
         self.__client = mqtt_client.Client()
@@ -43,7 +42,7 @@ class MQTT:
         self.__client.on_publish = self.on_publish
 
         # Connecting client
-        self.__client.username_pw_set(self._CONFIG['username'], self._CONFIG['password'])
+        self.__client.username_pw_set(username=MQTTConfig.username, password=MQTTConfig.password)
         self.__client.connect(self.__host, self.__port)
 
         # Waiting for connection to complete

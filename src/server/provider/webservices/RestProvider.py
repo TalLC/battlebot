@@ -5,6 +5,7 @@ from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
 from consumer.brokers.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
+from provider.webservices.rest.config.RestConfig import RestConfig
 from provider.webservices.rest.models.AdminBaseModel import AdminBaseModel
 from provider.webservices.rest.models.AdminDisplayClientsActionListModel import AdminDisplayClientsActionListModel
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByIdModel import AdminDisplayClientsActionGetByIdModel
@@ -20,10 +21,10 @@ from provider.webservices.rest.models.BotsIdActionShieldRaiseModel import BotsId
 
 class RestProvider:
 
-    def __init__(self, app: FastAPI, admin_password: str):
+    def __init__(self, app: FastAPI):
         self.__app = app
         self.__register_endpoints()
-        self.__admin_password = admin_password
+        self.__admin_password = RestConfig.admin_password
 
     def __register_endpoints(self):
         self.__admin_game_action_start()
