@@ -1,14 +1,14 @@
 import json
 import logging
 from time import sleep
-from fastapi import WebSocket
+
 from datetime import datetime, timedelta
 from pathlib import Path
 from threading import Thread, Event
 from common.Singleton import SingletonABCMeta
 from common.config import DATETIME_STR_FORMAT
-from provider.webservices.BlacklistedIP import BlacklistedIP
-from provider.webservices.IPLog import IPLog
+from provider.security.BlacklistedIP import BlacklistedIP
+from provider.security.IPLog import IPLog
 
 BAN_REASON_TOO_MANY_CONNECTIONS = "Too many connections in a short delay"
 
@@ -118,16 +118,3 @@ class NetworkSecurity(metaclass=SingletonABCMeta):
             data[key] = BlacklistedIP(**value)
         return data
 
-
-def antispam_websocket(func):
-    async def wrap(websocket: WebSocket):
-        blacklisted = NetworkSecurity().update_ip(websocket.client.host, 'websocket')
-        await websocket.accept()
-
-        if blacklisted is None:
-            await func(websocket)
-        else:
-            await websocket.send_json(blacklisted.light_json())
-            await websocket.close()
-
-    return wrap

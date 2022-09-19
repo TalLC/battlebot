@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from queue import SimpleQueue
 
 from fastapi import FastAPI, WebSocket
@@ -9,7 +8,7 @@ from business.GameManager import GameManager
 from utils.webservices import Webservices
 import time
 
-from provider.webservices.NetworkSecurity import NetworkSecurity, antispam_websocket
+from provider.security.decorators import antispam_websocket
 
 
 class WebsocketProvider:
