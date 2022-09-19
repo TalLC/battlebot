@@ -3,7 +3,7 @@ import logging
 import stomp
 from stomp import ConnectionListener
 from stomp.utils import Frame
-from provider.brokers.config.STOMPConfig import STOMPConfig
+from common.config import CONFIG_STOMP
 
 
 class STOMP:
@@ -31,16 +31,16 @@ class STOMP:
 
     def __init__(self):
         self.__connected = False
-        self.__host = STOMPConfig.host
-        self.__port = STOMPConfig.port
-        self.__destination_root = STOMPConfig.destination_root
+        self.__host = CONFIG_STOMP.host
+        self.__port = CONFIG_STOMP.port
+        self.__destination_root = CONFIG_STOMP.destination_root
         self.__subscription_id = 0
 
         # STOMP client
         self.__client = stomp.Connection(host_and_ports=[(self.__host, self.__port)])
 
         # Connecting client
-        self.__client.connect(username=STOMPConfig.username, passcode=STOMPConfig.password, wait=True)
+        self.__client.connect(username=CONFIG_STOMP.username, passcode=CONFIG_STOMP.password, wait=True)
         self.__connected = True
 
     def send_message(self, topic: str, message: dict):

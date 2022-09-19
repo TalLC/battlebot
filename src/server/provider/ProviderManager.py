@@ -83,7 +83,7 @@ class ProviderManager(metaclass=SingletonABCMeta):
 
     def __start_rest_api(self):
         logging.info("Starting REST API")
-        self.__rest_api = RestProvider(self.__app, CONFIG_REST['admin_password'])
+        self.__rest_api = RestProvider(self.__app)
 
     def close(self):
         self.__mqtt.close()
