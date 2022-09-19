@@ -74,7 +74,7 @@ GAME_STARTING_FAILED = ErrorCode(name='GAME_STARTING_FAILED', internal_code=0x00
                                  label="Unable to start the game")
 
 # Network Errors
-NETWORK_BANNED_IP_TEMP = ErrorCode(name='NETWORK_BANNED_IP_TEMP', internal_code=0x00000701, http_code=500,
+NETWORK_BANNED_IP_TEMP = ErrorCode(name='NETWORK_BANNED_IP_TEMP', internal_code=0x00000701, http_code=401,
                                    label="Your IP has been temporary banned")
-NETWORK_BANNED_IP_DEF = ErrorCode(name='NETWORK_BANNED_IP_DEF', internal_code=0x00000702, http_code=500,
+NETWORK_BANNED_IP_DEF = ErrorCode(name='NETWORK_BANNED_IP_DEF', internal_code=0x00000702, http_code=401,
                                   label="Your IP has been permanently banned")

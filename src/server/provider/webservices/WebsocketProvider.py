@@ -8,7 +8,7 @@ from business.GameManager import GameManager
 from utils.webservices import Webservices
 import time
 
-from provider.security.decorators import antispam_websocket
+from provider.security.decorators import websocket_ban_check, websocket_autoban
 
 
 class WebsocketProvider:
@@ -21,7 +21,8 @@ class WebsocketProvider:
     def __register_websocket(self):
 
         @self.__app.websocket("/ws")
-        @antispam_websocket
+        @websocket_ban_check
+        @websocket_autoban
         async def websocket_endpoint(websocket: WebSocket):
             queue = SimpleQueue()
             self.__webservices.add_ws_queue(queue)

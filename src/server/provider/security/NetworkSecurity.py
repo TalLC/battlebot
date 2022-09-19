@@ -36,8 +36,9 @@ class NetworkSecurity(metaclass=SingletonABCMeta):
     def _thread_deban_check(self, e: Event):
         while not e.is_set():
             for host, blacklisted in self._BLACKLISTED_IPS.copy().items():
-                if datetime.now() - blacklisted.timestamp > self._CONNECTION_DELAY_BEFORE_DEBAN:
-                    self.unban_ip(host)
+                if not blacklisted.definitive:
+                    if datetime.now() - blacklisted.timestamp > self._CONNECTION_DELAY_BEFORE_DEBAN:
+                        self.unban_ip(host)
             sleep(10)
 
     def update_ip(self, host: str, source: str) -> None | BlacklistedIP:
@@ -82,9 +83,12 @@ class NetworkSecurity(metaclass=SingletonABCMeta):
         return blacklisted
 
     def unban_ip(self, host: str):
-        logging.debug(f"Unbanning {host}")
-        self._BLACKLISTED_IPS.pop(host)
-        self._update_ban_file()
+        if host in self._BLACKLISTED_IPS.keys():
+            logging.debug(f"Unbanning {host}")
+            self._BLACKLISTED_IPS.pop(host)
+            self._update_ban_file()
+        else:
+            logging.debug(f"Cannot unban {host}: not banned")
 
     def _get_logs_in_delay(self, host: str, source: str) -> [IPLog]:
         # Fetch previous connections from this host and from this source

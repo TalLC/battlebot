@@ -1,12 +1,16 @@
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from common.ErrorCode import *
 from common.config import CONFIG_REST
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
 from consumer.brokers.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
+from provider.security.NetworkSecurity import NetworkSecurity
+from provider.security.decorators import rest_ban_check
 from provider.webservices.rest.models.AdminBaseModel import AdminBaseModel
+from provider.webservices.rest.models.AdminActionBanModel import AdminActionBanModel
+from provider.webservices.rest.models.AdminActionUnbanModel import AdminActionUnbanModel
 from provider.webservices.rest.models.AdminDisplayClientsActionListModel import AdminDisplayClientsActionListModel
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByIdModel import AdminDisplayClientsActionGetByIdModel
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByTokenModel import AdminDisplayClientsActionGetByTokenModel
@@ -27,6 +31,8 @@ class RestProvider:
         self.__admin_password = CONFIG_REST.admin_password
 
     def __register_endpoints(self):
+        self.__admin_action_ban()
+        self.__admin_action_unban()
         self.__admin_game_action_start()
         self.__admin_display_clients_action_list()
         self.__admin_display_clients_action_get_by_id()
@@ -41,11 +47,42 @@ class RestProvider:
         self.__bots_id_action_shield_raise()
         logging.info("All endpoints registered")
 
+    def __admin_action_ban(self):
+        """
+        Ban the specified IP.
+        """
+        @self.__app.patch("/admin/action/ban")
+        @rest_ban_check
+        async def action(model: AdminActionBanModel, _: Request):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Ban ip address
+            blacklisted = NetworkSecurity().ban_ip(model.host, model.source, model.reason, model.definitive)
+            return {'status': 'ok', 'banned': blacklisted.json()}
+
+    def __admin_action_unban(self):
+        """
+        Unban the specified IP.
+        """
+        @self.__app.patch("/admin/action/unban")
+        @rest_ban_check
+        async def action(model: AdminActionUnbanModel, _: Request):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Ban ip address
+            NetworkSecurity().unban_ip(model.host)
+            return {'status': 'ok', 'message': f'{model.host} unbanned'}
+
     def __admin_game_action_start(self):
         """
         Start the current game.
         """
         @self.__app.patch("/game/action/start")
+        @rest_ban_check
         async def action(model: AdminBaseModel):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -59,6 +96,7 @@ class RestProvider:
         !!Do not use "client_token" as Path parameter to avoid clients to set ready for others!!
         """
         @self.__app.patch("/display/clients/action/ready")
+        @rest_ban_check
         async def action(model: DisplayClientsActionReadyModel):
             # Checking if the token exists
             if not GameManager().display_manager.does_client_token_exists(model.client_token):
@@ -75,6 +113,7 @@ class RestProvider:
         List all present and past display clients.
         """
         @self.__app.get("/display/clients/action/list")
+        @rest_ban_check
         async def action(model: AdminDisplayClientsActionListModel):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -93,6 +132,7 @@ class RestProvider:
         Find a display client by its id.
         """
         @self.__app.get("/display/clients/action/get_by_id")
+        @rest_ban_check
         async def action(model: AdminDisplayClientsActionGetByIdModel):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -112,6 +152,7 @@ class RestProvider:
         Find a display client by its token.
         """
         @self.__app.get("/display/clients/action/get_by_token")
+        @rest_ban_check
         async def action(model: AdminDisplayClientsActionGetByTokenModel):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -131,6 +172,7 @@ class RestProvider:
         Create a new bot object and adds it to the specified team.
         """
         @self.__app.post("/bots/action/register")
+        @rest_ban_check
         async def action(model: BotsActionRegisterModel):
             bot_type = model.bot_type.lower()
 
@@ -155,6 +197,7 @@ class RestProvider:
         The client must send back these ids to the server to validate the connection.
         """
         @self.__app.get("/bots/{bot_id}/action/request_connection")
+        @rest_ban_check
         async def action(bot_id: str):
             logging.info(f"Bot {bot_id} is requesting a connection")
 
@@ -182,6 +225,7 @@ class RestProvider:
         our services.
         """
         @self.__app.patch("/bots/{bot_id}/action/check_connection")
+        @rest_ban_check
         async def action(bot_id: str, model: BotsIdActionCheckConnectionModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
@@ -209,6 +253,7 @@ class RestProvider:
         Make the bot shoot to the desired relative angle.
         """
         @self.__app.patch("/bots/{bot_id}/action/shoot")
+        @rest_ban_check
         async def action(bot_id: str, model: BotsIdActionShootModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
@@ -221,6 +266,7 @@ class RestProvider:
         Start to turn the specified bot to its left or right.
         """
         @self.__app.patch("/bots/{bot_id}/action/turn")
+        @rest_ban_check
         async def action(bot_id: str, model: BotsIdActionTurnModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
@@ -236,6 +282,7 @@ class RestProvider:
         Start to move the specified bot forward.
         """
         @self.__app.patch("/bots/{bot_id}/action/move")
+        @rest_ban_check
         async def action(bot_id: str, model: BotsIdActionMoveModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
@@ -251,6 +298,7 @@ class RestProvider:
         Raise or lower the shield of the specified bot.
         """
         @self.__app.patch("/bots/{bot_id}/action/shield_raise")
+        @rest_ban_check
         async def action(bot_id: str, model: BotsIdActionShieldRaiseModel):
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
