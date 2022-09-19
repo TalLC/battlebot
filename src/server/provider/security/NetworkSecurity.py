@@ -18,8 +18,8 @@ class NetworkSecurity(metaclass=SingletonABCMeta):
     Automatically ban IP address that spams a service.
     """
     _MAX_CONNECTIONS_IN_DELAY = 10
-    _CONNECTIONS_DELAY_FOR_ONE_IP = timedelta(minutes=1)
-    _CONNECTION_DELAY_BEFORE_DEBAN = timedelta(minutes=5)
+    _CONNECTIONS_DELAY_FOR_ONE_IP = timedelta(seconds=30)
+    _CONNECTION_DELAY_BEFORE_DEBAN = timedelta(minutes=1)
 
     _BLACKLISTED_IPS_FILE_PATH = Path('conf', 'blacklisted_ips.json')
     _BLACKLISTED_IPS: dict[str, BlacklistedIP] = dict()
