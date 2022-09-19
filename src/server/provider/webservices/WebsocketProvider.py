@@ -1,14 +1,12 @@
 import asyncio
 from queue import SimpleQueue
-
 from fastapi import FastAPI, WebSocket
 from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
+from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
 import time
-
-from provider.security.decorators import websocket_ban_check, websocket_autoban
 
 
 class WebsocketProvider:
@@ -21,8 +19,8 @@ class WebsocketProvider:
     def __register_websocket(self):
 
         @self.__app.websocket("/ws")
-        @websocket_ban_check
-        @websocket_autoban
+        @NetworkSecurityDecorators.websocket_ban_check
+        @NetworkSecurityDecorators.websocket_autoban
         async def websocket_endpoint(websocket: WebSocket):
             queue = SimpleQueue()
             self.__webservices.add_ws_queue(queue)

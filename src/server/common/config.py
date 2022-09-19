@@ -1,11 +1,13 @@
 import json
 from pathlib import Path
-from provider.webservices.rest.config.RestConfig import RestConfig
-from provider.brokers.config.MQTTConfig import MQTTConfig
-from provider.brokers.config.STOMPConfig import STOMPConfig
+from conf.models.BlacklistConfig import BlacklistConfig
+from conf.models.RestConfig import RestConfig
+from conf.models.MQTTConfig import MQTTConfig
+from conf.models.STOMPConfig import STOMPConfig
 
 
 # Config files
+CONFIG_BLACKLIST = BlacklistConfig(**json.loads(Path('conf', 'blacklist_config.json').read_text()))
 CONFIG_REST = RestConfig(**json.loads(Path('conf', 'rest.json').read_text()))
 CONFIG_MQTT = MQTTConfig(**json.loads(Path('conf', 'mqtt.json').read_text()))
 CONFIG_STOMP = STOMPConfig(**json.loads(Path('conf', 'stomp.json').read_text()))
@@ -16,7 +18,11 @@ DATETIME_STR_FORMAT = '%d/%m/%Y %H:%M:%S'
 # Name generation
 WORDS_ADJECTIVES_LIST = Path('conf', 'dictionaries', 'english-adjectives.txt')\
     .read_text().replace('\r\n', '\n').split('\n')
+WORDS_NOUNS_LIST = Path('conf', 'dictionaries', 'english-nouns.txt')\
+    .read_text().replace('\r\n', '\n').split('\n')
 WORDS_GERUNDS_LIST = Path('conf', 'dictionaries', 'english-gerunds.txt')\
     .read_text().replace('\r\n', '\n').split('\n')
-WORDS_NOUNS_LIST = Path('conf', 'dictionaries', 'english-nouns.txt')\
+WORDS_COLORS_LIST = Path('conf', 'dictionaries', 'english-colors.txt')\
+    .read_text().replace('\r\n', '\n').split('\n')
+WORDS_ANIMALS_LIST = Path('conf', 'dictionaries', 'english-animals.txt')\
     .read_text().replace('\r\n', '\n').split('\n')
