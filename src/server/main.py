@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
-from provider.webservices.NetworkSecurity import NetworkSecurity
+from provider.security.NetworkSecurity import NetworkSecurity
 from business.GameManager import GameManager
 
 """
