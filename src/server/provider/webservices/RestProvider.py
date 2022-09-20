@@ -67,14 +67,13 @@ class RestProvider:
         Unban the specified IP.
         """
         @self.__app.patch("/admin/action/unban")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: AdminActionUnbanModel, _: Request):
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
             # Ban ip address
-            NetworkSecurity().unban_ip(model.host)
+            NetworkSecurity().unban_ip(model.host, model.source)
             return {'status': 'ok', 'message': f'{model.host} unbanned'}
 
     def __admin_game_action_start(self):
