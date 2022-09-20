@@ -59,8 +59,8 @@ class RestProvider:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
             # Ban ip address
-            blacklisted = NetworkSecurity().ban_ip(model.host, model.source, model.reason, model.definitive)
-            return {'status': 'ok', 'banned': blacklisted.json()}
+            banned_ip = NetworkSecurity().ban_ip(model.host, model.source, model.reason, model.definitive)
+            return {'status': 'ok', 'banned': banned_ip.json()}
 
     def __admin_action_unban(self):
         """

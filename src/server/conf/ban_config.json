@@ -1,7 +1,8 @@
 {
   "enable_auto_ban": true,
-  "blacklist_file": "conf/blacklisted_ips.json",
+  "banned_ips_file": "conf/banned_ips.json",
   "max_connections_in_interval": 10,
+  "unban_check_interval_in_seconds" : 10,
   "interval_for_max_connections": {
     "hours": 0, "minutes": 0, "seconds": 30
   },

@@ -47,7 +47,7 @@ async def startup() -> None:
 
     # # Starting provider services
     logging.info("Starting provider services")
-    NetworkSecurity()  # Initializing blacklisted ips
+    NetworkSecurity()  # Initializing ban ip module
     provider_manager = ProviderManager(app)
     provider_manager.start_all()
 

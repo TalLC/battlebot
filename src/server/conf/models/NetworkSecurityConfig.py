@@ -4,16 +4,17 @@ from dataclasses import dataclass
 
 
 @dataclass
-class BlacklistConfig:
+class NetworkSecurityConfig:
     enable_auto_ban: bool
-    blacklist_file: str
+    banned_ips_file: str
     max_connections_in_interval: int
+    unban_check_interval_in_seconds: int
     interval_for_max_connections: dict
     delay_before_unban: dict
 
     @property
-    def blacklist_file_path(self) -> Path:
-        return Path(self.blacklist_file)
+    def banned_ips_file_path(self) -> Path:
+        return Path(self.banned_ips_file)
 
     @property
     def interval_for_max_connections_timedelta(self) -> timedelta:

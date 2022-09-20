@@ -3,7 +3,7 @@ from common.ErrorCode import NETWORK_BANNED_IP_TEMP, NETWORK_BANNED_IP_DEF
 from common.config import DATETIME_STR_FORMAT
 
 
-class BlacklistedIP:
+class BannedIP:
 
     @property
     def host(self) -> str:
