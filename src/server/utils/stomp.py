@@ -1,15 +1,14 @@
 import json
 import logging
-from pathlib import Path
 import stomp
 from stomp import ConnectionListener
 from stomp.utils import Frame
+from common.config import CONFIG_STOMP
 
 
 class STOMP:
     ConnectionListener = ConnectionListener
     Frame = Frame
-    _CONFIG = json.loads(Path('conf', 'stomp.json').read_text())
 
     @property
     def is_connected(self) -> bool:
@@ -32,16 +31,16 @@ class STOMP:
 
     def __init__(self):
         self.__connected = False
-        self.__host = self._CONFIG['host']
-        self.__port = self._CONFIG['port']
-        self.__destination_root = self._CONFIG['destination_root']
+        self.__host = CONFIG_STOMP.host
+        self.__port = CONFIG_STOMP.port
+        self.__destination_root = CONFIG_STOMP.destination_root
         self.__subscription_id = 0
 
         # STOMP client
         self.__client = stomp.Connection(host_and_ports=[(self.__host, self.__port)])
 
         # Connecting client
-        self.__client.connect(username=self._CONFIG['username'], passcode=self._CONFIG['password'], wait=True)
+        self.__client.connect(username=CONFIG_STOMP.username, passcode=CONFIG_STOMP.password, wait=True)
         self.__connected = True
 
     def send_message(self, topic: str, message: dict):

@@ -1,10 +1,10 @@
 import asyncio
 from queue import SimpleQueue
-
 from fastapi import FastAPI, WebSocket
 from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
+from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
 import time
 
@@ -17,15 +17,17 @@ class WebsocketProvider:
         self.__register_websocket()
 
     def __register_websocket(self):
+
         @self.__app.websocket("/ws")
+        @NetworkSecurityDecorators.websocket_ban_check
+        @NetworkSecurityDecorators.websocket_autoban
         async def websocket_endpoint(websocket: WebSocket):
-            await websocket.accept()
             queue = SimpleQueue()
             self.__webservices.add_ws_queue(queue)
             data_send = {}
 
             display_client = GameManager().display_manager.create_client(
-                host=websocket.client.host,port=websocket.client.port, websocket_headers=websocket.headers
+                host=websocket.client.host, port=websocket.client.port, websocket_headers=websocket.headers
             )
             print(display_client)
 

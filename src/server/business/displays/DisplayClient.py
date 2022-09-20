@@ -1,8 +1,9 @@
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 import starlette.datastructures
-from pathlib import Path
 from random import Random
+from common.config import DATETIME_STR_FORMAT, WORDS_GERUNDS_LIST, WORDS_COLORS_LIST, WORDS_ANIMALS_LIST
 
 
 class DisplayClient:
@@ -10,15 +11,7 @@ class DisplayClient:
     Holds information about clients that has been connected to the websocket.
     """
 
-    __adjectives_dictionary_path = Path('conf', 'dictionaries', 'english-adjectives.txt').read_text()
-    __adjectives = __adjectives_dictionary_path.replace('\r\n', '\n').split('\n')
-
-    __gerunds_dictionary_path = Path('conf', 'dictionaries', 'english-gerunds.txt').read_text()
-    __gerunds = __gerunds_dictionary_path.replace('\r\n', '\n').split('\n')
-
-    __nouns_dictionary_path = Path('conf', 'dictionaries', 'english-nouns.txt').read_text()
-    __nouns = __nouns_dictionary_path.replace('\r\n', '\n').split('\n')
-
+    @dataclass
     class Headers:
         accept_encoding: str
         accept_language: str
@@ -96,17 +89,17 @@ class DisplayClient:
         self._token = str(uuid.uuid4())
         self._host = host
         self._port = port
-        self._headers = DisplayClient.Headers()
-        self._headers.accept_encoding = websocket_headers['accept-encoding'] \
+        accept_encoding = websocket_headers['accept-encoding'] \
             if 'accept-encoding' in websocket_headers else str()
-        self._headers.accept_language = websocket_headers['accept-language'] \
+        accept_language = websocket_headers['accept-language'] \
             if 'accept-language' in websocket_headers else str()
-        self._headers.origin = websocket_headers['origin'] if 'origin' in websocket_headers else str()
-        self._headers.user_agent = websocket_headers['user-agent'] if 'user-agent' in websocket_headers else str()
+        origin = websocket_headers['origin'] if 'origin' in websocket_headers else str()
+        user_agent = websocket_headers['user-agent'] if 'user-agent' in websocket_headers else str()
+        self._headers = DisplayClient.Headers(accept_encoding, accept_language, origin, user_agent)
 
     def __str__(self):
-        timestamp_start = self.timestamp_start.strftime('%d/%m/%Y %H:%M:%S')
-        timestamp_stop = self.timestamp_stop.strftime('%d/%m/%Y %H:%M:%S') if self.timestamp_stop is not None else ''
+        timestamp_start = self.timestamp_start.strftime(DATETIME_STR_FORMAT)
+        timestamp_stop = self.timestamp_stop.strftime(DATETIME_STR_FORMAT) if self.timestamp_stop is not None else ''
         return f"Id: {self.id}\n" \
                f"Name: {self.name}\n" \
                f"Timestamp start: {timestamp_start}\n" \
@@ -120,8 +113,8 @@ class DisplayClient:
                f"{str(self.headers)}"
 
     def json(self) -> dict:
-        timestamp_start = self.timestamp_start.strftime('%d/%m/%Y %H:%M:%S')
-        timestamp_stop = self.timestamp_stop.strftime('%d/%m/%Y %H:%M:%S') if self.timestamp_stop is not None else ''
+        timestamp_start = self.timestamp_start.strftime(DATETIME_STR_FORMAT)
+        timestamp_stop = self.timestamp_stop.strftime(DATETIME_STR_FORMAT) if self.timestamp_stop is not None else ''
         return {
             "id": self.id,
             "name": self.name,
@@ -143,10 +136,11 @@ class DisplayClient:
         self._status = False
         self._timestamp_stop = datetime.now()
 
-    def __generate_name(self, seed: str) -> str:
+    @staticmethod
+    def __generate_name(seed: str) -> str:
         r = Random(x=seed)
-        adjective = self.__adjectives[r.randrange(0, len(self.__adjectives))]
-        gerund = self.__gerunds[r.randrange(0, len(self.__gerunds))]
-        noun = self.__nouns[r.randrange(0, len(self.__nouns))]
+        gerund = WORDS_GERUNDS_LIST[r.randrange(0, len(WORDS_GERUNDS_LIST))]
+        color = WORDS_COLORS_LIST[r.randrange(0, len(WORDS_COLORS_LIST))]
+        animal = WORDS_ANIMALS_LIST[r.randrange(0, len(WORDS_ANIMALS_LIST))]
 
-        return f"{adjective.capitalize()}{gerund.capitalize()}{noun.capitalize()}"
+        return f"{gerund.capitalize()}{color.capitalize()}{animal.capitalize()}"
