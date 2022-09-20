@@ -49,7 +49,7 @@ class RestProvider:
 
     def __admin_action_ban(self):
         """
-        Ban the specified IP.
+        Ban the specified IP from a specific source.
         """
         @self.__app.patch("/admin/action/ban")
         @NetworkSecurityDecorators.rest_ban_check
@@ -64,7 +64,7 @@ class RestProvider:
 
     def __admin_action_unban(self):
         """
-        Unban the specified IP.
+        Unban the specified IP for a specific source.
         """
         @self.__app.patch("/admin/action/unban")
         async def action(model: AdminActionUnbanModel, _: Request):
