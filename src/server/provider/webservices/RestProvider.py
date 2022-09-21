@@ -87,7 +87,11 @@ class RestProvider:
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
-            pass
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
+            GameManager().start_game()
 
     def __display_action_ready(self):
         """
@@ -173,6 +177,11 @@ class RestProvider:
         @self.__app.post("/bots/action/register")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(model: BotsActionRegisterModel):
+
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
             bot_type = model.bot_type.lower()
 
             # Does team exists?
@@ -200,6 +209,10 @@ class RestProvider:
         async def action(bot_id: str):
             logging.info(f"Bot {bot_id} is requesting a connection")
 
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -226,6 +239,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/check_connection")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionCheckConnectionModel):
+
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -254,6 +272,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/shoot")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionShootModel):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -267,6 +290,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/turn")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionTurnModel):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -283,6 +311,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/move")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionMoveModel):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -299,6 +332,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/shield_raise")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionShieldRaiseModel):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
