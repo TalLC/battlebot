@@ -1,6 +1,6 @@
-from consumer.webservices.messages.websocket.interface.IBotUpdateMessage import IBotUpdateMessage
+from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
 
 
-class BotMoveMessage(IBotUpdateMessage):
+class BotMoveMessage(BotUpdateMessage):
     def __init__(self, bot_id: str, x: float = None, z: float = None):
         super().__init__(bot_id=bot_id, x=x, z=z)

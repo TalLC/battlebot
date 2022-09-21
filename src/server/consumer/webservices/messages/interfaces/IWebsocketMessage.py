@@ -2,4 +2,7 @@ from abc import abstractmethod, ABC
 
 
 class IWebsocketMessage(ABC):
-    pass
+
+    @abstractmethod
+    def json(self) -> dict:
+        raise NotImplementedError()

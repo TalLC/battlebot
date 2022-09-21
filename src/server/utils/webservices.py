@@ -7,7 +7,7 @@ from websockets.exceptions import ConnectionClosedOK
 
 from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
 from common.Singleton import SingletonABCMeta
-from consumer.webservices.messages.websocket.interface.IBotUpdateMessage import IBotUpdateMessage
+from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
 
 
 class Webservices(metaclass=SingletonABCMeta):
@@ -27,9 +27,9 @@ class Webservices(metaclass=SingletonABCMeta):
                 while time.time() - timer > 100:
                     maj = False
                     message_add = self.__ws_tmp_queue.get()
-                    if isinstance(message_add, IBotUpdateMessage):
+                    if isinstance(message_add, BotUpdateMessage):
                         for message in message_list:
-                            if isinstance(message, IBotUpdateMessage):
+                            if isinstance(message, BotUpdateMessage):
                                 if message.bot_id == message_add.bot_id:
                                     message += message_add
                                     maj = True
