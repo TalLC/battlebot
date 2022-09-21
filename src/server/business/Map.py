@@ -16,6 +16,7 @@ class Map(metaclass=SingletonABCMeta):
     _size: tuple
     _data: list
     _matrice: list
+    _map_load: bool
     # [0[0, 1, 2, 3]]
     # [1[0, 1, 2, 3]]
     # [2[0, 1, 2, 3]]
@@ -48,6 +49,10 @@ class Map(metaclass=SingletonABCMeta):
             "size": self._size,
             "data": self._data
         }
+
+    @property
+    def map_load(self):
+        return self.map_load
 
     @property
     def matrice(self):

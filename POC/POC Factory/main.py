@@ -1,6 +1,6 @@
 from ImageFactory.ImageFactoryImpl import ImageFactoryImpl
 #
-# ImageFactoryImpl est une classe qui implémente l'interface ImageFactory
+# ImageFactoryImpl est une classe qui implémente l'interfaces ImageFactory
 # ImageFactory est un Singleton
 #
 # En fonction du nom de fichier donné en entrée, on crée une instance de Image correspondante
