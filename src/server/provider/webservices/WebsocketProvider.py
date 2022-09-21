@@ -7,7 +7,6 @@ from business.GameManager import GameManager
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
-import time
 
 
 class WebsocketProvider:
