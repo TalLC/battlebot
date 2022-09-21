@@ -92,6 +92,7 @@ class RestProvider:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
 
             GameManager().start_game()
+            return {'status': 'ok', 'message': 'Game is started'}
 
     def __display_action_ready(self):
         """
@@ -110,6 +111,8 @@ class RestProvider:
 
             # Setting client to Ready
             client.set_ready()
+
+            return {'status': 'ok', 'message': 'Tokens are matching'}
 
     def __admin_display_clients_action_list(self):
         """
