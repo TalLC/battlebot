@@ -1,121 +1,115 @@
 import json
+import logging
 from pathlib import Path
 
 from common.Singleton import SingletonABCMeta
 from business.gameobjects.tiles.TileFactory import TileFactory
 from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 
-config = json.loads(Path('conf', 'maps.json').read_text())
+
+def list_save_map() -> list:
+    """
+        Liste les fichiers JSON (donc les maps) stockées.
+    """
+    maps_dir = Path('../data/maps')
+    maps_list = []
+
+    for save_map in maps_dir.iterdir():
+        if save_map.is_file() and save_map.name.endswith('.json'):
+            maps_list.append(save_map)
+
+    return maps_list
 
 
 class Map(metaclass=SingletonABCMeta):
-    _id: str
-    _name: str
+    _map_id: str
     _height: int
     _width: int
-    _size: tuple
     _data: list
-    _matrice: list
-    # [0[0, 1, 2, 3]]
-    # [1[0, 1, 2, 3]]
-    # [2[0, 1, 2, 3]]
-    # [3[0, 1, 2, 3]]
-
-
-    @property
-    def id(self):
-        return self._id
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def data(self):
-        return self._data
-
-    @property
-    def size(self):
-        return self._size
+    _matrix: list
 
     @property
     def infos(self):
         return {
-            "id": self._id,
-            "name": self._name,
-            "height": self._height,
-            "width": self._width,
-            "size": self._size,
-            "data": self._data
-        }
+                "id": self._map_id,
+                "height": self._height,
+                "width": self._width,
+                "data": self._data
+            }
 
     @property
-    def matrice(self):
-        return self._matrice
+    def height(self):
+        return self._height
+
+    @property
+    def width(self):
+        return self._width
+
+    @property
+    def matrix(self):
+        return self._matrix
 
     def __init__(self):
         self._data = []
-        self._matrice = []
+        self._matrix = []
 
     @staticmethod
-    def does_map_exist(map_id):
+    def does_map_exists(map_id: str) -> bool:
         """
-        Check if map exist in saved maps.
+            Vérifie qu'une map correspond à l'id donné.
+
+        :param map_id: identifiant à tester
         """
-        if map_id in config.keys():
-            return True
+        maps_list = list_save_map()
+
+        for sm in maps_list:
+            if map_id in sm.name:
+                return True
+
         return False
 
-    def generate_map(self, id_map):
-        if self.does_map_exist(id_map):
-            self._id = id_map
-            self.load_map(self._id)
+    def initialize(self, map_id: str) -> None:
+        """
+            Charge les données du terrain depuis le json de sauvegarde.
+
+        :param map_id: identifiant de la map à charger
+        """
+        if self.does_map_exists(map_id=map_id):
+            save_map = json.loads(Path(f'../data/maps/{map_id}.json').read_text())
+
+            self._map_id = map_id
+            self._height = save_map['height']
+            self._width = save_map['width']
+            self._data = save_map['data']
+            self._matrix = self.load()
+
         else:
-            self.create_empty_map(4, 4)
+            logging.error(f"La map {map_id} n'a pas été trouvée.")
 
-    def load_map(self, id_map):
+    def load(self) -> list:
         """
-        Load an existing map from id
+            Génère la matrice du terrain.
         """
-        if id_map in config.keys():
-            self._name = config[id_map]['name']
-            self._height = config[id_map]['height']
-            self._width = config[id_map]['width']
-            self._size = (self._height, self._width)
-            self._data = config[id_map]['data']
-
-            for h in range(self._height):
-                current_line = []
-                for w in range(self._width):
-                    current_line.append(None)
-                self._matrice.append(current_line)
-
-            for d in self._data:
-                print(d)
-                self._matrice[d['x']][d['z']] = TileFactory.create_tile(tile_type=d['tile'],
-                                                                        x=d['x'],
-                                                                        z=d['z'],
-                                                                        tile_object=TileObjectFactory.create_tileobject(d['tile_object'], d['x'], d['z']))
-
-            print(self._matrice)
-
-    def set_size_map(self):
-        self._size = (self._height, self._width)
-
-    def create_empty_map(self, height, width):
-        self._name = "New map"
-        self._id = "999"
-        self._height = height
-        self._width = width
-        self.set_size_map()
-
+        # On créé un tableau vide aux dimensions de la map
+        mat = []
         for h in range(self._height):
+            current_line = []
             for w in range(self._width):
-                self._data.append(
-                    {
-                        'tile': 'ground',
-                        'tile_object': 'air',
-                        'x': h,
-                        'y': w
-                    }
-                )
+                current_line.append(None)
+            mat.append(current_line)
+
+        # On créé un obj Tile pour chaque cellule de la map
+        for d in self._data:
+            mat[d['x']][d['z']] = TileFactory.create_tile(tile_type=d['tile'], x=d['x'], z=d['z'],
+                                                          tile_object=TileObjectFactory.create_tileobject(
+                                                              d['tile_object'], d['x'], d['z']))
+        return mat
+
+
+if __name__ == '__main__':
+    mymap = Map()
+    mymap.initialize('empty_3_3')
+    print(mymap.infos)
+    for r in mymap.matrix:
+        for c in r:
+            print(c)
