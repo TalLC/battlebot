@@ -30,8 +30,8 @@ class WebsocketProvider:
                                                                          websocket_headers=websocket.headers)
             print(display_client)
 
-            while not GameManager().map.is_ready:
-                await asyncio.sleep(1)
+            # while not GameManager().map.is_ready:
+            #     await asyncio.sleep(1)
 
             await websocket.send_json(GameManager().map.data)
             sent_bot = list()
