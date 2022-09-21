@@ -1,9 +1,18 @@
 import uuid
 from abc import ABC
+from queue import PriorityQueue
+from threading import Thread, Event
 from business.gameobjects.behaviour.IMoving import IMoving
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
+from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
+from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from business.gameobjects.entity.bots.commands.BotHurtCommand import BotHurtCommand
+from business.gameobjects.entity.bots.commands.BotHealCommand import BotHealCommand
 from business.ClientConnection import ClientConnection
+from consumer.ConsumerManager import ConsumerManager
+
+from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 
 
 class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
@@ -26,11 +35,37 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
         IDestructible.__init__(self, health, True)
         self._ROLE = role
 
-        # Generate a random id.
+        self._commands_queue = PriorityQueue()
+        self._thread_event = Event()
+        self._thread = Thread(target=self._thread_handle_messages, args=(self._thread_event,)).start()
+
+        # Generate a random id
         self._id = str(uuid.uuid4())
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
+
+    def stop_handle_message_thread(self):
+        # Set the event to stop the thread
+        self._thread_event.set()
+
+    def _thread_handle_messages(self, e: Event):
+        while not e.is_set():
+            message = self._commands_queue.get(block=True)
+            self._route_message(message)
+
+    def _route_message(self, command: IBotCommand):
+        if isinstance(command, BotMoveCommand):
+            ...
+        if isinstance(command, BotHurtCommand):
+            self.hurt(command.value)
+            ConsumerManager().stomp.send_message(BotHealthStatusMessage(self.id, self.health))
+        if isinstance(command, BotHealCommand):
+            self.heal(command.value)
+            ConsumerManager().stomp.send_message(BotHealthStatusMessage(self.id, self.health))
+
+    def add_message_to_queue(self, command: IBotCommand):
+        self._commands_queue.put(command)
 
     def set_position(self, x: float, z: float, ry: float = 0.0):
         """
