@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
+from provider.security.NetworkSecurity import NetworkSecurity
 from business.GameManager import GameManager
 
 """
@@ -27,18 +28,31 @@ G_CONF_DIR = "conf"
 G_CONF_FILE_TEAMS = Path(G_CONF_DIR, "teams.json")
 G_CONF_TEAMS = json.loads(G_CONF_FILE_TEAMS.read_text())
 
-for team in G_CONF_TEAMS:
-    t = GameManager().team_manager.create_team(team["size"], team["name"], team["color"], team["id"] if "id" in team else None)
-    print(t)
-
-# Services
-# # Starting consumer services
-logging.info("Starting consumer services")
-ConsumerManager().start_all()
-
-# # Starting provider services
-logging.info("Starting provider services")
 app = FastAPI()  # Entry point for Uvicorn
-provider_manager = ProviderManager(app)
-provider_manager.start_all()
+
+
+@app.on_event('startup')
+async def startup() -> None:
+    # Teams
+    for team in G_CONF_TEAMS:
+        t = GameManager().team_manager.create_team(
+            team["size"], team["name"], team["color"], team["id"] if "id" in team else None
+        )
+        print(t)
+
+    # Services
+    # # Starting consumer services
+    logging.info("Starting consumer services")
+    ConsumerManager().start_all()
+
+    # # Starting provider services
+    logging.info("Starting provider services")
+    NetworkSecurity()  # Initializing ban ip module
+    provider_manager = ProviderManager(app)
+    provider_manager.start_all()
+
+
+@app.on_event('shutdown')
+def shutdown() -> None:
+    NetworkSecurity().stop_thread()
 

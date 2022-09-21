@@ -1,17 +1,17 @@
 from consumer.brokers.interfaces.IBrokerConsumer import IBrokerConsumer
-from utils import stomp
+from utils.stomp import STOMP
 
 
 class STOMPConsumer(IBrokerConsumer):
 
     def __init__(self):
-        self.__client = stomp.get()
+        self.__client = STOMP()
 
     def get_destination(self) -> str:
         """
         Return the root path of the topics.
         """
-        return stomp.get().destination_root
+        return self.__client.destination_root
 
     def _send_message(self, destination: str, message: dict, retain: bool = False):
         """

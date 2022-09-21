@@ -1,12 +1,8 @@
 import logging
 import json
-from pathlib import Path
-
+from time import sleep
 from paho.mqtt import client as mqtt_client
-
-
-__instance = None
-config = json.loads(Path('conf', 'mqtt.json').read_text())
+from common.config import CONFIG_MQTT
 
 
 class MQTT:
@@ -31,13 +27,12 @@ class MQTT:
     def destination_root(self) -> str:
         return self.__destination_root
 
-    def __init__(self, host: str, port: int, username: str, password: str, destination_root: str):
-        global config
-
+    def __init__(self):
         self.__connected = False
-        self.__host = host
-        self.__port = port
-        self.__destination_root = destination_root
+        self.__host = CONFIG_MQTT.host
+        self.__port = CONFIG_MQTT.port
+        self.__destination_root = CONFIG_MQTT.destination_root
+        self.__connect_timeout = CONFIG_MQTT.connect_timeout
 
         # MQTT client
         self.__client = mqtt_client.Client()
@@ -47,11 +42,11 @@ class MQTT:
         self.__client.on_publish = self.on_publish
 
         # Connecting client
-        self.__client.username_pw_set(username, password)
+        self.__client.username_pw_set(username=CONFIG_MQTT.username, password=CONFIG_MQTT.password)
         self.__client.connect(self.__host, self.__port)
 
         # Waiting for connection to complete
-        timeout = config['connect_timeout']
+        timeout = self.__connect_timeout
         while not self.__client.is_connected and timeout > 0:
             sleep(1)
             timeout -= 1
@@ -121,46 +116,3 @@ class MQTT:
         self.__client.loop_stop()
         self.__client.disconnect()
         logging.info("MQTT client disconnected")
-
-
-def get() -> MQTT:
-    """
-    Get MQTT instance.
-    """
-    global __instance
-
-    if __instance is None:
-        __instance = MQTT(
-            host=config['host'],
-            port=config['port'],
-            username=config['username'],
-            password=config['password'],
-            destination_root=config['destination_root']
-        )
-
-    return __instance
-
-
-if __name__ == '__main__':
-    from time import sleep
-    logging.basicConfig(level=logging.DEBUG)
-
-    def on_message(_client: mqtt_client, _userdata, msg: mqtt_client.MQTTMessage):
-        logging.info(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-
-    mqtt = MQTT("localhost", 1883, "system", "manager", "BATTLEBOT/BOT/")
-
-    timeout = 5
-    while not mqtt.is_connected and timeout > 0:
-        sleep(1)
-        timeout -= 1
-
-    if not mqtt.is_connected:
-        raise Exception("Failed to connect to MQTT broker")
-
-    mqtt.send_message("mqtttest", {"data": "test1"})
-    mqtt.send_message("mqtttest", {"data": "test2"})
-    mqtt.send_message("mqtttest", {"data": "test3"})
-    mqtt.send_message("mqtttest", {"data": "test4"})
-
-    mqtt.close()

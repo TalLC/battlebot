@@ -5,7 +5,7 @@ from common.Singleton import SingletonABCMeta
 from business.gameobjects.tiles.TileFactory import TileFactory
 from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 
-config = json.loads(Path('conf', '../conf/maps.json').read_text())
+config = json.loads(Path('conf', 'maps.json').read_text())
 
 
 class Map(metaclass=SingletonABCMeta):

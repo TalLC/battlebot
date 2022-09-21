@@ -27,7 +27,7 @@ def request_connection(bot_id: str):
     """
     Check Rest, MQTT and STOMP connections.
     """
-    r = requests.get(G_REST_URL + f"/bot/{bot_id}/action/request_connection")
+    r = requests.get(G_REST_URL + f"/bots/{bot_id}/action/request_connection")
     if r.ok:
         if 'request_id' in r.json():
             G_CONNECTION_STATUS["request_id"] = r.json()['request_id']
@@ -117,7 +117,7 @@ def send_ids_to_check(bot_id: str, request_id: str, stomp_id: str, mqtt_id: str)
         'stomp_id': stomp_id,
         'mqtt_id': mqtt_id
     }
-    r = requests.patch(G_REST_URL + f"/bot/{bot_id}/action/check_connection", json=payload)
+    r = requests.patch(G_REST_URL + f"/bots/{bot_id}/action/check_connection", json=payload)
     if not r.ok:
         if 'detail' in r.json():
             raise Exception(r.json()['detail'])
@@ -133,7 +133,7 @@ def enroll_new_bot(team_id: str, bot_name: str) -> str:
         'team_id': team_id,
         'bot_name': bot_name
     }
-    r = requests.post(G_REST_URL + f"/bot/action/register", json=payload)
+    r = requests.post(G_REST_URL + f"/bots/action/register", json=payload)
     if r.ok:
         if "bot_id" in r.json():
             return r.json()["bot_id"]

@@ -1,11 +1,13 @@
 import logging
+import json
+from fastapi import FastAPI
 from common.Singleton import SingletonABCMeta
+from common.config import CONFIG_REST
 from provider.webservices.RestProvider import RestProvider
 from provider.webservices.WebsocketProvider import WebsocketProvider
 from provider.webservices.WebsiteProvider import WebsiteProvider
 from provider.brokers.MQTTProvider import MQTTProvider
 from provider.brokers.STOMPProvider import STOMPProvider
-from fastapi import FastAPI
 
 
 class ProviderManager(metaclass=SingletonABCMeta):

@@ -25,6 +25,9 @@ class ErrorCode:
         self._http_code = http_code
         self._label = label
 
+    def __str__(self):
+        return f"{self.name} ({self.internal_code}) - {self.label}"
+
     @staticmethod
     def throw(error_code: 'ErrorCode'):
         """
@@ -57,6 +60,21 @@ BOT_DOES_NOT_EXISTS = ErrorCode(name='BOT_DOES_NOT_EXISTS', internal_code=0x0000
                                 label="The bot does not exist")
 
 # Display errors
-DISPLAY_BAD_TOKEN = ErrorCode(name='DISPLAY_BAD_TOKEN', internal_code=0x00000401, http_code=500,
+DISPLAY_CLIENT_ID_DOES_NOT_EXISTS = ErrorCode(name='DISPLAY_CLIENT_ID_DOES_NOT_EXISTS', internal_code=0x00000401,
+                                              http_code=500, label="No display client found for this id")
+DISPLAY_BAD_TOKEN = ErrorCode(name='DISPLAY_BAD_TOKEN', internal_code=0x00000402, http_code=500,
                               label="The token is not valid")
 
+# Admin errors
+ADMIN_BAD_PASSWORD = ErrorCode(name='ADMIN_BAD_PASSWORD', internal_code=0x00000501, http_code=500,
+                               label="Invalid password")
+
+# Game errors
+GAME_STARTING_FAILED = ErrorCode(name='GAME_STARTING_FAILED', internal_code=0x00000601, http_code=500,
+                                 label="Unable to start the game")
+
+# Network Errors
+NETWORK_BANNED_IP_TEMP = ErrorCode(name='NETWORK_BANNED_IP_TEMP', internal_code=0x00000701, http_code=401,
+                                   label="Your IP has been temporary banned")
+NETWORK_BANNED_IP_DEF = ErrorCode(name='NETWORK_BANNED_IP_DEF', internal_code=0x00000702, http_code=401,
+                                  label="Your IP has been permanently banned")

@@ -1,17 +1,17 @@
 from consumer.brokers.interfaces.IBrokerConsumer import IBrokerConsumer
-from utils import mqtt
+from utils.mqtt import MQTT
 
 
 class MQTTConsumer(IBrokerConsumer):
 
     def __init__(self):
-        self.__client = mqtt.get()
+        self.__client = MQTT()
 
     def get_destination(self) -> str:
         """
         Return the root path of the topics.
         """
-        return mqtt.get().destination_root
+        return self.__client.destination_root
 
     def _send_message(self, destination: str, message: dict, retain: bool = False):
         """
