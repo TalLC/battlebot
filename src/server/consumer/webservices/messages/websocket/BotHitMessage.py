@@ -1,6 +1,7 @@
 from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
+from consumer.webservices.messages.websocket.models.EnumStatus import EnumStatus
 
 
 class BotHitMessage(BotUpdateMessage):
-    def __init__(self, bot_id: str, hit: bool = False):
-        super().__init__(bot_id=bot_id, hit=hit)
+    def __init__(self, bot_id: str):
+        super().__init__(bot_id=bot_id, action=EnumStatus.HIT)

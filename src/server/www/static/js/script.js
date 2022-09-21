@@ -26,7 +26,7 @@ let height = window.innerHeight
 
 const camera = new THREE.OrthographicCamera( width / - 50, width / 50, height / 50, height / - 50, -10000, 100000 );
 camera.position.set(2, 2, 2);
-camera.lookAt(0, 0, 0)
+camera.lookAt(0, 0, 0);
 
 
 // Render
