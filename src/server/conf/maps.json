@@ -12,14 +12,14 @@
 			{
 				"tile": "ground",
 				"tile_object": "air",
-				"x": 1,
-				"z": 0
+				"x": 0,
+				"z": 1
 			},
 			{
 				"tile": "ground",
 				"tile_object": "air",
-				"x": 2,
-				"z": 0
+				"x": 0,
+				"z": 2
 			},
 			{
 				"tile": "ground",

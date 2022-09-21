@@ -1,3 +1,5 @@
+from abc import abstractmethod, ABC
 
-class IWebsocketMessage:
+
+class IWebsocketMessage(ABC):
     pass
