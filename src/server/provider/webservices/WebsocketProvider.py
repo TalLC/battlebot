@@ -4,6 +4,7 @@ from fastapi import FastAPI, WebSocket
 from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
+from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
 import time
@@ -31,13 +32,19 @@ class WebsocketProvider:
             )
             print(display_client)
 
-            # while !GameManager().map.is_ready:
-            #     await asyncio.sleep(1)
-            #
-            # await webservices.send_json(GameManager().map.data)
-            #
-            # while !GameManager().is_game_started:
-            #     await asyncio.sleep(1)
+            while not GameManager().map.is_ready:
+                await asyncio.sleep(1)
+
+            await websocket.send_json(GameManager().map.data)
+            sent_bot = list()
+            while not display_client.is_ready and not GameManager().:
+                for bot in GameManager().bot_manager.get_bots():
+                    if bot.id not in sent_bot:
+                        await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry))
+                        sent_bot.append(bot.id)
+
+                await asyncio.sleep(1)
+
 
             # While client is connected, we send them the messages
             while websocket.client_state == websockets.WebSocketState.CONNECTED:

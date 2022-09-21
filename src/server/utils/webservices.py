@@ -11,7 +11,7 @@ from consumer.webservices.messages.websocket.interface.IBotUpdateMessage import 
 
 
 class Webservices(metaclass=SingletonABCMeta):
-    __ws_client_queues = [SimpleQueue]
+    __ws_client_queues: [SimpleQueue] = list()
     __ws_tmp_queue = SimpleQueue()
 
     def __init__(self):
@@ -20,23 +20,22 @@ class Webservices(metaclass=SingletonABCMeta):
         self._thread.start()
 
     def concatenate(self, e: Event):
-        message_list = [IWebsocketMessage]
-        maj = False
+        message_list: [IWebsocketMessage] = list()
         while not e.is_set():
             try:
                 timer = time.time()
                 while time.time() - timer > 100:
+                    maj = False
                     message_add = self.__ws_tmp_queue.get()
                     if isinstance(message_add, IBotUpdateMessage):
                         for message in message_list:
                             if isinstance(message, IBotUpdateMessage):
                                 if message.bot_id == message_add.bot_id:
-                                    message.__add__(message_add)
+                                    message += message_add
                                     maj = True
                                     break
                         if not maj:
                             message_list.append(message_add)
-                            maj = False
                     else:
                         message_list.append(message_add)
                 self.dispatch_message_to_all_queues(message_list)
