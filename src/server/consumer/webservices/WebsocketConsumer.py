@@ -8,4 +8,5 @@ class WebsocketConsumer:
         self.__webservices = Webservices()
 
     def send_message(self, message: IWebsocketMessage):
-        self.__webservices.send_to_all_queues(message)
+        self.__webservices.send_tmp_queue(message)
+

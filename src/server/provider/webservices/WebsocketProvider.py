@@ -35,10 +35,6 @@ class WebsocketProvider:
             # While client is connected, we send them the messages
             while websocket.client_state == websockets.WebSocketState.CONNECTED:
                 try:
-                    timer = time.time()
-                    while time.time() - timer > 100:
-                        data = queue.get()
-                        data_send[data.pop('name')] = data
                     await websocket.send_json(data_send)
                     # await asyncio.sleep(1)
                 except ConnectionClosedOK:

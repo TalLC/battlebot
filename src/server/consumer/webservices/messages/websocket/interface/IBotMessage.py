@@ -8,6 +8,8 @@ class IBotMessage(IWebsocketMessage):
         return self._bot_id
 
     def __init__(self, bot_id: str):
+        super().__init__(bot_id=bot_id)
         self._bot_id = bot_id
-        pass
 
+    def __add__(self, other):
+        raise NotImplementedError()

@@ -1,4 +1,4 @@
-from consumer.webservices.messages.interfaces.IBotUpdateMessage import IBotUpdateMessage
+from consumer.webservices.messages.websocket.interface.IBotUpdateMessage import IBotUpdateMessage
 
 
 class BotMoveMessage(IBotUpdateMessage):

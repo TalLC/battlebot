@@ -1,4 +1,4 @@
-from consumer.webservices.messages.interfaces.IMapUpdateMessage import IMapUpdateMessage
+from consumer.webservices.messages.websocket.interface.IMapUpdateMessage import IMapUpdateMessage
 
 
 class TileObjectDestroyedMessage(IMapUpdateMessage):
