@@ -284,6 +284,9 @@ class RestProvider:
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
 
+            # Fetching corresponding Bot
+            bot = GameManager().bot_manager.get_bot(bot_id)
+
             return {"status": "ok", "message": f"Fired at {model.angle}°"}
 
     def __bots_id_action_turn(self):
