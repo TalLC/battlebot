@@ -32,19 +32,11 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
 
-    def set_position(self, x: int, z: int, heading: float = 0.0):
+    def set_position(self, x: float, z: float, ry: float = 0.0):
         """
         Set the position of the bot.
         Used for spawning the bot on the map.
         """
         self.x = x
         self.z = z
-        self.heading = heading
-
-    def deploy(self, battle_map, x: int, z: int):
-        """
-        Deploy bot on map
-        """
-        if battle_map.matrice[x][z].is_walkable:
-            self.set_position(x, z)
-            battle_map.matrice[x][z].tile_object = self
+        self.ry = ry
