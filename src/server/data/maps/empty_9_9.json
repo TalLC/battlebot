@@ -1,7 +1,7 @@
 {
-  "name": "map1",
-  "width": 3,
-  "height": 3,
+  "name": "test_map",
+  "width": 9,
+  "height": 9,
   "data": [
     {
       "tile": "ground",
@@ -12,14 +12,50 @@
     {
       "tile": "ground",
       "tile_object": "air",
-      "x": 1,
-      "z": 0
+      "x": 0,
+      "z": 1
     },
     {
       "tile": "ground",
       "tile_object": "air",
-      "x": 2,
-      "z": 0
+      "x": 0,
+      "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 0,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 0,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 0,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 0,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 0,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 0,
+      "z": 8
     },
     {
       "tile": "ground",
@@ -42,6 +78,42 @@
     {
       "tile": "ground",
       "tile_object": "air",
+      "x": 1,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 1,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 1,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 1,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 1,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 1,
+      "z": 8
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
       "x": 2,
       "z": 0
     },
@@ -56,6 +128,366 @@
       "tile_object": "air",
       "x": 2,
       "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 2,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 2,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 2,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 2,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 2,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 2,
+      "z": 8
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 0
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 1
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 3,
+      "z": 8
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 0
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 1
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 4,
+      "z": 8
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 0
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 1
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 5,
+      "z": 8
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 0
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 1
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 6,
+      "z": 8
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 0
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 1
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 7,
+      "z": 8
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 0
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 1
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 2
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 3
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 4
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 5
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 6
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 7
+    },
+    {
+      "tile": "ground",
+      "tile_object": "air",
+      "x": 8,
+      "z": 8
     }
   ]
 }
