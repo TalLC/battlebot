@@ -1,3 +1,5 @@
+import asyncio
+import random
 import uuid
 from abc import ABC
 from queue import PriorityQueue
@@ -12,7 +14,10 @@ from business.gameobjects.entity.bots.commands.BotHurtCommand import BotHurtComm
 from business.gameobjects.entity.bots.commands.BotHealCommand import BotHealCommand
 from business.ClientConnection import ClientConnection
 from consumer.ConsumerManager import ConsumerManager
+
+from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotShootMessage import BotShootMessage
+from consumer.webservices.messages.websocket.models.Target import Target
 
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 
@@ -37,15 +42,15 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
         IDestructible.__init__(self, health, True)
         self._ROLE = role
 
-        self._commands_queue = PriorityQueue()
-        self._thread_event = Event()
-        self._thread = Thread(target=self._thread_handle_messages, args=(self._thread_event,)).start()
-
         # Generate a random id
         self._id = str(uuid.uuid4())
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
+
+        self._commands_queue = PriorityQueue()
+        self._thread_event = Event()
+        self._thread = Thread(target=self._thread_handle_messages, args=(self._thread_event,)).start()
 
     def stop_handle_message_thread(self):
         # Set the event to stop the thread
@@ -58,11 +63,11 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
 
     def _route_message(self, command: IBotCommand):
         if isinstance(command, BotMoveCommand):
-            ...
+            destination = self.move()
+            ConsumerManager().websocket.send_message(BotMoveMessage(self.id, destination['x'], destination['z']))
         if isinstance(command, BotShootCommand):
-            print(f"{self.id} shooting at {command.value}")
-            self.shoot(command.value)
-            ConsumerManager().websocket.send_message(BotShootMessage(self.id))
+            target = self.shoot(command.value)
+            ConsumerManager().websocket.send_message(BotShootMessage(self.id, target))
         if isinstance(command, BotHurtCommand):
             self.hurt(command.value)
             ConsumerManager().stomp.send_message(BotHealthStatusMessage(self.id, self.health))
@@ -82,5 +87,19 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
         self.z = z
         self.ry = ry
 
-    def shoot(self, angle: float):
-        pass
+    def shoot(self, angle: float) -> Target:
+        print(f"{self.id} shooting at {angle}")
+        r = random.Random(x=self.id + str(angle))
+        x = r.randint(0, 20)
+        z = r.randint(0, 20)
+        print(f"Impact at {x};{z}")
+        target = Target(x, z)
+        return target
+
+    def move(self) -> dict:
+        r = random.Random(x=self.id)
+        x = r.randint(0, 20)
+        z = r.randint(0, 20)
+        print(f"{self.id} moving at {x};{z}")
+        return {'x': x, 'z': z}
+

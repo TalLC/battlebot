@@ -7,12 +7,15 @@ class IBotMessage(IWebsocketMessage):
     def bot_id(self) -> str:
         return self._bot_id
 
-    def __init__(self, bot_id: str):
-        super().__init__()
+    def __init__(self, msg_type: str, bot_id: str):
+        super().__init__(msg_type)
         self._bot_id = bot_id
 
     def __add__(self, other):
         raise NotImplementedError()
 
     def json(self) -> dict:
-        raise NotImplementedError()
+        return {
+            'msg_type': self.msg_type,
+            'bot_id': self.bot_id
+        }
