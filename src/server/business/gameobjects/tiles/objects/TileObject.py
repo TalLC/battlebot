@@ -12,3 +12,6 @@ class TileObject(OrientedGameObject, IDestructible, ABC):
         self._HEALTH_MAX = health
         self._HEALTH = self._HEALTH_MAX
         self._HAS_COLLISION = has_collision
+
+    def __str__(self):
+        return f"{self.name}"
