@@ -7,10 +7,12 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from business.gameobjects.entity.bots.commands.BotShootCommand import BotShootCommand
 from business.gameobjects.entity.bots.commands.BotHurtCommand import BotHurtCommand
 from business.gameobjects.entity.bots.commands.BotHealCommand import BotHealCommand
 from business.ClientConnection import ClientConnection
 from consumer.ConsumerManager import ConsumerManager
+from consumer.webservices.messages.websocket.BotShootMessage import BotShootMessage
 
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 
@@ -57,6 +59,10 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
     def _route_message(self, command: IBotCommand):
         if isinstance(command, BotMoveCommand):
             ...
+        if isinstance(command, BotShootCommand):
+            print(f"{self.id} shooting at {command.value}")
+            self.shoot(command.value)
+            ConsumerManager().websocket.send_message(BotShootMessage(self.id))
         if isinstance(command, BotHurtCommand):
             self.hurt(command.value)
             ConsumerManager().stomp.send_message(BotHealthStatusMessage(self.id, self.health))
@@ -75,3 +81,6 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
         self.x = x
         self.z = z
         self.ry = ry
+
+    def shoot(self, angle: float):
+        pass

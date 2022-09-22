@@ -4,6 +4,7 @@ from common.ErrorCode import *
 from common.config import CONFIG_REST
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
+from business.gameobjects.entity.bots.commands.BotShootCommand import BotShootCommand
 from consumer.brokers.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
 from consumer.brokers.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
 from provider.security.NetworkSecurity import NetworkSecurity
@@ -286,6 +287,9 @@ class RestProvider:
 
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Sending shoot command to the bot
+            bot.add_message_to_queue(BotShootCommand(value=model.angle))
 
             return {"status": "ok", "message": f"Fired at {model.angle}°"}
 

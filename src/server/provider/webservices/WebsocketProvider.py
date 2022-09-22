@@ -47,6 +47,7 @@ class WebsocketProvider:
                 try:
                     while not client_queue.empty():
                         data_send = client_queue.get()
+                        print(data_send.json())
                         await websocket.send_json(data_send.json())
                     await asyncio.sleep(0.1)
                 except ConnectionClosedOK:
