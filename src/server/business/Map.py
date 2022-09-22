@@ -108,7 +108,7 @@ class Map(metaclass=SingletonABCMeta):
 
 if __name__ == '__main__':
     mymap = Map()
-    mymap.initialize('empty_9_9')
+    mymap.initialize('empty_3_3')
     print(mymap.infos)
     for r in mymap.matrix:
         for c in r:

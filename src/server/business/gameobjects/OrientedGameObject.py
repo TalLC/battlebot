@@ -6,6 +6,6 @@ from business.gameobjects.GameObject import GameObject
 
 
 class OrientedGameObject(GameObject):
-    def __init__(self, name: str = 'oriented_game_object', ry: float = 0.0, x: int = 0, z: int = 0):
+    def __init__(self, name: str = 'oriented_game_object', ry: float = 0.0, x: float = 0.0, z: float = 0.0):
         super().__init__(name, x, z)
-        self.heading = ry
+        self.ry = ry
