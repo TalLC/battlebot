@@ -38,8 +38,8 @@ class BotUpdateMessage(IBotMessage):
 
     def json(self) -> dict:
         sent_json = {}
-        sent_json |= {"x": self.x} if self.x else None
-        sent_json |= {"z": self.z} if self.z else None
-        sent_json |= {"ry": self.ry} if self.ry else None
+        sent_json |= {"x": self.x} if self.x else dict()
+        sent_json |= {"z": self.z} if self.z else dict()
+        sent_json |= {"ry": self.ry} if self.ry else dict()
         sent_json |= {"hit": self.action.value}
         return sent_json
