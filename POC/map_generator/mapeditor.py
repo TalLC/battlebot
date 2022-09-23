@@ -12,24 +12,6 @@ https://github.com/formazione/timecrystals
 Adapté en vitesse pour générer les JSON des terrains du battlebot.
 """
 
-# VARS
-MAP_NAME: str
-COLS: int
-ROWS: int
-
-FPS = 60
-# define colours
-GREEN = (144, 201, 120)
-WHITE = (255, 255, 255)
-RED = (200, 25, 25)
-
-# game window
-TILE_SIZE = 40
-SCREEN_WIDTH = COLS * TILE_SIZE
-SCREEN_HEIGHT = ROWS * TILE_SIZE
-LOWER_MARGIN = 150
-SIDE_MARGIN = 500
-
 
 def editor():
 
@@ -139,11 +121,14 @@ def editor():
 
     pygame.init()
 
+    width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
+    print(f"w : {width} h : {height}")
+
     clock = pygame.time.Clock()
     level = 0
     current_tile = 0
 
-    screen = pygame.display.set_mode((SCREEN_WIDTH + SIDE_MARGIN, SCREEN_HEIGHT + LOWER_MARGIN))
+    screen = pygame.display.set_mode((SCREEN_WIDTH + SIDE_MARGIN, SCREEN_HEIGHT))
     pygame.display.set_caption('Level Editor')
 
     # store tiles in a list
@@ -168,17 +153,15 @@ def editor():
         world_data[ROWS - 1][tile] = 0
 
     # create buttons
-    save_button = button.Button(SCREEN_WIDTH + (SIDE_MARGIN // 2), SCREEN_HEIGHT + LOWER_MARGIN - 50, save_img, 1)
-    load_button = button.Button(SCREEN_WIDTH + (SIDE_MARGIN // 2), SCREEN_HEIGHT + LOWER_MARGIN - 125, load_img, 1)
     # make a button list
     button_list = []
     button_col = 0
     button_row = 0
     for i in range(len(img_list)):
-        tile_button = button.Button(SCREEN_WIDTH + ((TILE_SIZE+20) * button_col) + 20, (TILE_SIZE+20) * button_row + 20, img_list[i], 1)
+        tile_button = button.Button(SCREEN_WIDTH + ((TILE_SIZE+20) * button_col) + TILE_SIZE, (TILE_SIZE+20) * button_row + TILE_SIZE, img_list[i], 1)
         button_list.append(tile_button)
         button_col += 1
-        if button_col == 6:
+        if button_col == 3:
             button_row += 1
             button_col = 0
 
@@ -190,13 +173,16 @@ def editor():
         draw_bg()
         draw_grid()
         draw_world()
+        # draw tile panel and tiles
+        pygame.draw.rect(screen, GREEN, (SCREEN_WIDTH, 0, SIDE_MARGIN, SCREEN_HEIGHT))
+
+        save_button = button.Button(SCREEN_WIDTH + (SIDE_MARGIN/2), SCREEN_HEIGHT - 150, save_img, 1)
+        load_button = button.Button(SCREEN_WIDTH + (SIDE_MARGIN/2), SCREEN_HEIGHT - 100, load_img, 1)
 
         # save and load data
         save() if save_button.draw(screen) else None
         load() if load_button.draw(screen) else None
 
-        # draw tile panel and tiles
-        pygame.draw.rect(screen, GREEN, (SCREEN_WIDTH, 0, SIDE_MARGIN, SCREEN_HEIGHT))
 
         # choose a tile
         button_count = 0
@@ -250,7 +236,7 @@ def param():
 
     Button(
         param_w,
-        text="Register Player",
+        text="Créer map",
         padx=10,
         pady=5,
         command=click
@@ -260,6 +246,29 @@ def param():
 
 
 if __name__ == '__main__':
+    # VARS
+    MAP_NAME: str
+    COLS: int
+    ROWS: int
+
     param()
-    print("coucou")
+
+    FPS = 60
+    # define colours
+    GREEN = (144, 201, 120)
+    WHITE = (255, 255, 255)
+    RED = (200, 25, 25)
+
+    # game window
+    TILE_SIZE = 40
+    SCREEN_WIDTH = COLS * TILE_SIZE
+    SCREEN_HEIGHT = ROWS * TILE_SIZE
+
+    while SCREEN_HEIGHT > 1000 or SCREEN_WIDTH > 2000:
+        TILE_SIZE -= 1
+        SCREEN_HEIGHT = ROWS * TILE_SIZE
+        SCREEN_WIDTH = COLS * TILE_SIZE
+
+    SIDE_MARGIN = TILE_SIZE * 8
+
     editor()
