@@ -29,7 +29,7 @@ class MapCreateMessage(IWebsocketMessage):
     def json(self):
         return {
             'msg_type': self.msg_type,
-            'map_id': self.map_id,
+            'id': self.map_id,
             'height': self.height,
             'width': self.width,
             'tiles': self.tiles
