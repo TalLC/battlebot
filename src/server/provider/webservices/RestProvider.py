@@ -23,7 +23,7 @@ from provider.webservices.rest.models.BotsIdActionShootModel import BotsIdAction
 from provider.webservices.rest.models.BotsIdActionTurnModel import BotsIdActionTurnModel
 from provider.webservices.rest.models.BotsIdActionMoveModel import BotsIdActionMoveModel
 from provider.webservices.rest.models.BotsIdActionShieldRaiseModel import BotsIdActionShieldRaiseModel
-
+from provider.webservices.rest.models.AdminActionSelectMapModel import AdminActionSelectMapModel
 
 class RestProvider:
 
@@ -36,6 +36,7 @@ class RestProvider:
         self.__admin_action_ban()
         self.__admin_action_unban()
         self.__admin_game_action_start()
+        self.__admin_game_action_select_map()
         self.__admin_display_clients_action_list()
         self.__admin_display_clients_action_get_by_id()
         self.__admin_display_clients_action_get_by_token()
@@ -95,6 +96,24 @@ class RestProvider:
 
             GameManager().start_game()
             return {'status': 'ok', 'message': 'Game is started'}
+
+    def __admin_game_action_select_map(self):
+        """
+        Select the map.
+        """
+        @self.__app.patch("/game/action/select_map")
+        @NetworkSecurityDecorators.rest_ban_check
+        async def action(model: AdminActionSelectMapModel, _: Request):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
+            GameManager().map.initialize(map_id=model.map_name)
+            return {'status': 'ok', 'message': 'Map is loaded.'}
 
     def __display_action_ready(self):
         """
