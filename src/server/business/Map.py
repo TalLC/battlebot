@@ -11,7 +11,7 @@ def list_save_map() -> list:
     """
         Liste les fichiers JSON (donc les maps) stockées.
     """
-    maps_dir = Path('../data/maps')
+    maps_dir = Path('data', 'maps')
     maps_list = []
 
     for save_map in maps_dir.iterdir():
@@ -49,9 +49,15 @@ class Map(metaclass=SingletonABCMeta):
     def matrix(self):
         return self._matrix
 
+    @property
+    def data(self):
+        return self._data
+
     def __init__(self):
         self._data = []
         self._matrix = []
+
+        self.initialize('empty_9_9')
 
     @staticmethod
     def does_map_exists(map_id: str) -> bool:
@@ -75,7 +81,7 @@ class Map(metaclass=SingletonABCMeta):
         :param map_id: identifiant de la map à charger
         """
         if self.does_map_exists(map_id=map_id):
-            save_map = json.loads(Path(f'../data/maps/{map_id}.json').read_text())
+            save_map = json.loads(Path('data', 'maps', f'{map_id}.json').read_text())
 
             self._map_id = map_id
             self._height = save_map['height']
