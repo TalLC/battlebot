@@ -61,7 +61,7 @@ BOT_DOES_NOT_EXISTS = ErrorCode(name='BOT_DOES_NOT_EXISTS', internal_code=0x0000
 
 # Display errors
 DISPLAY_CLIENT_ID_DOES_NOT_EXISTS = ErrorCode(name='DISPLAY_CLIENT_ID_DOES_NOT_EXISTS', internal_code=0x00000401,
-                                              http_code=500, label="No display client found for this id")
+                                              http_code=404, label="No display client found for this id")
 DISPLAY_BAD_TOKEN = ErrorCode(name='DISPLAY_BAD_TOKEN', internal_code=0x00000402, http_code=500,
                               label="The token is not valid")
 
@@ -72,6 +72,10 @@ ADMIN_BAD_PASSWORD = ErrorCode(name='ADMIN_BAD_PASSWORD', internal_code=0x000005
 # Game errors
 GAME_STARTING_FAILED = ErrorCode(name='GAME_STARTING_FAILED', internal_code=0x00000601, http_code=500,
                                  label="Unable to start the game")
+GAME_NOT_STARTED = ErrorCode(name='GAME_NOT_STARTED', internal_code=0x00000602, http_code=500,
+                             label="The game is not started yet")
+GAME_ALREADY_STARTED = ErrorCode(name='GAME_ALREADY_STARTED', internal_code=0x00000603, http_code=500,
+                                 label="The game is already started")
 
 # Network Errors
 NETWORK_BANNED_IP_TEMP = ErrorCode(name='NETWORK_BANNED_IP_TEMP', internal_code=0x00000701, http_code=401,

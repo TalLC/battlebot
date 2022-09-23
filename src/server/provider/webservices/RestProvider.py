@@ -4,6 +4,8 @@ from common.ErrorCode import *
 from common.config import CONFIG_REST
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
+from business.gameobjects.entity.bots.commands.BotShootCommand import BotShootCommand
+from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
 from consumer.brokers.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
 from consumer.brokers.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
 from provider.security.NetworkSecurity import NetworkSecurity
@@ -21,7 +23,7 @@ from provider.webservices.rest.models.BotsIdActionShootModel import BotsIdAction
 from provider.webservices.rest.models.BotsIdActionTurnModel import BotsIdActionTurnModel
 from provider.webservices.rest.models.BotsIdActionMoveModel import BotsIdActionMoveModel
 from provider.webservices.rest.models.BotsIdActionShieldRaiseModel import BotsIdActionShieldRaiseModel
-
+from provider.webservices.rest.models.AdminActionSelectMapModel import AdminActionSelectMapModel
 
 class RestProvider:
 
@@ -34,6 +36,7 @@ class RestProvider:
         self.__admin_action_ban()
         self.__admin_action_unban()
         self.__admin_game_action_start()
+        self.__admin_game_action_select_map()
         self.__admin_display_clients_action_list()
         self.__admin_display_clients_action_get_by_id()
         self.__admin_display_clients_action_get_by_token()
@@ -87,7 +90,30 @@ class RestProvider:
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
-            pass
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
+            GameManager().start_game()
+            return {'status': 'ok', 'message': 'Game is started'}
+
+    def __admin_game_action_select_map(self):
+        """
+        Select the map.
+        """
+        @self.__app.patch("/game/action/select_map")
+        @NetworkSecurityDecorators.rest_ban_check
+        async def action(model: AdminActionSelectMapModel, _: Request):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
+            GameManager().map.initialize(map_id=model.map_name)
+            return {'status': 'ok', 'message': 'Map is loaded.'}
 
     def __display_action_ready(self):
         """
@@ -106,6 +132,8 @@ class RestProvider:
 
             # Setting client to Ready
             client.set_ready()
+
+            return {'status': 'ok', 'message': 'Tokens are matching'}
 
     def __admin_display_clients_action_list(self):
         """
@@ -173,6 +201,11 @@ class RestProvider:
         @self.__app.post("/bots/action/register")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(model: BotsActionRegisterModel, _: Request):
+
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
             bot_type = model.bot_type.lower()
 
             # Does team exists?
@@ -200,6 +233,10 @@ class RestProvider:
         async def action(bot_id: str, _: Request):
             logging.info(f"Bot {bot_id} is requesting a connection")
 
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -226,6 +263,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/check_connection")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionCheckConnectionModel, _: Request):
+
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -254,9 +296,20 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/shoot")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionShootModel, _: Request):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
+
+            # Fetching corresponding Bot
+            bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Sending shoot command to the bot
+            bot.add_message_to_queue(BotShootCommand(value=model.angle))
 
             return {"status": "ok", "message": f"Fired at {model.angle}°"}
 
@@ -267,6 +320,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/turn")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionTurnModel, _: Request):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
@@ -283,9 +341,20 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/move")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionMoveModel, _: Request):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
+
+            # Fetching corresponding Bot
+            bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Sending shoot command to the bot
+            bot.add_message_to_queue(BotMoveCommand())
 
             if model.action.lower() == 'start':
                 return {"status": "ok", "message": "Bot is starting to move"}
@@ -299,6 +368,11 @@ class RestProvider:
         @self.__app.patch("/bots/{bot_id}/action/shield_raise")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionShieldRaiseModel, _: Request):
+
+            # Check if the game is not started
+            if not GameManager().is_started:
+                ErrorCode.throw(GAME_NOT_STARTED)
+
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)

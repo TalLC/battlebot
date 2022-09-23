@@ -11,7 +11,14 @@ class IMapMessage(IWebsocketMessage):
     def z(self) -> int:
         return self._z
 
-    def __init__(self, x: int, z: int):
-        super().__init__(x=x, z=z)
+    def __init__(self, msg_type: str, x: int, z: int):
+        super().__init__(msg_type=msg_type)
         self._x = x
         self._z = z
+
+    def json(self) -> dict:
+        return {
+            'msg_type': self.msg_type,
+            'x': self.x,
+            'z': self.z
+        }

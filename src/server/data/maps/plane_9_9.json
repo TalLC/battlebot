@@ -29,7 +29,7 @@
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "tree_small",
       "x": 0,
       "z": 4
     },
@@ -281,7 +281,7 @@
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "tree_small",
       "x": 5,
       "z": 1
     },
@@ -353,7 +353,7 @@
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "wall_plain",
       "x": 6,
       "z": 4
     },
@@ -407,7 +407,7 @@
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "wall_plain",
       "x": 7,
       "z": 4
     },
@@ -461,25 +461,25 @@
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "wall_plain",
       "x": 8,
       "z": 4
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "wall_plain",
       "x": 8,
       "z": 5
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "wall_plain",
       "x": 8,
       "z": 6
     },
     {
       "tile": "ground",
-      "tile_object": "air",
+      "tile_object": "wall_plain",
       "x": 8,
       "z": 7
     },

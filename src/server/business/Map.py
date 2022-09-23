@@ -9,9 +9,9 @@ from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFacto
 
 def list_save_map() -> list:
     """
-        Liste les fichiers JSON (donc les maps) stockées.
+    Liste les fichiers JSON (donc les maps) stockées.
     """
-    maps_dir = Path('../data/maps')
+    maps_dir = Path('data', 'maps')
     maps_list = []
 
     for save_map in maps_dir.iterdir():
@@ -22,41 +22,51 @@ def list_save_map() -> list:
 
 
 class Map(metaclass=SingletonABCMeta):
-    _map_id: str
+    _id: str
     _height: int
     _width: int
-    _data: list
+    _tiles: list
     _matrix: list
 
     @property
     def infos(self):
         return {
-                "id": self._map_id,
-                "height": self._height,
-                "width": self._width,
-                "data": self._data
-            }
+            "id": self._id,
+            "height": self._height,
+            "width": self._width,
+            "data": self._tiles
+        }
 
     @property
-    def height(self):
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def height(self) -> int:
         return self._height
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self._width
 
     @property
-    def matrix(self):
+    def matrix(self) -> [[]]:
         return self._matrix
 
+    @property
+    def tiles(self) -> list:
+        return self._tiles
+
     def __init__(self):
-        self._data = []
+        self._tiles = []
         self._matrix = []
+
+        self.initialize('empty_9_9')
 
     @staticmethod
     def does_map_exists(map_id: str) -> bool:
         """
-            Vérifie qu'une map correspond à l'id donné.
+        Vérifie qu'une map correspond à l'id donné.
 
         :param map_id: identifiant à tester
         """
@@ -70,17 +80,17 @@ class Map(metaclass=SingletonABCMeta):
 
     def initialize(self, map_id: str) -> None:
         """
-            Charge les données du terrain depuis le json de sauvegarde.
+        Charge les données du terrain depuis le json de sauvegarde.
 
         :param map_id: identifiant de la map à charger
         """
         if self.does_map_exists(map_id=map_id):
-            save_map = json.loads(Path(f'../data/maps/{map_id}.json').read_text())
+            save_map = json.loads(Path('data', 'maps', f'{map_id}.json').read_text())
 
-            self._map_id = map_id
+            self._id = map_id
             self._height = save_map['height']
             self._width = save_map['width']
-            self._data = save_map['data']
+            self._tiles = save_map['tiles']
             self._matrix = self.load()
 
         else:
@@ -88,9 +98,9 @@ class Map(metaclass=SingletonABCMeta):
 
     def load(self) -> list:
         """
-            Génère la matrice du terrain.
+        Génère la matrice du terrain.
         """
-        # On créé un tableau vide aux dimensions de la map
+        # On crée un tableau vide aux dimensions de la map
         mat = []
         for h in range(self._height):
             current_line = []
@@ -98,11 +108,12 @@ class Map(metaclass=SingletonABCMeta):
                 current_line.append(None)
             mat.append(current_line)
 
-        # On créé un obj Tile pour chaque cellule de la map
-        for d in self._data:
-            mat[d['x']][d['z']] = TileFactory.create_tile(tile_type=d['tile'], x=d['x'], z=d['z'],
-                                                          tile_object=TileObjectFactory.create_tileobject(
-                                                              d['tile_object'], d['x'], d['z']))
+        # On crée un obj Tile pour chaque cellule de la map
+        for d in self._tiles:
+            mat[d['x']][d['z']] = TileFactory.create_tile(
+                tile_type=d['tile'], x=d['x'], z=d['z'], tile_object=TileObjectFactory.create_tileobject(
+                    d['tile_object'], d['x'], d['z'])
+            )
         return mat
 
 
