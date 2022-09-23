@@ -31,6 +31,9 @@ const scene = new THREE.Scene();
 const color_bg = new THREE.Color( 'skyblue' );
 scene.background = color_bg;
 
+// Model loader
+const model_loader = new GLTFLoader();
+
 // Caméra
 //const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
@@ -39,7 +42,7 @@ let height = window.innerHeight;
 
 const camera = new THREE.OrthographicCamera( width / - 50, width / 50, height / 50, height / - 50, -10000, 100000 );
 camera.position.set(2, 2, 2);
-camera.lookAt(16, 0, 16);
+camera.lookAt(0, 0, 0);
 
 
 // Render
@@ -98,26 +101,18 @@ function create_object(name, x, y, z){
     );
     return(loaded_object);
 }
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-const loader = new GLTFLoader();
 
 // this utility function allows you to use any three.js
 // loader with promises and async/await
 function modelLoader(url) {
   return new Promise((resolve, reject) => {
-    loader.load(url, data=> resolve(data), null, reject);
+    model_loader.load(url, data=> resolve(data), null, reject);
   });
 }
 
 async function create_bot(x, z) {
     const gltfData = await modelLoader('./static/models/robot_1.glb')
     
-    console.log(gltfData);
-
     scene.add(gltfData.scene);
  
     return gltfData.scene;
