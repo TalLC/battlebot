@@ -9,6 +9,8 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 let ws = new WebSocket("ws://localhost:8000/ws");
 var BOTS = new Object();
 var obj_list = {
+    'tree': 'tree.glb',
+    'rock': 'rock.glb',
     'tree_small':'tree_small.glb',
     'wall_plain':'wall_plain.glb',
     'ground':'ground.glb',
@@ -25,17 +27,19 @@ const EnumStatus =
 var map_list = [];
 
 // Scene
-const scene = new THREE.Scene()
+const scene = new THREE.Scene();
+const color_bg = new THREE.Color( 'skyblue' );
+scene.background = color_bg;
 
 // Caméra
-// const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+//const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 let width = window.innerWidth;
 let height = window.innerHeight;
 
 const camera = new THREE.OrthographicCamera( width / - 50, width / 50, height / 50, height / - 50, -10000, 100000 );
 camera.position.set(2, 2, 2);
-camera.lookAt(0, 0, 0);
+camera.lookAt(16, 0, 16);
 
 
 // Render
@@ -45,6 +49,7 @@ document.body.appendChild( renderer.domElement );
 
 // Controls
 const controls = new OrbitControls( camera, renderer.domElement );
+
 controls.update();
 
 // Light
@@ -303,7 +308,11 @@ ws.onmessage = function(event)
     else if (update.msg_type == 'MapUpdateMessage')
         update_map(update)
     else if (update.msg_type == 'MapCreateMessage')
+        // create map
         create_map(update)
+        //update camera
+        camera.lookAt(update.height, 0, update.width);
+        controls.target.set(update.height, 0, update.width)
 };
 
 function animate() {
