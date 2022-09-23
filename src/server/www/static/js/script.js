@@ -11,8 +11,8 @@ var bot_obj = {};
 var obj_list = {
     'tree_small':'tree_small.glb',
     'wall_plain':'wall_plain.glb',
-    'sol':'sol.glb',
-    'eau':'eau.glb'
+    'ground':'ground.glb',
+    'water':'water.glb'
 };
 const EnumStatus = 
 {
@@ -22,6 +22,7 @@ const EnumStatus =
     SHIELD_SHOW : 4,
     SHIELD_HIDE : 8
 }
+var map_list = [];
 
 // Scene
 const scene = new THREE.Scene()
@@ -56,23 +57,29 @@ directionalLight.position.z = -10;
 scene.add( directionalLight );
 
 function create_object(name, x, y, z){
+    console.log(name)
+    if (name == 'air')
+        return(null)
+
     // #### Load GLTF mesh file ####
-    const map = new GLTFLoader()
+    const loader = new GLTFLoader()
     console.log(name)
 
     // Loads gltf file
-    var object = './static/models/' + obj_list[name]
+    var model_path = './static/models/' + obj_list[name]
+    var loaded_object = null
 
-    map.load(
+    loader.load(
         // resource URL
-        object,
+        model_path,
 
         // called when resource is loaded
-        ( map ) => {
-            map.scene.position.x = x;
-            map.scene.position.y = y;
-            map.scene.position.z = z;
-            scene.add( map.scene );
+        ( map_object ) => {
+            map_object.scene.position.x = x;
+            map_object.scene.position.y = y;
+            map_object.scene.position.z = z;
+            loaded_object = map_object;
+            scene.add( map_object.scene );
         },
 
         // called when loading is in progresses
@@ -85,6 +92,7 @@ function create_object(name, x, y, z){
             console.log( 'An error happened' );
         }
     );
+    return(loaded_object);
 }
 
 function create_bot(id_bot, x, z){
@@ -99,7 +107,6 @@ function create_bot(id_bot, x, z){
         ( bot ) => {
             bot.scene.position.x = x;
             bot.scene.position.z = z;
-            bot_obj[id_bot] = bot.scene;
             scene.add(bot.scene);
         },
 
@@ -234,22 +241,50 @@ function update_bot(bot, update){
 };
 
 function update_map(update){
-    
+    if (map_list[update.x][update.z])
+    {
+        delete(update.tile_object)
+        create_object(update.tile_object, update.x * 2, 1, update.z * 2)
+    }
+    else
+    {
+        console.log(update)
+        create_object(update.tile, update.x * 2, 0, update.z * 2)
+        if (update.tile_object != air)
+            create_object(update.tile_object, update.x * 2, 1, update.z * 2)
+    }
 };
+
+function create_map(map_data){
+    for (var h = 0; h < map_data.height; h++)
+    {
+        var current_line = [];
+        for (var w = 0; w < map_data.width; w++)
+        {
+            for (var tile in map_data['tiles'])
+            {
+                tile = map_data['tiles'][tile]
+                if (h == tile['x'] && w == tile['z'])
+                    current_line.push({'tile': create_object(tile['tile'], h * 2, 0, w * 2), 'object': create_object(tile['tile_object'], h * 2, 1, w * 2)});
+            };
+        };
+        map_list.push(current_line);
+    };
+}
 
 ws.onmessage = function(event)
 {
-    var list_event = JSON.parse(event.data)
-    for (update in list_event)
+    var update = JSON.parse(event.data);
+    console.log(update)
+    if (update.msg_type == 'BotUpdateMessage')
     {
-        if (update.type == 'BotUpdateMessage') 
-        {
-            update_bot(bot_obj[update.bot_id], update)
-
-        }
-        else if (update.type == 'MapUpdateMessage')
-            update_map(update)
+        console.log("update bot")
+        // update_bot(bot_obj[update.bot_id], update)
     }
+    else if (update.msg_type == 'MapUpdateMessage')
+        update_map(update)
+    else if (update.msg_type == 'MapCreateMessage')
+        create_map(update)
 };
 
 function animate() {
