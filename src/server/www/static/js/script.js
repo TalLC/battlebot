@@ -64,6 +64,12 @@ directionalLight.position.x = -10;
 directionalLight.position.z = -10;
 scene.add( directionalLight );
 
+
+// Helpers
+const axesHelper = new THREE.AxesHelper( 50 );
+scene.add( axesHelper );
+
+
 function create_object(name, x, y, z){
 
     if (name == 'air')
@@ -112,7 +118,7 @@ function modelLoader(url) {
 
 async function create_bot() {
     const gltfData = await modelLoader('./static/models/robot_1.glb')
-    
+    gltfData.scene.position.y = -0.5
     scene.add(gltfData.scene);
  
     return gltfData.scene;
@@ -243,12 +249,12 @@ async function update_bot(update) {
     var bot = BOTS[update.bot_id]
     console.log(bot)
 
-    if (update.y){ bot.rotation.y = update.y };
-    if (update.x){ bot.position.x = update.x * 2 };
-    if (update.z){ bot.position.z = update.z * 2 };
+    if (update.ry){ bot.rotation.y = (-1 * update.ry)};
+    if (update.x){ bot.position.x = update.x };
+    if (update.z){ bot.position.z = update.z };
     if (update.action & EnumStatus.SHOOTING) {
         for (var target in update.targets) {
-            create_shoot(bot.position.x, bot.position.z, update.targets[target].x * 2, update.targets[target].z * 2)
+            create_shoot(bot.position.x, bot.position.z, update.targets[target].x, update.targets[target].z)
         }
     };
     if (update.action & EnumStatus.SHIELD_HIDE)
@@ -266,13 +272,13 @@ function update_map(update){
     if (map_list[update.x][update.z])
     {
         delete(update.tile_object)
-        create_object(update.tile_object, update.x * 2, 1, update.z * 2)
+        create_object(update.tile_object, update.x, 1, update.z)
     }
     else
     {
-        create_object(update.tile, update.x * 2, 0, update.z * 2)
+        create_object(update.tile, update.x, 0, update.z)
         if (update.tile_object != air)
-            create_object(update.tile_object, update.x * 2, 1, update.z * 2)
+            create_object(update.tile_object, update.x, 1, update.z)
     }
 };
 
@@ -286,7 +292,7 @@ function create_map(map_data){
             {
                 tile = map_data['tiles'][tile]
                 if (h == tile['x'] && w == tile['z'])
-                    current_line.push({'tile': create_object(tile['tile'], h * 2, 0, w * 2), 'object': create_object(tile['tile_object'], h * 2, 1, w * 2)});
+                    current_line.push({'tile': create_object(tile['tile'], h, 0, w), 'object': create_object(tile['tile_object'], h, 0.5, w)});
             };
         };
         map_list.push(current_line);

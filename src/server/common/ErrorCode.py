@@ -58,6 +58,8 @@ TEAM_IS_FULL = ErrorCode(name='TEAM_DOES_NOT_EXISTS', internal_code=0x00000202, 
 # Bot errors
 BOT_DOES_NOT_EXISTS = ErrorCode(name='BOT_DOES_NOT_EXISTS', internal_code=0x00000301, http_code=404,
                                 label="The bot does not exist")
+BOT_BAD_COMMAND_ARGS = ErrorCode(name='BOT_BAD_COMMAND_ARGS', internal_code=0x00000302, http_code=422,
+                                 label="Bad bot command argument(s)")
 
 # Display errors
 DISPLAY_CLIENT_ID_DOES_NOT_EXISTS = ErrorCode(name='DISPLAY_CLIENT_ID_DOES_NOT_EXISTS', internal_code=0x00000401,

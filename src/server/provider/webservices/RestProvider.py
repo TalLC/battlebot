@@ -4,8 +4,9 @@ from common.ErrorCode import *
 from common.config import CONFIG_REST
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
-from business.gameobjects.entity.bots.commands.BotShootCommand import BotShootCommand
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
+from business.gameobjects.entity.bots.commands.BotShootCommand import BotShootCommand
 from consumer.brokers.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
 from consumer.brokers.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
 from provider.security.NetworkSecurity import NetworkSecurity
@@ -24,6 +25,7 @@ from provider.webservices.rest.models.BotsIdActionTurnModel import BotsIdActionT
 from provider.webservices.rest.models.BotsIdActionMoveModel import BotsIdActionMoveModel
 from provider.webservices.rest.models.BotsIdActionShieldRaiseModel import BotsIdActionShieldRaiseModel
 from provider.webservices.rest.models.AdminActionSelectMapModel import AdminActionSelectMapModel
+
 
 class RestProvider:
 
@@ -329,9 +331,15 @@ class RestProvider:
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
 
-            if model.direction.lower() in ["left", "right"]:
-                return {"status": "ok", "message": f"Bot is starting to turn {model.direction}"}
-            elif model.direction.lower() == 'stop':
+            # Fetching corresponding Bot
+            bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Sending shoot command to the bot
+            bot.add_message_to_queue(BotTurnCommand(value=model.action))
+
+            if model.action.lower() in ["left", "right"]:
+                return {"status": "ok", "message": f"Bot is starting to turn {model.action}"}
+            elif model.action.lower() == 'stop':
                 return {"status": "ok", "message": "Bot has stopped turning"}
 
     def __bots_id_action_move(self):
@@ -354,11 +362,11 @@ class RestProvider:
             bot = GameManager().bot_manager.get_bot(bot_id)
 
             # Sending shoot command to the bot
-            bot.add_message_to_queue(BotMoveCommand())
+            bot.add_message_to_queue(BotMoveCommand(value=model.action))
 
-            if model.action.lower() == 'start':
+            if model.action == 'start':
                 return {"status": "ok", "message": "Bot is starting to move"}
-            elif model.action.lower() == 'stop':
+            elif model.action == 'stop':
                 return {"status": "ok", "message": "Bot has stopped moving"}
 
     def __bots_id_action_shield_raise(self):
