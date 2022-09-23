@@ -2,7 +2,7 @@
   "name": "test_map",
   "width": 9,
   "height": 9,
-  "data": [
+  "tiles": [
     {
       "tile": "ground",
       "tile_object": "air",

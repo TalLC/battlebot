@@ -2,7 +2,7 @@
   "name": "map2",
   "width": 6,
   "height": 6,
-  "data": [
+  "tiles": [
     {
       "tile": "ground",
       "tile_object": "air",

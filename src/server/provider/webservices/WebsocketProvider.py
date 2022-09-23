@@ -1,9 +1,12 @@
 import asyncio
+import logging
 from queue import SimpleQueue
 from fastapi import FastAPI, WebSocket
 from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
+from consumer.webservices.messages.websocket.models.MapCreateMessage import MapCreateMessage
+from consumer.webservices.messages.websocket.models.MapUpdateMessage import MapUpdateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
@@ -25,15 +28,22 @@ class WebsocketProvider:
             client_queue = SimpleQueue()
             self.__webservices.add_ws_queue(client_queue)
 
-            display_client = GameManager().display_manager.create_client(host=websocket.client.host,
-                                                                         port=websocket.client.port,
-                                                                         websocket_headers=websocket.headers)
+            display_client = GameManager().display_manager.create_client(
+                host=websocket.client.host, port=websocket.client.port, websocket_headers=websocket.headers
+            )
             print(display_client)
 
             # while not GameManager().map.is_ready:
             #     await asyncio.sleep(1)
 
-            await websocket.send_json(GameManager().map.data)
+            # Todo: déporter la création de map pour permettre la modification de la map avant le début de partie
+            logging.debug(f"Sending map to {display_client.name}")
+
+            current_map = GameManager().map
+            map_create_message = MapCreateMessage(map_id=current_map.id, height=current_map.height,
+                                                  width=current_map.width, tiles=current_map.tiles)
+            await websocket.send_json(map_create_message.json())
+
             sent_bot = list()
             while not display_client.is_ready and not GameManager().is_started:
                 await asyncio.sleep(1)
