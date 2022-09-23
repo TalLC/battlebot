@@ -7,7 +7,7 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 //Websocket
 
 let ws = new WebSocket("ws://localhost:8000/ws");
-var bot_obj = {};
+var BOTS = new Object();
 var obj_list = {
     'tree_small':'tree_small.glb',
     'wall_plain':'wall_plain.glb',
@@ -57,13 +57,12 @@ directionalLight.position.z = -10;
 scene.add( directionalLight );
 
 function create_object(name, x, y, z){
-    console.log(name)
+
     if (name == 'air')
         return(null)
 
     // #### Load GLTF mesh file ####
     const loader = new GLTFLoader()
-    console.log(name)
 
     // Loads gltf file
     var model_path = './static/models/' + obj_list[name]
@@ -94,33 +93,75 @@ function create_object(name, x, y, z){
     );
     return(loaded_object);
 }
-
-function create_bot(id_bot, x, z){
-    const bot = new GLTFLoader()
-
-        // Loads gltf file
-    bot.load(
-	    // resource URL
-	    './static/models/robot_1.glb',
-
-        // called when resource is loaded
-        ( bot ) => {
-            bot.scene.position.x = x;
-            bot.scene.position.z = z;
-            scene.add(bot.scene);
-        },
-
-        // called when loading is in progresses
-        ( xhr ) => {
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        },
-
-        // called when loading has errors
-        ( error ) => {
-            console.log( 'An error happened' );
-        }
-    );
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+
+const loader = new GLTFLoader();
+
+// this utility function allows you to use any three.js
+// loader with promises and async/await
+function modelLoader(url) {
+  return new Promise((resolve, reject) => {
+    loader.load(url, data=> resolve(data), null, reject);
+  });
+}
+
+async function create_bot(x, z) {
+    const gltfData = await modelLoader('./static/models/robot_1.glb')
+    
+    console.log(gltfData);
+
+    scene.add(gltfData.scene);
+ 
+    return gltfData.scene;
+ }
+ 
+
+// async function create_bot(x, z) {
+//     var bot = null
+//     const loader = new GLTFLoader()
+
+
+//     loader.OnLoaded 
+
+//     const result = await loader.loadAsync('./static/models/robot_1.glb');
+//     console.log("result", result)
+
+//     // Loads gltf file
+//     loader.load(
+// 	    // resource URL
+// 	    './static/models/robot_1.glb',
+
+//         // called when resource is loaded
+//         ( bot_object ) => {
+//             bot_object.scene.position.x = x;
+//             bot_object.scene.position.z = z;
+//             bot = bot_object.scene
+//             scene.add(bot);
+//         },
+
+//         // called when loading is in progresses
+//         ( xhr ) => {
+//             console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+//         },
+
+//         // called when loading has errors
+//         ( error ) => {
+//             console.log( 'An error happened' );
+//         }
+//     );
+
+//     // while(bot == null) {
+//     //     console.log("sleep")
+        
+//     // }
+
+//     console.log(bot);
+
+//     return bot;
+// }
 
 function create_bot_shield(id_bot, x, z){
     const bot_shield = new GLTFLoader()
@@ -177,67 +218,48 @@ function create_bot_hit(id_bot, x, z){
 }
 
 function create_shoot(x_origin, z_origin, x_target, z_target){
-    const shoot = new GLTFLoader()
+    const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
 
-        // Loads gltf file
-    shoot.load(
-	    // resource URL
-	    './static/models/shoot.glb',
+    const points = [];
+    points.push( new THREE.Vector3( x_origin, 3, z_origin ) );
+    points.push( new THREE.Vector3( x_target, 3, z_target ) );
 
-        // called when resource is loaded
-        ( shoot ) => {
-            shoot.scene.position.x = x;
-            shoot.scene.position.z = z;
-            scene.add(shoot.scene);
-        },
-
-        // called when loading is in progresses
-        ( xhr ) => {
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        },
-
-        // called when loading has errors
-        ( error ) => {
-            console.log( 'An error happened' );
-        }
-    );
+    const geometry = new THREE.BufferGeometry().setFromPoints( points );
+    const line = new THREE.Line( geometry, material );
+    scene.add( line );
 }
 
 function delete_object(object){
     console.log("delete_object")
 }
 
-function update_bot(bot, update){
-    if (bot)
-    {
-        if (update.y){ bot.rotation.y = update.y };
-        if (update.x){ bot.position.x = update.x };
-        if (update.z){ bot.position.z = update.z };
-        if (update.action.HIT)
-        {
-            delete_object(update.id_bot);
-            create_bot_hit(update.id_bot, update.x, update.z)
-            wait(1)
-            delete_object(update.id_bot);
-            create_bot(update.id_bot, update.x, update.z)
-        };
-        if (update.target) 
-        {
-            for (target in update.target)
-            {
-                if (update.action.SHOOT){ create_shoot(bot.position.x, bot.position.z, target.x, target.z) };
-            };
-        };
-        if (update.action.SHIELD_HIDE)
-        { 
-            delete_object(update.id_bot);
-        };
-        if (update.action.SHIELD_SHOW)
-        {
-            create_bot_shield(update.id_bot, update.x, update.z)
+async function update_bot(update) {
 
-        };
+    console.log(update.bot_id)
+    if (!(update.bot_id in BOTS)) {
+        BOTS[update.bot_id] = await create_bot(update.x, update.z)
     }
+
+    var bot = BOTS[update.bot_id]
+    console.log(bot)
+
+    if (update.y){ bot.rotation.y = update.y };
+    if (update.x){ bot.position.x = update.x };
+    if (update.z){ bot.position.z = update.z };
+    if (update.action & EnumStatus.SHOOTING) {
+        for (var target in update.targets) {
+            create_shoot(bot.position.x, bot.position.z, target.x, target.z)
+        }
+    };
+    if (update.action & EnumStatus.SHIELD_HIDE)
+    { 
+        
+    };
+    if (update.action & EnumStatus.SHIELD_SHOW)
+    {
+        create_bot_shield(update.id_bot, update.x, update.z)
+    };
+
 };
 
 function update_map(update){
@@ -248,7 +270,6 @@ function update_map(update){
     }
     else
     {
-        console.log(update)
         create_object(update.tile, update.x * 2, 0, update.z * 2)
         if (update.tile_object != air)
             create_object(update.tile_object, update.x * 2, 1, update.z * 2)
@@ -275,11 +296,9 @@ function create_map(map_data){
 ws.onmessage = function(event)
 {
     var update = JSON.parse(event.data);
-    console.log(update)
-    if (update.msg_type == 'BotUpdateMessage')
-    {
-        console.log("update bot")
-        // update_bot(bot_obj[update.bot_id], update)
+
+    if (update.msg_type == 'BotUpdateMessage') {
+        update_bot(update)
     }
     else if (update.msg_type == 'MapUpdateMessage')
         update_map(update)

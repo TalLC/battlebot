@@ -89,7 +89,7 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
 
     def shoot(self, angle: float) -> Target:
         print(f"{self.id} shooting at {angle}")
-        r = random.Random(x=self.id + str(angle))
+        r = random.Random()
         x = r.randint(0, 20)
         z = r.randint(0, 20)
         print(f"Impact at {x};{z}")
@@ -97,7 +97,7 @@ class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
         return target
 
     def move(self) -> dict:
-        r = random.Random(x=self.id)
+        r = random.Random()
         x = r.randint(0, 20)
         z = r.randint(0, 20)
         print(f"{self.id} moving at {x};{z}")
