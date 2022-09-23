@@ -110,7 +110,7 @@ function modelLoader(url) {
   });
 }
 
-async function create_bot(x, z) {
+async function create_bot() {
     const gltfData = await modelLoader('./static/models/robot_1.glb')
     
     scene.add(gltfData.scene);
@@ -237,18 +237,18 @@ async function update_bot(update) {
 
     console.log(update.bot_id)
     if (!(update.bot_id in BOTS)) {
-        BOTS[update.bot_id] = await create_bot(update.x, update.z)
+        BOTS[update.bot_id] = await create_bot()
     }
 
     var bot = BOTS[update.bot_id]
     console.log(bot)
 
     if (update.y){ bot.rotation.y = update.y };
-    if (update.x){ bot.position.x = update.x };
-    if (update.z){ bot.position.z = update.z };
+    if (update.x){ bot.position.x = update.x * 2 };
+    if (update.z){ bot.position.z = update.z * 2 };
     if (update.action & EnumStatus.SHOOTING) {
         for (var target in update.targets) {
-            create_shoot(bot.position.x, bot.position.z, target.x, target.z)
+            create_shoot(bot.position.x, bot.position.z, update.targets[target].x * 2, update.targets[target].z * 2)
         }
     };
     if (update.action & EnumStatus.SHIELD_HIDE)
@@ -297,17 +297,21 @@ ws.onmessage = function(event)
 {
     var update = JSON.parse(event.data);
 
+    console.log("MESSAGE", update)
+
     if (update.msg_type == 'BotUpdateMessage') {
         update_bot(update)
     }
-    else if (update.msg_type == 'MapUpdateMessage')
+    else if (update.msg_type == 'MapUpdateMessage') {
         update_map(update)
-    else if (update.msg_type == 'MapCreateMessage')
+    }
+    else if (update.msg_type == 'MapCreateMessage') {
         // create map
         create_map(update)
         //update camera
         camera.lookAt(update.height, 0, update.width);
         controls.target.set(update.height, 0, update.width)
+    }
 };
 
 function animate() {
