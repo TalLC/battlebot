@@ -30,7 +30,7 @@ from consumer.brokers.messages.stomp.BotTurningStatusMessage import BotTurningSt
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 
 
-class Bot(OrientedGameObject, IMoving, IDestructible, ABC):
+class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
     @property
     def id(self):

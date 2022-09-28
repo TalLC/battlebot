@@ -1,5 +1,5 @@
 import uuid
-from business.gameobjects.entity.bots.Bot import Bot
+from business.gameobjects.entity.bots.models.BotModel import BotModel
 
 
 class Team:
@@ -36,7 +36,7 @@ class Team:
         else:
             self._id = str(uuid.uuid4())
 
-    def add_bot(self, bot: Bot) -> bool:
+    def add_bot(self, bot: BotModel) -> bool:
         """
         Add an existing bot to the team.
         """

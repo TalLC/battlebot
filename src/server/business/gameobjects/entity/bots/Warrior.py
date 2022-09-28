@@ -1,9 +1,9 @@
 import math
 
-from business.gameobjects.entity.bots.Bot import Bot
+from business.gameobjects.entity.bots.models.BotModel import BotModel
 
 
-class Warrior(Bot):
+class Warrior(BotModel):
     _role = "Warrior"
     _health_max: int = 100
     _moving_speed = 1.0
