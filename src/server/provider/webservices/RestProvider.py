@@ -311,7 +311,7 @@ class RestProvider:
             bot = GameManager().bot_manager.get_bot(bot_id)
 
             # Sending shoot command to the bot
-            bot.add_message_to_queue(BotShootCommand(value=model.angle))
+            bot.add_command_to_queue(BotShootCommand(value=model.angle))
 
             return {"status": "ok", "message": f"Fired at {model.angle}°"}
 
@@ -335,7 +335,7 @@ class RestProvider:
             bot = GameManager().bot_manager.get_bot(bot_id)
 
             # Sending shoot command to the bot
-            bot.add_message_to_queue(BotTurnCommand(value=model.action))
+            bot.add_command_to_queue(BotTurnCommand(value=model.action))
 
             if model.action.lower() in ["left", "right"]:
                 return {"status": "ok", "message": f"Bot is starting to turn {model.action}"}
@@ -362,7 +362,7 @@ class RestProvider:
             bot = GameManager().bot_manager.get_bot(bot_id)
 
             # Sending shoot command to the bot
-            bot.add_message_to_queue(BotMoveCommand(value=model.action))
+            bot.add_command_to_queue(BotMoveCommand(value=model.action))
 
             if model.action == 'start':
                 return {"status": "ok", "message": "Bot is starting to move"}
