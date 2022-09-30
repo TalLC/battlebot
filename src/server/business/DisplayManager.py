@@ -40,8 +40,8 @@ class DisplayManager(IDisplayManager):
                 return client
         return None
 
-    def get_clients(self) -> [DisplayClient]:
-        return list(self._DISPLAY_CLIENTS.values())
+    def get_clients(self) -> (DisplayClient,):
+        return tuple(self._DISPLAY_CLIENTS.values())
 
     def get_all_clients_jsons(self) -> list:
         data = list()

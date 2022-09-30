@@ -24,11 +24,11 @@ class BotManager(IBotManager):
         else:
             return None
 
-    def get_bots(self) -> list[BotModel]:
+    def get_bots(self) -> (BotModel,):
         """
         Get all bots.
         """
-        return list(self._BOTS.values())
+        return tuple(self._BOTS.values())
 
     def create_bot(self, bot_name, bot_type) -> BotModel:
         """

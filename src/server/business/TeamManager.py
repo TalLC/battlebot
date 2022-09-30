@@ -16,8 +16,8 @@ class TeamManager(ITeamManager):
         else:
             return None
 
-    def get_teams(self) -> [Team]:
-        return list(self._TEAMS.values())
+    def get_teams(self) -> (Team,):
+        return tuple(self._TEAMS.values())
 
     def create_team(self, size: int, name: str, color: str, team_id: str = None) -> str:
         t = Team(self, size, name, color, team_id)
