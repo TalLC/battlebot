@@ -249,7 +249,7 @@ async function update_bot(update) {
     var bot = BOTS[update.bot_id]
     console.log(bot)
 
-    if (update.ry){ bot.rotation.y = update.ry + Math.PI/2 };
+    if (update.ry){ bot.rotation.y = -1 * update.ry }; // + Math.PI/2
     if (update.x){ bot.position.x = update.x };
     if (update.z){ bot.position.z = update.z };
     if (update.action & EnumStatus.SHOOTING) {

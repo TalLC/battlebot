@@ -194,9 +194,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Using the direction to decide if we add or subtract radians
         if self.turn_direction == 'left':
-            self.ry += radians
-        elif self.turn_direction == 'right':
             self.ry -= radians
+        elif self.turn_direction == 'right':
+            self.ry += radians
 
         # We keep the value between its max and min
         if self.ry < min_rotation:
