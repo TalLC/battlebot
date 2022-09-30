@@ -1,10 +1,13 @@
+from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-
-from common.Singleton import SingletonABCMeta
+from typing import TYPE_CHECKING
 from business.gameobjects.tiles.TileFactory import TileFactory
 from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
+
+if TYPE_CHECKING:
+    from business.GameManager import GameManager
 
 
 def list_save_map() -> list:
@@ -21,7 +24,7 @@ def list_save_map() -> list:
     return maps_list
 
 
-class Map(metaclass=SingletonABCMeta):
+class Map:
     _id: str
     _height: int
     _width: int
@@ -57,7 +60,8 @@ class Map(metaclass=SingletonABCMeta):
     def tiles(self) -> list:
         return self._tiles
 
-    def __init__(self):
+    def __init__(self, game_object: GameManager):
+        self._game_object = game_object
         self._tiles = []
         self._matrix = []
 
@@ -118,7 +122,7 @@ class Map(metaclass=SingletonABCMeta):
 
 
 if __name__ == '__main__':
-    mymap = Map()
+    mymap = Map(GameManager())
     mymap.initialize('empty_3_3')
     print(mymap.infos)
     for r in mymap.matrix:

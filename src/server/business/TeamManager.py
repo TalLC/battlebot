@@ -20,6 +20,6 @@ class TeamManager(ITeamManager):
         return list(self._TEAMS.values())
 
     def create_team(self, size: int, name: str, color: str, team_id: str = None) -> str:
-        t = Team(size, name, color, team_id)
+        t = Team(self.game_manager, size, name, color, team_id)
         self._TEAMS[t.id] = t
         return t.id

@@ -1,8 +1,16 @@
+from __future__ import annotations
 from abc import ABC
-from business.gameobjects.entity.bots.Bot import Bot
+from typing import TYPE_CHECKING
+from business.gameobjects.entity.bots.models.BotModel import BotModel
+
+if TYPE_CHECKING:
+    from business.GameManager import GameManager
 
 
 class IBotManager(ABC):
+
+    def __init__(self, game_manager: GameManager):
+        self.game_manager = game_manager
 
     def does_bot_exists(self, bot_id):
         """
@@ -10,19 +18,19 @@ class IBotManager(ABC):
         """
         raise NotImplementedError()
 
-    def get_bot(self, bot_id) -> None | Bot:
+    def get_bot(self, bot_id) -> None | BotModel:
         """
         Get a bot by its id.
         """
         raise NotImplementedError()
 
-    def get_bots(self) -> list[Bot]:
+    def get_bots(self) -> [BotModel]:
         """
         Get all bots.
         """
         raise NotImplementedError()
 
-    def create_bot(self, bot_name, bot_type) -> Bot:
+    def create_bot(self, bot_name, bot_type) -> BotModel:
         """
         Add a new bot to an existing team.
         """

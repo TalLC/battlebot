@@ -1,5 +1,10 @@
+from __future__ import annotations
 import uuid
-from business.gameobjects.entity.bots.Bot import Bot
+from business.gameobjects.entity.bots.models.BotModel import BotModel
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from business.TeamManager import TeamManager
 
 
 class Team:
@@ -24,7 +29,8 @@ class Team:
     def bots(self):
         return self._bots
 
-    def __init__(self, size: int, name: str, color: str, team_id: str = None):
+    def __init__(self, team_manager: TeamManager, size: int, name: str, color: str, team_id: str = None):
+        self.team_manager = team_manager
         self._name = name
         self._color = color
         self._size = size
@@ -36,7 +42,7 @@ class Team:
         else:
             self._id = str(uuid.uuid4())
 
-    def add_bot(self, bot: Bot) -> bool:
+    def add_bot(self, bot: BotModel) -> bool:
         """
         Add an existing bot to the team.
         """

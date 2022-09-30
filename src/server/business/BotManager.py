@@ -1,7 +1,6 @@
 import logging
-
 from business.interfaces.IBotManager import IBotManager
-from business.gameobjects.entity.bots.Bot import Bot
+from business.gameobjects.entity.bots.models.BotModel import BotModel
 from business.gameobjects.entity.bots.BotFactory import BotFactory
 
 
@@ -17,7 +16,7 @@ class BotManager(IBotManager):
             return True
         return False
 
-    def get_bot(self, bot_id) -> None | Bot:
+    def get_bot(self, bot_id) -> None | BotModel:
         """
         Get a bot by its id.
         """
@@ -26,17 +25,17 @@ class BotManager(IBotManager):
         else:
             return None
 
-    def get_bots(self) -> list[Bot]:
+    def get_bots(self) -> list[BotModel]:
         """
         Get all bots.
         """
         return list(self._BOTS.values())
 
-    def create_bot(self, bot_name, bot_type) -> Bot:
+    def create_bot(self, bot_name, bot_type) -> BotModel:
         """
         Create a new bot.
         """
-        bot = BotFactory().create_bot(bot_name, bot_type)
+        bot = BotFactory().create_bot(self, bot_name, bot_type)
         self._BOTS[bot.id] = bot
         logging.info(self._BOTS)
         return bot

@@ -24,7 +24,7 @@ class DisplayManager(IDisplayManager):
         return False
 
     def create_client(self, host: str, port: int, websocket_headers: starlette.datastructures.Headers) -> DisplayClient:
-        client = DisplayClient(len(self._DISPLAY_CLIENTS.keys()) + 1, host, port, websocket_headers)
+        client = DisplayClient(self, len(self._DISPLAY_CLIENTS.keys()) + 1, host, port, websocket_headers)
         self._DISPLAY_CLIENTS[client.token] = client
         return client
 

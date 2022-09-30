@@ -1,53 +1,53 @@
 
 class IDestructible:
-    _HEALTH_MAX = 0
-    _HEALTH = 0
-    _HAS_COLLISION = False
+    _health_max = 0
+    _health = 0
+    _has_collision = False
 
     @property
     def health(self) -> int:
-        return self._HEALTH
+        return self._health
 
     @property
     def health_max(self) -> int:
-        return self._HEALTH_MAX
+        return self._health_max
 
     @property
     def is_alive(self) -> bool:
-        return self._HEALTH > 0
+        return self._health > 0
 
     @property
     def has_collision(self) -> bool:
-        return self._HAS_COLLISION
+        return self._has_collision
 
     def __init__(self, health: int = 0, has_collision: bool = False):
-        self._HEALTH_MAX = health
-        self._HEALTH = self._HEALTH_MAX
-        self._HAS_COLLISION = has_collision
+        self._health_max = health
+        self._health = self._health_max
+        self._has_collision = has_collision
 
     def set_collisions(self, has_collision: bool) -> None:
         """
         Set the collisions of the entity.
         """
-        self._HAS_COLLISION = has_collision
+        self._has_collision = has_collision
 
     def heal(self, health: int) -> None:
         """
         Heal the entity.
         """
-        if 0 < self._HEALTH < self._HEALTH_MAX:
-            self._HEALTH += health
-            if self._HEALTH > self._HEALTH_MAX:
-                self._HEALTH = self._HEALTH_MAX
+        if 0 < self._health < self._health_max:
+            self._health += health
+            if self._health > self._health_max:
+                self._health = self._health_max
 
     def hurt(self, damage: int) -> None:
         """
         Apply damages to the entity.
         """
-        if self._HEALTH > 0:
-            self._HEALTH -= damage
-            if self._HEALTH < 0:
-                self._HEALTH = 0
+        if self._health > 0:
+            self._health -= damage
+            if self._health < 0:
+                self._health = 0
                 self._on_death()
 
     def _on_death(self) -> None:
@@ -55,6 +55,6 @@ class IDestructible:
         Callback when the entity is dead.
         Disable collisions if the entity is dead.
         """
-        if self._HEALTH <= 0:
+        if self._health <= 0:
             # entity is dead
             self.set_collisions(False)

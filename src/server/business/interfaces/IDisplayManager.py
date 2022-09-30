@@ -1,9 +1,17 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 import starlette.datastructures
 from business.displays.DisplayClient import DisplayClient
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from business.GameManager import GameManager
 
 
 class IDisplayManager(ABC):
+
+    def __init__(self, game_manager: GameManager):
+        self.game_manager = game_manager
 
     @abstractmethod
     def does_client_id_exists(self, id_num: int):

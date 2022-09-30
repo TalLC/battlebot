@@ -4,18 +4,21 @@ from business.gameobjects.entity.bots.models.BotModel import BotModel
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.ConsumerManager import ConsumerManager
 
-from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
+from consumer.brokers.messages.stomp.BotTurningStatusMessage import BotTurningStatusMessage
 
 
 @dataclass(order=True)
-class BotHealCommand(IBotCommand):
+class BotTurnCommand(IBotCommand):
     priority: float = float(datetime.now().timestamp())
-    action: str = field(default="heal", compare=False)
-    value: int = field(default=0, compare=False)
+    action: str = field(default="turn", compare=False)
+    value: str = field(default=str(), compare=False)
 
     def execute(self, arg: BotModel):
         """
         Contains the function to execute.
         """
-        arg.heal(self.value)
-        ConsumerManager().stomp.send_message(BotHealthStatusMessage(arg.id, arg.health))
+        if self.value == "stop":
+            arg.set_turning(False)
+        else:
+            arg.set_turning(True, self.value)
+        ConsumerManager().stomp.send_message(BotTurningStatusMessage(arg.id, self.value))
