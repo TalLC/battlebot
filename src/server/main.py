@@ -51,6 +51,15 @@ async def startup() -> None:
     provider_manager = ProviderManager(app)
     provider_manager.start_all()
 
+    # DEBUG: BOT de test
+    print("Enrôlement d'un bot de test :")
+    bot = GameManager().bot_manager.create_bot("BOT TEST 01", "warrior")
+    bot._id = "0-0-0-0-0"
+    GameManager().bot_manager._BOTS = dict()
+    GameManager().bot_manager._BOTS[bot._id] = bot
+    print(GameManager().bot_manager.get_bot("0-0-0-0-0"))
+    ##########################################
+
 
 @app.on_event('shutdown')
 def shutdown() -> None:
