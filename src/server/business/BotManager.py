@@ -1,4 +1,3 @@
-import logging
 from business.interfaces.IBotManager import IBotManager
 from business.gameobjects.entity.bots.models.BotModel import BotModel
 from business.gameobjects.entity.bots.BotFactory import BotFactory
@@ -37,5 +36,4 @@ class BotManager(IBotManager):
         """
         bot = BotFactory().create_bot(self, bot_name, bot_type)
         self._BOTS[bot.id] = bot
-        logging.info(self._BOTS)
         return bot

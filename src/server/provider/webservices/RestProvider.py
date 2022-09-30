@@ -50,7 +50,7 @@ class RestProvider:
         self.__bots_id_action_turn()
         self.__bots_id_action_move()
         self.__bots_id_action_shield_raise()
-        logging.info("All endpoints registered")
+        logging.info("[REST] All endpoints registered")
 
     def __admin_action_ban(self):
         """
@@ -233,7 +233,7 @@ class RestProvider:
         @self.__app.get("/bots/{bot_id}/action/request_connection")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, _: Request):
-            logging.info(f"Bot {bot_id} is requesting a connection")
+            logging.info(f"[REST] Bot {bot_id} is requesting a connection")
 
             # Check if the game is already started
             if GameManager().is_started:

@@ -1,8 +1,6 @@
 import logging
-import json
 from fastapi import FastAPI
 from common.Singleton import SingletonABCMeta
-from common.config import CONFIG_REST
 from provider.webservices.RestProvider import RestProvider
 from provider.webservices.WebsocketProvider import WebsocketProvider
 from provider.webservices.WebsiteProvider import WebsiteProvider
@@ -66,23 +64,23 @@ class ProviderManager(metaclass=SingletonABCMeta):
         self.__start_rest_api()
 
     def __start_mqtt(self):
-        logging.info("Starting MQTT")
+        logging.info("[PROVIDER_MANAGER] Starting MQTT")
         self.__mqtt = MQTTProvider()
 
     def __start_stomp(self):
-        logging.info("Starting STOMP")
+        logging.info("[PROVIDER_MANAGER] Starting STOMP")
         self.__stomp = STOMPProvider()
 
     def __start_website(self):
-        logging.info("Starting Website")
+        logging.info("[PROVIDER_MANAGER] Starting Website")
         self.__website = WebsiteProvider(self.__app)
 
     def __start_websocket(self):
-        logging.info("Starting Websocket")
+        logging.info("[PROVIDER_MANAGER] Starting Websocket")
         self.__websocket = WebsocketProvider(self.__app)
 
     def __start_rest_api(self):
-        logging.info("Starting REST API")
+        logging.info("[PROVIDER_MANAGER] Starting REST API")
         self.__rest_api = RestProvider(self.__app)
 
     def close(self):

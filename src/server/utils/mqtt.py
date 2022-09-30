@@ -3,9 +3,10 @@ import json
 from time import sleep
 from paho.mqtt import client as mqtt_client
 from common.config import CONFIG_MQTT
+from common.Singleton import SingletonABCMeta
 
 
-class MQTT:
+class MQTT(metaclass=SingletonABCMeta):
     MQTTMessage = mqtt_client.MQTTMessage
 
     @property
@@ -67,7 +68,7 @@ class MQTT:
         """
         if rc == mqtt_client.CONNACK_ACCEPTED:
             self.__connected = True
-            logging.info("Connected to MQTT Broker!")
+            logging.debug("[MQTT] Connected to MQTT Broker!")
         else:
             raise f"Failed to connect to MQTT broker, return code {rc}"
 
@@ -76,7 +77,7 @@ class MQTT:
         """
         Callback function when a message is published.
         """
-        logging.debug(f"Message id {mid} published")
+        logging.debug(f"[MQTT] Message id {mid} published")
 
     def on_message(self, func):
         """
@@ -89,19 +90,19 @@ class MQTT:
         Send a message to a topic.
         """
         res = self.__client.publish(topic=topic, payload=json.dumps(message), retain=retain)
-        logging.debug(f"Sending message id {res.mid}")
+        logging.debug(f"[MQTT] Sending message id {res.mid}")
 
         if res.rc == mqtt_client.MQTT_ERR_SUCCESS:
-            logging.debug(f"Sent `{message}` to topic `{topic}`")
+            logging.debug(f"[MQTT] Sent '{message}' to topic '{topic}' successfully")
         else:
-            logging.error(f"Failed to send message to topic {topic}")
+            logging.error(f"[MQTT] Failed to send message to topic {topic}")
 
     def subscribe(self, destination: str):
         """
         Subscribe to a topic and receive incoming messages.
         """
         self.__client.subscribe(topic=destination)
-        logging.info(f"Subscribed to topic {destination}")
+        logging.info(f"[MQTT] Subscribed to topic {destination}")
 
     def loop(self):
         """
@@ -115,4 +116,4 @@ class MQTT:
         """
         self.__client.loop_stop()
         self.__client.disconnect()
-        logging.info("MQTT client disconnected")
+        logging.info("[MQTT] MQTT client disconnected")

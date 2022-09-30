@@ -42,11 +42,11 @@ async def startup() -> None:
 
     # Services
     # # Starting consumer services
-    logging.info("Starting consumer services")
+    logging.info("[MAIN] Starting consumer services")
     ConsumerManager().start_all()
 
     # # Starting provider services
-    logging.info("Starting provider services")
+    logging.info("[MAIN] Starting provider services")
     NetworkSecurity()  # Initializing ban ip module
     provider_manager = ProviderManager(app)
     provider_manager.start_all()
