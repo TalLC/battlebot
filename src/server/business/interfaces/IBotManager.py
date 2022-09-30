@@ -1,8 +1,16 @@
+from __future__ import annotations
 from abc import ABC
+from typing import TYPE_CHECKING
 from business.gameobjects.entity.bots.models.BotModel import BotModel
+
+if TYPE_CHECKING:
+    from business.GameManager import GameManager
 
 
 class IBotManager(ABC):
+
+    def __init__(self, game_manager: GameManager):
+        self.game_manager = game_manager
 
     def does_bot_exists(self, bot_id):
         """

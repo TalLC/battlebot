@@ -1,8 +1,16 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from business.teams.Team import Team
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from business.GameManager import GameManager
 
 
 class ITeamManager(ABC):
+
+    def __init__(self, game_manager: GameManager):
+        self.game_manager = game_manager
 
     @abstractmethod
     def does_team_exists(self, team_id: str):

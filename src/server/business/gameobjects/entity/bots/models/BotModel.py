@@ -1,10 +1,12 @@
-import math
-from time import time, sleep
+from __future__ import annotations
+from math import pi, cos, sin
 import logging
 import random
 import uuid
+from time import time, sleep
 from abc import ABC
 from queue import PriorityQueue
+from typing import TYPE_CHECKING
 from threading import Thread, Event
 from business.gameobjects.behaviour.IMoving import IMoving
 from business.gameobjects.behaviour.IDestructible import IDestructible
@@ -16,6 +18,9 @@ from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.models.Target import Target
+
+if TYPE_CHECKING:
+    from business.BotManager import BotManager
 
 
 class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
@@ -41,7 +46,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         return self._role
 
-    def __init__(self, name: str, role: str, health: int, moving_speed: float, turning_speed: float):
+    def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
+                 turning_speed: float):
+        self._bot_manager = bot_manager
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
@@ -182,7 +189,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         Turn the bot on Y axis of the specified amount of radians.
         """
-        max_rotation = math.pi * 2
+        max_rotation = pi * 2
         min_rotation = 0.0
 
         # Using the direction to decide if we add or subtract radians
@@ -206,8 +213,8 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
 
         # Calculating new coordinates
-        new_x = math.cos(self.ry) * distance
-        new_z = math.sin(self.ry) * distance
+        new_x = cos(self.ry) * distance
+        new_z = sin(self.ry) * distance
 
         # Moving the bot on the map
         self.set_position(self.x + new_x, self.z + new_z, self.ry)

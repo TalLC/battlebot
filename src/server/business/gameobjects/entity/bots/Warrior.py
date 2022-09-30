@@ -1,6 +1,10 @@
+from __future__ import annotations
 import math
-
+from typing import TYPE_CHECKING
 from business.gameobjects.entity.bots.models.BotModel import BotModel
+
+if TYPE_CHECKING:
+    from business.BotManager import BotManager
 
 
 class Warrior(BotModel):
@@ -9,8 +13,8 @@ class Warrior(BotModel):
     _moving_speed = 1.0
     _turning_speed = math.pi / 6  # 30°
 
-    def __init__(self, name: str):
-        super().__init__(name, self._role, self._health_max, self._moving_speed, self._turning_speed)
+    def __init__(self, bot_manager: BotManager, name: str):
+        super().__init__(bot_manager, name, self._role, self._health_max, self._moving_speed, self._turning_speed)
 
     def __str__(self):
         return f"{self.role} {self.name} ({self.id}) - " \

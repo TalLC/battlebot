@@ -14,10 +14,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     def __init__(self):
         self._is_started = False
-        self.team_manager = TeamManager()
-        self.bot_manager = BotManager()
-        self.display_manager = DisplayManager()
-        self.map = Map()
+        self.team_manager = TeamManager(self)
+        self.bot_manager = BotManager(self)
+        self.display_manager = DisplayManager(self)
+        self.map = Map(self)
 
     def start_game(self):
         self._is_started = True
