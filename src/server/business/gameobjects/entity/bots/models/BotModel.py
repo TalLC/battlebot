@@ -48,7 +48,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
-        self._bot_manager = bot_manager
+        self.bot_manager = bot_manager
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
