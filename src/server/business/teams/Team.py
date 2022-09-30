@@ -42,6 +42,11 @@ class Team:
         else:
             self._id = str(uuid.uuid4())
 
+    def __str__(self):
+        return f"{self.name} ({self.id}) - " \
+               f"COLOR: {self.color}, " \
+               f"SIZE: {self.size}"
+
     def add_bot(self, bot: BotModel) -> bool:
         """
         Add an existing bot to the team.

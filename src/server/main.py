@@ -35,10 +35,12 @@ app = FastAPI()  # Entry point for Uvicorn
 async def startup() -> None:
     # Teams
     for team in G_CONF_TEAMS:
-        t = GameManager().team_manager.create_team(
+        GameManager().team_manager.create_team(
             team["size"], team["name"], team["color"], team["id"] if "id" in team else None
         )
-        print(t)
+
+    for team in GameManager().team_manager.get_teams():
+        print(team)
 
     # Services
     # # Starting consumer services
