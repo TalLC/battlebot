@@ -9,6 +9,10 @@ class IMessage(ABC):
         return self._bot_id
 
     @property
+    def msg_type(self) -> str:
+        return self._msg_type
+
+    @property
     def data(self) -> Any:
         return self._data
 
@@ -16,15 +20,12 @@ class IMessage(ABC):
     def retain(self) -> bool:
         return self._retain
 
-    @property
-    def message(self) -> dict:
-        return self._get_message()
-
-    def __init__(self, bot_id: str, data: Any, retain: bool = False):
+    def __init__(self, bot_id: str, msg_type: str, data: Any, retain: bool = False):
         self._bot_id = bot_id
+        self._msg_type = msg_type
         self._data = data
         self._retain = retain
 
     @abstractmethod
-    def _get_message(self) -> dict:
+    def json(self) -> dict:
         raise NotImplementedError()
