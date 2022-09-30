@@ -1,3 +1,4 @@
+from __future__ import annotations
 from consumer.webservices.messages.websocket.interfaces.IBotMessage import IBotMessage
 from consumer.webservices.messages.websocket.models.EnumStatus import EnumStatus
 from consumer.webservices.messages.websocket.models.Target import Target
@@ -34,7 +35,7 @@ class BotUpdateMessage(IBotMessage):
         self._ry = ry
         self._action = action
 
-    def __add__(self, other: 'BotUpdateMessage'):
+    def __add__(self, other: BotUpdateMessage):
         if self.bot_id != other.bot_id:
             raise ValueError("Bot ID must be equals!!")
         self._x = other.x if other.x is not None else self.x
