@@ -118,7 +118,7 @@ function modelLoader(url) {
 
 async function create_bot() {
     const gltfData = await modelLoader('./static/models/robot_1.glb')
-    gltfData.scene.position.y = -0.5
+    gltfData.scene.position.y = 0.5
     scene.add(gltfData.scene);
  
     return gltfData.scene;
