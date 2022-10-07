@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from conf.models.GameConfig import GameConfig
 from conf.models.NetworkSecurityConfig import NetworkSecurityConfig
 from conf.models.RestConfig import RestConfig
 from conf.models.MQTTConfig import MQTTConfig
@@ -7,6 +8,7 @@ from conf.models.STOMPConfig import STOMPConfig
 
 
 # Config files
+CONFIG_GAME = GameConfig(**json.loads(Path('conf', 'game.json').read_text()))
 CONFIG_NETWORK_SECURITY = NetworkSecurityConfig(**json.loads(Path('conf', 'ban_config.json').read_text()))
 CONFIG_REST = RestConfig(**json.loads(Path('conf', 'rest.json').read_text()))
 CONFIG_MQTT = MQTTConfig(**json.loads(Path('conf', 'mqtt.json').read_text()))
