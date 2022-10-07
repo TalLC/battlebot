@@ -152,13 +152,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
 
-    def _execute_command(self, command: IBotCommand):
-        """
-        Routing commands to their functions.
-        """
-        logging.debug(f"BOT {self.id} - Incoming message: {command}")
-        command.execute(self)
-
     def add_command_to_queue(self, command: IBotCommand):
         """
         Add a command message to the bot queue.
