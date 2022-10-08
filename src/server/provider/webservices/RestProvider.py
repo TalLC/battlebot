@@ -289,6 +289,9 @@ class RestProvider:
             if bot.client_connection.source_mqtt_id != model.mqtt_id:
                 ErrorCode.throw(LOGIN_INVALID_MQTT_ID)
 
+            # Connecting the bot
+            bot.client_connection.connect(model.request_id, model.stomp_id, model.mqtt_id)
+
             return {"status": "ok", "message": "Your bot is successfully connected"}
 
     def __bots_id_action_shoot(self):

@@ -35,3 +35,9 @@ class IBotManager(ABC):
         Add a new bot to an existing team.
         """
         raise NotImplementedError()
+
+    def get_bots_count(self, connected_only: bool = True):
+        """
+        Return the total amount of connected bots.
+        """
+        raise NotImplementedError()

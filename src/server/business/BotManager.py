@@ -5,7 +5,7 @@ from business.gameobjects.entity.bots.BotFactory import BotFactory
 
 class BotManager(IBotManager):
 
-    _BOTS = dict()
+    _BOTS: dict[str, BotModel] = dict()
 
     def does_bot_exists(self, bot_id):
         """
@@ -24,11 +24,16 @@ class BotManager(IBotManager):
         else:
             return None
 
-    def get_bots(self) -> (BotModel,):
+    def get_bots(self, connected_only: bool = True) -> (BotModel,):
         """
-        Get all bots.
+        Get all connected bots.
         """
-        return tuple(self._BOTS.values())
+        bots = tuple(self._BOTS.values())
+
+        if connected_only:
+            bots = (bot for bot in self._BOTS.values() if bot.client_connection.is_connected is connected_only)
+
+        return tuple(bots)
 
     def create_bot(self, bot_name, bot_type) -> BotModel:
         """
@@ -37,3 +42,9 @@ class BotManager(IBotManager):
         bot = BotFactory().create_bot(self, bot_name, bot_type)
         self._BOTS[bot.id] = bot
         return bot
+
+    def get_bots_count(self, connected_only: bool = True):
+        """
+        Return the total amount of connected bots.
+        """
+        return len(self.get_bots(connected_only))
