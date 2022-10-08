@@ -59,7 +59,7 @@ class WebsocketProvider:
 
                     # A new bot is connected
                     if bot.id not in sent_bot and bot.client_connection.is_connected:
-                        await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry))
+                        await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry).json())
                         sent_bot.append(bot.id)
 
                 # Waiting for bots to connect
