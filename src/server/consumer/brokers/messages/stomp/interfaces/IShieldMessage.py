@@ -3,7 +3,6 @@ from consumer.brokers.messages.interfaces.IBotMessage import IBotMessage
 
 
 class IShieldMessage(IBotMessage):
-    _SOURCE = "shield"
 
-    def __init__(self, bot_id: str, message_type: str, data: Any):
-        super().__init__(bot_id, self._SOURCE, message_type, data)
+    def __init__(self, bot_id: str, msg_type: str, data: Any):
+        super().__init__(bot_id=bot_id, source="shield", msg_type=msg_type, data=data)

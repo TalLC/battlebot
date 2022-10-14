@@ -4,9 +4,10 @@ import stomp
 from stomp import ConnectionListener
 from stomp.utils import Frame
 from common.config import CONFIG_STOMP
+from common.Singleton import SingletonABCMeta
 
 
-class STOMP:
+class STOMP(metaclass=SingletonABCMeta):
     ConnectionListener = ConnectionListener
     Frame = Frame
 
@@ -42,6 +43,10 @@ class STOMP:
         # Connecting client
         self.__client.connect(username=CONFIG_STOMP.username, passcode=CONFIG_STOMP.password, wait=True)
         self.__connected = True
+        logging.debug("[STOMP] Connected to STOMP Broker!")
+
+    def __del__(self):
+        self.close()
 
     def send_message(self, topic: str, message: dict):
         """
@@ -55,7 +60,7 @@ class STOMP:
         """
         self.__subscription_id += 1
         self.__client.subscribe(destination=destination, id=str(self.__subscription_id))
-        logging.info(f"Subscribed to queue {destination}")
+        logging.info(f"[STOMP] Subscribed to queue {destination}")
 
     def set_listener(self, name: str, listener: stomp.ConnectionListener):
         """
@@ -68,4 +73,4 @@ class STOMP:
         Close the connection to the broker.
         """
         self.__client.disconnect()
-        logging.info("STOMP client disconnected")
+        logging.info("[STOMP] STOMP client disconnected")

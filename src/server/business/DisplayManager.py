@@ -24,7 +24,7 @@ class DisplayManager(IDisplayManager):
         return False
 
     def create_client(self, host: str, port: int, websocket_headers: starlette.datastructures.Headers) -> DisplayClient:
-        client = DisplayClient(len(self._DISPLAY_CLIENTS.keys()) + 1, host, port, websocket_headers)
+        client = DisplayClient(self, len(self._DISPLAY_CLIENTS.keys()) + 1, host, port, websocket_headers)
         self._DISPLAY_CLIENTS[client.token] = client
         return client
 
@@ -40,8 +40,8 @@ class DisplayManager(IDisplayManager):
                 return client
         return None
 
-    def get_clients(self) -> [DisplayClient]:
-        return list(self._DISPLAY_CLIENTS.values())
+    def get_clients(self) -> (DisplayClient,):
+        return tuple(self._DISPLAY_CLIENTS.values())
 
     def get_all_clients_jsons(self) -> list:
         data = list()

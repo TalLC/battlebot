@@ -23,7 +23,7 @@ export default class View3DController{
         this.initLight();
         this.loader = new GLTFLoader();
         this.attach(document.body);
-        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 10, y: 10, z: 10}, {x: 0, y: 0, z: 0});
+        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
     }
 
     attach(parentElement){

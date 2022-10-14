@@ -1,27 +1,16 @@
+from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-
-from common.Singleton import SingletonABCMeta
+from typing import TYPE_CHECKING
 from business.gameobjects.tiles.TileFactory import TileFactory
 from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 
-
-def list_save_map() -> list:
-    """
-    Liste les fichiers JSON (donc les maps) stockées.
-    """
-    maps_dir = Path('data', 'maps')
-    maps_list = []
-
-    for save_map in maps_dir.iterdir():
-        if save_map.is_file() and save_map.name.endswith('.json'):
-            maps_list.append(save_map)
-
-    return maps_list
+if TYPE_CHECKING:
+    from business.GameManager import GameManager
 
 
-class Map(metaclass=SingletonABCMeta):
+class Map:
     _id: str
     _height: int
     _width: int
@@ -57,26 +46,40 @@ class Map(metaclass=SingletonABCMeta):
     def tiles(self) -> list:
         return self._tiles
 
-    def __init__(self):
+    def __init__(self, game_object: GameManager, map_id: str):
+        self._game_object = game_object
         self._tiles = []
         self._matrix = []
 
-        self.initialize('empty_9_9')
+        self.initialize(map_id)
 
-    @staticmethod
-    def does_map_exists(map_id: str) -> bool:
+    def does_map_exists(self, map_id: str) -> bool:
         """
         Vérifie qu'une map correspond à l'id donné.
 
         :param map_id: identifiant à tester
         """
-        maps_list = list_save_map()
+        maps_list = self.list_saved_map()
 
         for sm in maps_list:
             if map_id in sm.name:
                 return True
 
         return False
+
+    @staticmethod
+    def list_saved_map() -> list:
+        """
+        Liste les fichiers JSON (donc les maps) stockées.
+        """
+        maps_dir = Path('data', 'maps')
+        maps_list = []
+
+        for save_map in maps_dir.iterdir():
+            if save_map.is_file() and save_map.name.endswith('.json'):
+                maps_list.append(save_map)
+
+        return maps_list
 
     def initialize(self, map_id: str) -> None:
         """
@@ -118,8 +121,7 @@ class Map(metaclass=SingletonABCMeta):
 
 
 if __name__ == '__main__':
-    mymap = Map()
-    mymap.initialize('empty_3_3')
+    mymap = Map(GameManager(), "empty_3_3")
     print(mymap.infos)
     for r in mymap.matrix:
         for c in r:

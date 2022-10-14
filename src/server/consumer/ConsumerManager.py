@@ -40,15 +40,15 @@ class ConsumerManager(metaclass=SingletonABCMeta):
         self.__start_websocket()
 
     def __start_mqtt(self):
-        logging.info("Starting MQTT")
+        logging.info("[CONSUMER_MANAGER] Starting MQTT")
         self.__mqtt = MQTTConsumer()
 
     def __start_stomp(self):
-        logging.info("Starting STOMP")
+        logging.info("[CONSUMER_MANAGER] Starting STOMP")
         self.__stomp = STOMPConsumer()
 
     def __start_websocket(self):
-        logging.info("Starting Websocket")
+        logging.info("[CONSUMER_MANAGER] Starting Websocket")
         self.__websocket = WebsocketConsumer()
 
     def close(self):

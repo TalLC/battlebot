@@ -59,11 +59,11 @@ ws.onmessage = async function(event)
 {
     let update = JSON.parse(event.data);
     if (update.msg_type == 'BotCreateMessage'){
-        botState = update;
+        let botState = update;
         await game.createBot(botState.id, botState.x, botState.z, botState.ry);
     }
     else if (update.msg_type == 'BotUpdateMessage'){
-        botState = update;
+        let botState = update;
         for(actionDef in actions){
             let selected = actions[actionDef].actionSelector(botState);
             if(selected){
@@ -89,15 +89,17 @@ function animate(){
 
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+ }
 
 async function creation(){
     await game.createBot('985984', 0, 0, 0);
     let test = game.bots['985984'];
     console.log("im ready");
     console.log(test);
-    test.action('move', {x:10, z:1});
-    test.action('move', {x:0, z:10});
-    console.log(actions)
+    await test.action('move', {x:0.1, z:0.1});
+    console.log(test);
 }
 
 animate();

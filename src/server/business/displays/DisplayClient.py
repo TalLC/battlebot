@@ -1,9 +1,14 @@
+from __future__ import annotations
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import starlette.datastructures
 from random import Random
 from common.config import DATETIME_STR_FORMAT, WORDS_GERUNDS_LIST, WORDS_COLORS_LIST, WORDS_ANIMALS_LIST
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from business.DisplayManager import DisplayManager
 
 
 class DisplayClient:
@@ -79,7 +84,9 @@ class DisplayClient:
     def headers(self) -> Headers:
         return self._headers
 
-    def __init__(self, id_num: int, host: str, port: int, websocket_headers: starlette.datastructures.Headers):
+    def __init__(self, display_manager: DisplayManager, id_num: int, host: str, port: int,
+                 websocket_headers: starlette.datastructures.Headers):
+        self._display_manager = display_manager
         self._id = id_num
         self._name = self.__generate_name(seed=host)
         self._timestamp_start = datetime.now()

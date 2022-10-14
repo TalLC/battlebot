@@ -1,3 +1,4 @@
+import logging
 from abc import abstractmethod, ABC
 from consumer.brokers.messages.interfaces.IMessage import IMessage
 
@@ -8,7 +9,8 @@ class IBrokerConsumer(ABC):
         """
         Send an action to the correct topic or queue.
         """
-        self._send_message(f'{self.get_destination()}{message.bot_id}', message.message, message.retain)
+        logging.debug(f"[BROKER] Sending '{message.msg_type}' message: {message.json()}")
+        self._send_message(f'{self.get_destination()}{message.bot_id}', message.json(), message.retain)
 
     @abstractmethod
     def get_destination(self) -> str:

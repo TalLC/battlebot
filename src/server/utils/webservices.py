@@ -1,13 +1,9 @@
-import asyncio
 from time import time
 from datetime import timedelta
 from queue import SimpleQueue
 from threading import Thread, Event
-from typing import List
-
-from websockets.exceptions import ConnectionClosedOK
-from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
 from common.Singleton import SingletonABCMeta
+from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
 from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
 
 
@@ -20,49 +16,46 @@ class Webservices(metaclass=SingletonABCMeta):
         self._thread = Thread(target=self.concatenate, args=[self._event])
         self._thread.start()
 
-    def concatenate_not(self, e: Event):
-        while not e.is_set():
-            if not self.__ws_tmp_queue.empty():
-                message_add = self.__ws_tmp_queue.get()
-                self.dispatch_message_to_all_queues([message_add])
-
     def concatenate(self, e: Event):
+        # Message gathering interval
+        loop_wait_ms = 100
+
+        # Message gathered and concatenated in the interval
         message_list: [IWebsocketMessage] = list()
+
         while not e.is_set():
-            try:
-                timer_end = time() + timedelta(milliseconds=100).total_seconds()
+            # End of this loop in Now + loop_wait_ms
+            timer_end = time() + timedelta(milliseconds=loop_wait_ms).total_seconds()
 
-                msg_count_per_bot = dict()
-                while time() < timer_end:
-                    message_was_updated = False
-                    new_message = self.__ws_tmp_queue.get()
+            # Get all messages in this interval and concatenates the ones that can be
+            while time() < timer_end:
 
-                    if new_message.bot_id not in msg_count_per_bot:
-                        msg_count_per_bot[new_message.bot_id] = 1
-                    else:
-                        msg_count_per_bot[new_message.bot_id] += 1
+                # Gathering a message
+                new_message = self.__ws_tmp_queue.get()
+                has_been_merged = False
 
-                    if isinstance(new_message, BotUpdateMessage):
-                        for prev_message in message_list:
-                            if isinstance(prev_message, BotUpdateMessage):
-                                if prev_message.bot_id == new_message.bot_id:
-                                    prev_message += new_message
-                                    message_was_updated = True
-                                    break
-                        if not message_was_updated:
-                            message_list.append(new_message)
-                    else:
-                        message_list.append(new_message)
+                # Checking type of message
+                if isinstance(new_message, BotUpdateMessage):
 
-                    # asyncio.sleep(0.1)
+                    # Checking if we had another message from the same bot in the past
+                    for prev_message in message_list:
 
-                for key, value in msg_count_per_bot.items():
-                    print(f"{key} = {value} messages concaténés en 100ms")
+                        # If it was a message of type BotUpdateMessage, it can be concatenated
+                        if isinstance(prev_message, BotUpdateMessage):
 
-                self.dispatch_message_to_all_queues(message_list)
-                message_list = []
-            except ConnectionClosedOK:
-                break
+                            # We already had a message from this bot, let's add them
+                            if prev_message.bot_id == new_message.bot_id:
+                                prev_message += new_message
+                                has_been_merged = True
+                                continue
+
+                # We cannot merge this message with a previous one, adding it to the list
+                if not has_been_merged:
+                    message_list.append(new_message)
+
+            # Sending message to all displays
+            self.dispatch_message_to_all_queues(message_list)
+            message_list = []
 
     def close_thread(self):
         self._event.set()

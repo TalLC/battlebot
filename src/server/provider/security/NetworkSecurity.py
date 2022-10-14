@@ -78,7 +78,7 @@ class NetworkSecurity(INetworkSecurity):
         if host in self._BANNED_IPS.keys():
             # Check if the ban concerns the desired source
             if source in self._BANNED_IPS[host]:
-                logging.debug(f"Unbanning {host} for {source}")
+                logging.debug(f"[NETWORK_SECURITY] Unbanning {host} for {source}")
                 self._BANNED_IPS[host].pop(source)
 
                 # If there is no source left, we remove the entry
@@ -88,7 +88,7 @@ class NetworkSecurity(INetworkSecurity):
                 # Updating ban file
                 self._write_ban_file()
         else:
-            logging.debug(f"Cannot unban {host} for {source}: not banned")
+            logging.debug(f"[NETWORK_SECURITY] Cannot unban {host} for {source}: not banned")
 
     def update_ip(self, host: str, source: str) -> None | BannedIP:
         # Check if the IP is not already banned
