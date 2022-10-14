@@ -1,18 +1,18 @@
 import "./actionDefinition.js"
 import {actions} from "./actions/actions.js"
 
-export default class Bot
-{
+export default class Bot{
     id;
     x;
     z;
     ry;
     shoot;
     hit;
-    shield_hide;
-    shield_raise;
+    shieldHide;
+    shieldRaise;
+    objBot;
 
-    constructor(construct){
+    constructor(construct, viewController){
         this.id = construct.id;
         this.x = construct.x;
         this.z = construct.z;
@@ -22,10 +22,14 @@ export default class Bot
         this.shieldHide = false;
         this.shieldRaise = false;
         this.avatarPath = construct.avatar;
+        this.objBot = null;
+    }
+
+    async create(viewController){
+        this.objBot = await viewController.createBot(this.x, this.ry, this.z, 'avatar', 0);
     }
     
     action(key,param){
-        console.log(param)
         actions[key].action.call(this, param);
     }
 }

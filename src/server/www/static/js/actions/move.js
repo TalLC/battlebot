@@ -5,8 +5,11 @@ function eventwrapper(botState){return {x:botState.x, z:botState.z};}
 function actionSelector(botState){return botState.x && botState.z;}
 
 function action(move_coordinate){
-    console.log(move_coordinate);
-    //let dist = THREE.Vector3(this.x, 0, this.z).distanceTo(THREE.Vector3(move_coordinate[0], 0, move_coordinate[1]));
+    console.log(this.objBot)
+    this.x = move_coordinate.x;
+    this.z = move_coordinate.z;
+    this.objBot.position.x = move_coordinate.x;
+    this.objBot.position.z = move_coordinate.z;
 }
 
 /**

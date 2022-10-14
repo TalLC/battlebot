@@ -14,12 +14,16 @@ export default class View3DController{
     light;
     loader;
     constructor(width = window.innerWidth, height = window.innerHeight){
-        this.scene = new THREE.Scene();
-        this.size = {width:width, height:height};
         this.renderer = new THREE.WebGLRenderer();
+        this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
+        this.scene = new THREE.Scene();
+        let backColor = new THREE.Color(0xffffff);
+        this.scene.background = backColor;
         this.initLight();
         this.loader = new GLTFLoader();
+        this.attach(document.body);
+        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 10, y: 10, z: 10}, {x: 0, y: 0, z: 0});
     }
 
     attach(parentElement){
@@ -27,6 +31,7 @@ export default class View3DController{
     }
 
     initLight(){
+        console.log('initialisation light')
         const light = new THREE.AmbientLight( 0xffffff , 1.5); // soft white light
         this.scene.add( light );
 
@@ -37,6 +42,7 @@ export default class View3DController{
     }
 
     createCamera(frustum, position, lookAt){
+        console.log('initialisation cam')
         this.camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
         this.camera.position.set(position.x, position.y, position.z);
         this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
@@ -46,12 +52,12 @@ export default class View3DController{
     }
 
     createObject(x, y, z, objectName, objectIndex){
-        console.log(objectName)
+        console.log(objectName);
         if (objectName === 'air')
-            return(null)
+            return(null);
     
         // Loads gltf file
-        var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex]
+        var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
     
         this.loader.load(
             // resource URL
@@ -76,4 +82,26 @@ export default class View3DController{
             }
         );
     }
+
+    // this utility function allows you to use any three.js
+    // loader with promises and async/await
+    modelLoader(url) {
+        return new Promise((resolve, reject) => {
+            this.loader.load(url, data=> resolve(data), null, reject);
+        });
+    }
+  
+    async createBot(x, y, z, objectName, objectIndex){
+        var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
+
+        const gltfData = await this.modelLoader(model_path);
+        
+        gltfData.scene.position.x = x;
+        gltfData.scene.position.y = y;
+        gltfData.scene.position.z = z;
+        console.log("log view" + gltfData.scene);
+        this.scene.add(gltfData.scene);
+
+        return gltfData.scene;
+   }
 }

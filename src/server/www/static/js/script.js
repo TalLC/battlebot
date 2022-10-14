@@ -5,6 +5,9 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import bot from './bot.js'
 import View3DController from './view/view3DController.js'
+import GameManager from './gameManager.js'
+import {actions} from './actions/actions.js';
+import { CubeRefractionMapping, SkeletonHelper } from './view/three.module.js';
 
 
 //Websocket
@@ -17,51 +20,8 @@ var obj_list = {
     'ground':'ground.glb',
     'water':'water.glb'
 };
-const EnumStatus = 
-{
-    NONE : 0,
-    HIT : 1,
-    SHOOTING : 2,
-    SHIELD_SHOW : 4,
-    SHIELD_HIDE : 8
-}
 var map_list = [];
 
-// Scene
-const scene = new THREE.Scene()
-
-// Caméra
-// const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-let width = window.innerWidth;
-let height = window.innerHeight;
-
-const camera = new THREE.OrthographicCamera( width / - 50, width / 50, height / 50, height / - 50, -10000, 100000 );
-camera.position.set(2, 2, 2);
-camera.lookAt(0, 0, 0);
-
-
-// Render
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
-
-// Controls
-const controls = new OrbitControls( camera, renderer.domElement );
-controls.update();
-
-// Light
-const light = new THREE.AmbientLight( 0xffffff , 1.5); // soft white light
-scene.add( light );
-
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
-directionalLight.position.x = -10;
-directionalLight.position.z = -10;
-scene.add( directionalLight );
-
-function create_object(name, x, y, z){
-
-}
 
 function update_map(update){
     if (map_list[update.x][update.z])
@@ -95,43 +55,52 @@ function create_map(map_data){
     };
 }
 
-ws.onmessage = function(event)
+ws.onmessage = async function(event)
 {
     let update = JSON.parse(event.data);
-    console.log(update)
     if (update.msg_type == 'BotCreateMessage'){
-        bot_list[update.id] = new bot(update)
+        botState = update;
+        await game.createBot(botState.id, botState.x, botState.z, botState.ry);
     }
     else if (update.msg_type == 'BotUpdateMessage'){
-        botState = update
+        botState = update;
         for(actionDef in actions){
-            let selected = actionDef.actionSelector(botState);
+            let selected = actions[actionDef].actionSelector(botState);
             if(selected){
-                let paramAction = actionDef.eventwrapper(botState);
-                bot.action(actionKey,paramAction);
+                let paramAction = actions[actionDef].eventwrapper(botState);
+                game.bots[botState.id].action(actionDef,paramAction);
             }
         }
     }
     else if (update.msg_type == 'MapUpdateMessage'){
         update_map(update)
     }
-    else if (update.msg_type == 'MapCreateMessage'){
-        create_map(update)
-        console.log(map_list)
-    }
+    //else if (update.msg_type == 'MapCreateMessage'){
+    //    create_map(update)
+    //    console.log(map_list)
+    //}
 };
 
+let game = GameManager;
 
-function animate() {
+function animate(){
     requestAnimationFrame( animate );
-    renderer.render( scene, camera );
-};
+    game.v.renderer.render( game.v.scene, game.v.camera );
 
-//animate();
+}
 
-let b = new bot({id:0,x:0,z:0,ry:0});
-b.action('move', {x:0, z:0});
-let v = new View3DController();
-v.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 })
-v.attach()
-v.createObject(0, 0, 0, 'avatar', 0)
+
+async function creation(){
+    await game.createBot('985984', 0, 0, 0);
+    let test = game.bots['985984'];
+    console.log("im ready");
+    console.log(test);
+    test.action('move', {x:10, z:1});
+    test.action('move', {x:0, z:10});
+    console.log(actions)
+}
+
+animate();
+creation();
+
+
