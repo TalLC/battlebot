@@ -9,7 +9,7 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 let ws = new WebSocket("ws://localhost:8000/ws");
 var BOTS = new Object();
 var obj_list = {
-    'tree': 'tree.glb',
+    'tree': 'tree_small.glb',
     'rock': 'rock.glb',
     'tree_small':'tree_small.glb',
     'wall_plain':'wall_plain.glb',
