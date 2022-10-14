@@ -59,16 +59,21 @@ ws.onmessage = async function(event)
 {
     let update = JSON.parse(event.data);
     if (update.msg_type == 'BotCreateMessage'){
+        console.log(update)
         let botState = update;
-        await game.createBot(botState.id, botState.x, botState.z, botState.ry);
+        await game.createBot(botState.bot_id, botState.x, botState.z, botState.ry);
     }
     else if (update.msg_type == 'BotUpdateMessage'){
         let botState = update;
-        for(actionDef in actions){
+        console.log(update)
+        for(let actionDef in actions){
+            console.log(actions[actionDef])
             let selected = actions[actionDef].actionSelector(botState);
+            console.log(selected)
             if(selected){
                 let paramAction = actions[actionDef].eventwrapper(botState);
-                game.bots[botState.id].action(actionDef,paramAction);
+                console.log(paramAction)
+                game.bots[botState.bot_id].action(actionDef,paramAction);
             }
         }
     }
@@ -103,6 +108,6 @@ async function creation(){
 }
 
 animate();
-creation();
+//creation();
 
 
