@@ -32,6 +32,7 @@ class Webservices(metaclass=SingletonABCMeta):
 
                 # Gathering a message
                 new_message = self.__ws_tmp_queue.get()
+                has_been_merged = False
 
                 # Checking type of message
                 if isinstance(new_message, BotUpdateMessage):
@@ -45,10 +46,12 @@ class Webservices(metaclass=SingletonABCMeta):
                             # We already had a message from this bot, let's add them
                             if prev_message.bot_id == new_message.bot_id:
                                 prev_message += new_message
+                                has_been_merged = True
                                 continue
 
                 # We cannot merge this message with a previous one, adding it to the list
-                message_list.append(new_message)
+                if not has_been_merged:
+                    message_list.append(new_message)
 
             # Sending message to all displays
             self.dispatch_message_to_all_queues(message_list)
