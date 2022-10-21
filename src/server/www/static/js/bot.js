@@ -12,7 +12,7 @@ export default class Bot{
     shieldRaise;
     objBot;
 
-    constructor(construct, viewController){
+    constructor(construct){
         this.id = construct.id;
         this.x = construct.x;
         this.z = construct.z;

@@ -38,36 +38,17 @@ function update_map(update){
     }
 };
 
-function create_map(map_data){
-    for (var h = 0; h < map_data.height; h++)
-    {
-        var current_line = [];
-        for (var w = 0; w < map_data.width; w++)
-        {
-            for (var tile in map_data['tiles'])
-            {
-                tile = map_data['tiles'][tile]
-                if (h == tile['x'] && w == tile['z'])
-                    current_line.push({'tile': create_object(tile['tile'], h * 2, 0, w * 2), 'object': create_object(tile['tile_object'], h * 2, 1, w * 2)});
-            };
-        };
-        map_list.push(current_line);
-    };
-}
-
 ws.onmessage = async function(event)
 {
     let update = JSON.parse(event.data);
     if (update.msg_type == 'BotCreateMessage'){
-        console.log(update)
         let botState = update;
         await game.createBot(botState.bot_id, botState.x, botState.z, botState.ry);
     }
     else if (update.msg_type == 'BotUpdateMessage'){
         let botState = update;
-        console.log(update)
         for(let actionDef in actions){
-            console.log(actions[actionDef])
+            console.log(actions)
             let selected = actions[actionDef].actionSelector(botState);
             console.log(selected)
             if(selected){
@@ -80,10 +61,9 @@ ws.onmessage = async function(event)
     else if (update.msg_type == 'MapUpdateMessage'){
         update_map(update)
     }
-    //else if (update.msg_type == 'MapCreateMessage'){
-    //    create_map(update)
-    //    console.log(map_list)
-    //}
+    else if (update.msg_type == 'MapCreateMessage'){
+        await game.createMap(update)
+    }
 };
 
 let game = GameManager;
@@ -106,6 +86,7 @@ async function creation(){
     await test.action('move', {x:0.1, z:0.1});
     console.log(test);
 }
+
 
 animate();
 //creation();

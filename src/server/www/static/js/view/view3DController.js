@@ -51,38 +51,6 @@ export default class View3DController{
         return this.camera;
     }
 
-    createObject(x, y, z, objectName, objectIndex){
-        console.log(objectName);
-        if (objectName === 'air')
-            return(null);
-    
-        // Loads gltf file
-        var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
-    
-        this.loader.load(
-            // resource URL
-            model_path,
-    
-            // called when resource is loaded
-            (map_object) => {
-                map_object.scene.position.x = x;
-                map_object.scene.position.y = y;
-                map_object.scene.position.z = z;
-                this.scene.add( map_object.scene );
-            },
-    
-            // called when loading is in progresses
-            ( xhr ) => {
-                console.debug( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-            },
-    
-            // called when loading has errors
-            ( error ) => {
-                console.error( 'unable to create objects ' + objectName + " : " + error.name + ", " + error.message);
-            }
-        );
-    }
-
     // this utility function allows you to use any three.js
     // loader with promises and async/await
     modelLoader(url) {
@@ -90,16 +58,30 @@ export default class View3DController{
             this.loader.load(url, data=> resolve(data), null, reject);
         });
     }
-  
-    async createBot(x, y, z, objectName, objectIndex){
-        var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
+
+    async createObject(x, y, z, objectName){
+        console.log(objectName)
+        var model_path = graphicObjects[objectName];
 
         const gltfData = await this.modelLoader(model_path);
         
         gltfData.scene.position.x = x;
         gltfData.scene.position.y = y;
         gltfData.scene.position.z = z;
-        console.log("log view" + gltfData.scene);
+        this.scene.add(gltfData.scene);
+
+        return gltfData.scene;
+    }
+
+    async createBot(x, ry, z, objectName, objectIndex){
+        var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
+
+        const gltfData = await this.modelLoader(model_path);
+
+        gltfData.scene.position.x = x;
+        gltfData.scene.position.y = 0.5;
+        gltfData.scene.position.z = z;
+        gltfData.scene.rotation.y = ry;
         this.scene.add(gltfData.scene);
 
         return gltfData.scene;
