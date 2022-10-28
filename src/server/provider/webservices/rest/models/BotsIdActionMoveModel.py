@@ -1,5 +1,4 @@
 from pydantic import BaseModel, validator
-from common.ErrorCode import *
 
 
 class BotsIdActionMoveModel(BaseModel):

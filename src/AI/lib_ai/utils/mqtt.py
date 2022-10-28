@@ -97,10 +97,11 @@ class MQTT(metaclass=SingletonABCMeta):
         else:
             logging.error(f"[MQTT] Failed to send message to topic {topic}")
 
-    def subscribe(self, destination: str):
+    def subscribe(self, bot_id: str):
         """
         Subscribe to a topic and receive incoming messages.
         """
+        destination = CONFIG_MQTT.destination_root + bot_id
         self.__client.subscribe(topic=destination)
         logging.info(f"[MQTT] Subscribed to topic {destination}")
 
@@ -126,6 +127,6 @@ class MQTT(metaclass=SingletonABCMeta):
         """
         Close the connection to the broker.
         """
-        self.loop_stop()
+        self.__client.loop_stop()
         self.__client.disconnect()
         logging.info("[MQTT] MQTT client disconnected")

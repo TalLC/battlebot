@@ -6,7 +6,6 @@ from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
 from consumer.webservices.messages.websocket.models.MapCreateMessage import MapCreateMessage
-from consumer.webservices.messages.websocket.models.MapUpdateMessage import MapUpdateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
