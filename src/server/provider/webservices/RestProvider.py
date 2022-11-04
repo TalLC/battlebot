@@ -1,5 +1,6 @@
 import logging
 from fastapi import FastAPI, Request
+from common.ErrorCode import *
 from common.config import CONFIG_REST
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
@@ -125,11 +126,11 @@ class RestProvider:
         @NetworkSecurityDecorators.rest_ban_check
         async def action(model: DisplayClientsActionReadyModel, _: Request):
             # Checking if the token exists
-            if not GameManager().display_manager.does_client_token_exists(model.client_token):
+            if not GameManager().display_manager.does_client_token_exists(model.login_id):
                 ErrorCode.throw(DISPLAY_CLIENT_ID_DOES_NOT_EXISTS)
 
             # Fetching corresponding display client
-            client = GameManager().display_manager.get_client_by_token(model.client_token)
+            client = GameManager().display_manager.get_client_by_token(model.login_id)
 
             # Setting client to Ready
             client.set_ready()

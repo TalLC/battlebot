@@ -5,6 +5,7 @@ from fastapi import FastAPI, WebSocket
 from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
+from consumer.webservices.messages.websocket.models.DisplayClientLoginMessage import DisplayClientLoginMessage
 from consumer.webservices.messages.websocket.models.MapCreateMessage import MapCreateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
@@ -35,8 +36,8 @@ class WebsocketProvider:
             )
             logging.debug(f"Display {display_client.name} connected")
 
-            # while not GameManager().map.is_ready:
-            #     await asyncio.sleep(1)
+            # Sending token to the client in order to send it back using Rest when ready
+            await websocket.send_json(DisplayClientLoginMessage(display_client).json())
 
             # Todo: déporter la création de map pour permettre la modification de la map avant le début de partie
             logging.debug(f"Sending map to {display_client.name}")
@@ -50,8 +51,8 @@ class WebsocketProvider:
             # Keeping a track of which bots were sent
             sent_bot = list()
 
-            # Waiting for the display to be ready and the game to start
-            while not display_client.is_ready and not GameManager().is_started:
+            # Waiting for the game to start
+            while not GameManager().is_started:
 
                 # Sending bots information as they connect
                 for bot in GameManager().bot_manager.get_bots():
