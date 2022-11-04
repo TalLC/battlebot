@@ -1,8 +1,6 @@
 import * as THREE from './three.module.js';
 import {OrbitControls} from './OrbitControls.js';
-import {OBJLoader} from './OBJLoader.js';
 import {GLTFLoader} from './GLTFLoader.js';
-import Stats from './stats.module.js';
 import graphicObjects from "./graphicObjects.js";
 
 export default class View3DController{
@@ -13,7 +11,9 @@ export default class View3DController{
     controls;
     light;
     loader;
+    tmp;
     constructor(width = window.innerWidth, height = window.innerHeight){
+        this.tmp;
         this.renderer = new THREE.WebGLRenderer();
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
@@ -59,31 +59,30 @@ export default class View3DController{
         });
     }
 
-    async createObject(x, y, z, objectName){
-        console.log(objectName)
+    createObject(x, y, z, objectName){
         var model_path = graphicObjects[objectName];
 
-        const gltfData = await this.modelLoader(model_path);
-        
-        gltfData.scene.position.x = x;
-        gltfData.scene.position.y = y;
-        gltfData.scene.position.z = z;
-        this.scene.add(gltfData.scene);
-
-        return gltfData.scene;
+        return this.modelLoader(model_path).then((gltfData) => {
+            gltfData.scene.position.x = x;
+            gltfData.scene.position.y = y;
+            gltfData.scene.position.z = z;
+            gltfData.scene.receiveShadow = true;
+            gltfData.scene.castShadow = true;
+            this.scene.add(gltfData.scene);
+            return(gltfData.scene);
+        });
     }
 
-    async createBot(x, ry, z, objectName, objectIndex){
+    createBot(x, ry, z, objectName, objectIndex){
         var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
 
-        const gltfData = await this.modelLoader(model_path);
-
-        gltfData.scene.position.x = x;
-        gltfData.scene.position.y = 0.5;
-        gltfData.scene.position.z = z;
-        gltfData.scene.rotation.y = ry;
-        this.scene.add(gltfData.scene);
-
-        return gltfData.scene;
+        return this.modelLoader(model_path).then(gltfData => {
+            gltfData.scene.position.x = x;
+            gltfData.scene.position.y = 0.5;
+            gltfData.scene.position.z = z;
+            gltfData.scene.rotation.y = ry;
+            this.scene.add(gltfData.scene);
+            return(gltfData.scene);
+        });
    }
 }

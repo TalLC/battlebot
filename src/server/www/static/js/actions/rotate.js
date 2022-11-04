@@ -4,22 +4,16 @@ function eventwrapper(botState){return botState.ry === undefined? this.ry: botSt
 
 function actionSelector(botState){return !(botState.ry === undefined);}
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function action(rotate_coordinate){
+    this.objBot.rotation.y = (-1 * rotate_coordinate)
+    this.ry = (-1 * rotate_coordinate)
 }
 
-async function action(rotate_coordinate){
-    console.log(rotate_coordinate);
-    //let rotInit = this.ry;
-    //let rotDest = rotate_coordinate;
-    //let rotIndex = (rotInit - rotDest) / 10
-    //for(let i = 0; i < 10; i += 1){
-    //this.objBot.rotateY(rotIndex);
-    //    await sleep(5)
-    //}
-    this.objBot.rotation.y = -1 * rotate_coordinate;
-    this.ry = rotate_coordinate;
-}
+/*    let rotInit = new THREE.Vector3(0, this.ry, 0)
+    let rotDest = new THREE.Vector3(0, -1 * rotate_coordinate, 0)
+    rotInit.lerp(rotDest, 0.1);
+    this.objBot.rotation.setFromVector3(rotInit)
+    this.ry = (-1 * rotate_coordinate) */
 
 /**
 * @param param
