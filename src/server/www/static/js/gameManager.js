@@ -13,12 +13,12 @@ class GameManager{
         let v;
     }
 
-    async createBot(id, x, z, ry){
+    createBot(id, x, z, ry){
         this.bots[id] = new bot({id:id, x:x, z:z, ry:ry, avatar:'./static/models/robot_1.glb'});
-        await this.bots[id].create(this.v);
+        this.bots[id].create(this.v);
     }
 
-    async createMap(mapData){
+    createMap(mapData){
         for (let h = 0; h < mapData.height; h++)
         {
             let current_line = [];
@@ -28,10 +28,8 @@ class GameManager{
                  {
                     tileR = mapData['tiles'][tileR];
                     if (h === tileR['x'] && w === tileR['z']){
-                        console.log(tileR['x'])
                         var tmpTile = new tile({x:h, z:w});
-                        await tmpTile.create(tileR['tile'], tileR['tile_object'], this.v)
-                        console.log(tmpTile)
+                        tmpTile.create(tileR['tile'], tileR['tile_object'], this.v)
                         current_line.push(tmpTile);
                         break;
                     }

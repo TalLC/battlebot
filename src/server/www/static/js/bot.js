@@ -11,6 +11,7 @@ export default class Bot{
     shieldHide;
     shieldRaise;
     objBot;
+    enrolled;
 
     constructor(construct){
         this.id = construct.id;
@@ -23,10 +24,11 @@ export default class Bot{
         this.shieldRaise = false;
         this.avatarPath = construct.avatar;
         this.objBot = null;
+        this.enrolled = false;
     }
 
-    async create(viewController){
-        this.objBot = await viewController.createBot(this.x, this.ry, this.z, 'avatar', 0);
+    create(viewController){
+        viewController.createBot(this.x, this.ry, this.z, 'avatar', 0).then((objBot) => {this.objBot = objBot});
     }
     
     action(key,param){
