@@ -36,9 +36,6 @@ class WebsocketProvider:
             )
             logging.debug(f"Display {display_client.name} connected")
 
-            # Sending token to the client in order to send it back using Rest when ready
-            await websocket.send_json(DisplayClientLoginMessage(display_client).json())
-
             # Todo: déporter la création de map pour permettre la modification de la map avant le début de partie
             logging.debug(f"Sending map to {display_client.name}")
 
@@ -48,22 +45,18 @@ class WebsocketProvider:
                                                   width=current_map.width, tiles=current_map.tiles)
             await websocket.send_json(map_create_message.json())
 
-            # Keeping a track of which bots were sent
-            sent_bot = list()
-
-            # Waiting for the game to start
-            while not GameManager().is_started:
-
-                # Sending bots information as they connect
-                for bot in GameManager().bot_manager.get_bots():
-
-                    # A new bot is connected
-                    if bot.id not in sent_bot and bot.client_connection.is_connected:
-                        await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry).json())
-                        sent_bot.append(bot.id)
+            # Waiting for all the bots to be ready
+            while not GameManager().are_bots_ready:
 
                 # Waiting for bots to connect
                 await asyncio.sleep(1)
+
+            # Sending all bots to webservice
+            for bot in GameManager().bot_manager.get_bots():
+                await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry).json())
+
+            # Sending token to the client in order to send it back using Rest when ready
+            await websocket.send_json(DisplayClientLoginMessage(display_client).json())
 
             # While client is connected, we send them the messages
             while websocket.client_state == websockets.WebSocketState.CONNECTED:

@@ -15,7 +15,7 @@ class DisplayClientLoginMessage(IWebsocketMessage):
     def __init__(self, display_client: DisplayClient):
         self._login_id = display_client.login_id
         self._client_name = display_client.name
-        super().__init__(msg_type=f"DisplayClientInfo")
+        super().__init__(msg_type=f"DisplayClientLoginMessage")
 
     def json(self):
         return {

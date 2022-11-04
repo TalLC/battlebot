@@ -75,7 +75,6 @@ if __name__ == "__main__":
         game_message_thread_event = Event()
         game_message_thread = Thread(target=read_game_queue, args=(game_message_thread_event, bot)).start()
 
-
         try:
             # Waiting for the game to start
             while not G_GAME_IS_STARTED:
