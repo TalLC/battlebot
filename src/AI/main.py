@@ -10,6 +10,7 @@ from pathlib import Path
 
 G_BOT_ID_TMP_FILE = Path('bot_id.tmp')
 G_BOT_CONFIG = json.loads(Path('bot1.json').read_text())
+G_GAME_IS_STARTED = False
 
 
 def check_for_existing_bot_id() -> str:
@@ -22,16 +23,22 @@ def check_for_existing_bot_id() -> str:
         return ""
 
 
-def read_scanner_queue(e: Event, bot: BotAi):
+def read_scanner_queue(e: Event, bot_ai: BotAi):
     while not e.is_set():
-        scanner_message = bot.read_scanner()
+        scanner_message = bot_ai.read_scanner()
         logging.info(f"[SCANNER] {scanner_message}")
 
 
-def read_game_queue(e: Event, bot: BotAi):
+def read_game_queue(e: Event, bot_ai: BotAi):
+    global G_GAME_IS_STARTED
+
     while not e.is_set():
-        game_message = bot.read_game_message()
+        game_message = bot_ai.read_game_message()
         logging.info(f"[GAME] {game_message}")
+
+        # Todo : envoyer un message lorsque la partie démarre
+        if game_message['msg_type'] == 'game_status':
+            G_GAME_IS_STARTED = game_message['data']
 
 
 if __name__ == "__main__":
@@ -40,19 +47,19 @@ if __name__ == "__main__":
                         format='[%(levelname)s] %(asctime)s - %(message)s')
 
     # Creating a new Bot
-    with BotAi(G_BOT_CONFIG['bot_name'], G_BOT_CONFIG['team_id']) as bot1:
+    with BotAi(G_BOT_CONFIG['bot_name'], G_BOT_CONFIG['team_id']) as bot:
 
         # Bot enrollment
         try:
             # If we crashed after enrolling the bot, we re-use the same bot_id if it was stored
-            bot_id = bot1.enroll(check_for_existing_bot_id())
+            bot_id = bot.enroll(check_for_existing_bot_id())
         except BotAi.RestException as ex:
             # If the bot id is invalid
             if ex.name == 'BOT_DOES_NOT_EXISTS':
                 # Bot id was invalid, deleting tmp file
                 G_BOT_ID_TMP_FILE.unlink(missing_ok=True)
                 # Enrolling as new bot
-                bot_id = bot1.enroll()
+                bot_id = bot.enroll()
             else:
                 logging.exception(str(ex))
                 sys.exit()
@@ -62,13 +69,22 @@ if __name__ == "__main__":
 
         # Bot scanner messages handler thread
         scanner_message_thread_event = Event()
-        scanner_message_thread = Thread(target=read_scanner_queue, args=(scanner_message_thread_event, bot1)).start()
+        scanner_message_thread = Thread(target=read_scanner_queue, args=(scanner_message_thread_event, bot)).start()
 
         # Game messages handler thread
         game_message_thread_event = Event()
-        game_message_thread = Thread(target=read_game_queue, args=(game_message_thread_event, bot1)).start()
+        game_message_thread = Thread(target=read_game_queue, args=(game_message_thread_event, bot)).start()
+
 
         try:
+            # Waiting for the game to start
+            while not G_GAME_IS_STARTED:
+                sleep(0.1)
+
+            # Big AI time
+            bot.move('start')
+            bot.turn('left')
+
             while True:
                 # Analyze stuff
                 # Make complex decisions
@@ -80,7 +96,7 @@ if __name__ == "__main__":
             game_message_thread_event.set()
 
             # Closing bot connections
-            bot1.close()
+            bot.close()
 
             # Removing temp file
             G_BOT_ID_TMP_FILE.unlink(missing_ok=True)
