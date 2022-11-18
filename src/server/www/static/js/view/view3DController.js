@@ -11,9 +11,7 @@ export default class View3DController{
     controls;
     light;
     loader;
-    tmp;
     constructor(width = window.innerWidth, height = window.innerHeight){
-        this.tmp;
         this.renderer = new THREE.WebGLRenderer();
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);

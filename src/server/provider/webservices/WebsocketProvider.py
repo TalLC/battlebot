@@ -51,6 +51,14 @@ class WebsocketProvider:
             # Keeping a track of which bots were sent
             sent_bot = list()
 
+            if GameManager().is_started:
+                # Sending bots information as they connect
+                for bot in GameManager().bot_manager.get_bots():
+                    if bot.client_connection.is_connected:
+                        await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry).json())
+                # Waiting for bots to connect
+                await asyncio.sleep(1)
+
             # Waiting for the display to be ready and the game to start
             while not display_client.is_ready and not GameManager().is_started:
 
