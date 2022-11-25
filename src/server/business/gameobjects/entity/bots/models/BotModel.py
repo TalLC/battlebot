@@ -12,6 +12,7 @@ from business.gameobjects.behaviour.IMoving import IMoving
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
+from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
 from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
 from business.shapes.ShapeFactory import ShapeFactory
 from consumer.ConsumerManager import ConsumerManager
