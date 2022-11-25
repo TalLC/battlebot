@@ -24,6 +24,7 @@ from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
     from business.BotManager import BotManager
+    from business.shapes import Shapes
 
 
 class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
@@ -49,6 +50,14 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         return self._role
 
+    @property
+    def shape(self) -> Shapes:
+        return ShapeFactory.create_shape(name='circle', o=(self.x, self.z), radius=.5, resolution=3)
+
+    @shape.setter
+    def shape(self, _):
+        pass
+
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
         self.bot_manager = bot_manager
@@ -56,6 +65,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
         self._role = role
+        self._scanner = SimpleScanner(self)
 
         # Generate a random id
         self._id = str(uuid.uuid4())
@@ -75,6 +85,12 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Thread handling continuous actions as moving and turning
         self._thread_continuous_actions = Thread(
             target=self._thread_handle_continuous_actions,
+            args=(self._thread_event,)
+        ).start()
+
+        # Thread's scanner
+        self._thread_scanner = Thread(
+            target=self._thread_scanning,
             args=(self._thread_event,)
         ).start()
 
@@ -154,6 +170,20 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
+
+    def _thread_scanning(self, e: Event):
+        # Waiting interval between all increments
+        loop_wait_ms = 100
+        logging.debug('LETSGO')
+        while not e.is_set():
+            if self.bot_manager.game_manager.is_started:
+                detected_objects = self._scanner.scanning()
+                if detected_objects:
+                    ConsumerManager().mqtt.send_message(
+                        BotScannerDetectionMessage(self.id, detected_object_list=detected_objects))
+                sleep(self._scanner.interval)
+            else:
+                sleep(loop_wait_ms / 1000)
 
     def add_command_to_queue(self, command: IBotCommand):
         """

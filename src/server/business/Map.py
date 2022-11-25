@@ -68,18 +68,6 @@ class Map:
 
         return False
 
-    def is_walkable_at(self, x: float, z: float) -> bool:
-
-        if x >= self.width or z >= self.height:
-            return False
-
-        if x < 0 or z < 0:
-            return False
-
-        cell = self._matrix[int(x)][int(z)]
-
-        return cell.is_walkable
-
     @staticmethod
     def list_saved_map() -> list:
         """

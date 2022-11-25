@@ -1,15 +1,10 @@
-from __future__ import annotations
 from datetime import datetime
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
-
+from business.gameobjects.entity.bots.models.BotModel import BotModel
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.ConsumerManager import ConsumerManager
+
 from consumer.brokers.messages.stomp.BotMovingStatusMessage import BotMovingStatusMessage
-
-
-if TYPE_CHECKING:
-    from business.gameobjects.entity.bots.models.BotModel import BotModel
 
 
 @dataclass(order=True)
