@@ -3,8 +3,7 @@ import logging
 from time import sleep
 from datetime import datetime
 from threading import Thread, Event
-from common.config import CONFIG_NETWORK_SECURITY
-from common.config import DATETIME_STR_FORMAT
+from common.config import CONFIG_NETWORK_SECURITY, DATETIME_STR_FORMAT
 from provider.security.interfaces.INetworkSecurity import INetworkSecurity
 from provider.security.BannedIP import BannedIP
 from provider.security.IPLog import IPLog
