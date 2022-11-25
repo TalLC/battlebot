@@ -1,10 +1,11 @@
 from pydantic import BaseModel, validator
+from common.ErrorCode import *
 
 
 class BotsIdActionTurnModel(BaseModel):
-    direction: str
+    action: str
 
-    @validator('direction')
+    @validator('action')
     def action_must_be_one_of_these(cls, v):
         """
         Validating sent value and lowering if validated.

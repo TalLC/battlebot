@@ -1,9 +1,3 @@
-3d/
-POC/POC Python full/
-POC/POC threejs cdn/
-src/server/activemq/
-
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

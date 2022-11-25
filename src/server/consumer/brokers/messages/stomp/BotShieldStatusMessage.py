@@ -1,7 +1,8 @@
-from consumer.brokers.messages.stomp.interfaces.IBotStatMessage import IBotStatMessage
+from consumer.brokers.messages.stomp.interfaces.IShieldMessage import IShieldMessage
 
 
-class BotShieldStatusMessage(IBotStatMessage):
+class BotShieldStatusMessage(IShieldMessage):
 
     def __init__(self, bot_id: str, durability_percent: int):
-        super().__init__(bot_id=bot_id, msg_type="shield_status", stat_value=durability_percent)
+        data = durability_percent
+        super().__init__(bot_id=bot_id, msg_type="shield_status", data=data)

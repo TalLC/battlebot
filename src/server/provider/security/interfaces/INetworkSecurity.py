@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from threading import Event
-from common.config import CONFIG_NETWORK_SECURITY
 from common.Singleton import SingletonABCMeta
+from common.config import CONFIG_NETWORK_SECURITY
 from provider.security.BannedIP import BannedIP
 from provider.security.IPLog import IPLog
 

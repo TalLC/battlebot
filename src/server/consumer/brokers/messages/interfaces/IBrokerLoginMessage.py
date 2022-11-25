@@ -14,15 +14,8 @@ class IBrokerLoginMessage(IMessage):
     def __init__(self, bot_id: str, login_id: str, broker_name: str, retain: bool = False):
         self._login_id = login_id
         self._broker_name = broker_name
-        data = {
-            "value": login_id
-        }
-
-        super().__init__(bot_id=bot_id, source='server', msg_type=f"{broker_name.lower()}_id", data=data, retain=retain)
+        super().__init__(bot_id=bot_id, msg_type=f"{broker_name.lower()}_login_message",
+                         data={f"{broker_name.lower()}_id": login_id}, retain=retain)
 
     def json(self) -> dict:
-        return {
-            'msg_type': self.msg_type,
-            'source': self.source,
-            'data': self.data
-        }
+        return self.data

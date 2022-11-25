@@ -4,7 +4,7 @@ from business.displays.DisplayClient import DisplayClient
 
 
 class DisplayManager(IDisplayManager):
-    _DISPLAY_CLIENTS: dict[str, DisplayClient] = dict()
+    _DISPLAY_CLIENTS = dict()
 
     def does_client_id_exists(self, id_num: int):
         """
@@ -25,7 +25,7 @@ class DisplayManager(IDisplayManager):
 
     def create_client(self, host: str, port: int, websocket_headers: starlette.datastructures.Headers) -> DisplayClient:
         client = DisplayClient(self, len(self._DISPLAY_CLIENTS.keys()) + 1, host, port, websocket_headers)
-        self._DISPLAY_CLIENTS[client.login_id] = client
+        self._DISPLAY_CLIENTS[client.token] = client
         return client
 
     def get_client_by_token(self, token: str) -> None | DisplayClient:
