@@ -12,9 +12,12 @@ from business.gameobjects.behaviour.IMoving import IMoving
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
+from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
+from business.shapes.ShapeFactory import ShapeFactory
 from consumer.ConsumerManager import ConsumerManager
+
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
-from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.models.Target import Target
@@ -208,11 +211,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Calculating new coordinates
         new_x = cos(self.ry) * distance
         new_z = sin(self.ry) * distance
-
-        # Check if the destination is valid
-        if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
-            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
-            return
 
         # Moving the bot on the map
         self.set_position(self.x + new_x, self.z + new_z, self.ry)

@@ -3,11 +3,13 @@ import json
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
+
 from business.gameobjects.tiles.TileFactory import TileFactory
 from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 
 if TYPE_CHECKING:
     from business.GameManager import GameManager
+    from business.gameobjects.tiles.Tile import Tile
 
 
 class Map:
@@ -15,7 +17,7 @@ class Map:
     _height: int
     _width: int
     _tiles: list
-    _matrix: list
+    _matrix: [[Tile]]
 
     @property
     def infos(self):
@@ -39,7 +41,7 @@ class Map:
         return self._width
 
     @property
-    def matrix(self) -> [[]]:
+    def matrix(self) -> [[Tile]]:
         return self._matrix
 
     @property
@@ -49,7 +51,6 @@ class Map:
     def __init__(self, game_object: GameManager, map_id: str):
         self._game_object = game_object
         self._tiles = []
-        self._matrix = []
 
         self.initialize(map_id)
 
@@ -111,21 +112,23 @@ class Map:
         else:
             logging.error(f"La map {map_id} n'a pas été trouvée.")
 
-    def load(self) -> list:
+    def load(self) -> [[Tile]]:
         """
         Génère la matrice du terrain.
         """
         # On crée un tableau vide aux dimensions de la map
-        mat = []
+        mat: [list[Tile]] = list()
         for h in range(self._height):
-            current_line = []
+            current_line: [Tile] = list()
             for w in range(self._width):
-                current_line.append(None)
+                current_line.append(TileFactory.create_tile(tile_type='void', x=w, z=w))
             mat.append(current_line)
 
         # On crée un obj Tile pour chaque cellule de la map
         for d in self._tiles:
-            mat[d['x']][d['z']] = TileFactory.create_tile(
+            x = d['x']
+            z = d['z']
+            mat[x][z] = TileFactory.create_tile(
                 tile_type=d['tile'], x=d['x'], z=d['z'], tile_object=TileObjectFactory.create_tileobject(
                     d['tile_object'], d['x'], d['z'])
             )
