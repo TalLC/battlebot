@@ -7,8 +7,8 @@ from consumer.ConsumerManager import ConsumerManager
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.commands.BotShootCommand import BotShootCommand
-from consumer.brokers.messages.mqtt.MQTTLoginMessage import MQTTLoginMessage
-from consumer.brokers.messages.stomp.STOMPLoginMessage import STOMPLoginMessage
+from consumer.brokers.messages.mqtt.ServerMqttIdMessage import ServerMqttIdMessage
+from consumer.brokers.messages.stomp.ServerStompIdMessage import ServerStompIdMessage
 from provider.security.NetworkSecurity import NetworkSecurity
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from provider.webservices.rest.models.AdminBaseModel import AdminBaseModel
@@ -126,11 +126,11 @@ class RestProvider:
         @NetworkSecurityDecorators.rest_ban_check
         async def action(model: DisplayClientsActionReadyModel, _: Request):
             # Checking if the token exists
-            if not GameManager().display_manager.does_client_token_exists(model.client_token):
+            if not GameManager().display_manager.does_client_token_exists(model.login_id):
                 ErrorCode.throw(DISPLAY_CLIENT_ID_DOES_NOT_EXISTS)
 
             # Fetching corresponding display client
-            client = GameManager().display_manager.get_client_by_token(model.client_token)
+            client = GameManager().display_manager.get_client_by_token(model.login_id)
 
             # Setting client to Ready
             client.set_ready()
@@ -222,6 +222,8 @@ class RestProvider:
             if not is_bot_added:
                 ErrorCode.throw(TEAM_IS_FULL)
 
+            logging.debug(f'[REST] Bot "{model.bot_name}" has been registered')
+
             return {"status": "ok", "message": "The bot has been successfully registered", "bot_id": bot.id}
 
     def __bots_id_action_request_connection(self):
@@ -248,8 +250,8 @@ class RestProvider:
 
             # Sending 3 different ids to the client using 3 different channels
             # Rest, STOMP and MQTT
-            ConsumerManager().mqtt.send_message(MQTTLoginMessage(bot.id, bot.client_connection.source_mqtt_id))
-            ConsumerManager().stomp.send_message(STOMPLoginMessage(bot.id, bot.client_connection.source_stomp_id))
+            ConsumerManager().mqtt.send_message(ServerMqttIdMessage(bot.id, bot.client_connection.source_mqtt_id))
+            ConsumerManager().stomp.send_message(ServerStompIdMessage(bot.id, bot.client_connection.source_stomp_id))
 
             return {
                 "status": "ok",
@@ -277,8 +279,8 @@ class RestProvider:
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
 
-            # Compare request ID
-            if bot.client_connection.source_request_id != model.request_id:
+            # Compare rest ID
+            if bot.client_connection.source_request_id != model.rest_id:
                 ErrorCode.throw(LOGIN_INVALID_REQUEST_ID)
 
             # Compare STOMP ID
@@ -290,7 +292,7 @@ class RestProvider:
                 ErrorCode.throw(LOGIN_INVALID_MQTT_ID)
 
             # Connecting the bot
-            bot.client_connection.connect(model.request_id, model.stomp_id, model.mqtt_id)
+            bot.client_connection.connect(model.rest_id, model.stomp_id, model.mqtt_id)
 
             return {"status": "ok", "message": "Your bot is successfully connected"}
 
@@ -338,11 +340,11 @@ class RestProvider:
             bot = GameManager().bot_manager.get_bot(bot_id)
 
             # Sending shoot command to the bot
-            bot.add_command_to_queue(BotTurnCommand(value=model.action))
+            bot.add_command_to_queue(BotTurnCommand(value=model.direction))
 
-            if model.action.lower() in ["left", "right"]:
-                return {"status": "ok", "message": f"Bot is starting to turn {model.action}"}
-            elif model.action.lower() == 'stop':
+            if model.direction.lower() in ["left", "right"]:
+                return {"status": "ok", "message": f"Bot is starting to turn {model.direction}"}
+            elif model.direction.lower() == 'stop':
                 return {"status": "ok", "message": "Bot has stopped turning"}
 
     def __bots_id_action_move(self):

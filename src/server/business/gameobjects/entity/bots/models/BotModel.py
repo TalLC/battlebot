@@ -242,6 +242,11 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         new_x = cos(self.ry) * distance
         new_z = sin(self.ry) * distance
 
+        # Check if the destination is valid
+        if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+            return
+
         # Moving the bot on the map
         self.set_position(self.x + new_x, self.z + new_z, self.ry)
 
