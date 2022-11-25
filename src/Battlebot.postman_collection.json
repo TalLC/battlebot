@@ -1,0 +1,527 @@
+{
+	"info": {
+		"_postman_id": "c8f790cd-f2da-4ddc-9cfc-4b55cfb8caf4",
+		"name": "Battlebot",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DisplayClient",
+			"item": [
+				{
+					"name": "/display/clients/action/ready",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"login_id\": \"2db23fce-df23-412e-a8d4-42bf5fff1ea3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/display/clients/action/ready",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"display",
+								"clients",
+								"action",
+								"ready"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "admin - /admin/action/ban",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"source\": \"websocket\",\r\n    \"reason\": \"Ban de test\",\r\n    \"definitive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/admin/action/ban",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"admin",
+								"action",
+								"ban"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /admin/action/unban",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"source\": \"websocket\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/admin/action/unban",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"admin",
+								"action",
+								"unban"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /game/action/select_map",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"map_name\": \"lake_32_32\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/game/action/select_map",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"game",
+								"action",
+								"select_map"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /display/clients/action/list",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"connected_only\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/display/clients/action/list",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"display",
+								"clients",
+								"action",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /display/clients/action/get_by_id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"client_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/display/clients/action/get_by_id",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"display",
+								"clients",
+								"action",
+								"get_by_id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /display/clients/action/get_by_token",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"client_token\": \"af1a0c40-4125-47b8-925d-a6c101f003c0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/display/clients/action/get_by_token",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"display",
+								"clients",
+								"action",
+								"get_by_token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bots",
+			"item": [
+				{
+					"name": "/bots/action/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"team_id\": \"4dd6dfe8-e98f-447d-87ae-63612e295863\",\r\n    \"bot_name\": \"My bot\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/bots/action/register",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"bots",
+								"action",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "request connection",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/request_connection?bot_id=VIBB11ST",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"request_connection"
+							],
+							"query": [
+								{
+									"key": "bot_id",
+									"value": "VIBB11ST"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check connection",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/check_connection?bot_id=VIBB11ST&request_id=Y03KJPA0&stomp_id&mqtt_id",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"check_connection"
+							],
+							"query": [
+								{
+									"key": "bot_id",
+									"value": "VIBB11ST"
+								},
+								{
+									"key": "request_id",
+									"value": "Y03KJPA0"
+								},
+								{
+									"key": "stomp_id",
+									"value": null
+								},
+								{
+									"key": "mqtt_id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/bots/{bot_id}/action/shoot",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"angle\": 42.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/shoot",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"bots",
+								":bot_id",
+								"action",
+								"shoot"
+							],
+							"variable": [
+								{
+									"key": "bot_id",
+									"value": "199dc97d-d97d-4fa1-a451-459b29a07632"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/bots/{bot_id}/action/move",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"stop\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/move",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"bots",
+								":bot_id",
+								"action",
+								"move"
+							],
+							"variable": [
+								{
+									"key": "bot_id",
+									"value": "0-0-0-0-0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/bots/{bot_id}/action/turn",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"stop\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/turn",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"bots",
+								":bot_id",
+								"action",
+								"turn"
+							],
+							"variable": [
+								{
+									"key": "bot_id",
+									"value": "0-0-0-0-0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Game",
+			"item": [
+				{
+					"name": "/game/action/start",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/game/action/start",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"game",
+								"action",
+								"start"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
