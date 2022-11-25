@@ -2,4 +2,4 @@ from pydantic import BaseModel
 
 
 class DisplayClientsActionReadyModel(BaseModel):
-    client_token: str
+    login_id: str

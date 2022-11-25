@@ -3,9 +3,9 @@ from common.ErrorCode import *
 
 
 class BotsIdActionTurnModel(BaseModel):
-    action: str
+    direction: str
 
-    @validator('action')
+    @validator('direction')
     def action_must_be_one_of_these(cls, v):
         """
         Validating sent value and lowering if validated.

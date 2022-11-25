@@ -24,16 +24,16 @@ class BotManager(IBotManager):
         else:
             return None
 
-    def get_bots(self, connected_only: bool = True) -> (BotModel, ):
+    def get_bots(self, connected_only: bool = True) -> (BotModel,):
         """
         Get all connected bots.
         """
         bots = tuple(self._BOTS.values())
 
         if connected_only:
-            bots = tuple(bot for bot in self._BOTS.values() if bot.client_connection.is_connected is connected_only)
+            bots = (bot for bot in self._BOTS.values() if bot.client_connection.is_connected is connected_only)
 
-        return bots
+        return tuple(bots)
 
     def create_bot(self, bot_name, bot_type) -> BotModel:
         """
@@ -47,5 +47,4 @@ class BotManager(IBotManager):
         """
         Return the total amount of connected bots.
         """
-        # return self.get_bots(connected_only)
         return len(self.get_bots(connected_only))
