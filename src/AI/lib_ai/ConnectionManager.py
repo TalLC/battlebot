@@ -65,7 +65,7 @@ class ConnectionManager:
         else:
             # Re-using an existing bot
             self._bot_id = bot_id
-        logging.debug(f"AI Bot enrolled: bot_id={self._bot_id}")
+        logging.debug(f"[ConnectionManager] AI Bot enrolled: bot_id={self._bot_id}")
 
         # Requesting rest and brokers connections ids
         self._rest_id = self._request_connection()
@@ -93,7 +93,7 @@ class ConnectionManager:
             self._mqtt_id = mqtt_id
 
         # If all ids were retrieved, we send them to the server for validation
-        logging.debug(f"{str(self._rest_id)}, {str(self._stomp_id)}, {str(self._mqtt_id)}")
+        logging.debug(f"[ConnectionManager] {str(self._rest_id)}, {str(self._stomp_id)}, {str(self._mqtt_id)}")
         if self._rest_id and self._mqtt_id and self._stomp_id:
             self._all_services_connected = self._send_ids_to_check()
 
@@ -104,14 +104,14 @@ class ConnectionManager:
         MQTT and STOMP ids need to be retrieved from their queues.
         """
         # Calling the webservice will return a rest_id used to validate RestAPI
-        _id = Rest().request_connection(self._bot_id)
-        logging.info(f"rest_id={_id}")
-        return _id
+        rest_id = Rest().request_connection(self._bot_id)
+        logging.info(f"[ConnectionManager] rest_id={rest_id}")
+        return rest_id
 
     def _send_ids_to_check(self) -> bool:
         """
         Validate connection by sending all requested ids.
         """
-        validated = Rest().send_ids_to_check(self._bot_id, self._rest_id, self._mqtt_id, self._stomp_id)
-        logging.info(f"Bot connection status: {'OK' if validated else 'KO'}")
-        return validated
+        are_ids_validated = Rest().send_ids_to_check(self._bot_id, self._rest_id, self._mqtt_id, self._stomp_id)
+        logging.info(f"[ConnectionManager] Bot connection status: {'OK' if are_ids_validated else 'KO'}")
+        return are_ids_validated

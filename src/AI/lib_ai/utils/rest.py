@@ -18,18 +18,21 @@ class Rest(metaclass=SingletonABCMeta):
 
     rest_server = f"{CONFIG_REST.protocol}://{CONFIG_REST.host}:{CONFIG_REST.port}"
 
+    def __init__(self):
+        self._http_session = requests.session()
+
     def _send_to_rest(self, endpoint: str, method: str, payload: dict = None) -> dict:
         """
         Send an HTTP request to Rest API.
         """
         if method.lower() == "post":
-            requests_func = requests.post
+            requests_func = self._http_session.post
         elif method.lower() == "patch":
-            requests_func = requests.patch
+            requests_func = self._http_session.patch
         elif method.lower() == "put":
-            requests_func = requests.put
+            requests_func = self._http_session.put
         else:
-            requests_func = requests.get
+            requests_func = self._http_session.get
 
         r = requests_func(f"{self.rest_server}{endpoint}", json=payload if payload is not None else dict())
         logging.debug(f"[REST] {method.lower()} {endpoint} - Response: {r.json()}")
@@ -41,7 +44,7 @@ class Rest(metaclass=SingletonABCMeta):
                 # Raising a RestException using values from details
                 raise RestException(**r.json()['detail'])
 
-        logging.error(f"Bad response from Rest API:\n{r.json()}")
+        logging.error(f"[REST] Bad response from Rest API:\n{r.json()}")
 
     def enroll_new_bot(self, team_id: str, bot_name: str) -> str:
         """

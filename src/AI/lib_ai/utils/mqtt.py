@@ -54,7 +54,7 @@ class MQTT(metaclass=SingletonABCMeta):
 
         # Check if connection is successful
         if not self.__client.is_connected:
-            raise Exception("Failed to connect to MQTT broker")
+            raise Exception("[MQTT] Failed to connect to MQTT broker")
 
         # Starting internal thread to handle publish/subscribe operations
         self.__client.loop_start()
@@ -70,7 +70,7 @@ class MQTT(metaclass=SingletonABCMeta):
             self.__connected = True
             logging.debug("[MQTT] Connected to MQTT Broker!")
         else:
-            raise f"Failed to connect to MQTT broker, return code {rc}"
+            raise f"[MQTT] Failed to connect to MQTT broker, return code {rc}"
 
     @staticmethod
     def on_publish(_client: mqtt_client, _userdata, mid: int):

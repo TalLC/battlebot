@@ -83,5 +83,5 @@ class WebsocketProvider:
             display_client.set_connection_closed()
             logging.debug(f"Display {display_client.name} disconnected")
 
-            # Removing the queue to avoir receiving messages
+            # Removing the queue to avoid receiving messages
             self.__webservices.remove_ws_queue(client_queue)

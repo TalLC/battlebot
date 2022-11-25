@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class IBotManager(ABC):
 
     def __init__(self, game_manager: GameManager):
-        self._game_manager = game_manager
+        self.game_manager = game_manager
 
     def does_bot_exists(self, bot_id):
         """
