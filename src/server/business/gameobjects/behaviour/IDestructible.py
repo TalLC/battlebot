@@ -46,9 +46,15 @@ class IDestructible:
         """
         if self._health > 0:
             self._health -= damage
-            if self._health < 0:
+            if self._health <= 0:
                 self._health = 0
                 self._on_death()
+
+    def kill(self) -> None:
+        """
+        Kills the entity.
+        """
+        self.hurt(self._health_max)
 
     def _on_death(self) -> None:
         """

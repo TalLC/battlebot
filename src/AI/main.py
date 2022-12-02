@@ -14,6 +14,7 @@ G_BOT_ID_TMP_FILE = Path('bot_id.tmp')
 G_BOT_CONFIG = json.loads(Path('bot1.json').read_text())
 G_GAME_IS_STARTED = False
 
+G_BOT_HEALTH = 100
 G_BOT_IS_MOVING = False
 G_BOT_IS_TURNING = False
 G_BOT_TURN_DIRECTION = str()
@@ -32,23 +33,63 @@ def check_for_existing_bot_id() -> str:
 def read_scanner_queue(e: Event, bot_ai: BotAi):
     while not e.is_set():
         scanner_message = bot_ai.read_scanner()
-        logging.info(f"[SCANNER] {scanner_message}")
+        logging.debug(f"[SCANNER] {scanner_message}")
+        handle_scanner_message(scanner_message)
+
+
+def handle_scanner_message(message: dict):
+    """
+    Handle a new scanner message.
+    """
+    try:
+        if 'msg_type' in message and message['msg_type'] == 'object_detection':
+            for detected_object in message['data']:
+                # Checking if an object is detected
+                if detected_object['name'] is not None:
+                    angle = (detected_object['from'] + detected_object['to']) / 2
+                    logging.info(
+                        f"[SCANNER] {detected_object['name']} detected at a distance of "
+                        f"{detected_object['distance']} ({angle}r)"
+                    )
+        else:
+            logging.error("Not an object detection scanner message")
+    except:
+        logging.error("Bad scanner message format")
 
 
 def read_game_queue(e: Event, bot_ai: BotAi):
-    global G_GAME_IS_STARTED
-    global G_BOT_IS_MOVING
-
     while not e.is_set():
         game_message = bot_ai.read_game_message()
-        logging.info(f"[GAME] {game_message}")
+        logging.debug(f"[GAME] {game_message}")
+        handle_game_message(game_message)
 
-        if game_message['msg_type'] == 'game_status':
-            G_GAME_IS_STARTED = game_message['data']
-        elif game_message['msg_type'] == 'moving_status':
-            if not game_message['data']['value']:
-                # Bot has been stopped
-                G_BOT_IS_MOVING = False
+
+def handle_game_message(message: dict):
+    """
+    Handle a new game message.
+    """
+    try:
+        if 'msg_type' in message:
+            # Health update message
+            if message['msg_type'] == 'health_status':
+                global G_BOT_HEALTH
+                current_health = message['data']['value']
+                G_BOT_HEALTH = current_health
+                logging.info(f"[BOT] Health: {current_health}")
+            # Game update message
+            if message['msg_type'] == 'game_status':
+                global G_GAME_IS_STARTED
+                G_GAME_IS_STARTED = message['data']
+            # Bot moving update message
+            elif message['msg_type'] == 'moving_status':
+                global G_BOT_IS_MOVING
+                if not message['data']['value']:
+                    # Bot has been stopped
+                    G_BOT_IS_MOVING = False
+        else:
+            logging.error("Not an object detection scanner message")
+    except:
+        logging.error("Bad scanner message format")
 
 
 def get_opposite_direction(direction: str) -> str:
@@ -58,6 +99,10 @@ def get_opposite_direction(direction: str) -> str:
         return 'left'
     else:
         return 'stop'
+
+
+def show_bot_stats():
+    logging.info(f"Health: {G_BOT_HEALTH}")
 
 
 if __name__ == "__main__":
@@ -105,6 +150,9 @@ if __name__ == "__main__":
             while not G_GAME_IS_STARTED:
                 sleep(0.1)
 
+            # Game is started
+            show_bot_stats()
+
             # Big AI time
             bot.move('start')
             G_BOT_IS_MOVING = True
@@ -116,7 +164,7 @@ if __name__ == "__main__":
             G_BOT_IS_TURNING = True
 
             last_direction_change_ts = datetime.now()
-            while True:
+            while G_BOT_HEALTH > 0:
                 # Analyze stuff
                 # Compiling matrix
                 # Optimizing core mainframe
