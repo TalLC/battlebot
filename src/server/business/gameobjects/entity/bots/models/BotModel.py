@@ -267,6 +267,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Sending current health
         self.send_client_health_status()
 
+        # Todo : Envoyer les caractéristiques du bots (vitesse de déplacement, etc) au client
         # Sending max moving speed
         # self.moving_speed
 
