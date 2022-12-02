@@ -13,12 +13,14 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
 from business.shapes.ShapeFactory import ShapeFactory
 from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
+from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.models.Target import Target
@@ -65,6 +67,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
+
         self._role = role
         self._scanner = SimpleScanner(self)
 
@@ -81,7 +84,10 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self._thread_event = Event()
 
         # Thread handling incoming messages
-        self._thread_messages = Thread(target=self._thread_handle_commands, args=(self._thread_event,)).start()
+        self._thread_messages = Thread(
+            target=self._thread_handle_commands,
+            args=(self._thread_event,)
+        ).start()
 
         # Thread handling continuous actions as moving and turning
         self._thread_continuous_actions = Thread(
@@ -253,3 +259,58 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Sending new position over websocket
         ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+
+    def send_client_bot_properties(self) -> None:
+        """
+        Sending bot properties to the client.
+        """
+        # Sending current health
+        self.send_client_health_status()
+
+        # Sending max moving speed
+        # self.moving_speed
+
+        # Sending max turning speed
+        # self.moving_speed
+
+    def send_client_health_status(self) -> None:
+        """
+        Send current health to the client.
+        """
+        logging.debug(f"[BOT {self.name}] Health: {self.health}")
+
+        # Sending health status to the client
+        ConsumerManager().stomp.send_message(BotHealthStatusMessage(self.id, self.health))
+
+    def _on_death(self) -> None:
+        """
+        Callback when the bot is dead.
+        """
+        if self._health <= 0:
+            logging.info(f"[BOT {self.name}] Has died")
+
+            # Stopping scanner
+            logging.debug(f"[BOT {self.name}] Stopping scanner")
+            self._scanner.switch()
+
+            # Stopping the bot
+            logging.debug(f"[BOT {self.name}] Stopping movements")
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+            self.add_command_to_queue(BotTurnCommand(priority=0, value="stop"))
+
+            # Waiting for bot to be stopped
+            while self.is_turning or self.is_moving:
+                sleep(0.01)
+            logging.debug(f"[BOT {self.name}] Is stopped")
+
+            # Sending death information to the client
+            self.send_client_health_status()
+            logging.debug(f"[BOT {self.name}] Health report sent")
+
+            # Killing threads
+            self.stop_threads()
+            logging.debug(f"[BOT {self.name}] Thread stopped")
+
+            # Disabling collisions
+            self.set_collisions(False)
+            logging.debug(f"[BOT {self.name}] Collisions disabled")

@@ -110,7 +110,7 @@ class ScannerModel(IScanner, ABC):
         return res
 
     def scanning(self) -> list:
-        logging.debug("...........................................................................................")
+        logging.debug(f".................................{self._bot.name}.................................")
         result_scan = dict()
         final_result = list()
 
