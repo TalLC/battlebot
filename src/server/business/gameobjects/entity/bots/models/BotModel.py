@@ -65,6 +65,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
         self.bot_manager = bot_manager
+        self._role = role
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
@@ -73,7 +74,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coords()
         self.ry = Random().randint(0, 1000) / 1000
 
-        self._role = role
+        # Creating a scanner to get environmental information
         self._scanner = SimpleScanner(self)
 
         # Generate a random id
@@ -273,6 +274,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self.send_client_health_status()
 
         # Todo : Envoyer les caractéristiques du bots (vitesse de déplacement, etc) au client
+        # Sending bot role
+        # self.role
+
         # Sending max moving speed
         # self.moving_speed
 
