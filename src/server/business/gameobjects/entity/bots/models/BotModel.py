@@ -105,7 +105,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         Stop all threads for this bot.
         """
-        # Set the event to stop the thread
+        # Set the event to stop the threads
         self._thread_event.set()
 
     def _thread_handle_commands(self, e: Event):
