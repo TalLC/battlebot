@@ -42,6 +42,7 @@ class RestProvider:
         self.__admin_display_clients_action_list()
         self.__admin_display_clients_action_get_by_id()
         self.__admin_display_clients_action_get_by_token()
+        self.__admin_bots_id_action_kill()
         self.__display_action_ready()
         self.__bots_action_register()
         self.__bots_id_action_request_connection()
@@ -196,6 +197,26 @@ class RestProvider:
 
             return {'status': 'ok', 'client': client.json()}
 
+    def __admin_bots_id_action_kill(self):
+        """
+        Kills the specified bot.
+        """
+        @self.__app.patch("/bots/{bot_id}/action/kill")
+        async def action(bot_id: str, model: AdminBaseModel, _: Request):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Does bot exists
+            if not GameManager().bot_manager.does_bot_exists(bot_id):
+                ErrorCode.throw(BOT_DOES_NOT_EXISTS)
+
+            # Fetching corresponding Bot
+            bot = GameManager().bot_manager.get_bot(bot_id)
+            bot.kill()
+
+            return {"status": "ok", "message": "The bot has been killed", "bot_id": bot.id}
+
     def __bots_action_register(self):
         """
         Create a new bot object and adds it to the specified team.
@@ -216,6 +237,10 @@ class RestProvider:
 
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.create_bot(model.bot_name, bot_type)
+
+            # Is bot alive
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
 
             # Adding the bot to the team
             is_bot_added = GameManager().team_manager.get_team(model.team_id).add_bot(bot)
@@ -247,6 +272,10 @@ class RestProvider:
 
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Is bot alive
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
 
             # Sending 3 different ids to the client using 3 different channels
             # Rest, STOMP and MQTT
@@ -293,7 +322,7 @@ class RestProvider:
 
             # Connecting the bot
             bot.client_connection.connect(model.rest_id, model.stomp_id, model.mqtt_id)
-
+            bot.send_client_bot_properties()
             return {"status": "ok", "message": "Your bot is successfully connected"}
 
     def __bots_id_action_shoot(self):
@@ -314,6 +343,10 @@ class RestProvider:
 
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Is bot alive
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
 
             # Sending shoot command to the bot
             bot.add_command_to_queue(BotShootCommand(value=model.angle))
@@ -339,7 +372,11 @@ class RestProvider:
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
 
-            # Sending shoot command to the bot
+            # Is bot alive
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
+
+            # Sending turn command to the bot
             bot.add_command_to_queue(BotTurnCommand(value=model.direction))
 
             if model.direction.lower() in ["left", "right"]:
@@ -366,7 +403,11 @@ class RestProvider:
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
 
-            # Sending shoot command to the bot
+            # Is bot alive
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
+
+            # Sending move command to the bot
             bot.add_command_to_queue(BotMoveCommand(value=model.action))
 
             if model.action == 'start':
@@ -389,6 +430,13 @@ class RestProvider:
             # Does bot exists
             if not GameManager().bot_manager.does_bot_exists(bot_id):
                 ErrorCode.throw(BOT_DOES_NOT_EXISTS)
+
+            # Fetching corresponding Bot
+            bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Is bot alive
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
 
             if model.action.lower() == 'start':
                 return {"status": "ok", "message": "Bot is starting to use its shield."}
