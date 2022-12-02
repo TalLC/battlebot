@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"login_id\": \"2db23fce-df23-412e-a8d4-42bf5fff1ea3\"\r\n}",
+							"raw": "{\r\n    \"login_id\": \"0751fb30-d841-4d99-b34b-15c0c3c8ec73\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -252,6 +252,37 @@
 								"clients",
 								"action",
 								"get_by_token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /bots/{bot_id}/action/kill",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/kill",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"bots",
+								":bot_id",
+								"action",
+								"kill"
+							],
+							"variable": [
+								{
+									"key": "bot_id",
+									"value": ""
+								}
 							]
 						}
 					},
