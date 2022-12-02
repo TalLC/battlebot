@@ -1,4 +1,5 @@
 from __future__ import annotations
+from random import Random
 from math import pi, cos, sin
 import logging
 import random
@@ -67,6 +68,10 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
+
+        # Randomisation du point de départ et de l'orientation
+        self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coords()
+        self.ry = Random().randint(0, 1000) / 1000
 
         self._role = role
         self._scanner = SimpleScanner(self)
