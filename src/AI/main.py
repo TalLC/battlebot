@@ -164,7 +164,7 @@ if __name__ == "__main__":
             G_BOT_IS_TURNING = True
 
             last_direction_change_ts = datetime.now()
-            while G_BOT_HEALTH > 0:
+            while G_BOT_HEALTH > 0 and G_GAME_IS_STARTED:
                 # Analyze stuff
                 # Compiling matrix
                 # Optimizing core mainframe
@@ -195,6 +195,10 @@ if __name__ == "__main__":
                     G_BOT_IS_MOVING = True
 
                 sleep(0.1)
+
+            if not G_GAME_IS_STARTED:
+                logging.info("Game has been stopped")
+
         except KeyboardInterrupt:
             # Closing messages reading threads
             scanner_message_thread_event.set()
