@@ -45,15 +45,59 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self.map = Map(self, CONFIG_GAME.map_id)
 
         # Thread auto starting the game when enough bot are connected
-        self._thread_event = Event()
-        self._thread_messages = Thread(target=self._thread_check_starting_conditions, args=(self._thread_event,)).start()
+        self._event_stop_checking_starting_conditions = Event()
+        self._thread_game_start_conditions = Thread(
+            target=self._thread_check_starting_conditions,
+            args=(self._event_stop_checking_starting_conditions,)
+        ).start()
+
+        # Thread to stop the game on winning conditions
+        # Must be started manually when the game starts
+        self._event_stop_checking_stopping_conditions = Event()
+        self._thread_game_stop_conditions = Thread(
+            target=self._thread_check_stopping_conditions,
+            args=(self._event_stop_checking_stopping_conditions,)
+        )
 
     def stop_threads(self):
         """
-        Stop all threads for this bot.
+        Stop all the GameManager's threads.
         """
-        # Set the event to stop the thread
-        self._thread_event.set()
+        # Set the events to stop the threads
+        self._event_stop_checking_starting_conditions.set()
+        self._event_stop_checking_stopping_conditions.set()
+
+    def _wait_for_players(self, e: Event):
+        """
+        Thread blocking operation. Waiting until all players are connected or until the event is triggered.
+        """
+        current_players_count = self.registered_players_count
+        while current_players_count < self._max_players and not e.is_set():
+            # Check if a new player has been connected
+            __tmp_p_count = self.registered_players_count
+
+            if __tmp_p_count != current_players_count:
+                # Announcing new player
+                current_players_count = __tmp_p_count
+                connected_bots_names = '\n'.join(
+                    [f'{bot.team.name} : "{bot.name}"' for bot in self.bot_manager.get_bots()]
+                )
+                logging.debug(f"{current_players_count}/{self._max_players} players connected:"
+                              f"\n{connected_bots_names}")
+            else:
+                sleep(1)
+
+    def _wait_for_display_clients(self, e: Event):
+        """
+        Thread blocking operation. Waiting until at least one display client is connected.
+        """
+        while not self._is_client_ready and not e.is_set():
+            # Check if a client is ready
+            for client in self.display_manager.get_clients():
+                if client.is_ready:
+                    self._is_client_ready = True
+                    break
+            sleep(1)
 
     def _thread_check_starting_conditions(self, e: Event):
         """
@@ -61,45 +105,52 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
          - all players to register their bots
          - at least one display client to be connected
         """
-        # Waiting until all players are connected or until the thread is stopped
+        # Waiting until all players are connected
         logging.debug("Waiting for bots to join the game...")
-        current_players_count = self.registered_players_count
-        while current_players_count < self._max_players and not e.is_set():
+        self._wait_for_players(e)
 
-            # Check if a new player has been connected
-            __tmp_p_count = self.registered_players_count
-            if __tmp_p_count != current_players_count:
-                current_players_count = __tmp_p_count
-                connected_bots_names = ', '.join([f'"{bot.name}"' for bot in self.bot_manager.get_bots()])
-                logging.debug(f"{current_players_count}/{self._max_players} players connected:"
-                              f"\n{connected_bots_names}")
-            else:
-                sleep(1)
-
-        # All bots are connected
-        self._are_bots_ready = True
+        # Check if the thread is aborting
+        if not e.is_set():
+            # All bots are connected
+            self._are_bots_ready = True
+        else:
+            logging.debug("Auto game start has been aborted")
+            return
 
         # Waiting until at least one client display is connected
         logging.debug("Waiting for a display client...")
-        while not self._is_client_ready and not e.is_set():
-
-            # Check if a client is ready
-            for client in self.display_manager.get_clients():
-                if client.is_ready:
-                    self._is_client_ready = True
-                    break
+        self._wait_for_display_clients(e)
 
         # Start the game only if it wasn't already started from API
         if not e.is_set():
             logging.debug("Starting the game")
             self.start_game()
+        else:
+            logging.debug("Auto game start has been aborted")
+            return
+
+    def _thread_check_stopping_conditions(self, e: Event):
+        """
+        Thread waiting for:
+         - one team is left alive
+        """
+        # Waiting until there is only one team left alive
+        logging.debug("Waiting for the game to finish")
+        while len(self.team_manager.get_teams(still_alive_only=True)) >= 2 and not e.is_set():
+            sleep(1)
+
+        if not e.is_set():
+            self.stop_game()
+            logging.debug("Game is finished")
+        else:
+            logging.debug("Game has been aborted")
 
     def start_game(self):
         """
         Set the boolean to "started".
         """
         # Ensure the thread is stopped if we started the game from API
-        self._thread_event.set()
+        self._event_stop_checking_starting_conditions.set()
 
         self._is_started = True
         logging.info(f"Game has been started with {self.registered_players_count} players!")
@@ -107,3 +158,19 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         # Dispatching starting message to all connected bots
         for bot in self.bot_manager.get_bots():
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=True))
+
+        # Starting to check end game conditions
+        self._thread_game_stop_conditions.start()
+
+    def stop_game(self):
+        """
+        Stops the game.
+        """
+        # Ensure the thread is stopped if we have aborted the game
+        self._event_stop_checking_stopping_conditions.set()
+        self._is_started = False
+
+        # Dispatching starting message to all connected bots
+        for bot in self.bot_manager.get_bots():
+            bot.stop()
+            ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
