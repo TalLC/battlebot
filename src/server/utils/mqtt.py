@@ -110,10 +110,22 @@ class MQTT(metaclass=SingletonABCMeta):
         """
         self.__client.loop()
 
+    def loop_start(self):
+        """
+        Start running the MQTT client loop to read messages.
+        """
+        self.__client.loop_start()
+
+    def loop_stop(self):
+        """
+        Stop the MQTT client loop from reading messages.
+        """
+        self.__client.loop_stop()
+
     def close(self):
         """
         Close the connection to the broker.
         """
-        self.__client.loop_stop()
+        self.loop_stop()
         self.__client.disconnect()
         logging.info("[MQTT] MQTT client disconnected")

@@ -1,13 +1,12 @@
 import asyncio
-import json
 import logging
 from queue import SimpleQueue
 from fastapi import FastAPI, WebSocket
 from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
+from consumer.webservices.messages.websocket.models.DisplayClientLoginMessage import DisplayClientLoginMessage
 from consumer.webservices.messages.websocket.models.MapCreateMessage import MapCreateMessage
-from consumer.webservices.messages.websocket.models.MapUpdateMessage import MapUpdateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
@@ -37,9 +36,6 @@ class WebsocketProvider:
             )
             logging.debug(f"Display {display_client.name} connected")
 
-            # while not GameManager().map.is_ready:
-            #     await asyncio.sleep(1)
-
             # Todo: déporter la création de map pour permettre la modification de la map avant le début de partie
             logging.debug(f"Sending map to {display_client.name}")
 
@@ -49,41 +45,30 @@ class WebsocketProvider:
                                                   width=current_map.width, tiles=current_map.tiles)
             await websocket.send_json(map_create_message.json())
 
-            # Keeping a track of which bots were sent
-            sent_bot = list()
-
-            if GameManager().is_started:
-                # Sending bots information as they connect
-                for bot in GameManager().bot_manager.get_bots():
-                    if bot.client_connection.is_connected:
-                        await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry).json())
-                # Waiting for bots to connect
-                await asyncio.sleep(1)
-
-            # Waiting for the display to be ready and the game to start
-            while not display_client.is_ready and not GameManager().is_started:
-
-                # Sending bots information as they connect
-                for bot in GameManager().bot_manager.get_bots():
-
-                    # A new bot is connected
-                    if bot.id not in sent_bot and bot.client_connection.is_connected:
-                        await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry).json())
-                        sent_bot.append(bot.id)
+            # Waiting for all the bots to be ready
+            while not GameManager().are_bots_ready:
 
                 # Waiting for bots to connect
                 await asyncio.sleep(1)
+
+            # Sending all bots to webservice
+            for bot in GameManager().bot_manager.get_bots():
+                await websocket.send_json(BotCreateMessage(bot_id=bot.id, x=bot.x, z=bot.z, ry=bot.ry).json())
+
+            # Sending token to the client in order to send it back using Rest when ready
+            await websocket.send_json(DisplayClientLoginMessage(display_client).json())
 
             # While client is connected, we send them the messages
             while websocket.client_state == websockets.WebSocketState.CONNECTED:
                 try:
                     # While we have messages in the queue
                     while not client_queue.empty():
-                        # Reading message'
+                        # Reading message
                         data_send = client_queue.get()
-                        logging.debug(f"[WEBSOCKET] Sending message: {data_send}")
+                        logging.debug(f"[WEBSOCKET] Sending '{data_send.msg_type}' message: {data_send.json()}")
+
                         # Sending message to display
-                        await websocket.send_json(data_send)
+                        await websocket.send_json(data_send.json())
 
                     # No messages, waiting
                     await asyncio.sleep(0.1)

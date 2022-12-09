@@ -8,4 +8,4 @@ class IBotStatMessage(IBotMessage):
         data = {
             "value": stat_value
         }
-        super().__init__(bot_id=bot_id, source="bot", msg_type=msg_type, data=data)
+        super().__init__(bot_id=bot_id, msg_type=msg_type, data=data)
