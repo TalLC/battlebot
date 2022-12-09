@@ -63,11 +63,12 @@ class WebsocketProvider:
                 try:
                     # While we have messages in the queue
                     while not client_queue.empty():
-                        # Reading message'
+                        # Reading message
                         data_send = client_queue.get()
-                        logging.debug(f"[WEBSOCKET] Sending message: {data_send}")
+                        logging.debug(f"[WEBSOCKET] Sending '{data_send.msg_type}' message: {data_send.json()}")
+
                         # Sending message to display
-                        await websocket.send_json(data_send)
+                        await websocket.send_json(data_send.json())
 
                     # No messages, waiting
                     await asyncio.sleep(0.1)
