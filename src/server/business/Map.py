@@ -1,13 +1,16 @@
 from __future__ import annotations
 import json
 import logging
+from random import Random
 from pathlib import Path
 from typing import TYPE_CHECKING
+
 from business.gameobjects.tiles.TileFactory import TileFactory
 from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 
 if TYPE_CHECKING:
     from business.GameManager import GameManager
+    from business.gameobjects.tiles.Tile import Tile
 
 
 class Map:
@@ -15,7 +18,7 @@ class Map:
     _height: int
     _width: int
     _tiles: list
-    _matrix: list
+    _matrix: [[Tile]]
 
     @property
     def infos(self):
@@ -39,7 +42,7 @@ class Map:
         return self._width
 
     @property
-    def matrix(self) -> [[]]:
+    def matrix(self) -> [[Tile]]:
         return self._matrix
 
     @property
@@ -49,7 +52,6 @@ class Map:
     def __init__(self, game_object: GameManager, map_id: str):
         self._game_object = game_object
         self._tiles = []
-        self._matrix = []
 
         self.initialize(map_id)
 
@@ -66,6 +68,34 @@ class Map:
                 return True
 
         return False
+
+    def is_walkable_at(self, x: float, z: float) -> bool:
+
+        if x >= self.width or z >= self.height:
+            return False
+
+        if x < 0 or z < 0:
+            return False
+
+        cell = self._matrix[int(x)][int(z)]
+
+        return cell.is_walkable
+
+    def get_random_spawn_coords(self) -> tuple:
+        """
+        Returns a random spawnable position.
+        """
+        rand = Random()
+        max_x = self.width - 1
+        max_z = self.height - 1
+        spawn_x = rand.randint(0, max_x)
+        spawn_z = rand.randint(0, max_z)
+
+        while not self.is_walkable_at(spawn_x, spawn_z):
+            spawn_x = rand.randint(0, max_x)
+            spawn_z = rand.randint(0, max_z)
+
+        return spawn_x, spawn_z
 
     @staticmethod
     def list_saved_map() -> list:
@@ -99,21 +129,23 @@ class Map:
         else:
             logging.error(f"La map {map_id} n'a pas été trouvée.")
 
-    def load(self) -> list:
+    def load(self) -> [[Tile]]:
         """
         Génère la matrice du terrain.
         """
         # On crée un tableau vide aux dimensions de la map
-        mat = []
+        mat: [list[Tile]] = list()
         for h in range(self._height):
-            current_line = []
+            current_line: [Tile] = list()
             for w in range(self._width):
-                current_line.append(None)
+                current_line.append(TileFactory.create_tile(tile_type='void', x=w, z=w))
             mat.append(current_line)
 
         # On crée un obj Tile pour chaque cellule de la map
         for d in self._tiles:
-            mat[d['x']][d['z']] = TileFactory.create_tile(
+            x = d['x']
+            z = d['z']
+            mat[x][z] = TileFactory.create_tile(
                 tile_type=d['tile'], x=d['x'], z=d['z'], tile_object=TileObjectFactory.create_tileobject(
                     d['tile_object'], d['x'], d['z'])
             )

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import uuid
+import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import starlette.datastructures
@@ -69,8 +70,8 @@ class DisplayClient:
         return self._is_ready
 
     @property
-    def token(self) -> str:
-        return self._token
+    def login_id(self) -> str:
+        return self._login_id
 
     @property
     def host(self) -> str:
@@ -93,7 +94,7 @@ class DisplayClient:
         self._timestamp_stop = None
         self._status = True
         self._is_ready = False
-        self._token = str(uuid.uuid4())
+        self._login_id = str(uuid.uuid4())
         self._host = host
         self._port = port
         accept_encoding = websocket_headers['accept-encoding'] \
@@ -114,7 +115,7 @@ class DisplayClient:
                f"Timestamp duration: {str(self.timestamp_duration)}\n" \
                f"Status: {'connected' if self.status else 'disconnected'}\n" \
                f"Is Ready: {self.is_ready}\n" \
-               f"Token: {self.token}\n" \
+               f"Login ID: {self.login_id}\n" \
                f"IP and port: {self.host}:{self.port}\n" \
                f"Headers:\n" \
                f"{str(self.headers)}"
@@ -130,13 +131,14 @@ class DisplayClient:
             "timestamp_duration": str(self.timestamp_duration),
             "status": 'connected' if self.status else 'disconnected',
             "is_ready": self.is_ready,
-            "token": self.token,
+            "login_id": self.login_id,
             "host": self.host,
             "port": self.port,
             "headers": self.headers.json()
         }
 
     def set_ready(self):
+        logging.debug(f"Display client {self.name} is ready")
         self._is_ready = True
 
     def set_connection_closed(self):

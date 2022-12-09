@@ -1,4 +1,5 @@
 from __future__ import annotations
+from random import Random
 from math import pi, cos, sin
 import logging
 import random
@@ -12,15 +13,22 @@ from business.gameobjects.behaviour.IMoving import IMoving
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
+from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
+from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
+from business.shapes.ShapeFactory import ShapeFactory
 from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
+from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
+from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
     from business.BotManager import BotManager
+    from business.shapes import Shapes
 
 
 class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
@@ -46,13 +54,28 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         return self._role
 
+    @property
+    def shape(self) -> Shapes:
+        return ShapeFactory.create_shape(name='circle', o=(self.x, self.z), radius=.5, resolution=3)
+
+    @shape.setter
+    def shape(self, _):
+        pass
+
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
         self.bot_manager = bot_manager
+        self._role = role
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
-        self._role = role
+
+        # Randomisation du point de départ et de l'orientation
+        self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coords()
+        self.ry = Random().randint(0, 1000) / 1000
+
+        # Creating a scanner to get environmental information
+        self._scanner = SimpleScanner(self)
 
         # Generate a random id
         self._id = str(uuid.uuid4())
@@ -67,7 +90,10 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self._thread_event = Event()
 
         # Thread handling incoming messages
-        self._thread_messages = Thread(target=self._thread_handle_commands, args=(self._thread_event,)).start()
+        self._thread_messages = Thread(
+            target=self._thread_handle_commands,
+            args=(self._thread_event,)
+        ).start()
 
         # Thread handling continuous actions as moving and turning
         self._thread_continuous_actions = Thread(
@@ -75,11 +101,17 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             args=(self._thread_event,)
         ).start()
 
+        # Thread's scanner
+        self._thread_scanner = Thread(
+            target=self._thread_scanning,
+            args=(self._thread_event,)
+        ).start()
+
     def stop_threads(self):
         """
         Stop all threads for this bot.
         """
-        # Set the event to stop the thread
+        # Set the event to stop the threads
         self._thread_event.set()
 
     def _thread_handle_commands(self, e: Event):
@@ -152,6 +184,20 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
 
+    def _thread_scanning(self, e: Event):
+        # Waiting interval between all increments
+        loop_wait_ms = 100
+        logging.debug('LETSGO')
+        while not e.is_set():
+            if self.bot_manager.game_manager.is_started:
+                detected_objects = self._scanner.scanning()
+                if detected_objects:
+                    ConsumerManager().mqtt.send_message(
+                        BotScannerDetectionMessage(self.id, detected_object_list=detected_objects))
+                sleep(self._scanner.interval)
+            else:
+                sleep(loop_wait_ms / 1000)
+
     def add_command_to_queue(self, command: IBotCommand):
         """
         Add a command message to the bot queue.
@@ -209,8 +255,72 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         new_x = cos(self.ry) * distance
         new_z = sin(self.ry) * distance
 
+        # Check if the destination is valid
+        if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+            return
+
         # Moving the bot on the map
         self.set_position(self.x + new_x, self.z + new_z, self.ry)
 
         # Sending new position over websocket
         ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+
+    def send_client_bot_properties(self) -> None:
+        """
+        Sending bot properties to the client.
+        """
+        # Sending current health
+        self.send_client_health_status()
+
+        # Todo : Envoyer les caractéristiques du bots (vitesse de déplacement, etc) au client
+        # Sending bot role
+        # self.role
+
+        # Sending max moving speed
+        # self.moving_speed
+
+        # Sending max turning speed
+        # self.moving_speed
+
+    def send_client_health_status(self) -> None:
+        """
+        Send current health to the client.
+        """
+        logging.debug(f"[BOT {self.name}] Health: {self.health}")
+
+        # Sending health status to the client
+        ConsumerManager().stomp.send_message(BotHealthStatusMessage(self.id, self.health))
+
+    def _on_death(self) -> None:
+        """
+        Callback when the bot is dead.
+        """
+        if self._health <= 0:
+            logging.info(f"[BOT {self.name}] Has died")
+
+            # Stopping scanner
+            logging.debug(f"[BOT {self.name}] Stopping scanner")
+            self._scanner.switch()
+
+            # Stopping the bot
+            logging.debug(f"[BOT {self.name}] Stopping movements")
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+            self.add_command_to_queue(BotTurnCommand(priority=0, value="stop"))
+
+            # Waiting for bot to be stopped
+            while self.is_turning or self.is_moving:
+                sleep(0.01)
+            logging.debug(f"[BOT {self.name}] Is stopped")
+
+            # Sending death information to the client
+            self.send_client_health_status()
+            logging.debug(f"[BOT {self.name}] Health report sent")
+
+            # Killing threads
+            self.stop_threads()
+            logging.debug(f"[BOT {self.name}] Thread stopped")
+
+            # Disabling collisions
+            self.set_collisions(False)
+            logging.debug(f"[BOT {self.name}] Collisions disabled")

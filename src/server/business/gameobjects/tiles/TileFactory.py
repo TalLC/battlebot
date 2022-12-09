@@ -1,4 +1,5 @@
 from business.gameobjects.tiles.Ground import Ground
+from business.gameobjects.tiles.Tile import Tile
 from business.gameobjects.tiles.Void import Void
 from business.gameobjects.tiles.Water import Water
 from business.gameobjects.tiles.objects.Air import Air
@@ -7,7 +8,7 @@ from business.gameobjects.tiles.objects.Air import Air
 class TileFactory:
 
     @staticmethod
-    def create_tile(tile_type, x, z, tile_object=Air()):
+    def create_tile(tile_type, x, z, tile_object=Air()) -> Tile:
         if tile_type.lower() == "ground":
             return Ground(x=x, z=z, tile_object=tile_object)
         elif tile_type.lower() == "water":
