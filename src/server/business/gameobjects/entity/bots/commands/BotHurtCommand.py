@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.ConsumerManager import ConsumerManager
 
-from consumer.webservices.messages.websocket.BotHitMessage import BotHitMessage
+from consumer.webservices.messages.websocket.HitMessage import HitMessage
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 
 if TYPE_CHECKING:
@@ -24,5 +24,5 @@ class BotHurtCommand(IBotCommand):
         Contains the function to execute.
         """
         arg.hurt(self.value)
-        ConsumerManager().websocket.send_message(BotHitMessage(arg.id))
+        ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=arg.id))
         ConsumerManager().stomp.send_message(BotHealthStatusMessage(arg.id, arg.health))
