@@ -25,6 +25,7 @@ from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScanner
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
+from consumer.webservices.messages.websocket.HitMessage import HitMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
@@ -343,3 +344,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Disabling collisions
             self.set_collisions(False)
             logging.debug(f"[BOT {self.name}] Collisions disabled")
+
+    def _on_hurt(self) -> None:
+        """
+        Callback when the bot is hurt.
+        """
+        ConsumerManager().stomp.send_message(HitMessage(object_type='bot', object_id=self.id))
