@@ -1,3 +1,4 @@
+from math import pi
 from business.gameobjects.GameObject import GameObject
 from shapely.geometry import Polygon
 
@@ -7,7 +8,22 @@ from shapely.geometry import Polygon
 
 
 class OrientedGameObject(GameObject):
+
+    @property
+    def ry(self) -> float:
+        """
+        The value is contained between 0.0 and 2pi.
+        """
+        return self._ry
+
+    @ry.setter
+    def ry(self, value):
+        """
+        Sets the value to a value between 0.0 and 2pi.
+        """
+        self._ry = sorted((0.0, value, 2*pi))[1]
+
     def __init__(self, name: str = 'oriented_game_object', ry: float = 0.0, x: float = 0.0, z: float = 0.0,
                  shape: Polygon or None = None):
         super().__init__(name, x, z, shape)
-        self.ry = ry
+        self._ry = ry
