@@ -15,6 +15,10 @@ if TYPE_CHECKING:
 class SimpleScanner(ScannerModel):
 
     @property
+    def bot(self) -> BotModel:
+        return self._bot
+
+    @property
     def interval(self) -> float:
         return self._interval
 
@@ -31,5 +35,4 @@ class SimpleScanner(ScannerModel):
         return self._activated
 
     def __init__(self, bot: BotModel):
-        self.bot = bot
-        super().__init__(self.bot, interval=1, distance=10, fov=pi/2, activated=True)
+        super().__init__(bot, interval=1, distance=10, fov=pi/2, activated=True)
