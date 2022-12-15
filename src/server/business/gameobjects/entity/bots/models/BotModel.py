@@ -1,9 +1,10 @@
 from __future__ import annotations
+
+import math
 from random import Random
 from math import pi, cos, sin
 import logging
 import random
-import uuid
 from time import time, sleep
 from abc import ABC
 from queue import PriorityQueue
@@ -15,7 +16,7 @@ from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
-from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
+from business.gameobjects.entity.bots.equipments.Equipment import Equipment
 from business.shapes.ShapeFactory import ShapeFactory
 from consumer.ConsumerManager import ConsumerManager
 
@@ -24,6 +25,7 @@ from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScanner
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
+from consumer.webservices.messages.websocket.HitMessage import HitMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
@@ -63,6 +65,13 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         return self._role
 
     @property
+    def equipment(self) -> Equipment:
+        """
+        Get the equipment.
+        """
+        return self._equipment
+
+    @property
     def shape(self) -> Shapes:
         return ShapeFactory.create_shape(name='circle', o=(self.x, self.z), radius=.5, resolution=3)
 
@@ -73,20 +82,22 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
         self.bot_manager = bot_manager
+
+        # Role name
         self._role = role
+
+        # The equipment is defined by the bot role
+        self._equipment: Equipment = Equipment()
+
+        # Parents initializations
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
 
-        # Randomisation du point de départ et de l'orientation
+        # Random starting point
         self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coords()
-        self.ry = Random().randint(0, 1000) / 1000
-
-        # Creating a scanner to get environmental information
-        self._scanner = SimpleScanner(self)
-
-        # Generate a random id
-        self._id = str(uuid.uuid4())
+        # Random starting rotation
+        self.ry = Random().randint(0, math.floor(2*pi*100)) / 100
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
@@ -95,24 +106,24 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self._commands_queue = PriorityQueue()
 
         # Event to stop all threads at once
-        self._thread_event = Event()
+        self._event_stop_threads = Event()
 
         # Thread handling incoming messages
         self._thread_messages = Thread(
             target=self._thread_handle_commands,
-            args=(self._thread_event,)
+            args=(self._event_stop_threads,)
         ).start()
 
         # Thread handling continuous actions as moving and turning
         self._thread_continuous_actions = Thread(
             target=self._thread_handle_continuous_actions,
-            args=(self._thread_event,)
+            args=(self._event_stop_threads,)
         ).start()
 
         # Thread's scanner
         self._thread_scanner = Thread(
             target=self._thread_scanning,
-            args=(self._thread_event,)
+            args=(self._event_stop_threads,)
         ).start()
 
     def stop(self):
@@ -127,7 +138,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Stop all threads for this bot.
         """
         # Set the event to stop the threads
-        self._thread_event.set()
+        self._event_stop_threads.set()
 
     def _thread_handle_commands(self, e: Event):
         """
@@ -204,18 +215,18 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         loop_wait_ms = 100
         while not e.is_set():
             if self.bot_manager.game_manager.is_started:
-                detected_objects = self._scanner.scanning()
+                detected_objects = self.equipment.scanner.scanning()
                 if detected_objects:
                     ConsumerManager().mqtt.send_message(
                         BotScannerDetectionMessage(self.id, detected_object_list=detected_objects))
-                sleep(self._scanner.interval)
+                sleep(self.equipment.scanner.interval)
             else:
                 sleep(loop_wait_ms / 1000)
 
     def _thread_stop_bot(self):
         # Stopping scanner
         logging.debug(f"[BOT {self.name}] Stopping scanner")
-        self._scanner.switch()
+        self.equipment.scanner.switch()
 
         # Stopping the bot
         logging.debug(f"[BOT {self.name}] Stopping movements")
@@ -254,27 +265,18 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         x = r.randint(0, game_map.width - 1)
         z = r.randint(0, game_map.height - 1)
         print(f"Impact at {x};{z}")
-        target = Target(x, z)
+        target = Target(x=x, z=z)
         return target
 
     def turn(self, radians: float):
         """
         Turn the bot on Y axis of the specified amount of radians.
         """
-        max_rotation = pi * 2
-        min_rotation = 0.0
-
         # Using the direction to decide if we add or subtract radians
         if self.turn_direction == 'left':
             self.ry -= radians
         elif self.turn_direction == 'right':
             self.ry += radians
-
-        # We keep the value between its max and min
-        if self.ry < min_rotation:
-            self.ry += max_rotation
-        elif self.ry > max_rotation:
-            self.ry -= max_rotation
 
         # Sending new rotation over websocket
         ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
@@ -342,3 +344,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Disabling collisions
             self.set_collisions(False)
             logging.debug(f"[BOT {self.name}] Collisions disabled")
+
+    def _on_hurt(self) -> None:
+        """
+        Callback when the bot is hurt.
+        """
+        ConsumerManager().stomp.send_message(HitMessage(object_type='bot', object_id=self.id))

@@ -63,3 +63,6 @@ class IScanner(ABC):
         Update the fov shape and check if obj are inside.
         """
         raise NotImplementedError()
+
+    def __str__(self) -> str:
+        raise NotImplementedError()

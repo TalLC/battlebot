@@ -1,10 +1,17 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
 class Target:
-    x: float
-    z: float
+    id: str = field(default=None)
+    x: float = field(default=0.0)
+    z: float = field(default=0.0)
 
     def json(self):
-        return {'x': self.x, 'z': self.z}
+        json = {
+            'x': self.x,
+            'z': self.z,
+        }
+        # We only add the target's id if it exists
+        json |= {'id': self.id} if self.id else dict()
+        return json
