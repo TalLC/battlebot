@@ -5,7 +5,6 @@ from random import Random
 from math import pi, cos, sin
 import logging
 import random
-import uuid
 from time import time, sleep
 from abc import ABC
 from queue import PriorityQueue
@@ -82,9 +81,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
         self.bot_manager = bot_manager
-
-        # Generate a random id
-        self._id = str(uuid.uuid4())
 
         # Role name
         self._role = role
@@ -268,27 +264,18 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         x = r.randint(0, game_map.width - 1)
         z = r.randint(0, game_map.height - 1)
         print(f"Impact at {x};{z}")
-        target = Target(x, z)
+        target = Target(x=x, z=z)
         return target
 
     def turn(self, radians: float):
         """
         Turn the bot on Y axis of the specified amount of radians.
         """
-        max_rotation = 2*pi
-        min_rotation = 0.0
-
         # Using the direction to decide if we add or subtract radians
         if self.turn_direction == 'left':
             self.ry -= radians
         elif self.turn_direction == 'right':
             self.ry += radians
-
-        # We keep the value between its max and min
-        if self.ry < min_rotation:
-            self.ry += max_rotation
-        elif self.ry > max_rotation:
-            self.ry -= max_rotation
 
         # Sending new rotation over websocket
         ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
