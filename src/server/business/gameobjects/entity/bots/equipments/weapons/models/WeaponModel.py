@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 from business.gameobjects.entity.bots.equipments.weapons.interface.IWeapon import IWeapon
@@ -30,3 +31,5 @@ class WeaponModel(IWeapon, ABC):
         self._damages = damages
         self._reach_distance = reach_distance
 
+    def __str__(self) -> str:
+        return f"{self.name} (damages: {self.damages}, reach: {self.reach_distance})"

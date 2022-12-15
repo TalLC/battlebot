@@ -27,3 +27,6 @@ class IWeapon(ABC):
     def reach_distance(self) -> int:
         """ Range of the weapon """
         raise NotImplementedError()
+
+    def __str__(self) -> str:
+        raise NotImplementedError()

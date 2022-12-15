@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from business.gameobjects.entity.bots.equipments.weapons.models.WeaponModel import WeaponModel
 
