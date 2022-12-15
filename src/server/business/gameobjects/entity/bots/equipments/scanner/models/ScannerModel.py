@@ -16,10 +16,36 @@ if TYPE_CHECKING:
 
 
 class ScannerModel(IScanner, ABC):
-    def __init__(self, bot: BotModel, interval: float = 3, distance: int = 3, fov: float = pi / 2,
+
+    @property
+    def bot(self) -> BotModel:
+        return self._bot
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def interval(self) -> float:
+        return self._interval
+
+    @property
+    def distance(self) -> int:
+        return self._distance
+
+    @property
+    def fov(self) -> float:
+        return self._fov
+
+    @property
+    def activated(self) -> bool:
+        return self._activated
+
+    def __init__(self, bot: BotModel, name: str, interval: float = 3, distance: int = 3, fov: float = pi / 2,
                  activated: bool = True):
 
         self._bot = bot
+        self._name = name
 
         self._interval = interval
         self._distance = distance
@@ -152,3 +178,6 @@ class ScannerModel(IScanner, ABC):
             logging.debug(f"from {e.a_from % 2*pi} to {e.to % 2*pi}, name : {e.name}, distance : {e.distance}")
 
         return final_result
+
+    def __str__(self) -> str:
+        return f"{self.name} (fov: {self.fov}, interval: {self.interval}, distance: {self.distance})"

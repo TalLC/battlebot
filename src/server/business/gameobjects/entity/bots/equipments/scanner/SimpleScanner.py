@@ -13,26 +13,11 @@ if TYPE_CHECKING:
 
 
 class SimpleScanner(ScannerModel):
-
-    @property
-    def bot(self) -> BotModel:
-        return self._bot
-
-    @property
-    def interval(self) -> float:
-        return self._interval
-
-    @property
-    def distance(self) -> int:
-        return self._distance
-
-    @property
-    def fov(self) -> float:
-        return self._fov
-
-    @property
-    def activated(self) -> bool:
-        return self._activated
+    _name = "Simple scanner"
+    _interval = 1
+    _distance = 10
+    _fov = pi/2
 
     def __init__(self, bot: BotModel):
-        super().__init__(bot, interval=1, distance=10, fov=pi/2, activated=True)
+        super().__init__(bot=bot, name=self._name, interval=self._interval, distance=self._distance,
+                         fov=self.fov, activated=True)
