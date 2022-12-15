@@ -52,7 +52,7 @@ LOGIN_INVALID_MQTT_ID = ErrorCode(name='LOGIN_INVALID_MQTT_ID', internal_code=0x
 # Team errors
 TEAM_DOES_NOT_EXISTS = ErrorCode(name='TEAM_DOES_NOT_EXISTS', internal_code=0x00000201, http_code=404,
                                  label="The team does not exist")
-TEAM_IS_FULL = ErrorCode(name='TEAM_DOES_NOT_EXISTS', internal_code=0x00000202, http_code=500,
+TEAM_IS_FULL = ErrorCode(name='TEAM_IS_FULL', internal_code=0x00000202, http_code=500,
                          label="The team is full")
 
 # Bot errors

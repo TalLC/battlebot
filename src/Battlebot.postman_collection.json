@@ -481,7 +481,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"action\": \"stop\"\r\n}",
+							"raw": "{\r\n    \"direction\": \"stop\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

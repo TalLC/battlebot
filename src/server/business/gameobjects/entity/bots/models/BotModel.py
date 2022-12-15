@@ -28,6 +28,7 @@ from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
     from business.BotManager import BotManager
+    from business.TeamManager import Team
     from business.shapes import Shapes
 
 
@@ -39,6 +40,13 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Get bot unique id.
         """
         return self._id
+
+    @property
+    def team(self) -> Team:
+        """
+        Get the bots team.
+        """
+        return self.bot_manager.game_manager.team_manager.get_bot_team(self.id)
 
     @property
     def client_connection(self) -> ClientConnection:
@@ -106,6 +114,13 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             target=self._thread_scanning,
             args=(self._thread_event,)
         ).start()
+
+    def stop(self):
+        """
+        Stops properly all bot activities.
+        To use when the game is over or when the bot died.
+        """
+        Thread(target=self._thread_stop_bot).start()
 
     def stop_threads(self):
         """
@@ -187,7 +202,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def _thread_scanning(self, e: Event):
         # Waiting interval between all increments
         loop_wait_ms = 100
-        logging.debug('LETSGO')
         while not e.is_set():
             if self.bot_manager.game_manager.is_started:
                 detected_objects = self._scanner.scanning()
@@ -197,6 +211,25 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
                 sleep(self._scanner.interval)
             else:
                 sleep(loop_wait_ms / 1000)
+
+    def _thread_stop_bot(self):
+        # Stopping scanner
+        logging.debug(f"[BOT {self.name}] Stopping scanner")
+        self._scanner.switch()
+
+        # Stopping the bot
+        logging.debug(f"[BOT {self.name}] Stopping movements")
+        self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+        self.add_command_to_queue(BotTurnCommand(priority=0, value="stop"))
+
+        # Waiting for bot to be stopped
+        while self.is_turning or self.is_moving:
+            sleep(0.01)
+        logging.debug(f"[BOT {self.name}] Is stopped")
+
+        # Killing threads
+        self.stop_threads()
+        logging.debug(f"[BOT {self.name}] Threads stopped")
 
     def add_command_to_queue(self, command: IBotCommand):
         """
@@ -299,27 +332,12 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         if self._health <= 0:
             logging.info(f"[BOT {self.name}] Has died")
 
-            # Stopping scanner
-            logging.debug(f"[BOT {self.name}] Stopping scanner")
-            self._scanner.switch()
-
-            # Stopping the bot
-            logging.debug(f"[BOT {self.name}] Stopping movements")
-            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
-            self.add_command_to_queue(BotTurnCommand(priority=0, value="stop"))
-
-            # Waiting for bot to be stopped
-            while self.is_turning or self.is_moving:
-                sleep(0.01)
-            logging.debug(f"[BOT {self.name}] Is stopped")
+            # Stopping bot movements and threads
+            self.stop()
 
             # Sending death information to the client
             self.send_client_health_status()
             logging.debug(f"[BOT {self.name}] Health report sent")
-
-            # Killing threads
-            self.stop_threads()
-            logging.debug(f"[BOT {self.name}] Thread stopped")
 
             # Disabling collisions
             self.set_collisions(False)
