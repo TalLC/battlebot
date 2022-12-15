@@ -41,8 +41,25 @@ ws.onmessage = async function(event)
         //appel back
         console.log(update)
     }
+    else if(update.msg_type == 'BotUpdateMessage'){
+        update_html(update);
+    }
 };
 
+function update_html(values){
+//    console.log(values);
+
+    for (const [key, value] of Object.entries(values)) {
+        if (key === "x"){
+            document.getElementById('x').innerHTML=value;
+        } else if (key === "z"){
+            document.getElementById('z').innerHTML=value;
+        } else if (key === "ry"){
+            document.getElementById('ry').innerHTML=value * 180/Math.PI;
+        }
+    }
+
+}
 
 
 

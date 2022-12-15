@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-import logging
-from math import pi
+from abc import ABC
 from typing import TYPE_CHECKING
 
 from business.gameobjects.entity.bots.equipments.scanner.models.ScannerModel import ScannerModel
-from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
-from utils.geometry import Vector2D, Point2D
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
 
 
-class SimpleScanner(ScannerModel):
+class SimpleScanner(ScannerModel, ABC):
 
     @property
     def interval(self) -> float:
@@ -32,4 +29,4 @@ class SimpleScanner(ScannerModel):
 
     def __init__(self, bot: BotModel):
         self.bot = bot
-        super().__init__(self.bot, interval=1, distance=10, fov=pi/2, activated=True)
+        super().__init__(self.bot, interval=1.0, distance=10, fov=90.0, activated=True)

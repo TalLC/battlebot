@@ -14,16 +14,18 @@ export default class View3DController{
     tmp;
     constructor(width = window.innerWidth, height = window.innerHeight){
         this.tmp;
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({ canvas: cScene});
         this.size = {width:width, height:height};
-        this.renderer.setSize(this.size.width, this.size.height);
+//        this.renderer.setSize(this.size.width, this.size.height);
+        this.renderer.setSize(1200, 800);
         this.scene = new THREE.Scene();
         let backColor = new THREE.Color(0xffffff);
         this.scene.background = backColor;
         this.initLight();
         this.loader = new GLTFLoader();
         this.attach(document.body);
-        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
+        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 12, z: 2}, {x: 0, y: 0, z: 0});
+        this.createDebugGrid();
     }
 
     attach(parentElement){
@@ -47,8 +49,17 @@ export default class View3DController{
         this.camera.position.set(position.x, position.y, position.z);
         this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.target.set(15, 0, 15);
         this.controls.update();
         return this.camera;
+    }
+
+    createDebugGrid() {
+        console.log("ici");
+        const grid = new THREE.GridHelper(32, 32);
+        // grid.rotateX(-Math.PI / 2);
+        grid.position.set(15.5, 0.6, 15.5);
+        this.scene.add(grid);
     }
 
     // this utility function allows you to use any three.js

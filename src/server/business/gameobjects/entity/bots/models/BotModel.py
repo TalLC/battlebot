@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from math import pi, cos, sin
 import logging
 import random
@@ -14,7 +15,7 @@ from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
 from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
-from business.shapes.ShapeFactory import ShapeFactory
+from business.shapes.ShapeFactory import ShapeFactory, Shape
 from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
@@ -25,7 +26,7 @@ from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
     from business.BotManager import BotManager
-    from business.shapes import Shapes
+    from shapely.geometry.base import BaseGeometry
 
 
 class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
@@ -52,12 +53,16 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         return self._role
 
     @property
-    def shape(self) -> Shapes:
-        return ShapeFactory.create_shape(name='circle', o=(self.x, self.z), radius=.5, resolution=3)
+    def shape(self) -> BaseGeometry:
+        return ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.5, resolution=3)
 
     @shape.setter
     def shape(self, _):
         pass
+
+    @property
+    def ry_deg(self):
+        return self.ry * (180 / pi)
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
@@ -175,7 +180,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def _thread_scanning(self, e: Event):
         # Waiting interval between all increments
         loop_wait_ms = 100
-        logging.debug('LETSGO')
         while not e.is_set():
             if self.bot_manager.game_manager.is_started:
                 detected_objects = self._scanner.scanning()
