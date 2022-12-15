@@ -1,3 +1,4 @@
+import uuid
 from shapely.geometry import Polygon
 
 
@@ -6,7 +7,15 @@ class GameObject:
     Base class for every objects on the map.
     """
 
+    @property
+    def id(self):
+        """
+        Unique identifier.
+        """
+        return self._id
+
     def __init__(self, name: str = 'game_object', x: float = 0.0, z: float = 0.0, shape: Polygon or None = None):
+        self._id = str(uuid.uuid4())
         self.name = name
         self.x = x
         self.z = z
