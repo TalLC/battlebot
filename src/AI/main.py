@@ -30,7 +30,7 @@ def check_for_existing_bot_id() -> str:
         return ""
 
 
-def read_scanner_queue(e: Event, bot_ai: BotAi):
+def thread_read_scanner_queue(e: Event, bot_ai: BotAi):
     while not e.is_set():
         scanner_message = bot_ai.read_scanner()
         logging.debug(f"[SCANNER] {scanner_message}")
@@ -57,7 +57,7 @@ def handle_scanner_message(message: dict):
         logging.error("Bad scanner message format")
 
 
-def read_game_queue(e: Event, bot_ai: BotAi):
+def thread_read_game_queue(e: Event, bot_ai: BotAi):
     while not e.is_set():
         game_message = bot_ai.read_game_message()
         logging.debug(f"[GAME] {game_message}")
@@ -112,6 +112,13 @@ if __name__ == "__main__":
 
     # Creating a new Bot
     with BotAi(G_BOT_CONFIG['bot_name'], G_BOT_CONFIG['team_id']) as bot:
+        def stop():
+            # Closing messages reading threads
+            scanner_message_thread_event.set()
+            game_message_thread_event.set()
+
+            # Removing temp file
+            G_BOT_ID_TMP_FILE.unlink(missing_ok=True)
 
         # Bot enrollment
         try:
@@ -133,18 +140,16 @@ if __name__ == "__main__":
 
         # Bot scanner messages handler thread
         scanner_message_thread_event = Event()
-        scanner_message_thread = Thread(target=read_scanner_queue, args=(scanner_message_thread_event, bot)).start()
+        Thread(target=thread_read_scanner_queue, args=(scanner_message_thread_event, bot)).start()
 
         # Game messages handler thread
         game_message_thread_event = Event()
-        game_message_thread = Thread(target=read_game_queue, args=(game_message_thread_event, bot)).start()
+        Thread(target=thread_read_game_queue, args=(game_message_thread_event, bot)).start()
 
         try:
             # Randomize directions and durations
             seed = random.randrange(sys.maxsize)
-            # seed = 8688777440085104591
             rand_gen = random.Random(seed)
-            print(seed)
 
             # Waiting for the game to start
             while not G_GAME_IS_STARTED:
@@ -198,14 +203,15 @@ if __name__ == "__main__":
 
             if not G_GAME_IS_STARTED:
                 logging.info("Game has been stopped")
+                stop()
 
         except KeyboardInterrupt:
-            # Closing messages reading threads
-            scanner_message_thread_event.set()
-            game_message_thread_event.set()
+            logging.info("Bot has been aborted")
+            stop()
 
-            # Closing bot connections
-            bot.close()
-
-            # Removing temp file
-            G_BOT_ID_TMP_FILE.unlink(missing_ok=True)
+        except BotAi.RestException as ex:
+            if ex.name == 'GAME_NOT_STARTED':
+                logging.info("Game has been stopped")
+                stop()
+            else:
+                raise
