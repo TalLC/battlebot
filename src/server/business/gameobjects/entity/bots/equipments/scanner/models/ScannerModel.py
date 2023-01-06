@@ -9,6 +9,9 @@ from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner imp
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
 from business.shapes.ShapeFactory import Shape, ShapeFactory
 from business.shapes.ShapesUtils import get_nearest_point
+from consumer.ConsumerManager import ConsumerManager
+from consumer.webservices.messages.websocket.DebugScannerMessage import DebugScannerMessage
+
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
@@ -34,6 +37,8 @@ class ScannerModel(IScanner, ABC):
 
         min_angle = (self._bot.ry_deg - self._fov / 2) % 360
         max_angle = (self._bot.ry_deg + self._fov / 2) % 360
+
+        logging.info(f"scanning from {min_angle} to {max_angle} [{abs(min_angle-max_angle)}]")
 
         return min_angle, max_angle
 
@@ -90,6 +95,7 @@ class ScannerModel(IScanner, ABC):
 
         angle = start_angle
 
+        ray_angle_list = list()
         # while angle != max_angle:
         for i in range(int(self._fov)):
             tmp = "_"
@@ -131,9 +137,79 @@ class ScannerModel(IScanner, ABC):
 
         return self._keep_nearest_values(result_raycasting)
 
+    def raycasuicide(self):
+        visu_rcast = list()
+        result_raycasting = list()
+        # TODO : récupérer seulement les objets en face du bot.
+        detected_objects = self._bot.bot_manager.game_manager.map.get_all_objects_on_map()
+
+        # Get bot's shape
+        bot_shape = self._bot.shape
+
+        # Calculate the angles of the field of view
+        min_angle, max_angle = self._get_fov_angles()
+        step = 0.5
+
+        tmp_angle = min_angle
+        relative_angle = 0 - (self._fov/2)
+        for i in range(0, int((self._fov/step))):
+            # if min_angle > max_angle:
+            #     if tmp_angle >= 360:
+            #         tmp_angle = 0.0
+            tmp_angle %= 360
+
+            # Calculate the end point of the ray
+            end_x = self._bot.x + self.distance * math.cos(math.radians(tmp_angle))
+            end_y = self._bot.z + self.distance * math.sin(math.radians(tmp_angle))
+            # Create ray
+            ray = ShapeFactory().create_shape(shape=Shape.LINE, coords=[(self._bot.x, self._bot.z), (end_x, end_y)])
+            # Check each object in the list
+            for obj in detected_objects:
+                # Get shape of the object
+                object_circle = obj.shape
+
+                # Check if ray touch object's shape
+                if object_circle.intersects(ray) and object_circle.distance(bot_shape.centroid) > obj.radius:
+                    # List the intersections points
+                    points_list = object_circle.intersection(ray).boundary
+
+                    nearest_point = get_nearest_point(bot_shape.centroid, points_list)
+
+                    # bot_shape_boundary = bot_shape.exterior.coords
+                    # bot_shape_radius = 0
+                    # for x, y in bot_shape_boundary:
+                    #     bot_shape_radius = max(bot_shape_radius, math.sqrt(x ** 2 + y ** 2))
+                    # print(bot_shape_radius)
+                    result_raycasting.append({
+                        "distance": nearest_point.distance(bot_shape.centroid),
+                        "name": obj.name,
+                        "angle": relative_angle,
+                        "obj_id": obj.id
+                    })
+
+            tmp_angle += step
+            relative_angle += step
+
+        tmp = self._keep_nearest_values(result_raycasting)
+        logging.debug(tmp)
+
+        r = self._create_detected_objects(self._keep_nearest_values(result_raycasting))
+
+        logging.info(f"bot looking at {self._bot.ry_deg}, from {min_angle} to {max_angle}")
+        logging.info(r)
+
+        return 0
+
     def scanning(self) -> list:
         # supra magic power +++ infinite mega racasting the revange of the return !
         logging.info(".....................................................................")
-        rayc_result = self._raycastroll()
+        zbleuzbleuzbleu = self.raycasuicide()
+        # rayc_result = self._raycastroll()
 
-        return self._create_detected_objects(rayc_result)
+        # return self._create_detected_objects(rayc_result)
+        return
+
+    @staticmethod
+    def debug_line():
+        # Sending new position over websocket
+        ConsumerManager().websocket.send_message(DebugScannerMessage({"test": "value_test"}))
