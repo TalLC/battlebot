@@ -18,10 +18,36 @@ if TYPE_CHECKING:
 
 
 class ScannerModel(IScanner, ABC):
-    def __init__(self, bot: BotModel, interval: float = 3, distance: int = 3, fov: float = 90.0,
+
+    @property
+    def bot(self) -> BotModel:
+        return self._bot
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def interval(self) -> float:
+        return self._interval
+
+    @property
+    def distance(self) -> int:
+        return self._distance
+
+    @property
+    def fov(self) -> float:
+        return self._fov
+
+    @property
+    def activated(self) -> bool:
+        return self._activated
+
+    def __init__(self, bot: BotModel, name: str, interval: float = 3, distance: int = 3, fov: float = 90.0,
                  activated: bool = True):
 
         self._bot = bot
+        self._name = name
 
         self._interval = interval
         self._distance = distance
@@ -213,3 +239,6 @@ class ScannerModel(IScanner, ABC):
     def debug_line():
         # Sending new position over websocket
         ConsumerManager().websocket.send_message(DebugScannerMessage({"test": "value_test"}))
+
+    def __str__(self) -> str:
+        return f"{self.name} (fov: {self.fov}, interval: {self.interval}, distance: {self.distance})"

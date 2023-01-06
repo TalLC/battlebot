@@ -48,6 +48,7 @@ async def startup() -> None:
     print("Enrôlement d'un bot de test :")
     bot = GameManager().bot_manager.create_bot("BOT TEST 01", "warrior")
     bot._id = "0-0-0-0-0"
+    GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot)
     GameManager().bot_manager._BOTS = dict()
     GameManager().bot_manager._BOTS[bot._id] = bot
     bot.client_connection.connect(

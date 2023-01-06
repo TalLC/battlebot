@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 
 class IDestructible:
     _health_max = 0
@@ -46,15 +48,28 @@ class IDestructible:
         """
         if self._health > 0:
             self._health -= damage
-            if self._health < 0:
+            if self._health <= 0:
                 self._health = 0
                 self._on_death()
+                return
+        self._on_hurt()
 
+    def kill(self) -> None:
+        """
+        Kills the entity.
+        """
+        self.hurt(self._health_max)
+
+    @abstractmethod
     def _on_death(self) -> None:
         """
         Callback when the entity is dead.
-        Disable collisions if the entity is dead.
         """
-        if self._health <= 0:
-            # entity is dead
-            self.set_collisions(False)
+        raise NotImplementedError
+
+    @abstractmethod
+    def _on_hurt(self) -> None:
+        """
+        Callback when the entity is hurt.
+        """
+        raise NotImplementedError
