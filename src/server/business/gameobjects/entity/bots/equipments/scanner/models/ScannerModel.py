@@ -9,8 +9,6 @@ from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner imp
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
 from business.shapes.ShapeFactory import Shape, ShapeFactory
 from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords
-from consumer.ConsumerManager import ConsumerManager
-
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
@@ -148,7 +146,7 @@ class ScannerModel(IScanner, ABC):
         obj_in_fov = list()
 
         # TODO : récupérer seulement les objets en face du bot.
-        detected_objects = self._bot.bot_manager.game_manager.map.tiles_grid.get_all_tiles_objects()
+        detected_objects = self._bot.bot_manager.game_manager.get_all_objects_on_map()
         # Calculate the angles of the field of view
         min_angle, max_angle = self._get_fov_angles()
         # Init relative angle from bot
@@ -160,17 +158,18 @@ class ScannerModel(IScanner, ABC):
 
             # Check if collision between ray and elements on the map.
             for obj in detected_objects:
-                if obj.shape.intersection(ray):
-                    # get all intersections points
-                    points_list = obj.shape.intersection(ray).boundary
-                    # get nearest point from bot
-                    nearest_point = get_nearest_point(self._bot.shape.centroid, points_list)
-                    obj_in_fov.append({
-                        "distance": nearest_point.distance(self._bot.shape.centroid),
-                        "name": obj.name,
-                        "angle": relative_angle,
-                        "obj_id": obj.id
-                    })
+                if obj != self._bot:
+                    if obj.shape.intersection(ray):
+                        # get all intersections points
+                        points_list = obj.shape.intersection(ray).boundary
+                        # get nearest point from bot
+                        nearest_point = get_nearest_point(self._bot.shape.centroid, points_list)
+                        obj_in_fov.append({
+                            "distance": nearest_point.distance(self._bot.shape.centroid),
+                            "name": obj.name,
+                            "angle": relative_angle,
+                            "obj_id": obj.id
+                        })
             relative_angle += self._precision
 
         # keep only objects in the foreground
@@ -178,11 +177,6 @@ class ScannerModel(IScanner, ABC):
         logging.info("..............................")
 
         return self._create_detected_objects(visible_objects)
-
-    @staticmethod
-    def debug_line():
-        # Sending new position over websocket
-        ConsumerManager().websocket.send_message(DebugScannerMessage({"test": "value_test"}))
 
     def __str__(self) -> str:
         return f"{self.name} (fov: {self.fov}, interval: {self.interval}, distance: {self.distance})"

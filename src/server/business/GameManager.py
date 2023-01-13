@@ -174,3 +174,9 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         for bot in self.bot_manager.get_bots():
             bot.stop()
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
+
+    def get_all_objects_on_map(self):
+        entities = list()
+        for obj in self.map.tiles_grid.get_all_tiles_objects(with_collision=True) + list(self.bot_manager.get_bots()):
+            entities.append(obj)
+        return entities
