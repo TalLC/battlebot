@@ -10,7 +10,6 @@ from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import D
 from business.shapes.ShapeFactory import Shape, ShapeFactory
 from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords
 from consumer.ConsumerManager import ConsumerManager
-from consumer.webservices.messages.websocket.DebugScannerMessage import DebugScannerMessage
 
 
 if TYPE_CHECKING:
