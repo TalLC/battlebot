@@ -149,36 +149,4 @@ ws.onmessage = async function(event) {
             sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: loginId});
         }
     }
-
-    return;
-    update.push(JSON.parse(event.data));
-    console.log(update[0]);
-    if (update[0].msg_type == 'MapCreateMessage'){
-        console.log('CreateMapWS');
-        game.createMap(update[0]);
-        update.shift();
-    }
-    else if (update[0].msg_type == 'BotCreateMessage'){
-        console.log('CreateBot');
-        game.createBot(update[0].bot_id, update[0].x, update[0].z, update[0].ry);
-        update.shift();
-    }
-    else if(update[0].msg_type == 'DisplayClientLoginMessage'){
-        while(null in game.bots);
-        console.log('Start game');
-        loginId = update[0].login_id;
-        sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: loginId});
-        update.shift();
-    }
-    else if(update[0].msg_type == 'BotShootAtCoordinates'){
-        // Un bot tir aux coordonnées spécifiées
-        const botId = game.bots[update[0].bot_id];
-        const x = game.bots[update[0].x];
-        const z = game.bots[update[0].z];
-        console.log(`Bot ${botId} is shooting at ${x}, ${z}`);
-
-        
-        
-        update.shift();
-    }
 };
