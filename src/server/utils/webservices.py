@@ -1,3 +1,4 @@
+import json
 from time import time
 from datetime import timedelta
 from queue import SimpleQueue
@@ -64,9 +65,14 @@ class Webservices(metaclass=SingletonABCMeta):
         self.__ws_tmp_queue.put(message)
 
     def dispatch_message_to_all_queues(self, message_list: [IWebsocketMessage]):
-        for message in message_list:
-            for queue in self.__ws_client_queues:
-                queue.put(item=message)
+        liste_json_message = [message.json() for message in message_list]
+
+        json_message = {
+            'messages': liste_json_message,
+            'count' : len(liste_json_message)
+        }
+        for queue in self.__ws_client_queues:
+            queue.put(item=json_message)
 
     def add_ws_queue(self, queue: SimpleQueue):
         """

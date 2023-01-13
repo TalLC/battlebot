@@ -1,3 +1,4 @@
+// Dictionnaire des différents liens entre un nom d'objet et son modèle 3D. 
 export default {
     'avatar': ["/static/models/robot_1.glb"],
     'tree':'/static/models/tree_small.glb',
