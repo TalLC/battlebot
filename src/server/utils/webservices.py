@@ -69,7 +69,7 @@ class Webservices(metaclass=SingletonABCMeta):
 
         json_message = {
             'messages': liste_json_message,
-            'count' : len(liste_json_message)
+            'count': len(liste_json_message)
         }
         for queue in self.__ws_client_queues:
             queue.put(item=json_message)
