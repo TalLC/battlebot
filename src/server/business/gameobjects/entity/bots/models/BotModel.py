@@ -278,6 +278,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # print(f"Impact at {x};{z}")
         # target = Target(x=x, z=z)
         # return target
+        return Target(x=0, z=0)
 
         # Clamping the angle value to its limits according to the scanner capabilities
         shoot_angle = sorted((self.equipment.scanner.fov / -2, angle, self.equipment.scanner.fov / 2))[1]
@@ -395,4 +396,4 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         Callback when the bot is hurt.
         """
-        ConsumerManager().stomp.send_message(HitMessage(object_type='bot', object_id=self.id))
+        ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
