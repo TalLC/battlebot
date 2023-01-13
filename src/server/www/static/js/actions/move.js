@@ -1,5 +1,5 @@
 import {ActionDefinition, actions} from "./actions.js";
-import * as THREE from '../view/three.module.js';
+import * as THREE from 'three';
 
 function eventwrapper(botState){return {x: botState.x === undefined? this.x: botState.x, z: botState.x === undefined? this.z: botState.z};}
 

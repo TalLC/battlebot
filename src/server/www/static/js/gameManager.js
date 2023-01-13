@@ -1,6 +1,6 @@
 import View3DController from "./view/view3DController.js";
-import bot from "./bot.js"
-import tile from "./tile.js"
+import bot from "./gameObjects/bot.js"
+import tile from "./gameObjects/tile.js"
 
 class GameManager{
     v = new View3DController();

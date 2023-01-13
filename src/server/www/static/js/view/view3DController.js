@@ -1,6 +1,6 @@
-import * as THREE from './three.module.js';
-import {OrbitControls} from './OrbitControls.js';
-import {GLTFLoader} from './GLTFLoader.js';
+import * as THREE from 'three';
+import {OrbitControls} from 'controls/OrbitControls';
+import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
 
 export default class View3DController{
@@ -24,6 +24,7 @@ export default class View3DController{
         this.loader = new GLTFLoader();
         this.attach(document.body);
         this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
+        this.createDebugGrid();
     }
 
     attach(parentElement){
@@ -49,6 +50,14 @@ export default class View3DController{
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.update();
         return this.camera;
+    }
+
+    createDebugGrid() {
+        console.log("ici");
+        const grid = new THREE.GridHelper(32, 32);
+        // grid.rotateX(-Math.PI / 2);
+        grid.position.set(15.5, 0.6, 15.5);
+        this.scene.add(grid);
     }
 
     // this utility function allows you to use any three.js

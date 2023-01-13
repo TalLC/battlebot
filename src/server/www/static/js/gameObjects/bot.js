@@ -1,5 +1,5 @@
-import "./actionDefinition.js"
-import {actions} from "./actions/actions.js"
+import "../actionDefinition.js"
+import {actions} from "../actions/actions.js"
 
 export default class Bot{
     id;
