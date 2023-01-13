@@ -1,6 +1,6 @@
-import * as THREE from './three.module.js';
-import {OrbitControls} from './OrbitControls.js';
-import {GLTFLoader} from './GLTFLoader.js';
+import * as THREE from 'three';
+import {OrbitControls} from 'controls/OrbitControls';
+import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
 
 export default class View3DController{

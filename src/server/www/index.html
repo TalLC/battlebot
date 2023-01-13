@@ -6,19 +6,17 @@
 		<link rel="stylesheet" href="static/css/styles.css" />
 	</head>
 	<body>
-        <script type="importmap">
-            {
-              "imports": {
-                "three": "./static/js/view/three.module.js",
-                "three/examples/jsm/controls/OrbitControls":"./static/js/view/OrbitControls.js",
-                "three/examples/jsm/libs/stats.module":"./static/js/view/stats.module.js",
-                "three/examples/jsm/loaders/OBJLoader":"./static/js/view/OBJLoader.js",
-                "three/examples/jsm/loaders/GLTFLoader":"./static/js/view/GLTFLoader.js"
-              }
-            }
-        </script>
-		<script type='module' src="static/js/script.js">
-			// Our Javascript will go here.
-		</script>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "./static/js/threejs/three.module.js",
+            "controls/OrbitControls":"./static/js/threejs/OrbitControls.js",
+            "stats.module":"./static/js/threejs/stats.module.js",
+            "loaders/OBJLoader":"./static/js/threejs/OBJLoader.js",
+            "loaders/GLTFLoader":"./static/js/threejs/GLTFLoader.js"
+          }
+        }
+    </script>
+		<script type='module' src="static/js/script.js"></script>
 	</body>
 </html>
