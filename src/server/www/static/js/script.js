@@ -78,7 +78,6 @@ function doAction(message){
         }
     }
     else if (message.msg_type === "BotShootAtCoordinates") {
-        console.log("shoot");
         let actionDef = "shoot";
         let selected = actions[actionDef].actionSelector(message);
         if (selected) {
