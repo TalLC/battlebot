@@ -4,14 +4,6 @@ import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
 
 export default class View3DController{
-    scene;
-    size;
-    camera;
-    renderer;
-    controls;
-    light;
-    loader;
-    tmp;
     constructor(width = window.innerWidth, height = window.innerHeight){
         this.tmp;
         this.renderer = new THREE.WebGLRenderer();

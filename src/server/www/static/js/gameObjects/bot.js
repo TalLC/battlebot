@@ -2,17 +2,6 @@ import "../actionDefinition.js"
 import {actions} from "../actions/actions.js"
 
 export default class Bot{
-    id;
-    x;
-    z;
-    ry;
-    shoot;
-    hit;
-    shieldHide;
-    shieldRaise;
-    objBot;
-    enrolled;
-
     constructor(construct){
         this.id = construct.id;
         this.x = construct.x;

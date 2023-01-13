@@ -3,16 +3,11 @@ import bot from "./gameObjects/bot.js"
 import tile from "./gameObjects/tile.js"
 
 class GameManager{
-    v = new View3DController();
-    bots = {};
-    map = [];
-    mapObjects = {};
-
     constructor(){
-        let map;
-        let bots;
-        let v;
-        let mapObjects;
+        this.v = new View3DController();
+        this.bots = {};
+        this.map = [];
+        this.mapObjects = {};
     }
 
     createBot(id, x, z, ry){

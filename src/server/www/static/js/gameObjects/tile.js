@@ -2,11 +2,6 @@ import "../actionDefinition.js"
 import {actions} from "../actions/actions.js"
 
 export default class Tile{
-    x;
-    z;
-    objTile;
-    objObj;
-
     constructor(construct){
         this.x = construct.x;
         this.z = construct.z;
