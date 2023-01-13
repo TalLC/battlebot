@@ -1,5 +1,4 @@
 import {ActionDefinition, actions} from "./actions.js";
-import * as THREE from 'three';
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.

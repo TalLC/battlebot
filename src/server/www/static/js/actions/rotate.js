@@ -1,5 +1,4 @@
 import {ActionDefinition, actions} from "./actions.js";
-import * as THREE from '../view/three.module.js';
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action rotate.

@@ -45,6 +45,8 @@ function animate(){
         game.v.renderer.render( game.v.scene, game.v.camera );
 }
 */
+
+
 /*
     Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
     Param : message -> correspont aux données pour un bot, reçu dans un appel websocket.
@@ -63,9 +65,10 @@ function doAction(message){
             }
         }
     }
+    return promise;
     return promise.then(() => {
-        requestAnimationFrame( animate );
-        game.v.renderer.render( game.v.scene, game.v.camera );
+        //requestAnimationFrame( animate );
+        //game.v.renderer.render( game.v.scene, game.v.camera );
     });
 }
 
@@ -75,21 +78,22 @@ Param : N/A
 Return : N/A
 */
 function animate(){
-if(update[0] !== undefined && update[0].messages !== undefined){
-    let promises = [];
-    for(let i = 0; i < update[0].messages.length; i++){
-        //ajouter toute les promises à un tableau
-        promises.push(doAction(update[0].messages[i]));
+
+    if(update[0] !== undefined && update[0].messages !== undefined){
+        let promises = [];
+        for(let i = 0; i < update[0].messages.length; i++){
+            promises.push(doAction(update[0].messages[i]));
+        }
+        Promise.all(promises).then(() =>{
+            requestAnimationFrame( animate );
+            game.v.renderer.render( game.v.scene, game.v.camera );
+        });
+        update.shift();
     }
-    Promise.all(promises).then(() =>{
-        //game.v.renderer.render( game.v.scene, game.v.camera );
-    });
-    update.shift();
-}
-else{
-    requestAnimationFrame( animate );
-    game.v.renderer.render( game.v.scene, game.v.camera );
-}
+    else{
+        requestAnimationFrame( animate );
+        game.v.renderer.render( game.v.scene, game.v.camera );
+    }
 }
 
 animate();
@@ -116,8 +120,13 @@ ws.onmessage = async function(event)
     }
     else if(update[0].msg_type == 'DisplayClientLoginMessage'){
         while(null in game.bots);
-        //appel back
         console.log(update[0]);
+        /*await fetch('', {
+            method: 'PATCH',
+            body: {
+                "api_password": "password"
+            }
+        });*/
         update.shift();
     }
 };
