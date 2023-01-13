@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, List
 from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner import IScanner
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
 from business.shapes.ShapeFactory import Shape, ShapeFactory
-from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords, is_intersection
+from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.DebugScannerMessage import DebugScannerMessage
 
