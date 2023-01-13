@@ -1,20 +1,21 @@
 from __future__ import annotations
 
 import logging
-import math
 from abc import ABC
-from typing import TYPE_CHECKING
+from itertools import groupby
+from typing import TYPE_CHECKING, List
 
 from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner import IScanner
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
 from business.shapes.ShapeFactory import Shape, ShapeFactory
-from business.shapes.ShapesUtils import get_nearest_point
+from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords, is_intersection
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.DebugScannerMessage import DebugScannerMessage
 
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
+    from shapely.geometry import LineString
 
 
 class ScannerModel(IScanner, ABC):
@@ -40,11 +41,15 @@ class ScannerModel(IScanner, ABC):
         return self._fov
 
     @property
+    def precision(self) -> float:
+        return self._precision
+
+    @property
     def activated(self) -> bool:
         return self._activated
 
     def __init__(self, bot: BotModel, name: str, interval: float = 3, distance: int = 3, fov: float = 90.0,
-                 activated: bool = True):
+                 precision: float = 0.5, activated: bool = True):
 
         self._bot = bot
         self._name = name
@@ -52,7 +57,7 @@ class ScannerModel(IScanner, ABC):
         self._interval = interval
         self._distance = distance
         self._fov = fov
-
+        self._precision = precision
         self._activated = activated
         super().__init__()
 
@@ -64,176 +69,116 @@ class ScannerModel(IScanner, ABC):
         min_angle = (self._bot.ry_deg - self._fov / 2) % 360
         max_angle = (self._bot.ry_deg + self._fov / 2) % 360
 
-        logging.info(f"scanning from {min_angle} to {max_angle} [{abs(min_angle-max_angle)}]")
+        logging.info(f"[BOT {self._bot.name}] scanning from {min_angle} to {max_angle} [{abs(min_angle-max_angle)}]")
 
         return min_angle, max_angle
 
     @staticmethod
-    def _keep_nearest_values(r_raw: list[dict]) -> list[dict]:
-        r_clean = []
-        for d1 in r_raw:
-            angles = [x['angle'] for x in r_clean]
-            if d1["angle"] not in angles:
-                r_clean.append(d1)
+    def _keep_nearest_elements(elements: list[dict]) -> list[dict]:
+        """
+            Keep only the nearest value of detected objects by angle. (Delete the object or part of object in the
+            background)
+        """
+        foreground_elements = []
+        for elem1 in elements:
+            angles = [x['angle'] for x in foreground_elements]
+            if elem1["angle"] not in angles:
+                foreground_elements.append(elem1)
             else:
-                for d2 in r_clean:
-                    if d1["angle"] == d2["angle"]:
-                        if d1["distance"] < d2["distance"]:
-                            r_clean.remove(d2)
-                            r_clean.append(d1)
-        return r_clean
+                for elem2 in foreground_elements:
+                    if elem1["angle"] == elem2["angle"]:
+                        if elem1["distance"] < elem2["distance"]:
+                            foreground_elements.remove(elem2)
+                            foreground_elements.append(elem1)
+        return foreground_elements
 
     @staticmethod
-    def _create_detected_objects(r_raycast):
-        list_detected_objects = []
-        for i, e in enumerate(r_raycast):
-            if i == 0:
-                list_detected_objects.append(
-                    DetectedObject(name=e['name'], a_from=e['angle'], a_to=e['angle'], distance=e['distance']))
-                continue
-            previous_obj = list_detected_objects[-1]
-            if e['name'] == previous_obj.name:
-                if math.isclose(e['distance'], previous_obj.distance, rel_tol=0.5):
-                    previous_obj.distance = sum([previous_obj.distance, e['distance']]) / len([previous_obj.distance, e['distance']])
-                    previous_obj.a_to = e['angle']
-            else:
-                list_detected_objects.append(
-                    DetectedObject(name=e['name'], a_from=e['angle'], a_to=e['angle'], distance=e['distance']))
+    def _create_detected_objects(elements: List[dict]) -> List[DetectedObject]:
+        """
+            Return list of DetectedObject from raycasting's result.
+        """
+        def key_func(k):
+            return k['obj_id']
 
-        return list_detected_objects
+        list_detected_obj = list()
+        r_raycast = sorted(elements, key=key_func)
 
-    def _raycastroll(self):
+        for obj_id, hits_group in groupby(r_raycast, key_func):
+            hits_list = list(hits_group)
 
-        visu_rcast = list()
-        # TODO : récupérer seulement les objets en face du bot.
-        detected_objects = self._bot.bot_manager.game_manager.map.get_all_objects_on_map()
+            list_detected_obj.append(DetectedObject(
+                obj_id=obj_id,
+                name=hits_list[0]['name'],
+                a_from=min([hit["angle"] for hit in hits_list]),
+                a_to=max([hit["angle"] for hit in hits_list]),
+                distance=sum([hit["distance"] for hit in hits_list])/len(hits_list)
+            ))
 
-        # Get bot's shape
-        bot_shape = self._bot.shape
+        for e in list_detected_obj:
+            logging.debug(e)
 
-        # Calculate the angles of the field of view
-        min_angle, max_angle = self._get_fov_angles()
+        return list_detected_obj
 
-        result_raycasting = list()
-        # Iterate over the angles in the field of view, sending a ray every 1 degree
-
-        start_angle = min_angle
-
-        angle = start_angle
-
-        ray_angle_list = list()
-        # while angle != max_angle:
-        for i in range(int(self._fov)):
-            tmp = "_"
-            decimals = angle - int(angle)
-            angle = angle % 360 if angle != 360 else 0
-            angle += decimals
-
-            # Calculate the end point of the ray
-            end_x = self._bot.x + self.distance * math.cos(math.radians(angle))
-            end_y = self._bot.z + self.distance * math.sin(math.radians(angle))
-
-            # Create ray
-            ray = ShapeFactory().create_shape(shape=Shape.LINE, coords=[(self._bot.x, self._bot.z), (end_x, end_y)])
-
-            # Check each object in the list
-            for obj in detected_objects:
-                # Get shape of the object
-                object_circle = obj.shape
-
-                # Check if ray touch object's shape
-                if object_circle.intersects(ray) and object_circle.distance(bot_shape.centroid) > obj.radius:
-                    # List the intersections points
-                    points_list = object_circle.intersection(ray).boundary
-
-                    nearest_point = get_nearest_point(bot_shape.centroid, points_list)
-
-                    result_raycasting.append({
-                        "distance": nearest_point.distance(bot_shape.centroid),
-                        "name": obj.name,
-                        "angle": angle
-                    })
-                    tmp = obj.name[0]
-
-            visu_rcast.append(tmp)
-            angle += 1
-
-        logging.info(''.join(visu_rcast))
-        logging.info(self._create_detected_objects(self._keep_nearest_values(result_raycasting)))
-
-        return self._keep_nearest_values(result_raycasting)
-
-    def raycasuicide(self):
-        visu_rcast = list()
-        result_raycasting = list()
-        # TODO : récupérer seulement les objets en face du bot.
-        detected_objects = self._bot.bot_manager.game_manager.map.get_all_objects_on_map()
-
-        # Get bot's shape
-        bot_shape = self._bot.shape
-
-        # Calculate the angles of the field of view
-        min_angle, max_angle = self._get_fov_angles()
-        step = 0.5
-
+    def _iterate_fov_angle(self, min_angle: float, max_angle: float) -> List[float]:
+        """
+            Return list of angles in fov.
+        """
+        angles = list()
         tmp_angle = min_angle
-        relative_angle = 0 - (self._fov/2)
-        for i in range(0, int((self._fov/step))):
-            # if min_angle > max_angle:
-            #     if tmp_angle >= 360:
-            #         tmp_angle = 0.0
-            tmp_angle %= 360
+        for i in range(0, int((self._fov/self._precision))):
+            if min_angle > max_angle and tmp_angle >= 360:
+                tmp_angle = 0.0
+            angles.append(tmp_angle)
+            tmp_angle += self._precision
+        return angles
 
-            # Calculate the end point of the ray
-            end_x = self._bot.x + self.distance * math.cos(math.radians(tmp_angle))
-            end_y = self._bot.z + self.distance * math.sin(math.radians(tmp_angle))
-            # Create ray
-            ray = ShapeFactory().create_shape(shape=Shape.LINE, coords=[(self._bot.x, self._bot.z), (end_x, end_y)])
-            # Check each object in the list
+    def create_ray(self, angle: float) -> LineString:
+        """
+            Return linestring that represents a ray starting from the bot at an angle "angle"
+        """
+        # Calculate the end point of the ray
+        end_coords = calculate_point_coords(self._bot.coordinates, self.distance, angle)
+        # Create ray
+        return ShapeFactory().create_shape(shape=Shape.LINE, coords=[self._bot.coordinates, end_coords])
+
+    def scanning(self) -> List[DetectedObject]:
+        """
+            Supra magic power +++ infinite mega racasting the revange of the return !
+        """
+        logging.info(f"..........{self._bot.name}..........")
+        obj_in_fov = list()
+
+        # TODO : récupérer seulement les objets en face du bot.
+        detected_objects = self._bot.bot_manager.game_manager.map.get_all_objects_on_map()
+        # Calculate the angles of the field of view
+        min_angle, max_angle = self._get_fov_angles()
+        # Init relative angle from bot
+        relative_angle = 0 - (self._fov / 2)
+
+        # Shoot ray every [precision value] degree
+        for a in self._iterate_fov_angle(min_angle, max_angle):
+            ray = self.create_ray(a)
+
+            # Check if collision between ray and elements on the map.
             for obj in detected_objects:
-                # Get shape of the object
-                object_circle = obj.shape
-
-                # Check if ray touch object's shape
-                if object_circle.intersects(ray) and object_circle.distance(bot_shape.centroid) > obj.radius:
-                    # List the intersections points
-                    points_list = object_circle.intersection(ray).boundary
-
-                    nearest_point = get_nearest_point(bot_shape.centroid, points_list)
-
-                    # bot_shape_boundary = bot_shape.exterior.coords
-                    # bot_shape_radius = 0
-                    # for x, y in bot_shape_boundary:
-                    #     bot_shape_radius = max(bot_shape_radius, math.sqrt(x ** 2 + y ** 2))
-                    # print(bot_shape_radius)
-                    result_raycasting.append({
-                        "distance": nearest_point.distance(bot_shape.centroid),
+                if obj.shape.intersection(ray):
+                    # get all intersections points
+                    points_list = obj.shape.intersection(ray).boundary
+                    # get nearest point from bot
+                    nearest_point = get_nearest_point(self._bot.shape.centroid, points_list)
+                    obj_in_fov.append({
+                        "distance": nearest_point.distance(self._bot.shape.centroid),
                         "name": obj.name,
                         "angle": relative_angle,
                         "obj_id": obj.id
                     })
+            relative_angle += self._precision
 
-            tmp_angle += step
-            relative_angle += step
+        # keep only objects in the foreground
+        visible_objects = self._keep_nearest_elements(obj_in_fov)
+        logging.info("..............................")
 
-        tmp = self._keep_nearest_values(result_raycasting)
-        logging.debug(tmp)
-
-        r = self._create_detected_objects(self._keep_nearest_values(result_raycasting))
-
-        logging.info(f"bot looking at {self._bot.ry_deg}, from {min_angle} to {max_angle}")
-        logging.info(r)
-
-        return 0
-
-    def scanning(self) -> list:
-        # supra magic power +++ infinite mega racasting the revange of the return !
-        logging.info(".....................................................................")
-        zbleuzbleuzbleu = self.raycasuicide()
-        # rayc_result = self._raycastroll()
-
-        # return self._create_detected_objects(rayc_result)
-        return
+        return self._create_detected_objects(visible_objects)
 
     @staticmethod
     def debug_line():
