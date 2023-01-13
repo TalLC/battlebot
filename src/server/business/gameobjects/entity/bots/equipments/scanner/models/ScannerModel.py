@@ -2,17 +2,20 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from math import pi
-from typing import TYPE_CHECKING
-from shapely.geometry import Polygon, LineString, Point
+from itertools import groupby
+from typing import TYPE_CHECKING, List
 
 from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner import IScanner
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
-from utils.geometry import Vector2D, Point2D
+from business.shapes.ShapeFactory import Shape, ShapeFactory
+from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords
+from consumer.ConsumerManager import ConsumerManager
+from consumer.webservices.messages.websocket.DebugScannerMessage import DebugScannerMessage
+
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
-    from business.gameobjects.tiles.Tile import Tile
+    from shapely.geometry import LineString
 
 
 class ScannerModel(IScanner, ABC):
@@ -38,146 +41,149 @@ class ScannerModel(IScanner, ABC):
         return self._fov
 
     @property
+    def precision(self) -> float:
+        return self._precision
+
+    @property
     def activated(self) -> bool:
         return self._activated
 
-    def __init__(self, bot: BotModel, name: str, interval: float = 3, distance: int = 3, fov: float = pi / 2,
-                 activated: bool = True):
+    def __init__(self, bot: BotModel, name: str, interval: float = 3, distance: int = 3, fov: float = 90.0,
+                 precision: float = 0.5, activated: bool = True):
 
         self._bot = bot
         self._name = name
 
         self._interval = interval
         self._distance = distance
-
         self._fov = fov
-        self._fov_from = Vector2D.from_angle(self._bot.ry).angle_to(Vector2D.from_angle(-self._fov / 2))
-        self._fov_to = Vector2D.from_angle(self._bot.ry).angle_to(Vector2D.from_angle(self._fov / 2))
-        self._fov_shape = None
-
+        self._precision = precision
         self._activated = activated
         super().__init__()
 
     def switch(self) -> None:
         self._activated = not self._activated
 
-    def _update_fov_shape(self) -> None:
-        half_fov = self._fov / 2
-        front_max = Vector2D.from_angle(self._bot.ry).__mul__(self._distance)
-        left_max = Vector2D.from_angle(self._bot.ry - half_fov).__mul__(self._distance)
-        right_max = Vector2D.from_angle(self._bot.ry + half_fov).__mul__(self._distance)
+    def _get_fov_angles(self) -> (float, float):
 
-        vision_cone = Polygon([
-            (self._bot.x, self._bot.z),
-            (self._bot.x + left_max.x, self._bot.z + left_max.y),
-            (self._bot.x + front_max.x, self._bot.z + front_max.y),
-            (self._bot.x + right_max.x, self._bot.z + right_max.y)])
+        min_angle = (self._bot.ry_deg - self._fov / 2) % 360
+        max_angle = (self._bot.ry_deg + self._fov / 2) % 360
 
-        self._fov_shape = vision_cone
+        logging.info(f"[BOT {self._bot.name}] scanning from {min_angle} to {max_angle} [{abs(min_angle-max_angle)}]")
 
-    def _get_objects_in_fov(self) -> Tile:
-        # for each object in data, test if shape's obj intersect with fov shape
-        # add to detected_object_list
-        map_matrix = self._bot.bot_manager.game_manager.map.tiles_grid
+        return min_angle, max_angle
 
-        for z, line in enumerate(map_matrix):
-            for x, cell in enumerate(line):
-                if cell.tile_object.shape is None:
-                    continue
-                if self._fov_shape.intersects(cell.tile_object.shape.poly):
-                    # add cells to the list
-                    yield cell.tile_object
+    @staticmethod
+    def _keep_nearest_elements(elements: list[dict]) -> list[dict]:
+        """
+            Keep only the nearest value of detected objects by angle. (Delete the object or part of object in the
+            background)
+        """
+        foreground_elements = []
+        for elem1 in elements:
+            angles = [x['angle'] for x in foreground_elements]
+            if elem1["angle"] not in angles:
+                foreground_elements.append(elem1)
+            else:
+                for elem2 in foreground_elements:
+                    if elem1["angle"] == elem2["angle"]:
+                        if elem1["distance"] < elem2["distance"]:
+                            foreground_elements.remove(elem2)
+                            foreground_elements.append(elem1)
+        return foreground_elements
 
-    def _get_bots_in_fov(self) -> BotModel:
-        # get bots locations from game manager
-        # for each bot in data, test if shape of bot is in fov shape
-        # add to detected_object_list
-        for other_bot in self._bot.bot_manager.get_bots():
-            if other_bot == self._bot:
-                continue
+    @staticmethod
+    def _create_detected_objects(elements: List[dict]) -> List[DetectedObject]:
+        """
+            Return list of DetectedObject from raycasting's result.
+        """
+        def key_func(k):
+            return k['obj_id']
 
-            if self._fov_shape.intersects(other_bot.shape.poly):
-                yield other_bot
+        list_detected_obj = list()
+        r_raycast = sorted(elements, key=key_func)
 
-    def _store_detected_object(self, result, point, cur_angle, obj):
-        bot, d_obj = Point2D(x=self._bot.x, y=self._bot.z), Point2D(x=point.x, y=point.y)
-        distance_between_self_and_obj = Vector2D.from_points(bot, d_obj).__abs__()
+        for obj_id, hits_group in groupby(r_raycast, key_func):
+            hits_list = list(hits_group)
 
-        if distance_between_self_and_obj < result[cur_angle]['distance']:
-            return {"name": obj.name, "distance": distance_between_self_and_obj}
-        else:
-            return result[cur_angle]
+            list_detected_obj.append(DetectedObject(
+                obj_id=obj_id,
+                name=hits_list[0]['name'],
+                a_from=min([hit["angle"] for hit in hits_list]),
+                a_to=max([hit["angle"] for hit in hits_list]),
+                distance=sum([hit["distance"] for hit in hits_list])/len(hits_list)
+            ))
 
-    def _get_detected_objs(self):
-        detected_objects: list[BotModel | Tile] = list()
-        detected_objects += self._get_objects_in_fov()
-        detected_objects += self._get_bots_in_fov()
+        for e in list_detected_obj:
+            logging.debug(e)
 
-        return detected_objects
+        return list_detected_obj
 
-    def _create_line(self, angle):
-        cu_vec = Vector2D.from_angle(angle).__mul__(self._distance)
-        return LineString([(self._bot.x, self._bot.z), (cu_vec.x, cu_vec.y)])
+    def _iterate_fov_angle(self, min_angle: float, max_angle: float) -> List[float]:
+        """
+            Return list of angles in fov.
+        """
+        angles = list()
+        tmp_angle = min_angle
+        for i in range(0, int((self._fov/self._precision))):
+            if min_angle > max_angle and tmp_angle >= 360:
+                tmp_angle = 0.0
+            angles.append(tmp_angle)
+            tmp_angle += self._precision
+        return angles
 
-    def _detection(self, res, agl, obj_list):
-        res[agl] = {"name": None, "distance": self._distance}
-        cu_line = self._create_line(agl)
+    def create_ray(self, angle: float) -> LineString:
+        """
+            Return linestring that represents a ray starting from the bot at an angle "angle"
+        """
+        # Calculate the end point of the ray
+        end_coords = calculate_point_coords(self._bot.coordinates, self.distance, angle)
+        # Create ray
+        return ShapeFactory().create_shape(shape=Shape.LINE, coords=[self._bot.coordinates, end_coords])
 
-        # for all obj in fov, check if intersection(angle, objs)
-        for o in obj_list:
-            object_ring = LineString(list(o.shape.poly.exterior.coords))
-            if cu_line.intersects(object_ring):
-                intersections = cu_line.intersection(object_ring)
-                if isinstance(intersections, Point):
-                    res[agl] = self._store_detected_object(res, point=intersections, cur_angle=agl, obj=o)
-                else:
-                    for i in intersections.geoms:
-                        res[agl] = self._store_detected_object(res, point=i, cur_angle=agl, obj=o)
-        return res
+    def scanning(self) -> List[DetectedObject]:
+        """
+            Supra magic power +++ infinite mega racasting the revange of the return !
+        """
+        logging.info(f"..........{self._bot.name}..........")
+        obj_in_fov = list()
 
-    def scanning(self) -> list:
-        logging.debug(f".................................{self._bot.name}.................................")
-        result_scan = dict()
-        final_result = list()
+        # TODO : récupérer seulement les objets en face du bot.
+        detected_objects = self._bot.bot_manager.game_manager.map.tiles_grid.get_all_tiles_objects()
+        # Calculate the angles of the field of view
+        min_angle, max_angle = self._get_fov_angles()
+        # Init relative angle from bot
+        relative_angle = 0 - (self._fov / 2)
 
-        # get list of objs detected in fov
-        self._update_fov_shape()
-        detected_obj_list = self._get_detected_objs()
+        # Shoot ray every [precision value] degree
+        for a in self._iterate_fov_angle(min_angle, max_angle):
+            ray = self.create_ray(a)
 
-        angle_scan = self._bot.ry - self._fov / 2
-        angle_end_scan = self._bot.ry + self._fov / 2
-        previous = DetectedObject(name=None, a_from=angle_scan, to=angle_scan, distance=self._distance)
+            # Check if collision between ray and elements on the map.
+            for obj in detected_objects:
+                if obj.shape.intersection(ray):
+                    # get all intersections points
+                    points_list = obj.shape.intersection(ray).boundary
+                    # get nearest point from bot
+                    nearest_point = get_nearest_point(self._bot.shape.centroid, points_list)
+                    obj_in_fov.append({
+                        "distance": nearest_point.distance(self._bot.shape.centroid),
+                        "name": obj.name,
+                        "angle": relative_angle,
+                        "obj_id": obj.id
+                    })
+            relative_angle += self._precision
 
-        logging.debug(f"bot heading {self._bot.ry} and looks between : {angle_scan % 2*pi} and {angle_end_scan % 2*pi}")
+        # keep only objects in the foreground
+        visible_objects = self._keep_nearest_elements(obj_in_fov)
+        logging.info("..............................")
 
-        # detect data every degree
-        while angle_scan < angle_end_scan:
-            result_scan = self._detection(result_scan, angle_scan, detected_obj_list)
-            angle_scan += pi / 180
+        return self._create_detected_objects(visible_objects)
 
-        for angle, scan_data in result_scan.items():
-
-            # if scan_data are same as previous, update `to` and `distance` values
-            if previous.name == scan_data['name'] \
-                    and (previous.distance - 0.5) < scan_data['distance'] < (previous.distance + 0.5):
-                previous.to = angle
-                previous.distance = (previous.distance + scan_data['distance'])/2
-                continue
-
-            # append object
-            final_result.append(previous)
-
-            # prepare next object
-            previous = DetectedObject(name=scan_data['name'], a_from=angle, to=angle, distance=scan_data['distance'])
-
-        # append last object
-        final_result.append(previous)
-
-        # for debug
-        for e in final_result:
-            logging.debug(f"from {e.a_from % 2*pi} to {e.to % 2*pi}, name : {e.name}, distance : {e.distance}")
-
-        return final_result
+    @staticmethod
+    def debug_line():
+        # Sending new position over websocket
+        ConsumerManager().websocket.send_message(DebugScannerMessage({"test": "value_test"}))
 
     def __str__(self) -> str:
         return f"{self.name} (fov: {self.fov}, interval: {self.interval}, distance: {self.distance})"

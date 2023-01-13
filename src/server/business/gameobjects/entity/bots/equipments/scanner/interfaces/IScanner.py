@@ -36,28 +36,6 @@ class IScanner(ABC):
         """
         raise NotImplementedError()
 
-    def _update_fov_shape(self) -> None:
-        """
-        Create a Polygon that represents the field of view.
-        """
-        raise NotImplementedError()
-
-    def _get_objects_in_fov(self) -> Generator[Tile]:
-        """
-        Return the list of objects detected in field of view.
-
-        :return: List of cells detected in field of view.
-        """
-        raise NotImplementedError()
-
-    def _get_bots_in_fov(self) -> Generator[BotModel]:
-        """
-        Return the list of bots detected in field of view.
-
-        :return: List of cells detected in field of view.
-        """
-        raise NotImplementedError()
-
     def scanning(self) -> None:
         """
         Update the fov shape and check if obj are inside.

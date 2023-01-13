@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from business.gameobjects.tiles.objects.TileObject import TileObject
 from business.gameobjects.GameObject import GameObject
 from business.shapes.ShapeFactory import ShapeFactory
+from business.shapes.ShapeFactory import Shape
 
 """
     Base class for every tile in the game.
@@ -25,7 +26,7 @@ class Tile(GameObject, ABC):
 
     def __init__(self, name: str, x: int, z: int, tile_object: TileObject):
         self.tile_object = tile_object
-        super().__init__(name, x, z, ShapeFactory.create_shape(name='square', o=(x, z), width=1))
+        super().__init__(name, x, z, ShapeFactory().create_shape(Shape.SQUARE, o=(x, z), width=1))
 
     def __str__(self):
         return f"({self.x};{self.z})[{self.tile_object} on {self.name}] ({self.id})"

@@ -30,12 +30,7 @@ class GameManager{
                  {
                     tileR = mapData['tiles_grid'][tileR];
                     if (h === tileR['x'] && w === tileR['z']){
-                        console.log("h", h, "w", w);
-
-
                         var tmpTile = new tile({x:h, z:w});
-                        console.log("tmpTile", tmpTile);
-
                         tmpTile.create(tileR['name'].toLowerCase(), tileR['object']['name'].toLowerCase(), this.v);
                         this.mapObjects[tileR['id']] = tmpTile;
                         current_line.push(tmpTile);

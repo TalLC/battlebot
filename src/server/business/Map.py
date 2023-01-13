@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from business.gameobjects.tiles.TileFactory import TileFactory
 from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
+from business.gameobjects.tiles.objects.TileObject import TileObject
 
 if TYPE_CHECKING:
     from business.GameManager import GameManager
@@ -34,6 +35,12 @@ class TilesGrid:
         """
         found_tiles = [tile for tile in self.tiles if tile.x == x and tile.z == z]
         return found_tiles[0] if len(found_tiles) > 0 else None
+
+    def get_all_tiles_objects(self) -> list[TileObject]:
+        """
+        Get all tile objects from the map.
+        """
+        return [tile.tile_object for tile in self.tiles]
 
     def json(self) -> list[dict]:
         """
@@ -184,6 +191,16 @@ class Map:
                 maps_list.append(save_map)
 
         return maps_list
+
+    # def get_all_objects_on_map(self) -> list:
+    #     to_return = []
+    #
+    #     for line in self._matrix:
+    #         for cell in line:
+    #             if cell.tile_object.has_collision:
+    #                 to_return.append(cell.tile_object)
+    #
+    #     return to_return
 
 
 if __name__ == '__main__':
