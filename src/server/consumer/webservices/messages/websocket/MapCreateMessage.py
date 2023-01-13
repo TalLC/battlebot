@@ -1,4 +1,5 @@
 from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
+from business.Map import TilesGrid
 
 
 class MapCreateMessage(IWebsocketMessage):
@@ -16,15 +17,15 @@ class MapCreateMessage(IWebsocketMessage):
         return self._width
 
     @property
-    def tiles(self) -> [dict]:
-        return self._tiles
+    def tiles_grid(self) -> [dict]:
+        return self._tiles_grid
 
-    def __init__(self, map_id: str, height: int, width: int, tiles: list):
+    def __init__(self, map_id: str, height: int, width: int, tiles_grid: TilesGrid):
         super().__init__(msg_type="MapCreateMessage")
         self._map_id = map_id
         self._height = height
         self._width = width
-        self._tiles = tiles
+        self._tiles_grid = tiles_grid
 
     def json(self):
         return {
@@ -32,5 +33,5 @@ class MapCreateMessage(IWebsocketMessage):
             'id': self.map_id,
             'height': self.height,
             'width': self.width,
-            'tiles': self.tiles
+            'tiles_grid': self.tiles_grid.json()
         }

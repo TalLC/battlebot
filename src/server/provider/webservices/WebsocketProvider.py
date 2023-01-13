@@ -6,7 +6,7 @@ from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
 from consumer.webservices.messages.websocket.models.DisplayClientLoginMessage import DisplayClientLoginMessage
-from consumer.webservices.messages.websocket.models.MapCreateMessage import MapCreateMessage
+from consumer.webservices.messages.websocket.MapCreateMessage import MapCreateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
@@ -42,7 +42,7 @@ class WebsocketProvider:
             # Sending map information
             current_map = GameManager().map
             map_create_message = MapCreateMessage(map_id=current_map.id, height=current_map.height,
-                                                  width=current_map.width, tiles=current_map.tiles)
+                                                  width=current_map.width, tiles_grid=current_map.tiles_grid)
             await websocket.send_json(map_create_message.json())
 
             # Waiting for all the bots to be ready

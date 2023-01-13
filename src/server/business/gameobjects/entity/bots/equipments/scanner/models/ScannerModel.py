@@ -10,7 +10,6 @@ from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import D
 from business.shapes.ShapeFactory import Shape, ShapeFactory
 from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords
 from consumer.ConsumerManager import ConsumerManager
-from consumer.webservices.messages.websocket.DebugScannerMessage import DebugScannerMessage
 
 
 if TYPE_CHECKING:
@@ -149,7 +148,7 @@ class ScannerModel(IScanner, ABC):
         obj_in_fov = list()
 
         # TODO : récupérer seulement les objets en face du bot.
-        detected_objects = self._bot.bot_manager.game_manager.map.get_all_objects_on_map()
+        detected_objects = self._bot.bot_manager.game_manager.map.tiles_grid.get_all_tiles_objects()
         # Calculate the angles of the field of view
         min_angle, max_angle = self._get_fov_angles()
         # Init relative angle from bot

@@ -29,4 +29,4 @@ class Tile(GameObject, ABC):
         super().__init__(name, x, z, ShapeFactory().create_shape(Shape.SQUARE, o=(x, z), width=1))
 
     def __str__(self):
-        return f"({self.x};{self.z})[{self.tile_object} on {self.name}]"
+        return f"({self.x};{self.z})[{self.tile_object} on {self.name}] ({self.id})"

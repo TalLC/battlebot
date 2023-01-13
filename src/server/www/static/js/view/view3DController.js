@@ -72,27 +72,31 @@ export default class View3DController{
     createObject(x, y, z, objectName){
         var model_path = graphicObjects[objectName];
 
-        return this.modelLoader(model_path).then((gltfData) => {
-            gltfData.scene.position.x = x;
-            gltfData.scene.position.y = y;
-            gltfData.scene.position.z = z;
-            gltfData.scene.receiveShadow = true;
-            gltfData.scene.castShadow = true;
-            this.scene.add(gltfData.scene);
-            return(gltfData.scene);
-        });
+        return this.modelLoader(model_path).then(
+            (gltfData) => {
+                gltfData.scene.position.x = x;
+                gltfData.scene.position.y = y;
+                gltfData.scene.position.z = z;
+                gltfData.scene.receiveShadow = true;
+                gltfData.scene.castShadow = true;
+                this.scene.add(gltfData.scene);
+                return(gltfData.scene);
+            }
+        );
     }
 
     createBot(x, ry, z, objectName, objectIndex){
         var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
 
-        return this.modelLoader(model_path).then(gltfData => {
-            gltfData.scene.position.x = x;
-            gltfData.scene.position.y = 0.5;
-            gltfData.scene.position.z = z;
-            gltfData.scene.rotation.y = ry;
-            this.scene.add(gltfData.scene);
-            return(gltfData.scene);
-        });
+        return this.modelLoader(model_path).then(
+            gltfData => {
+                gltfData.scene.position.x = x;
+                gltfData.scene.position.y = 0.5;
+                gltfData.scene.position.z = z;
+                gltfData.scene.rotation.y = ry;
+                this.scene.add(gltfData.scene);
+                return(gltfData.scene);
+            }
+        );
    }
 }

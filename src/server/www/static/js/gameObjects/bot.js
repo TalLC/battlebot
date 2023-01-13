@@ -28,7 +28,11 @@ export default class Bot{
     }
 
     create(viewController){
-        viewController.createBot(this.x, this.ry, this.z, 'avatar', 0).then((objBot) => {this.objBot = objBot});
+        viewController.createBot(this.x, this.ry, this.z, 'avatar', 0).then(
+            (objBot) => {
+                this.objBot = objBot
+            }
+        );
     }
     
     action(key,param){
