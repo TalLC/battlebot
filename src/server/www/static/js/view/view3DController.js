@@ -48,6 +48,7 @@ export default class View3DController{
         this.camera.position.set(position.x, position.y, position.z);
         this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+
         this.controls.update();
         return this.camera;
     }

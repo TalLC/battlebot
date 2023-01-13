@@ -19,3 +19,6 @@ class TileObject(OrientedGameObject, IDestructible, ABC):
 
     def __str__(self):
         return f"{self.name}"
+
+    def __eq__(self, other):
+        return self.name == other.name and self.x == other.x and self.z == other.z

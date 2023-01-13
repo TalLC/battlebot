@@ -15,6 +15,8 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
+from business.shapes.ShapeFactory import ShapeFactory, Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
 from business.shapes.ShapeFactory import ShapeFactory
@@ -31,8 +33,8 @@ from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
     from business.BotManager import BotManager
+    from shapely.geometry.base import BaseGeometry
     from business.TeamManager import Team
-    from business.shapes import Shapes
 
 
 class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
@@ -73,12 +75,16 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         return self._equipment
 
     @property
-    def shape(self) -> Shapes:
-        return ShapeFactory.create_shape(name='circle', o=(self.x, self.z), radius=.5, resolution=3)
+    def shape(self) -> BaseGeometry:
+        return ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.5, resolution=3)
 
     @shape.setter
     def shape(self, _):
         pass
+
+    @property
+    def ry_deg(self):
+        return self.ry * (180 / pi)
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):

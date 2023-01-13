@@ -12,8 +12,8 @@ class BotScannerDetectionMessage(IScannerMessage):
 
             data.append(
                 {
-                    "from": detected.a_from % 2*pi,
-                    "to": detected.to % 2*pi,
+                    "from": detected.a_from,
+                    "to": detected.a_to,
                     "name": detected.name,
                     "distance": detected.distance
                 }

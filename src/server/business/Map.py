@@ -151,6 +151,16 @@ class Map:
             )
         return mat
 
+    def get_all_objects_on_map(self) -> list:
+        to_return = []
+
+        for line in self._matrix:
+            for cell in line:
+                if cell.tile_object.has_collision:
+                    to_return.append(cell.tile_object)
+
+        return to_return
+
 
 if __name__ == '__main__':
     mymap = Map(GameManager(), "empty_3_3")
