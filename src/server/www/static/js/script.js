@@ -1,9 +1,11 @@
 import GameManager from './gameManager.js';
 import {actions} from './actions/actions.js';
+import sendRestMessage from './rest.js'
 
-let ws = new WebSocket("ws://localhost:8000/ws");
+let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let game = GameManager;
 let update = [];
+let loginId;
 
 /*
     Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
@@ -120,13 +122,9 @@ ws.onmessage = async function(event)
     }
     else if(update[0].msg_type == 'DisplayClientLoginMessage'){
         while(null in game.bots);
-        console.log(update[0]);
-        /*await fetch('', {
-            method: 'PATCH',
-            body: {
-                "api_password": "password"
-            }
-        });*/
+        console.log('Start game');
+        loginId = update[0].login_id;
+        sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: loginId});
         update.shift();
     }
 };
