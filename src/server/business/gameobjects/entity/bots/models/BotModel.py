@@ -96,7 +96,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         IDestructible.__init__(self, health, True)
 
         # Random starting point
-        self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coords()
+        self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coordinates()
         # Random starting rotation
         self.ry = Random().randint(0, math.floor(2*pi*100)) / 100
 

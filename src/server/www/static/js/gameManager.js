@@ -6,11 +6,13 @@ class GameManager{
     v = new View3DController();
     bots = {};
     map = [];
+    mapObjects = {};
 
     constructor(){
         let map;
         let bots;
         let v;
+        let mapObjects;
     }
 
     createBot(id, x, z, ry){
@@ -24,12 +26,18 @@ class GameManager{
             let current_line = [];
             for (let w = 0; w < mapData.width; w++)
             {
-                for (let tileR in mapData['tiles'])
+                for (let tileR in mapData['tiles_grid'])
                  {
-                    tileR = mapData['tiles'][tileR];
+                    tileR = mapData['tiles_grid'][tileR];
                     if (h === tileR['x'] && w === tileR['z']){
+                        console.log("h", h, "w", w);
+
+
                         var tmpTile = new tile({x:h, z:w});
-                        tmpTile.create(tileR['tile'], tileR['tile_object'], this.v)
+                        console.log("tmpTile", tmpTile);
+
+                        tmpTile.create(tileR['name'].toLowerCase(), tileR['object']['name'].toLowerCase(), this.v);
+                        this.mapObjects[tileR['id']] = tmpTile;
                         current_line.push(tmpTile);
                         break;
                     }

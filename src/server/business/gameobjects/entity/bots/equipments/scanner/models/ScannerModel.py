@@ -78,7 +78,7 @@ class ScannerModel(IScanner, ABC):
     def _get_objects_in_fov(self) -> Tile:
         # for each object in data, test if shape's obj intersect with fov shape
         # add to detected_object_list
-        map_matrix = self._bot.bot_manager.game_manager.map.matrix
+        map_matrix = self._bot.bot_manager.game_manager.map.tiles_grid
 
         for z, line in enumerate(map_matrix):
             for x, cell in enumerate(line):
