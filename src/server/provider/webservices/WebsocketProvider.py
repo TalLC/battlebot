@@ -65,10 +65,10 @@ class WebsocketProvider:
                     while not client_queue.empty():
                         # Reading message
                         data_send = client_queue.get()
-                        # logging.debug(f"[WEBSOCKET] Sending '{data_send.msg_type}' message: {data_send.json()}")
+                        # logging.debug(f"[WEBSOCKET] Sending message: {data_send}")
 
                         # Sending message to display
-                        await websocket.send_json(data_send.json())
+                        await websocket.send_json(data_send)
 
                     # No messages, waiting
                     await asyncio.sleep(0.1)
