@@ -1,6 +1,6 @@
-import * as THREE from './three.module.js';
-import {OrbitControls} from './OrbitControls.js';
-import {GLTFLoader} from './GLTFLoader.js';
+import * as THREE from 'three';
+import {OrbitControls} from 'controls/OrbitControls';
+import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
 
 export default class View3DController{
@@ -22,7 +22,7 @@ export default class View3DController{
         this.initLight();
         this.loader = new GLTFLoader();
         this.attach(document.body);
-        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 12, z: 2}, {x: 0, y: 0, z: 0});
+        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
         this.createDebugGrid();
     }
 

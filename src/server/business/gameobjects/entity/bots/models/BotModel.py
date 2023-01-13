@@ -27,6 +27,7 @@ from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScanner
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
+from consumer.webservices.messages.websocket.BotShootAtCoordinates import BotShootAtCoordinates
 from consumer.webservices.messages.websocket.HitMessage import HitMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
@@ -263,16 +264,55 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self.ry = ry
 
     def shoot(self, angle: float) -> Target:
-        # WIP
-        print(f"{self.id} shooting at {angle}")
-        from business.GameManager import GameManager
-        game_map = GameManager().map
-        r = random.Random()
-        x = r.randint(0, game_map.width - 1)
-        z = r.randint(0, game_map.height - 1)
-        print(f"Impact at {x};{z}")
-        target = Target(x=x, z=z)
-        return target
+        """
+        Called by Rest when the bot is ordered to shoot.
+        Return the target that was hit (can be a GameObject or coordinates if nothing was hit).
+        """
+        # # WIP
+        # print(f"{self.id} shooting at {angle}")
+        # from business.GameManager import GameManager
+        # game_map = GameManager().map
+        # r = random.Random()
+        # x = r.randint(0, game_map.width - 1)
+        # z = r.randint(0, game_map.height - 1)
+        # print(f"Impact at {x};{z}")
+        # target = Target(x=x, z=z)
+        # return target
+
+        # Clamping the angle value to its limits according to the scanner capabilities
+        shoot_angle = sorted((self.equipment.scanner.fov / -2, angle, self.equipment.scanner.fov / 2))[1]
+        # Maximum fire distance depends on the weapon capabilities
+        shoot_max_distance = self.equipment.weapon.reach_distance
+
+        # Maximum end coordinate of the shoot
+        shoot_end_x = self.x + shoot_max_distance * math.cos(math.radians(angle))
+        shoot_end_z = self.z + shoot_max_distance * math.sin(math.radians(angle))
+
+        # Gathering map objects
+        # Todo : get_map_objects_in_radius(center: Tuple, radius: int)
+        # Todo : get_map_objects_all()
+        map_objects = self.bot_manager.game_manager.map.get_all_objects_on_map()
+        ray = ShapeFactory().create_shape(shape=Shape.LINE, coords=[(self.x, self.z), (shoot_end_x, shoot_end_z)])
+
+        # Get the latest touched object
+        touched_object: OrientedGameObject | None = None
+
+        # Check each object in the list
+        for obj in map_objects:
+            # Get shape of the object
+            object_circle = obj.shape
+
+            # Check if ray touch object's shape
+            if object_circle.intersects(ray):
+                pass
+
+        # If an object was shot, we return it
+        if touched_object is not None:
+            # We have one object that was shot
+            return Target(id=touched_object.id)
+        else:
+            # No object was harmed
+            return Target(x=shoot_end_x, z=shoot_end_z)
 
     def turn(self, radians: float):
         """
