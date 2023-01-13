@@ -14,10 +14,8 @@ export default class View3DController{
     tmp;
     constructor(width = window.innerWidth, height = window.innerHeight){
         this.tmp;
-        this.renderer = new THREE.WebGLRenderer({ canvas: cScene});
         this.size = {width:width, height:height};
-//        this.renderer.setSize(this.size.width, this.size.height);
-        this.renderer.setSize(1200, 800);
+        this.renderer.setSize(this.size.width, this.size.height);
         this.scene = new THREE.Scene();
         let backColor = new THREE.Color(0xffffff);
         this.scene.background = backColor;
@@ -49,7 +47,7 @@ export default class View3DController{
         this.camera.position.set(position.x, position.y, position.z);
         this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.target.set(15, 0, 15);
+
         this.controls.update();
         return this.camera;
     }
