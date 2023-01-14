@@ -15,3 +15,7 @@ def calculate_point_coords(origin: tuple, distance: float, angle: float) -> tupl
               origin[1] + distance * sin(radians(angle)))
 
     return coords
+
+
+def get_radius(element):
+    return element.exterior.distance(element.centroid)
