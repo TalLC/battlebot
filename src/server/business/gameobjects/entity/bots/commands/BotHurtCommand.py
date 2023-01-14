@@ -24,5 +24,4 @@ class BotHurtCommand(IBotCommand):
         Contains the function to execute.
         """
         arg.hurt(self.value)
-        ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=arg.id))
         ConsumerManager().stomp.send_message(BotHealthStatusMessage(arg.id, arg.health))

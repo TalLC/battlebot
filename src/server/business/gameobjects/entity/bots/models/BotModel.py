@@ -104,7 +104,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Random starting point
         self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coordinates()
         # Random starting rotation
-        self.ry = Random().randint(0, math.floor(2*pi*100)) / 100
+        self.ry = Random().randint(0, math.floor(2 * pi * 100)) / 100
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
@@ -336,6 +336,16 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         new_x = cos(self.ry) * distance
         new_z = sin(self.ry) * distance
 
+        neared_tiles = self.bot_manager.game_manager.map.tiles_grid.get_tiles_in_radius(collision_only=False,
+                                                                                        origin=self.coordinates)
+        future_shape = ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.5, resolution=3)
+        for tile in neared_tiles:
+            # check if objects is on tile
+            if tile.tile_object.has_collision and tile.tile_object.shape.intersection(future_shape):
+                logging.info('???????????CONTACT???????????')
+                # self.add_command_to_queue(BotHurtCommand(priority=0, value=1))
+                return
+
         # Check if the destination is valid
         if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
             self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
@@ -395,4 +405,4 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         Callback when the bot is hurt.
         """
-        ConsumerManager().stomp.send_message(HitMessage(object_type='bot', object_id=self.id))
+        ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
