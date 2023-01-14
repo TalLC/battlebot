@@ -56,6 +56,8 @@ async def startup() -> None:
         bot.client_connection.source_stomp_id,
         bot.client_connection.source_mqtt_id
     )
+    bot.set_position(15.5, 15.5, 0.0)
+
     print(GameManager().bot_manager.get_bot("0-0-0-0-0"))
     ##########################################
 
