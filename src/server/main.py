@@ -46,19 +46,30 @@ async def startup() -> None:
 
     # DEBUG: BOT de test
     print("Enrôlement d'un bot de test :")
-    bot = GameManager().bot_manager.create_bot("BOT TEST 01", "warrior")
-    bot._id = "0-0-0-0-0"
-    GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot)
+    bot1 = GameManager().bot_manager.create_bot("BOT TEST 01", "warrior")
+    # bot2 = GameManager().bot_manager.create_bot("BOT TEST 02", "warrior")
+    bot1._id = "0-0-0-0-0"
+    # bot2._id = "0-0-0-0-1"
+    GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot1)
+    # GameManager().team_manager.get_team("test-team").add_bot(bot2)
     GameManager().bot_manager._BOTS = dict()
-    GameManager().bot_manager._BOTS[bot._id] = bot
-    bot.client_connection.connect(
-        bot.client_connection.source_request_id,
-        bot.client_connection.source_stomp_id,
-        bot.client_connection.source_mqtt_id
+    # GameManager().bot_manager._BOTS[bot1._id] = bot1
+    # GameManager().bot_manager._BOTS[bot2._id] = bot2
+    bot1.client_connection.connect(
+        bot1.client_connection.source_request_id,
+        bot1.client_connection.source_stomp_id,
+        bot1.client_connection.source_mqtt_id
     )
-    bot.set_position(15.5, 15.5, 0.0)
+    # bot2.client_connection.connect(
+    #     bot2.client_connection.source_request_id,
+    #     bot2.client_connection.source_stomp_id,
+    #     bot2.client_connection.source_mqtt_id
+    # )
+    bot1.set_position(8, 15.5, 0.0)
+    # bot2.set_position(15.5, 15.5, 0.0)
 
     print(GameManager().bot_manager.get_bot("0-0-0-0-0"))
+    # print(GameManager().bot_manager.get_bot("0-0-0-0-1"))
     ##########################################
 
 
