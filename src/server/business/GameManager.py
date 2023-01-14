@@ -177,6 +177,6 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     def get_all_objects_on_map(self):
         entities = list()
-        for obj in self.map.tiles_grid.get_all_tiles_objects(with_collision=True) + list(self.bot_manager.get_bots()):
+        for obj in self.map.tiles_grid.get_all_tiles_objects(collision_only=True) + list(self.bot_manager.get_bots()):
             entities.append(obj)
         return entities
