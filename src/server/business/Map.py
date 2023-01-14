@@ -36,12 +36,28 @@ class TilesGrid:
         found_tiles = [tile for tile in self.tiles if tile.x == x and tile.z == z]
         return found_tiles[0] if len(found_tiles) > 0 else None
 
-    def get_all_tiles_objects(self, with_collision: bool = True) -> list[TileObject]:
+    def get_all_tiles_objects(self, collision_only: bool = True) -> list[TileObject]:
         """
         Get all tile objects from the map.
         """
         return [tile.tile_object for tile in self.tiles
-                if not with_collision or (with_collision and tile.tile_object.has_collision)]
+                if not collision_only or (collision_only and tile.tile_object.has_collision)]
+
+    def get_tiles_in_radius(self, collision_only: bool = True, origin: tuple = (0.0, 0.0), radius: int = 1):
+        """
+            Get tiles in radius from the map
+        """
+        tiles = list()
+        ox, oz = int(origin[0]), int(origin[1])
+        for x in range(ox - radius, ox + radius + 1):
+            for z in range(oz - radius, oz + radius + 1):
+                tmp_tile = self.get_tile_at(x=x, z=z)
+                if collision_only and tmp_tile.tile_object.has_collision:
+                    tiles.append(tmp_tile)
+                elif not collision_only:
+                    tiles.append(tmp_tile)
+
+        return tiles
 
     def json(self) -> list[dict]:
         """
