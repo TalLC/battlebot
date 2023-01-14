@@ -36,6 +36,25 @@ class TilesGrid:
         found_tiles = [tile for tile in self.tiles if tile.x == x and tile.z == z]
         return found_tiles[0] if len(found_tiles) > 0 else None
 
+    def get_all_tiles(self) -> list[Tile]:
+        """
+        Get all tile objects from the map.
+        """
+        return [tile for tile in self.tiles]
+
+    def get_tiles_in_radius(self, origin: tuple = (0.0, 0.0), radius: int = 1) -> list[Tile]:
+        """
+        Get all tile objects from the map.
+        """
+        tiles = list()
+        ox, oz = int(origin[0]), int(origin[1])
+        for x in range(ox - radius, ox + radius + 1):
+            for z in range(oz - radius, oz + radius + 1):
+                tmp_tile = self.get_tile_at(x=x, z=z)
+                if tmp_tile is not None:
+                    tiles.append(tmp_tile)
+        return tiles
+
     def get_all_tiles_objects(self, collision_only: bool = True) -> list[TileObject]:
         """
         Get all tile objects from the map.
@@ -43,20 +62,20 @@ class TilesGrid:
         return [tile.tile_object for tile in self.tiles
                 if not collision_only or (collision_only and tile.tile_object.has_collision)]
 
-    def get_tiles_in_radius(self, collision_only: bool = True, origin: tuple = (0.0, 0.0), radius: int = 1):
+    def get_tiles_objects_in_radius(self, collision_only: bool = True, origin: tuple = (0.0, 0.0), radius: int = 1):
         """
-            Get tiles in radius from the map
+            Get tiles objects in radius from the map
         """
         tiles = list()
         ox, oz = int(origin[0]), int(origin[1])
         for x in range(ox - radius, ox + radius + 1):
             for z in range(oz - radius, oz + radius + 1):
                 tmp_tile = self.get_tile_at(x=x, z=z)
-                if collision_only and tmp_tile.tile_object.has_collision:
-                    tiles.append(tmp_tile)
-                elif not collision_only:
-                    tiles.append(tmp_tile)
-
+                if tmp_tile is not None:
+                    if collision_only and tmp_tile.tile_object.has_collision:
+                        tiles.append(tmp_tile.tile_object)
+                    elif not collision_only:
+                        tiles.append(tmp_tile.tile_object)
         return tiles
 
     def json(self) -> list[dict]:
@@ -154,7 +173,7 @@ class Map:
 
         cell = self._tiles_grid.get_tile_at(int(x), int(z))
 
-        return cell.is_walkable
+        return cell.is_walkable and not cell.tile_object.has_collision
 
     def get_random_spawn_coordinates(self) -> tuple:
         """

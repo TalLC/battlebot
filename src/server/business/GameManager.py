@@ -1,6 +1,9 @@
+from __future__ import annotations
 import logging
 from time import sleep
 from threading import Thread, Event
+from typing import TYPE_CHECKING, Tuple, List, Union
+
 from common.config import CONFIG_GAME
 from common.Singleton import SingletonABCMeta
 from business.interfaces.IGameManager import IGameManager
@@ -10,6 +13,11 @@ from business.DisplayManager import DisplayManager
 from business.Map import Map
 from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.stomp.GameStatusMessage import GameStatusMessage
+
+if TYPE_CHECKING:
+    from business.gameobjects.entity.bots.models.BotModel import BotModel
+    from business.gameobjects.tiles.Tile import Tile
+    from business.gameobjects.tiles.objects.TileObject import TileObject
 
 
 class GameManager(IGameManager, metaclass=SingletonABCMeta):
@@ -175,8 +183,34 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             bot.stop()
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
 
-    def get_all_objects_on_map(self):
+    def get_items_on_map(self, bots_only: bool = True, objects_only: bool = True, collision_only: bool = True,
+                         radius: int = 0, origin: Tuple[float, float] = (0, 0)
+                         ) -> Union[List[Tile], List[TileObject], List[BotModel]]:
+        """
+            Return items from map. Parameters define what should be returned.
+        """
         entities = list()
-        for obj in self.map.tiles_grid.get_all_tiles_objects(collision_only=True) + list(self.bot_manager.get_bots()):
-            entities.append(obj)
+
+        if radius == 0:
+            # All map
+            if objects_only:
+                # return TileObject
+                entities += self.map.tiles_grid.get_all_tiles_objects(collision_only=collision_only)
+            else:
+                # return Tile
+                entities += self.map.tiles_grid.get_all_tiles()
+        else:
+            # Part of map
+            if objects_only:
+                # return TileObject
+                entities += self.map.tiles_grid.get_tiles_objects_in_radius(collision_only=collision_only,
+                                                                            origin=origin, radius=radius)
+            else:
+                # return Tile
+                entities += self.map.tiles_grid.get_tiles_in_radius(origin=origin, radius=radius)
+
+        if bots_only:
+            # Add bots to the list
+            entities += list(self.bot_manager.get_bots(connected_only=True))
+
         return entities

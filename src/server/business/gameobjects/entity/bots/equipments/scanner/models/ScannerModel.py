@@ -9,6 +9,7 @@ from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner imp
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
 from business.shapes.ShapeFactory import Shape, ShapeFactory
 from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords
+from business.gameobjects.tiles.Tile import Tile
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
@@ -66,7 +67,7 @@ class ScannerModel(IScanner, ABC):
         min_angle = (self._bot.ry_deg - self._fov / 2) % 360
         max_angle = (self._bot.ry_deg + self._fov / 2) % 360
 
-        logging.info(f"[BOT {self._bot.name}] scanning from {min_angle} to {max_angle} [{abs(min_angle-max_angle)}]")
+        logging.info(f"[BOT {self._bot.name}] scanning from {min_angle} to {max_angle} [{self._distance}]")
 
         return min_angle, max_angle
 
@@ -89,8 +90,7 @@ class ScannerModel(IScanner, ABC):
                             foreground_elements.append(elem1)
         return foreground_elements
 
-    @staticmethod
-    def _create_detected_objects(elements: List[dict]) -> List[DetectedObject]:
+    def _create_detected_objects(self, elements: List[dict]) -> List[DetectedObject]:
         """
             Return list of DetectedObject from raycasting's result.
         """
@@ -112,7 +112,7 @@ class ScannerModel(IScanner, ABC):
             ))
 
         for e in list_detected_obj:
-            logging.debug(e)
+            logging.debug(f"{self._bot.name} : {e}")
 
         return list_detected_obj
 
@@ -142,11 +142,11 @@ class ScannerModel(IScanner, ABC):
         """
             Supra magic power +++ infinite mega racasting the revange of the return !
         """
-        logging.info(f"..........{self._bot.name}..........")
         obj_in_fov = list()
 
-        # TODO : récupérer seulement les objets en face du bot.
-        detected_objects = self._bot.bot_manager.game_manager.get_all_objects_on_map()
+        detected_objects = self._bot.bot_manager.game_manager.get_items_on_map(bots_only=True, objects_only=False,
+                                                                               radius=self._distance,
+                                                                               origin=self._bot.coordinates)
         # Calculate the angles of the field of view
         min_angle, max_angle = self._get_fov_angles()
         # Init relative angle from bot
@@ -155,26 +155,30 @@ class ScannerModel(IScanner, ABC):
         # Shoot ray every [precision value] degree
         for a in self._iterate_fov_angle(min_angle, max_angle):
             ray = self.create_ray(a)
-
             # Check if collision between ray and elements on the map.
-            for obj in detected_objects:
-                if obj != self._bot:
-                    if obj.shape.intersection(ray):
+            for item in detected_objects:
+                # keep only TileObjects with collision and Bots
+                if isinstance(item, Tile):
+                    item = item.tile_object
+                    if not item.has_collision:
+                        continue
+
+                if item != self._bot:
+                    if item.shape.intersection(ray):
                         # get all intersections points
-                        points_list = obj.shape.intersection(ray).boundary
+                        points_list = item.shape.intersection(ray).boundary
                         # get nearest point from bot
                         nearest_point = get_nearest_point(self._bot.shape.centroid, points_list)
                         obj_in_fov.append({
                             "distance": nearest_point.distance(self._bot.shape.centroid),
-                            "name": obj.name,
+                            "name": item.name,
                             "angle": relative_angle,
-                            "obj_id": obj.id
+                            "obj_id": item.id
                         })
             relative_angle += self._precision
 
         # keep only objects in the foreground
         visible_objects = self._keep_nearest_elements(obj_in_fov)
-        logging.info("..............................")
 
         return self._create_detected_objects(visible_objects)
 
