@@ -53,7 +53,7 @@ async def startup() -> None:
     GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot1)
     # GameManager().team_manager.get_team("test-team").add_bot(bot2)
     GameManager().bot_manager._BOTS = dict()
-    # GameManager().bot_manager._BOTS[bot1._id] = bot1
+    GameManager().bot_manager._BOTS[bot1._id] = bot1
     # GameManager().bot_manager._BOTS[bot2._id] = bot2
     bot1.client_connection.connect(
         bot1.client_connection.source_request_id,
