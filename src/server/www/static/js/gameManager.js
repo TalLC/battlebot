@@ -1,10 +1,12 @@
 import View3DController from "./view/view3DController.js";
+import Ui from "./ui.js";
 import bot from "./gameObjects/bot.js"
 import tile from "./gameObjects/tile.js"
 
 class GameManager{
     constructor(){
-        this.v = new View3DController();
+        this.v = new View3DController("view-container");
+        this.ui = new Ui(this, "ui-container");
         this.bots = {};
         this.map = [];
         this.mapObjects = {};

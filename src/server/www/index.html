@@ -1,21 +1,29 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="fr">
 	<head>
-		<meta charset="utf-8">
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>My first three.js app</title>
 		<link rel="stylesheet" href="static/css/styles.css" />
 	</head>
 	<body>
+    <div id="ui-container">
+      <div>
+        <button id="ui-button-force-start" class="btn" type="button">Forcer le démarrage</button>
+        <button id="ui-button-add-bot" class="btn" type="button">Ajouter un bot</button>
+      </div>
+    </div>
+    <div id="view-container"></div>
     <script type="importmap">
-        {
-          "imports": {
-            "three": "./static/js/threejs/three.module.js",
-            "controls/OrbitControls":"./static/js/threejs/OrbitControls.js",
-            "stats.module":"./static/js/threejs/stats.module.js",
-            "loaders/OBJLoader":"./static/js/threejs/OBJLoader.js",
-            "loaders/GLTFLoader":"./static/js/threejs/GLTFLoader.js"
-          }
+      {
+        "imports": {
+          "three": "./static/js/threejs/three.module.js",
+          "controls/OrbitControls":"./static/js/threejs/OrbitControls.js",
+          "stats.module":"./static/js/threejs/stats.module.js",
+          "loaders/OBJLoader":"./static/js/threejs/OBJLoader.js",
+          "loaders/GLTFLoader":"./static/js/threejs/GLTFLoader.js"
         }
+      }
     </script>
 		<script type='module' src="static/js/script.js"></script>
 	</body>

@@ -5,3 +5,15 @@ html {
 body {
     margin: 0;
 }
+
+#ui-container {
+    position: fixed;
+    background-color: #803030aa;
+    height: auto;
+    width: 100%;
+}
+
+.btn {
+    font-size: medium;
+    height: 100%;
+}
