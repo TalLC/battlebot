@@ -45,18 +45,18 @@ async def startup() -> None:
     provider_manager.start_all()
 
     # DEBUG: BOT de test
-    print("Enrôlement d'un bot de test :")
-    bot = GameManager().bot_manager.create_bot("BOT TEST 01", "warrior")
-    bot._id = "0-0-0-0-0"
-    GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot)
-    GameManager().bot_manager._BOTS = dict()
-    GameManager().bot_manager._BOTS[bot._id] = bot
-    bot.client_connection.connect(
-        bot.client_connection.source_request_id,
-        bot.client_connection.source_stomp_id,
-        bot.client_connection.source_mqtt_id
-    )
-    print(GameManager().bot_manager.get_bot("0-0-0-0-0"))
+    # print("Enrôlement d'un bot de test :")
+    # bot = GameManager().bot_manager.create_bot("BOT TEST 01", "warrior")
+    # bot._id = "0-0-0-0-0"
+    # GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot)
+    # GameManager().bot_manager._BOTS = dict()
+    # GameManager().bot_manager._BOTS[bot._id] = bot
+    # bot.client_connection.connect(
+    #     bot.client_connection.source_request_id,
+    #     bot.client_connection.source_stomp_id,
+    #     bot.client_connection.source_mqtt_id
+    # )
+    # print(GameManager().bot_manager.get_bot("0-0-0-0-0"))
     ##########################################
 
 
