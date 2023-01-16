@@ -146,7 +146,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         """
         # Waiting until there is only one team left alive
         logging.debug("Waiting for the game to finish")
-        while len(self.team_manager.get_teams(still_alive_only=True)) >= 2 and not e.is_set():
+        while self.team_manager.bot_count(alive_only=True) >= 2 and not e.is_set():
             sleep(1)
 
         if not e.is_set():
