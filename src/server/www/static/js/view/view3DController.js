@@ -4,7 +4,9 @@ import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
 
 export default class View3DController{
-    constructor(width = window.innerWidth, height = window.innerHeight){
+    constructor(viewContainerId, width = window.innerWidth, height = window.innerHeight){
+        const viewContainer = document.getElementById(viewContainerId);
+
         this.renderer = new THREE.WebGLRenderer();
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
@@ -13,7 +15,7 @@ export default class View3DController{
         this.scene.background = backColor;
         this.initLight();
         this.loader = new GLTFLoader();
-        this.attach(document.body);
+        this.attach(viewContainer);
         this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
         this.createDebugGrid();
     }
