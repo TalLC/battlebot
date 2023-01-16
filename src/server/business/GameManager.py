@@ -42,7 +42,8 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self.team_manager = TeamManager(self)
         self.bot_manager = BotManager(self)
         self.display_manager = DisplayManager(self)
-        self.map = Map(self, CONFIG_GAME.map_id)
+        self.map = None
+        self.load_map(CONFIG_GAME.map_id)
 
         # Thread auto starting the game when enough bot are connected
         self._event_stop_checking_starting_conditions = Event()
@@ -58,6 +59,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             target=self._thread_check_stopping_conditions,
             args=(self._event_stop_checking_stopping_conditions,)
         )
+
+    def load_map(self, map_id: str):
+        """
+        Loads a new map.
+        """
+        if self.map:
+            del self.map
+
+        self.map = Map(self, map_id)
 
     def stop_threads(self):
         """
