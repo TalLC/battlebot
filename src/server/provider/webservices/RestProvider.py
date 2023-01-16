@@ -214,6 +214,11 @@ class RestProvider:
 
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Is bot already dead
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
+
             bot.kill()
 
             return {"status": "ok", "message": "The bot has been killed", "bot_id": bot.id}
@@ -228,11 +233,11 @@ class RestProvider:
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
-            # Check if the game is not started
-            if not GameManager().is_started:
-                ErrorCode.throw(GAME_NOT_STARTED)
+            # Check if the game is started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
 
-            print("Adding a test bot:")
+            logging.info("Adding a test bot:")
             bot_count = GameManager().bot_manager.get_bots_count()
             bot = GameManager().bot_manager.create_bot(f"BOT TEST {bot_count}", "warrior")
             del GameManager().bot_manager._BOTS[bot.id]
@@ -241,8 +246,9 @@ class RestProvider:
             bot._id = f"0-0-0-0-{bot_count}"
             GameManager().bot_manager._BOTS[bot.id] = bot
 
-            # Adding to the special bot team
-            GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot)
+            # Adding the bot to the least populated team
+            team = sorted(GameManager().team_manager.get_teams(), key=lambda t: t.bot_count())[0]
+            team.add_bot(bot)
 
             bot.client_connection.connect(
                 bot.client_connection.source_request_id,
@@ -250,7 +256,7 @@ class RestProvider:
                 bot.client_connection.source_mqtt_id
             )
 
-            print(GameManager().bot_manager.get_bot("0-0-0-0-0"))
+            logging.info(GameManager().bot_manager.get_bot("0-0-0-0-0"))
 
             return {"status": "ok", "message": "The bot has been added", "bot_id": bot.id}
 
