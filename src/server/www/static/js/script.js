@@ -57,7 +57,7 @@ function animate(){
 function doAction(message){
     // Création d'une promise vide
     let promise = Promise.resolve();
-    console.log(message);
+    // console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
         if(game.bots[message.bot_id] && game.bots[message.bot_id].objBot){
@@ -140,7 +140,7 @@ ws.onmessage = async function(event) {
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.createBot(message.bot_id, message.x, message.z, message.ry);
+            game.createBot(message.bot_id, message.x, message.z, message.ry, message.team_color);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
             while(null in game.bots);
