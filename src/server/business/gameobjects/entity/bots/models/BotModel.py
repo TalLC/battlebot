@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from random import Random
-from math import pi, cos, sin
+from math import pi
 import logging
 from time import time, sleep
 from abc import ABC
@@ -14,11 +14,10 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
-from business.shapes.ShapeFactory import Shape
+from business.shapes.ShapeFactory import ShapeFactory, Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
-from business.shapes.ShapeFactory import ShapeFactory
-from business.shapes.ShapesUtils import get_radius, calculate_point_coords
+from business.shapes.ShapesUtils import ShapesUtils
 from consumer.ConsumerManager import ConsumerManager
 from business.gameobjects.tiles.Tile import Tile
 
@@ -268,7 +267,54 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Called by Rest when the bot is ordered to shoot.
         Return the target that was hit (can be a GameObject or coordinates if nothing was hit).
         """
-        return Target(x=0, z=0)
+        # # WIP
+        # print(f"{self.id} shooting at {angle}")
+        # from business.GameManager import GameManager
+        # game_map = GameManager().map
+        # r = random.Random()
+        # x = r.randint(0, game_map.width - 1)
+        # z = r.randint(0, game_map.height - 1)
+        # print(f"Impact at {x};{z}")
+        # target = Target(x=x, z=z)
+        # return target
+        # return Target(x=0, z=0)
+
+        # Clamping the angle value to its limits according to the scanner capabilities
+        shoot_angle = sorted((self.equipment.scanner.fov / -2, angle, self.equipment.scanner.fov / 2))[1]
+
+        # Maximum fire distance depends on the weapon capabilities
+        shoot_max_distance = self.equipment.weapon.reach_distance
+
+        # Maximum end coordinate of the shoot
+        shoot_end_x, shoot_end_z = ShapesUtils.get_coordinates_at_distance(
+            (self.x, self.z), shoot_max_distance, self.ry + shoot_angle
+        )
+
+        # Gathering map objects
+        map_objects = self.bot_manager.game_manager.get_items_on_map(
+            bots_only=True, objects_only=True, collision_only=True, radius=shoot_max_distance, origin=self.coordinates
+        )
+        # Avoid shooting in our foot
+        map_objects.remove(self)
+
+        # Test which objects can be shot
+        closest_object: OrientedGameObject | None = None
+        touched_objects = ShapesUtils.cast_ray_on_objects((self.x, self.z), (shoot_end_x, shoot_end_z), map_objects)
+        if len(touched_objects):
+            sorted_objects = sorted(
+                touched_objects,
+                key=lambda obj: ShapesUtils.get_2d_distance_between((self.x, self.z), obj.coordinates)
+            )
+            closest_object = sorted_objects[0]
+
+        # If an object was shot, we return it
+        if closest_object is not None:
+            # We have one object that was shot
+            # return Target(id=closest_object.id)
+            return Target(x=closest_object.x, z=closest_object.z)
+        else:
+            # No object was harmed
+            return Target(x=shoot_end_x, z=shoot_end_z)
 
     def turn(self, radians: float):
         """
@@ -289,8 +335,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
 
         # Calculating new coordinates
-        new_x = cos(self.ry) * distance
-        new_z = sin(self.ry) * distance
+        new_x, new_z = ShapesUtils.get_coordinates_at_distance(
+            (self.x, self.z), distance, self.ry
+        )
 
         # Check if the destination is valid
         if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
@@ -379,7 +426,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
                     return item.tile_object.name
 
                 elif not item.is_walkable and (self.shape.centroid.distance(item.shape.centroid) <
-                                               get_radius(item.shape) + get_radius(self.shape)):
+                                               ShapesUtils.get_radius(item.shape) + ShapesUtils.get_radius(self.shape)):
                     # Si on ne peut pas marcher sur l'item et que la distance entre l'objet et le bot est faible
                     return item.name
 
@@ -392,7 +439,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def knockback(self):
         logging.debug("OOF")
         logging.debug(f"before {self.coordinates}")
-        dest = calculate_point_coords(self.coordinates, distance=1, angle=self.ry - math.pi)
+        dest = ShapesUtils.get_coordinates_at_distance(self.coordinates, distance=1, angle=self.ry - math.pi)
         self.set_position(x=dest[0], z=dest[1], ry=self.ry - math.pi)
         ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
         ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
