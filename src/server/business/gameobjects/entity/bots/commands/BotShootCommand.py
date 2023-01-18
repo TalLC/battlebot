@@ -26,4 +26,4 @@ class BotShootCommand(IBotCommand):
         if target.id:
             ConsumerManager().websocket.send_message(BotShootAtObjects(arg.id, target.id))
         else:
-            ConsumerManager().websocket.send_message(BotShootAtCoordinates(arg.id, target.x, target.z))
+            ConsumerManager().websocket.send_message(BotShootAtCoordinates(arg.id, {'x': target.x, 'y': target.z}))
