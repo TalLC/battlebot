@@ -341,28 +341,29 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         new_x = cos(self.ry) * distance
         new_z = sin(self.ry) * distance
 
-        # # Check if the destination is valid
-        # if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
+        # Check if the destination is valid
+        if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
+
+            return
+
+        # collision = self.collision()
+        # if collision:
+        #     logging.info(f'-------------{self.name} COLLISION with {collision} -------------')
+        #     self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+        #     sleep(0.1)
+        #     dest = calculate_point_coords(self.coordinates, distance=-1, angle=(self.ry - math.pi))
+        #     self.set_position(x=dest[0], z=dest[1], ry=self.ry)
+        #     logging.info(f"send new position to front ({dest[0]}-{dest[1]}")
+        #     ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+        #     # ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
         #
-        #     return
+        # else:
 
-        collision = self.collision()
-        if collision:
-            logging.info(f'-------------{self.name} COLLISION with {collision} -------------')
-            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
-            sleep(0.1)
-            dest = calculate_point_coords(self.coordinates, distance=-1, angle=(self.ry - math.pi))
-            self.set_position(x=dest[0], z=dest[1], ry=self.ry)
-            logging.info(f"send new position to front ({dest[0]}-{dest[1]}")
-            ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
-            # ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
+        # Moving the bot on the map
+        self.set_position(self.x + new_x, self.z + new_z, self.ry)
 
-        else:
-            # Moving the bot on the map
-            self.set_position(self.x + new_x, self.z + new_z, self.ry)
-
-            # Sending new position over websocket
-            ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+        # Sending new position over websocket
+        ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
 
     def send_client_bot_properties(self) -> None:
         """
