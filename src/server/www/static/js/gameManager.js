@@ -3,6 +3,7 @@ import Ui from "./ui.js";
 import bot from "./gameObjects/bot.js"
 import tile from "./gameObjects/tile.js"
 
+
 class GameManager{
     constructor(){
         this.v = new View3DController("view-container");
@@ -23,6 +24,14 @@ class GameManager{
     createBot(id, x, z, ry, teamColor){
         this.bots[id] = new bot({id:id, x:x, z:z, ry:ry, teamColor:teamColor, avatar:'./static/models/robot_1.glb'});
         this.bots[id].create(this.v);
+    }
+
+    getBotFromSceneObject(sceneObject) {
+        for(let bot of Object.values(this.bots)) {
+            if (bot.objBot.children[0] === sceneObject) {
+                return bot;
+            }
+        }
     }
 
     /*
@@ -51,6 +60,7 @@ class GameManager{
             this.map.push(current_line);
         }
     }
+
 }
 
 export default new GameManager();

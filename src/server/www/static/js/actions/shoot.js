@@ -9,11 +9,7 @@ import * as THREE from 'three';
     Return : un dictionnaire contenant les positions en x et en z "final" du bot
 */
 function eventwrapper(message){
-    return {
-        bot_id: message.bot_id,
-        x: message.coordinates.x,
-        z: message.coordinates.z
-    };
+    return message;
 }
 
 /*
@@ -31,13 +27,25 @@ function actionSelector(message){
     Return : N/A
 */
 function action(parameters){
-
     const bot = GameManager.bots[parameters.bot_id];
 
+    for (let coordinates of parameters.coordinates) {
+        shootTo(bot, coordinates);
+    }
+}
+
+/**
+* @param param
+*/
+actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
+
+
+function shootTo(bot, to) {
+    console.log(to);
     const laserMesh = createLaserMesh(
         bot.teamColor,
         new THREE.Vector3(bot.x, 1.5, bot.z),
-        new THREE.Vector3(0.0, 1.5, 0.0)
+        new THREE.Vector3(to.x, 1.5, to.z)
     );
 
     //Add the mesh to the scene
@@ -52,31 +60,9 @@ function action(parameters){
 
     // Wait for the promise to resolve, then remove the mesh from the scene
     laserPromise.then(() => {
-
-        if (!(laserMesh instanceof THREE.Object3D)) return false;
-
-        // for better memory management and performance
-        if (laserMesh.geometry) laserMesh.geometry.dispose();
-
-        if (laserMesh.material) {
-            if (laserMesh.material instanceof Array) {
-                // for better memory management and performance
-                laserMesh.material.forEach(material => material.dispose());
-            } else {
-                // for better memory management and performance
-                laserMesh.material.dispose();
-            }
-        }
-        laserMesh.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
+        GameManager.v.disposeObject3D(laserMesh);
     });
-    
 }
-
-/**
-* @param param
-*/
-actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
-
 
 function createLaserMesh(color, start, end) {
     // Create a material
@@ -98,7 +84,7 @@ function createLaserMesh(color, start, end) {
     let tubeGeometry = new THREE.TubeGeometry(
       path,
       segments,
-      0.3,
+      0.15,
       8,
       true
     );

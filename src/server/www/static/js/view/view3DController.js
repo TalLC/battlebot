@@ -2,12 +2,12 @@ import * as THREE from 'three';
 import {OrbitControls} from 'controls/OrbitControls';
 import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
-import { MeshBasicMaterial } from 'three';
+import Debug from "../debug.js";
+
 
 export default class View3DController{
     constructor(viewContainerId, width = window.innerWidth, height = window.innerHeight){
-        const viewContainer = document.getElementById(viewContainerId);
-
+        this.container = document.getElementById(viewContainerId);
         this.renderer = new THREE.WebGLRenderer();
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
@@ -17,9 +17,16 @@ export default class View3DController{
         this.scene.background = backColor;
         this.initLight();
         this.loader = new GLTFLoader();
-        this.attach(viewContainer);
-        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
-        this.createDebugGrid();
+        this.attach(this.container);
+        this.camera = this.createCamera(
+            {left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 },
+            {x: 32, y: 50, z: 32},
+            {x: 0, y: 0, z: 0}
+        );
+
+        this.debug = new Debug(this, "debug-container");
+        this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
+        this.container.onclick = this.debug.clickObject.bind(this.debug);
     }
 
     /*
@@ -58,21 +65,13 @@ export default class View3DController{
     */
     createCamera(frustum, position, lookAt){
         console.log('initialisation cam')
-        this.camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
-        this.camera.position.set(position.x, position.y, position.z);
-        this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-
+        const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
+        camera.position.set(position.x, position.y, position.z);
+        camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
+        this.controls = new OrbitControls(camera, this.renderer.domElement);
+        
         this.controls.update();
-        return this.camera;
-    }
-
-    createDebugGrid() {
-        console.log("ici");
-        const grid = new THREE.GridHelper(32, 32);
-        // grid.rotateX(-Math.PI / 2);
-        grid.position.set(15.5, 0.6, 15.5);
-        this.scene.add(grid);
+        return camera;
     }
 
     /*
@@ -129,7 +128,7 @@ export default class View3DController{
                 gltfData.scene.position.z = z;
                 gltfData.scene.rotation.y = ry;
                 
-                const material = new MeshBasicMaterial(
+                const material = new THREE.MeshBasicMaterial(
                     {
                         "color": teamColor,
                         "transparent": true,
@@ -146,4 +145,23 @@ export default class View3DController{
             }
         );
    }
+
+    disposeObject3D(object3D) {
+        if (!(object3D instanceof THREE.Object3D)) return false;
+
+        // for better memory management and performance
+        if (object3D.geometry) object3D.geometry.dispose();
+
+        if (object3D.material) {
+            if (object3D.material instanceof Array) {
+                // for better memory management and performance
+                object3D.material.forEach(material => material.dispose());
+            } else {
+                // for better memory management and performance
+                object3D.material.dispose();
+            }
+        }
+        object3D.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
+    }
+    
 }

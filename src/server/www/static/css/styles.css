@@ -4,19 +4,37 @@ html {
 
 body {
     margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #ui-container {
-    position: fixed;
     background-color: #803030aa;
+    position: fixed;
+    top: 0;
     text-align: center;
     height: auto;
     width: 100%;
 }
 
 #ui-container > div {
-    font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
+}
+
+#view-container {
+    height: 100vh;
+    width: 100vw;
+}
+
+#debug-container {
+    background-color: #aaaaaacc;
+    position: fixed;
+    top: 10vh;
+    right: 0px;
+    min-height: 300px;
+    min-width: 5vw;
+    border-radius: 30px 0 0 30px;
+    padding: 15px;
+    /* backdrop-filter: blur(2px); */
 }
 
 .btn {
