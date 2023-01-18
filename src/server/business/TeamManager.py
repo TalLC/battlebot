@@ -36,3 +36,12 @@ class TeamManager(ITeamManager):
         t = Team(self, size, name, color, team_id)
         self._TEAMS[t.id] = t
         return t.id
+
+    def bot_count(self, alive_only: bool = False) -> int:
+        """
+        Get the total number of bots in the teams.
+        """
+        bot_count = 0
+        for team in self.get_teams():
+            bot_count += team.bot_count(alive_only=alive_only)
+        return bot_count

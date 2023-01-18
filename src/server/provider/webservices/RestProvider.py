@@ -43,6 +43,7 @@ class RestProvider:
         self.__admin_display_clients_action_get_by_id()
         self.__admin_display_clients_action_get_by_token()
         self.__admin_bots_id_action_kill()
+        self.__admin_bots_action_add()
         self.__display_action_ready()
         self.__bots_action_register()
         self.__bots_id_action_request_connection()
@@ -115,7 +116,7 @@ class RestProvider:
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
 
-            GameManager().map.initialize(map_id=model.map_name)
+            GameManager().load_map(map_id=model.map_name)
             return {'status': 'ok', 'message': 'Map is loaded.'}
 
     def __display_action_ready(self):
@@ -213,9 +214,51 @@ class RestProvider:
 
             # Fetching corresponding Bot
             bot = GameManager().bot_manager.get_bot(bot_id)
+
+            # Is bot already dead
+            if not bot.is_alive:
+                ErrorCode.throw(BOT_IS_DEAD)
+
             bot.kill()
 
             return {"status": "ok", "message": "The bot has been killed", "bot_id": bot.id}
+
+    def __admin_bots_action_add(self):
+        """
+        Adds an ai-less bot in the game.
+        """
+        @self.__app.patch("/bots/action/add")
+        async def action(model: AdminBaseModel, _: Request):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Check if the game is started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
+            logging.info("Adding a test bot:")
+            bot_count = GameManager().bot_manager.get_bots_count()
+            bot = GameManager().bot_manager.create_bot(f"BOT TEST {bot_count}", "warrior")
+            del GameManager().bot_manager._BOTS[bot.id]
+
+            # Forcing bot ID
+            bot._id = f"0-0-0-0-{bot_count}"
+            GameManager().bot_manager._BOTS[bot.id] = bot
+
+            # Adding the bot to the least populated team
+            team = sorted(GameManager().team_manager.get_teams(), key=lambda t: t.bot_count())[0]
+            team.add_bot(bot)
+
+            bot.client_connection.connect(
+                bot.client_connection.source_request_id,
+                bot.client_connection.source_stomp_id,
+                bot.client_connection.source_mqtt_id
+            )
+
+            logging.info(GameManager().bot_manager.get_bot("0-0-0-0-0"))
+
+            return {"status": "ok", "message": "The bot has been added", "bot_id": bot.id}
 
     def __bots_action_register(self):
         """

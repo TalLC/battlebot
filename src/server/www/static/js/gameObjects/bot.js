@@ -7,6 +7,7 @@ export default class Bot{
         this.x = construct.x;
         this.z = construct.z;
         this.ry = construct.ry;
+        this.teamColor = this.colorStrToNumber(construct.teamColor);
         this.shoot = false;
         this.hit = false;
         this.shieldHide = false;
@@ -22,7 +23,7 @@ export default class Bot{
         Return : N/A
     */
     create(viewController){
-        viewController.createBot(this.x, this.ry, this.z, 'avatar', 0).then(
+        viewController.createBot(this.x, this.ry, this.z, this.teamColor, 'avatar', 0).then(
             (objBot) => {
                 this.objBot = objBot
             }
@@ -38,4 +39,20 @@ export default class Bot{
     action(key,param){
         actions[key].action.call(this, param);
     }
+
+
+    colorStrToNumber(strColor) {
+        // Default color
+        let numberColor = 0xffffff;
+        
+        try {
+            // Parsing string color
+            numberColor = Number(strColor);
+        } catch (error) {
+            console.error(`Could not cast "${strColor}" into a number`);
+        }
+
+        return numberColor;
+    }
+
 }

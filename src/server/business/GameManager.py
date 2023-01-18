@@ -42,7 +42,8 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self.team_manager = TeamManager(self)
         self.bot_manager = BotManager(self)
         self.display_manager = DisplayManager(self)
-        self.map = Map(self, CONFIG_GAME.map_id)
+        self.map = None
+        self.load_map(CONFIG_GAME.map_id)
 
         # Thread auto starting the game when enough bot are connected
         self._event_stop_checking_starting_conditions = Event()
@@ -58,6 +59,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             target=self._thread_check_stopping_conditions,
             args=(self._event_stop_checking_stopping_conditions,)
         )
+
+    def load_map(self, map_id: str):
+        """
+        Loads a new map.
+        """
+        if self.map:
+            del self.map
+
+        self.map = Map(self, map_id)
 
     def stop_threads(self):
         """
@@ -136,7 +146,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         """
         # Waiting until there is only one team left alive
         logging.debug("Waiting for the game to finish")
-        while len(self.team_manager.get_teams(still_alive_only=True)) >= 2 and not e.is_set():
+        while self.team_manager.bot_count(alive_only=True) >= 2 and not e.is_set():
             sleep(1)
 
         if not e.is_set():
@@ -177,6 +187,6 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     def get_all_objects_on_map(self):
         entities = list()
-        for obj in self.map.tiles_grid.get_all_tiles_objects(with_collision=True) + list(self.bot_manager.get_bots()):
+        for obj in self.map.tiles_grid.get_all_tiles_objects(collision_only=True) + list(self.bot_manager.get_bots()):
             entities.append(obj)
         return entities

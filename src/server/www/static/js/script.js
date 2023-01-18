@@ -55,18 +55,39 @@ function animate(){
     Return : N/A
 */
 function doAction(message){
+    // Création d'une promise vide
     let promise = Promise.resolve();
-    if(game.bots[message.bot_id] && game.bots[message.bot_id].objBot){
-        for(let actionDef in actions){
-            let selected = actions[actionDef].actionSelector(message);
-            if(selected){
-                let paramAction = actions[actionDef].eventwrapper(message);
-                promise = promise.then(() => {
-                    game.bots[message.bot_id].action(actionDef,paramAction);
-                });
+    // console.log(message);
+    if (message.msg_type === "BotUpdateMessage") {
+        // On vérifie si le bot existe
+        if(game.bots[message.bot_id] && game.bots[message.bot_id].objBot){
+            
+            // Parcours des actions enregistrées
+            for(let actionDef in actions){
+
+                // "selected" n'est pas null si actionSelector ne renvoi pas d'erreur ?
+                let selected = actions[actionDef].actionSelector(message);
+                
+                if(selected){
+                    let paramAction = actions[actionDef].eventwrapper(message);
+                    promise = promise.then(() => {
+                        game.bots[message.bot_id].action(actionDef,paramAction);
+                    });
+                }
             }
         }
     }
+    else if (message.msg_type === "BotShootAtCoordinates") {
+        let actionDef = "shoot";
+        let selected = actions[actionDef].actionSelector(message);
+        if (selected) {
+            let paramAction = actions[actionDef].eventwrapper(message);
+            promise = promise.then(() => {
+                game.bots[message.bot_id].action(actionDef, paramAction);
+            });
+        }
+    }
+
     return promise;
     return promise.then(() => {
         //requestAnimationFrame( animate );
@@ -80,7 +101,6 @@ Param : N/A
 Return : N/A
 */
 function animate(){
-
     if(update[0] !== undefined && update[0].messages !== undefined){
         let promises = [];
         for(let i = 0; i < update[0].messages.length; i++){
@@ -105,26 +125,28 @@ animate();
     Param : event -> Correspont au donnée de chaque appel websocket
     Return : N/A
 */
-ws.onmessage = async function(event)
-{
-    console.log(event.data);
-    update.push(JSON.parse(event.data));
-    console.log(update);
-    if (update[0].msg_type == 'MapCreateMessage'){
-        console.log('CreateMapWS');
-        game.createMap(update[0]);
-        update.shift();
+ws.onmessage = async function(event) {
+    const message = JSON.parse(event.data);
+
+    // Messages d'update multiples
+    if (message.messages !== undefined) {
+        update.push(message);
     }
-    else if (update[0].msg_type == 'BotCreateMessage'){
-        console.log('CreateBot');
-        game.createBot(update[0].bot_id, update[0].x, update[0].z, update[0].ry);
-        update.shift();
-    }
-    else if(update[0].msg_type == 'DisplayClientLoginMessage'){
-        while(null in game.bots);
-        console.log('Start game');
-        loginId = update[0].login_id;
-        sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: loginId});
-        update.shift();
+    // Messages seuls
+    else {
+        if (message.msg_type == 'MapCreateMessage'){
+            console.log('CreateMapWS');
+            game.createMap(message);
+        }
+        else if (message.msg_type == 'BotCreateMessage'){
+            console.log('CreateBot');
+            game.createBot(message.bot_id, message.x, message.z, message.ry, message.team_color);
+        }
+        else if (message.msg_type == 'DisplayClientLoginMessage'){
+            while(null in game.bots);
+            console.log('Start game');
+            loginId = message.login_id;
+            sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: loginId});
+        }
     }
 };
