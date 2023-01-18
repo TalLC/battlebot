@@ -129,22 +129,17 @@ export default class View3DController{
                 gltfData.scene.position.z = z;
                 gltfData.scene.rotation.y = ry;
                 
-                let materialColor;
-                try {
-                    materialColor = Number(teamColor);
-                    const material = new MeshBasicMaterial(
-                        {
-                            "color": materialColor,
-                            "transparent": true,
-                            "opacity": 0.7
-                        }
-                    );
-                    gltfData.scene.traverse((o) => {
-                        if (o.isMesh) o.material = material;
-                    });
-                } catch (error) {
-                    console.error(`Could not cast "${teamColor}" into a number`);
-                }
+                const material = new MeshBasicMaterial(
+                    {
+                        "color": teamColor,
+                        "transparent": true,
+                        "opacity": 0.7
+                    }
+                );
+
+                gltfData.scene.traverse((o) => {
+                    if (o.isMesh) o.material = material;
+                });
 
                 this.scene.add(gltfData.scene);
                 return(gltfData.scene);
