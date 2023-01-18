@@ -1,4 +1,7 @@
 import {ActionDefinition, actions} from "./actions.js";
+import GameManager from '../gameManager.js';
+import * as THREE from 'three';
+
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
@@ -28,7 +31,45 @@ function actionSelector(message){
     Return : N/A
 */
 function action(parameters){
-    console.log("shoot", parameters);
+
+    const bot = GameManager.bots[parameters.bot_id];
+
+    const laserMesh = createLaserMesh(
+        bot.teamColor,
+        new THREE.Vector3(bot.x, 1.5, bot.z),
+        new THREE.Vector3(0.0, 1.5, 0.0)
+    );
+
+    //Add the mesh to the scene
+    GameManager.v.scene.add(laserMesh);
+
+    // Create a promise that resolves after 2 seconds
+    const laserPromise = new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, 2000);
+    });
+
+    // Wait for the promise to resolve, then remove the mesh from the scene
+    laserPromise.then(() => {
+
+        if (!(laserMesh instanceof THREE.Object3D)) return false;
+
+        // for better memory management and performance
+        if (laserMesh.geometry) laserMesh.geometry.dispose();
+
+        if (laserMesh.material) {
+            if (laserMesh.material instanceof Array) {
+                // for better memory management and performance
+                laserMesh.material.forEach(material => material.dispose());
+            } else {
+                // for better memory management and performance
+                laserMesh.material.dispose();
+            }
+        }
+        laserMesh.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
+    });
+    
 }
 
 /**
@@ -37,30 +78,27 @@ function action(parameters){
 actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
 
 
-
-
-
-/*
-
-
-function removeObject3D(object3D) {
-    if (!(object3D instanceof THREE.Object3D)) return false;
-
-    // for better memory management and performance
-    if (object3D.geometry) object3D.geometry.dispose();
-
-    if (object3D.material) {
-        if (object3D.material instanceof Array) {
-            // for better memory management and performance
-            object3D.material.forEach(material => material.dispose());
-        } else {
-            // for better memory management and performance
-            object3D.material.dispose();
-        }
-    }
-    object3D.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
-    return true;
+function createLaserMesh(color, from, to) {
+        // Create a material
+        let lineMaterial = new THREE.MeshBasicMaterial({
+            color: color
+        });
+    
+        // Create a path for the tube
+        let path = new THREE.CatmullRomCurve3( [
+            from, to
+        ] );
+    
+        // Create the tube geometry
+        let tubeGeometry = new THREE.TubeGeometry(
+            path,
+            100,
+            0.15,
+            8,
+            true
+        );
+    
+        // Create the tube mesh
+        return new THREE.Mesh(tubeGeometry, lineMaterial);
 }
 
-
-*/
