@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, List
 from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner import IScanner
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
 from business.shapes.ShapeFactory import Shape, ShapeFactory
-from business.shapes.ShapesUtils import get_nearest_point, calculate_point_coords
+from business.shapes.ShapesUtils import ShapesUtils
 from business.gameobjects.tiles.Tile import Tile
 
 if TYPE_CHECKING:
@@ -134,7 +134,7 @@ class ScannerModel(IScanner, ABC):
             Return linestring that represents a ray starting from the bot at an angle "angle"
         """
         # Calculate the end point of the ray
-        end_coords = calculate_point_coords(self._bot.coordinates, self.distance, angle)
+        end_coords = ShapesUtils.get_coordinates_at_distance(self._bot.coordinates, self.distance, angle)
         # Create ray
         return ShapeFactory().create_shape(shape=Shape.LINE, coords=[self._bot.coordinates, end_coords])
 
@@ -167,8 +167,8 @@ class ScannerModel(IScanner, ABC):
                     if item.shape.intersection(ray):
                         # get all intersections points
                         points_list = item.shape.intersection(ray).boundary
-                        # get nearest point from bot
-                        nearest_point = get_nearest_point(self._bot.shape.centroid, points_list)
+                        # get the nearest point from bot
+                        nearest_point = ShapesUtils.get_nearest_point(self._bot.shape.centroid, points_list)
                         obj_in_fov.append({
                             "distance": nearest_point.distance(self._bot.shape.centroid),
                             "name": item.name,
