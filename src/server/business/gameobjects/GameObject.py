@@ -1,5 +1,4 @@
 import uuid
-from typing import Tuple
 
 from shapely.geometry import Polygon
 
@@ -17,7 +16,7 @@ class GameObject:
         return self._id
 
     @property
-    def coordinates(self) -> Tuple[float, float]:
+    def coordinates(self) -> tuple[float, float]:
         return self.x, self.z
 
     def __init__(self, name: str = 'game_object', x: float = 0.0, z: float = 0.0, shape: Polygon or None = None):
