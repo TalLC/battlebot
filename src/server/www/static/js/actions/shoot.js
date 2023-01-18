@@ -78,27 +78,31 @@ function action(parameters){
 actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
 
 
-function createLaserMesh(color, from, to) {
-        // Create a material
-        let lineMaterial = new THREE.MeshBasicMaterial({
-            color: color
-        });
+function createLaserMesh(color, start, end) {
+    // Create a material
+    let lineMaterial = new THREE.MeshBasicMaterial({
+      color: color
+    });
+  
+    //calculate the distance between start and end point
+    let distance = start.distanceTo(end);
     
-        // Create a path for the tube
-        let path = new THREE.CatmullRomCurve3( [
-            from, to
-        ] );
+    //calculate the number of segments needed
+    const desired_detail_level = 2;
+    let segments = Math.ceil(distance / desired_detail_level);
     
-        // Create the tube geometry
-        let tubeGeometry = new THREE.TubeGeometry(
-            path,
-            100,
-            0.15,
-            8,
-            true
-        );
+    // Create a path for the tube
+    let path = new THREE.CatmullRomCurve3([start, end]);
     
-        // Create the tube mesh
-        return new THREE.Mesh(tubeGeometry, lineMaterial);
+    // Create the tube geometry
+    let tubeGeometry = new THREE.TubeGeometry(
+      path,
+      segments,
+      0.3,
+      8,
+      true
+    );
+  
+    // Create the tube mesh
+    return new THREE.Mesh(tubeGeometry, lineMaterial);
 }
-
