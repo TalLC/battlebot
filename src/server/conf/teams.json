@@ -3,32 +3,32 @@
       "id": "test-team-no-ai",
       "size": 3000,
       "name": "Blue team",
-      "color": "0000FF"
+      "color": "0x0000ff"
   },
   {
       "id": "test-team",
       "size": 3,
       "name": "Red team",
-      "color": "FF0000"
+      "color": "0xff0000"
   },
   {
       "size": 3,
       "name": "Green team",
-      "color": "00FF00"
+      "color": "0x00ff00"
   },
   {
       "size": 3,
       "name": "Yellow team",
-      "color": "FFFF00"
+      "color": "0xffff00"
   },
   {
       "size": 3,
       "name": "Black team",
-      "color": "000000"
+      "color": "0x000000"
   },
   {
       "size": 3,
       "name": "White team",
-      "color": "FFFFFF"
+      "color": "0xffffff"
   }
 ]

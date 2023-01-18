@@ -2,18 +2,22 @@ import * as THREE from 'three';
 import {OrbitControls} from 'controls/OrbitControls';
 import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
+import { MeshBasicMaterial } from 'three';
 
 export default class View3DController{
-    constructor(width = window.innerWidth, height = window.innerHeight){
+    constructor(viewContainerId, width = window.innerWidth, height = window.innerHeight){
+        const viewContainer = document.getElementById(viewContainerId);
+
         this.renderer = new THREE.WebGLRenderer();
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
         this.scene = new THREE.Scene();
+
         let backColor = new THREE.Color(0xffffff);
         this.scene.background = backColor;
         this.initLight();
         this.loader = new GLTFLoader();
-        this.attach(document.body);
+        this.attach(viewContainer);
         this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
         this.createDebugGrid();
     }
@@ -115,7 +119,7 @@ export default class View3DController{
                 objectIndex -> Index correspondant à l'avatar souhaité dans la liste.
         Return : Une Promise qui retournera à terme l'objet Bot de la scene afin de pouvoir intéragir avec.
     */
-    createBot(x, ry, z, objectName, objectIndex){
+    createBot(x, ry, z, teamColor, objectName, objectIndex){
         var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
 
         return this.modelLoader(model_path).then(
@@ -124,6 +128,19 @@ export default class View3DController{
                 gltfData.scene.position.y = 0.5;
                 gltfData.scene.position.z = z;
                 gltfData.scene.rotation.y = ry;
+                
+                const material = new MeshBasicMaterial(
+                    {
+                        "color": teamColor,
+                        "transparent": true,
+                        "opacity": 0.7
+                    }
+                );
+
+                gltfData.scene.traverse((o) => {
+                    if (o.isMesh) o.material = material;
+                });
+
                 this.scene.add(gltfData.scene);
                 return(gltfData.scene);
             }

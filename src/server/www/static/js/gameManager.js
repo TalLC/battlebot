@@ -1,10 +1,12 @@
 import View3DController from "./view/view3DController.js";
+import Ui from "./ui.js";
 import bot from "./gameObjects/bot.js"
 import tile from "./gameObjects/tile.js"
 
 class GameManager{
     constructor(){
-        this.v = new View3DController();
+        this.v = new View3DController("view-container");
+        this.ui = new Ui(this, "ui-container");
         this.bots = {};
         this.map = [];
         this.mapObjects = {};
@@ -18,8 +20,8 @@ class GameManager{
                 ry -> Rotation autour de l'axe y du Bot
         Return : N/A
     */
-    createBot(id, x, z, ry){
-        this.bots[id] = new bot({id:id, x:x, z:z, ry:ry, avatar:'./static/models/robot_1.glb'});
+    createBot(id, x, z, ry, teamColor){
+        this.bots[id] = new bot({id:id, x:x, z:z, ry:ry, teamColor:teamColor, avatar:'./static/models/robot_1.glb'});
         this.bots[id].create(this.v);
     }
 

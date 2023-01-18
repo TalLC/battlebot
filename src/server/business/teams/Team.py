@@ -30,18 +30,11 @@ class Team:
         return self._bots
 
     @property
-    def alive_bots_count(self) -> int:
-        """
-        Get the number of bot alive in the team.
-        """
-        return len([bot for bot in self.bots.values() if bot.is_alive])
-
-    @property
     def is_alive(self) -> bool:
         """
         Returns true if at least one bot is still alive in the team.
         """
-        return self.alive_bots_count > 0
+        return self.bot_count(alive_only=True) > 0
 
     def __init__(self, team_manager: TeamManager, size: int, name: str, color: str, team_id: str = None):
         self.team_manager = team_manager
@@ -59,7 +52,15 @@ class Team:
     def __str__(self):
         return f"{self.name} ({self.id}) - " \
                f"COLOR: {self.color}, " \
-               f"SIZE: {self.size}"
+               f"BOTS: {self.bot_count()}/{self.size}"
+
+    def bot_count(self, alive_only: bool = False) -> int:
+        """
+        Get the number of bot in the team.
+        """
+        return len([
+            bot for bot in self.bots.values() if not alive_only or (alive_only and bot.is_alive)]
+        )
 
     def add_bot(self, bot: BotModel) -> bool:
         """

@@ -268,56 +268,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Called by Rest when the bot is ordered to shoot.
         Return the target that was hit (can be a GameObject or coordinates if nothing was hit).
         """
-        # # WIP
-        # print(f"{self.id} shooting at {angle}")
-        # from business.GameManager import GameManager
-        # game_map = GameManager().map
-        # r = random.Random()
-        # x = r.randint(0, game_map.width - 1)
-        # z = r.randint(0, game_map.height - 1)
-        # print(f"Impact at {x};{z}")
-        # target = Target(x=x, z=z)
-        # return target
-
-        # Clamping the angle value to its limits according to the scanner capabilities
-        shoot_angle = sorted((self.equipment.scanner.fov / -2, angle, self.equipment.scanner.fov / 2))[1]
-        # Maximum fire distance depends on the weapon capabilities
-        shoot_max_distance = self.equipment.weapon.reach_distance
-
-        # Maximum end coordinate of the shoot
-        shoot_end_x = self.x + shoot_max_distance * math.cos(math.radians(angle))
-        shoot_end_z = self.z + shoot_max_distance * math.sin(math.radians(angle))
-
-        # Gathering map objects
-        # Todo : get_map_objects_in_radius(center: Tuple, radius: int)
-        # Todo : get_map_objects_all()
-        # map_objects = self.bot_manager.game_manager.map.get_all_objects_on_map()
-        map_objects = self.bot_manager.game_manager.get_items_on_map(bots_only=True, objects_only=True,
-                                                                     collision_only=True,
-                                                                     radius=self._equipment.weapon.reach_distance,
-                                                                     origin=self.coordinates)
-
-        ray = ShapeFactory().create_shape(shape=Shape.LINE, coords=[(self.x, self.z), (shoot_end_x, shoot_end_z)])
-
-        # Get the latest touched object
-        touched_object: OrientedGameObject | None = None
-
-        # Check each object in the list
-        for obj in map_objects:
-            # Get shape of the object
-            object_circle = obj.shape
-
-            # Check if ray touch object's shape
-            if object_circle.intersects(ray):
-                pass
-
-        # If an object was shot, we return it
-        if touched_object is not None:
-            # We have one object that was shot
-            return Target(id=touched_object.id)
-        else:
-            # No object was harmed
-            return Target(x=shoot_end_x, z=shoot_end_z)
+        return Target(x=0, z=0)
 
     def turn(self, radians: float):
         """
@@ -343,7 +294,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Check if the destination is valid
         if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
-
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
             return
 
         # collision = self.collision()
