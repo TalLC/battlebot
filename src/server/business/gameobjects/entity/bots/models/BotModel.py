@@ -172,12 +172,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Action: Move
             if self.is_moving:
 
-                collision = self.collision()
-                if collision:
-                    logging.info(f'-------------{self.name} COLLISION with {collision} -------------')
-                    self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
-                    self.knockback()
-
                 # If this is the first movement of this type, here is our starting point
                 # We will start to actually move next loop
                 if self.last_move_timestamp == 0.0:
@@ -352,11 +346,23 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         #
         #     return
 
-        # Moving the bot on the map
-        self.set_position(self.x + new_x, self.z + new_z, self.ry)
+        collision = self.collision()
+        if collision:
+            logging.info(f'-------------{self.name} COLLISION with {collision} -------------')
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+            sleep(0.1)
+            dest = calculate_point_coords(self.coordinates, distance=-1, angle=(self.ry - math.pi))
+            self.set_position(x=dest[0], z=dest[1], ry=self.ry)
+            logging.info(f"send new position to front ({dest[0]}-{dest[1]}")
+            ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+            # ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
 
-        # Sending new position over websocket
-        ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+        else:
+            # Moving the bot on the map
+            self.set_position(self.x + new_x, self.z + new_z, self.ry)
+
+            # Sending new position over websocket
+            ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
 
     def send_client_bot_properties(self) -> None:
         """
