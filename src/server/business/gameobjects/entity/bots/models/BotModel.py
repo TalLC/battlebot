@@ -4,7 +4,6 @@ import math
 from random import Random
 from math import pi, cos, sin
 import logging
-import random
 from time import time, sleep
 from abc import ABC
 from queue import PriorityQueue
@@ -15,12 +14,13 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
-from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
-from business.shapes.ShapeFactory import ShapeFactory, Shape
+from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
 from business.shapes.ShapeFactory import ShapeFactory
+from business.shapes.ShapesUtils import get_radius, calculate_point_coords
 from consumer.ConsumerManager import ConsumerManager
+from business.gameobjects.tiles.Tile import Tile
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
@@ -76,7 +76,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
     @property
     def shape(self) -> BaseGeometry:
-        return ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.5, resolution=3)
+        return ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.2, resolution=3)
 
     @shape.setter
     def shape(self, _):
@@ -104,7 +104,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Random starting point
         self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coordinates()
         # Random starting rotation
-        self.ry = Random().randint(0, math.floor(2*pi*100)) / 100
+        self.ry = Random().randint(0, math.floor(2 * pi * 100)) / 100
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
@@ -221,7 +221,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Waiting interval between all increments
         loop_wait_ms = 100
         while not e.is_set():
-            if self.bot_manager.game_manager.is_started:
+            if self.bot_manager.game_manager.is_started and self.equipment.scanner.activated:
                 detected_objects = self.equipment.scanner.scanning()
                 if detected_objects:
                     ConsumerManager().mqtt.send_message(
@@ -297,6 +297,19 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
             return
 
+        # collision = self.collision()
+        # if collision:
+        #     logging.info(f'-------------{self.name} COLLISION with {collision} -------------')
+        #     self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+        #     sleep(0.1)
+        #     dest = calculate_point_coords(self.coordinates, distance=-1, angle=(self.ry - math.pi))
+        #     self.set_position(x=dest[0], z=dest[1], ry=self.ry)
+        #     logging.info(f"send new position to front ({dest[0]}-{dest[1]}")
+        #     ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+        #     # ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
+        #
+        # else:
+
         # Moving the bot on the map
         self.set_position(self.x + new_x, self.z + new_z, self.ry)
 
@@ -352,3 +365,36 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Callback when the bot is hurt.
         """
         ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
+
+    def collision(self):
+        neared_items = self.bot_manager.game_manager.get_items_on_map(bots_only=True, objects_only=False, radius=1,
+                                                                      origin=self.coordinates)
+
+        for item in neared_items:
+            # Determine object's class
+            if isinstance(item, Tile):
+
+                if item.tile_object.has_collision and item.tile_object.shape.intersection(self.shape):
+                    # Si l'objet a des collisions et si les formes de l'objet et du bot se touchent
+                    return item.tile_object.name
+
+                elif not item.is_walkable and (self.shape.centroid.distance(item.shape.centroid) <
+                                               get_radius(item.shape) + get_radius(self.shape)):
+                    # Si on ne peut pas marcher sur l'item et que la distance entre l'objet et le bot est faible
+                    return item.name
+
+            if isinstance(item, self.__class__) and item != self and item.shape.intersection(self.shape):
+                # Si l'objet est un bot
+                return item.name
+
+        return False
+
+    def knockback(self):
+        logging.debug("OOF")
+        logging.debug(f"before {self.coordinates}")
+        dest = calculate_point_coords(self.coordinates, distance=1, angle=self.ry - math.pi)
+        self.set_position(x=dest[0], z=dest[1], ry=self.ry - math.pi)
+        ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+        ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
+
+        logging.debug(f"after {self.coordinates}")

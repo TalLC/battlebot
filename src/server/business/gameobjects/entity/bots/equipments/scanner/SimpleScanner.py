@@ -16,4 +16,4 @@ class SimpleScanner(ScannerModel):
 
     def __init__(self, bot: BotModel):
         super().__init__(bot=bot, name=self._name, interval=self._interval, distance=self._distance,
-                         fov=self._fov, activated=True)
+                         fov=self._fov, activated=False)
