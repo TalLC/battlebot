@@ -7,47 +7,6 @@ let game = GameManager;
 let update = [];
 let loginId;
 
-/*
-    Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
-    Param : message -> correspont aux données pour un bot, reçu dans un appel websocket.
-    Return : N/A
-
-function doAction(message){
-    if(message.msg_type === 'BotUpdateMessage'){
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].objBot !== null){
-            // return la promise des actions du bot
-            for(let actionDef in actions){
-                let selected = actions[actionDef].actionSelector(message);
-                if(selected){
-                    let paramAction = actions[actionDef].eventwrapper(message);
-                    game.bots[message.bot_id].action(actionDef,paramAction);
-                }
-            }
-        }
-    }
-}
-*/
-/*
-    Fonction : Permet une animation fluide à chaque frame.
-    Param : N/A
-    Return : N/A
-
-function animate(){
-    requestAnimationFrame( animate );
-    if(update[0] !== undefined && update[0].messages !== undefined){
-        for(let i = 0; i < update[0].messages.length; i++){
-            //ajouter toute les promises à un tableau
-            doAction(update[0].messages[i]);
-        }
-        //promise.all ???
-        game.v.renderer.render( game.v.scene, game.v.camera );
-        update.shift();
-    }
-    else
-        game.v.renderer.render( game.v.scene, game.v.camera );
-}
-*/
-
 
 /*
     Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
@@ -89,10 +48,6 @@ function doAction(message){
     }
 
     return promise;
-    return promise.then(() => {
-        //requestAnimationFrame( animate );
-        //game.v.renderer.render( game.v.scene, game.v.camera );
-    });
 }
 
 /*

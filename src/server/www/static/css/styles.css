@@ -1,3 +1,7 @@
+:root {
+    --ui-header-height: 64px;
+}
+
 html {
     background-color: #1a1a1a;
 }
@@ -5,6 +9,7 @@ html {
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
 }
 
 #ui-container {
@@ -12,7 +17,7 @@ body {
     position: fixed;
     top: 0;
     text-align: center;
-    height: auto;
+    height: var(--ui-header-height);
     width: 100%;
 }
 
@@ -20,24 +25,32 @@ body {
     font-weight: bold;
 }
 
-#view-container {
-    height: 100vh;
-    width: 100vw;
+#threejs-canvas {
+    height: 100%;
+    width: 100%;
+    outline: none;
+    display: block;
 }
 
 #debug-container {
-    background-color: #aaaaaacc;
     position: fixed;
-    top: 10vh;
+    top: var(--ui-header-height);
     right: 0px;
-    min-height: 300px;
-    min-width: 5vw;
+    min-width: 8vw;
+    margin-top: 15px;
+}
+
+#info-container {
+    background-color: #aaaaaacc;
     border-radius: 30px 0 0 30px;
+    min-height: 300px;
     padding: 15px;
     /* backdrop-filter: blur(2px); */
 }
 
-.btn {
-    font-size: medium;
-    height: 100%;
+#remote-container {
+    background-color: #aaaaaacc;
+    border-radius: 30px 0 0 30px;
+    min-height: 300px;
+    margin-top: 15px;
 }

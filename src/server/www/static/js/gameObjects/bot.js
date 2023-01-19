@@ -1,6 +1,6 @@
+import * as THREE from 'three';
 import "../actionDefinition.js"
 import {actions} from "../actions/actions.js"
-import { MeshBasicMaterial } from 'three';
 
 export default class Bot{
     constructor(construct){
@@ -48,11 +48,11 @@ export default class Bot{
 
     colorStrToNumber(strColor) {
         // Default color
-        let numberColor = 0xffffff;
+        let numberColor = new THREE.Color(0xffffff);
         
         try {
             // Parsing string color
-            numberColor = Number(strColor);
+            numberColor = numberColor = new THREE.Color(Number(strColor));
         } catch (error) {
             console.error(`Could not cast "${strColor}" into a number`);
         }
@@ -75,7 +75,7 @@ export default class Bot{
     onClick(e) {
         console.log("Clicked!", this.id);
         objBot.traverse((o) => {
-            if (o.isMesh) o.material = new MeshBasicMaterial(
+            if (o.isMesh) o.material = new THREE.MeshBasicMaterial(
                 {
                     "color": 0x00ff00,
                     "transparent": false,

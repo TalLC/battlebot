@@ -1,11 +1,12 @@
 import * as THREE from 'three';
-import gameManager from './gameManager.js';
+import GameManager from './gameManager.js';
 
 
 export default class Debug{
 
     constructor(view3DController, debugContainerId) {
         this.container = document.getElementById(debugContainerId);
+        this.infoContainer = this.container.querySelector("#info-container");
         this.view = view3DController;
 
         // Helpers
@@ -42,31 +43,39 @@ export default class Debug{
     }
 
     clickObject(event) {
-        this.resetInformationsPanel();
-        
-        if (this.selectedObjectBoxHelper) {
-            this.view.disposeObject3D(this.selectedObjectBoxHelper);
-        }
 
         for (const hit of this.raycastedObjects) {
             if (hit.object.type === "BoxHelper" || hit.object.type === "GridHelper") continue;
             let clickedObject;
 
             // On cherche si c'est un bot qui est sélectionné
-            clickedObject = gameManager.getBotFromSceneObject(hit.object.parent);
+            clickedObject = GameManager.getBotFromSceneObject(hit.object.parent);
             if (clickedObject) {
-                this.selectedObjectBoxHelper = new THREE.BoxHelper(hit.object, 0xffff00);
-                this.view.scene.add(this.selectedObjectBoxHelper);    
-                this.writeBotInformations(gameManager.getBotFromSceneObject(hit.object.parent));
+                this.setSelectedObject(hit.object);
+                this.writeBotInformations(GameManager.getBotFromSceneObject(hit.object.parent));
                 break;
             }
 
             // // On cherche si c'est un objet de la map qui est sélectionné
             // clickedObject = gameManager.getObjectFromSceneObject(hit.object.parent);
             // if (clickedObject) {
+            //     this.setSelectedObject(hit.object);
             //     this.writeBotInformations(gameManager.getObjectFromSceneObject(hit.object.parent));
             //     break;
             // }
+        }
+    }
+
+    setSelectedObject(object) {
+        this.deselectObject();
+        this.selectedObjectBoxHelper = new THREE.BoxHelper(object, 0xff00ff);
+        this.view.scene.add(this.selectedObjectBoxHelper);
+    }
+
+    deselectObject() {
+        this.resetInformationsContainer();
+        if (this.selectedObjectBoxHelper) {
+            this.view.disposeObject3D(this.selectedObjectBoxHelper);
         }
     }
 
@@ -76,9 +85,9 @@ export default class Debug{
         let header = document.createElement('h1');
         header.innerHTML = `BOT`;
         
-        let botId = document.createElement('h2');
+        let botId = document.createElement('h3');
         botId.innerHTML = `${bot.id}`;
-        botId.style.color = `#${bot.teamColor.toString(16).padStart(6, '0')}`;
+        botId.style.color = `#${bot.teamColor.getHexString()}`;
 
         let botX = document.createElement('p');
         botX.innerHTML = `X (Bot) = ${bot.x}`;
@@ -99,23 +108,24 @@ export default class Debug{
         botObjRy.innerHTML = `Ry (obj) = ${bot.objBot.rotation.y}`;
 
         // Ajout des données au conteneur
-        this.container.appendChild(header);
-        this.container.appendChild(botId);
-        this.container.appendChild(botX);
-        this.container.appendChild(botObjX);
-        this.container.appendChild(botZ);
-        this.container.appendChild(botObjZ);
-        this.container.appendChild(botRy);
-        this.container.appendChild(botObjRy);
+        this.infoContainer.appendChild(header);
+        this.infoContainer.appendChild(document.createElement('hr'));
+        this.infoContainer.appendChild(botId);
+        this.infoContainer.appendChild(botX);
+        this.infoContainer.appendChild(botObjX);
+        this.infoContainer.appendChild(botZ);
+        this.infoContainer.appendChild(botObjZ);
+        this.infoContainer.appendChild(botRy);
+        this.infoContainer.appendChild(botObjRy);
     }
 
     writeObjectInformations(object) {
 
     }
 
-    resetInformationsPanel() {
+    resetInformationsContainer() {
         // Clear du conteneur
-        this.container.innerHTML = "";
+        this.infoContainer.innerHTML = "";
     }
 
 }

@@ -4,20 +4,22 @@ import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
 import Debug from "../debug.js";
 
-
 export default class View3DController{
     constructor(viewContainerId, width = window.innerWidth, height = window.innerHeight){
         this.container = document.getElementById(viewContainerId);
-        this.renderer = new THREE.WebGLRenderer();
+        this.threejsCanvas = this.container.querySelector("#threejs-canvas");
+        this.renderer = new THREE.WebGLRenderer( { canvas: this.threejsCanvas } );
+
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
         this.scene = new THREE.Scene();
-
+        
         let backColor = new THREE.Color(0xffffff);
         this.scene.background = backColor;
+
         this.initLight();
         this.loader = new GLTFLoader();
-        this.attach(this.container);
+        // this.attach(this.container);
         this.camera = this.createCamera(
             {left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 },
             {x: 32, y: 50, z: 32},
@@ -27,6 +29,7 @@ export default class View3DController{
         this.debug = new Debug(this, "debug-container");
         this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
         this.container.onclick = this.debug.clickObject.bind(this.debug);
+        this.container.ondblclick = this.debug.deselectObject.bind(this.debug);
     }
 
     /*
@@ -163,5 +166,5 @@ export default class View3DController{
         }
         object3D.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
     }
-    
+
 }
