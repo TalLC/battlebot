@@ -2,21 +2,37 @@
 <html lang="fr">
 	<head>
 		<meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 		<title>My first three.js app</title>
+    <link rel="stylesheet" href="static/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap/bootstrap-icons.css">
 		<link rel="stylesheet" href="static/css/styles.css" />
 	</head>
 	<body>
     <div id="ui-container">
-      <button id="ui-button-force-start" class="btn" type="button">Forcer le démarrage ▶️</button>
-      <button id="ui-button-add-bot" class="btn" type="button">Ajouter un bot 🤖</button>
-      <button id="ui-button-kill-bot" class="btn" type="button">Tuer un bot 🤖🔫</button>
-      <div>
-        La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 Equipe en vie
+      <div class="row">
+        <div class="col">
+          <button id="ui-button-force-start" class="btn btn-primary" type="button">Forcer le démarrage ▶️</button>
+          <button id="ui-button-add-bot" class="btn btn-primary" type="button">Ajouter un bot 🤖</button>
+          <button id="ui-button-kill-bot" class="btn btn-primary" type="button">Tuer un bot 🤖🔫</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 équipe en vie
+        </div>
       </div>
     </div>
-    <div id="debug-container"></div>
-    <div id="view-container"></div>
+    <div id="debug-container">
+      <div id="info-container"></div>
+      <div id="remote-container">
+      
+      </div>
+    </div>
+
+    <div id="view-container">
+      <canvas id="threejs-canvas"></canvas>
+    </div>
     <script type="importmap">
       {
         "imports": {
@@ -28,6 +44,7 @@
         }
       }
     </script>
+    <script src="static/js/bootstrap/bootstrap.bundle.min.js"></script>
 		<script type='module' src="static/js/script.js"></script>
 	</body>
 </html>
