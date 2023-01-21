@@ -21,12 +21,13 @@ export default class View3DController{
         this.loader = new GLTFLoader();
         // this.attach(this.container);
         this.camera = this.createCamera(
-            {left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 },
+            {left: width / - 32, right: width / 32, top: height / 32, bottom: height / - 32, near: 1, far: 1000 },
             {x: 32, y: 50, z: 32},
             {x: 0, y: 0, z: 0}
         );
 
         this.debug = new Debug(this, "debug-container");
+        
         this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
         this.container.onclick = this.debug.clickObject.bind(this.debug);
         this.container.ondblclick = this.debug.deselectObject.bind(this.debug);
@@ -147,7 +148,7 @@ export default class View3DController{
                 return(gltfData.scene);
             }
         );
-   }
+    }
 
     disposeObject3D(object3D) {
         if (!(object3D instanceof THREE.Object3D)) return false;

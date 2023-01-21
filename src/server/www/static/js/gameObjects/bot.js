@@ -1,13 +1,12 @@
 import * as THREE from 'three';
 import "../actionDefinition.js"
 import {actions} from "../actions/actions.js"
+import GameObject from './gameObject.js';
 
-export default class Bot{
+export default class Bot extends GameObject{
     constructor(construct){
-        this.id = construct.id;
-        this.x = construct.x;
-        this.z = construct.z;
-        this.ry = construct.ry;
+        super(construct.id, "bot", construct.x, construct.z, construct.ry);
+
         this.teamColor = this.colorStrToNumber(construct.teamColor);
         this.shoot = false;
         this.hit = false;

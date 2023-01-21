@@ -12,7 +12,24 @@ body {
     overflow: hidden;
 }
 
-#ui-container {
+.btn-remote {
+    margin: 5px;
+}
+
+.input-action {
+    margin: 5px;
+    max-width: 100px;
+}
+
+.btn-action {
+    width: 100%;
+}
+
+.sep-remote > hr {
+    margin: 15px;
+}
+
+#header-container {
     background-color: #803030aa;
     position: fixed;
     top: 0;
@@ -21,7 +38,7 @@ body {
     width: 100%;
 }
 
-#ui-container > div {
+#header-container > div {
     font-weight: bold;
 }
 
@@ -51,6 +68,6 @@ body {
 #remote-container {
     background-color: #aaaaaacc;
     border-radius: 30px 0 0 30px;
-    min-height: 300px;
     margin-top: 15px;
+    padding: 30px;
 }
