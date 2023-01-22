@@ -46,7 +46,7 @@ export default class Debug{
 
     clickObject(event) {
         this.deselectObject();
-        
+
         for (const hit of this.raycastedObjects) {
             if (hit.object.type === "BoxHelper" || hit.object.type === "GridHelper") continue;
             let clickedObject;
@@ -139,7 +139,6 @@ export default class Debug{
 
         let objectRy = document.createElement('p');
         objectRy.innerHTML = `Ry = ${object.ry}`;
-
 
         // Ajout des données au conteneur
         this.infoContainer.appendChild(header);
