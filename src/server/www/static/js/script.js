@@ -5,7 +5,6 @@ import sendRestMessage from './rest.js'
 let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let game = GameManager;
 let update = [];
-let loginId;
 
 
 /*
@@ -19,12 +18,13 @@ function doAction(message){
     // console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].objBot){
+        if(game.bots[message.bot_id] && game.bots[message.bot_id].sceneObject){
             
             // Parcours des actions enregistrées
             for(let actionDef in actions){
 
-                // "selected" n'est pas null si actionSelector ne renvoi pas d'erreur ?
+                // Choix de l'action à effectuer suivant les arguments trouvés dans le message
+                // Todo : Se baser sur le type de message ?
                 let selected = actions[actionDef].actionSelector(message);
                 
                 if(selected){
@@ -51,9 +51,9 @@ function doAction(message){
 }
 
 /*
-Fonction : Permet une animation fluide à chaque frame.
-Param : N/A
-Return : N/A
+    Fonction : Permet une animation fluide à chaque frame.
+    Param : N/A
+    Return : N/A
 */
 function animate(){
     if(update[0] !== undefined && update[0].messages !== undefined){
@@ -95,13 +95,13 @@ ws.onmessage = async function(event) {
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.createBot(message.bot_id, message.x, message.z, message.ry, message.team_color);
+            game.addBot(message.bot_id, message.x, message.z, message.ry, message.team_color);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
             while(null in game.bots);
             console.log('Start game');
-            loginId = message.login_id;
-            sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: loginId});
+            game.loginId = message.login_id;
+            sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: game.loginId});
         }
     }
 };
