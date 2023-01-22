@@ -1,25 +1,84 @@
+:root {
+    --ui-header-height: 64px;
+}
+
 html {
     background-color: #1a1a1a;
 }
 
 body {
     margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
 }
 
-#ui-container {
-    position: fixed;
-    background-color: #803030aa;
-    text-align: center;
-    height: auto;
+.btn-remote {
+    margin: 5px;
+}
+
+.input-action {
+    margin: 5px;
+    max-width: 100px;
+}
+
+.btn-action {
     width: 100%;
 }
 
-#ui-container > div {
-    font-family: Arial, Helvetica, sans-serif;
+.sep-remote > hr {
+    margin: 15px;
+}
+
+#header-container {
+    background-color: #803030aa;
+    position: fixed;
+    top: 0;
+    text-align: center;
+    height: var(--ui-header-height);
+    width: 100%;
+}
+
+#header-container > div {
     font-weight: bold;
 }
 
-.btn {
-    font-size: medium;
+#threejs-canvas {
     height: 100%;
+    width: 100%;
+    outline: none;
+    display: block;
+}
+
+#debug-container {
+    position: fixed;
+    top: var(--ui-header-height);
+    right: 0px;
+    min-width: 8vw;
+    margin-top: 15px;
+}
+
+#info-container {
+    background-color: #aaaaaacc;
+    border-radius: 30px 0 0 30px;
+    min-height: 300px;
+    padding: 15px;
+    /* backdrop-filter: blur(2px); */
+}
+
+#remote-container {
+    background-color: #aaaaaacc;
+    border-radius: 30px 0 0 30px;
+    margin-top: 15px;
+    padding: 30px;
+}
+
+.unselectable {
+    -drag: none;  
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

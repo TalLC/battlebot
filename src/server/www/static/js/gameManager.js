@@ -1,12 +1,11 @@
 import View3DController from "./view/view3DController.js";
-import Ui from "./ui.js";
 import bot from "./gameObjects/bot.js"
 import tile from "./gameObjects/tile.js"
+
 
 class GameManager{
     constructor(){
         this.v = new View3DController("view-container");
-        this.ui = new Ui(this, "ui-container");
         this.bots = {};
         this.map = [];
         this.mapObjects = {};
@@ -23,6 +22,28 @@ class GameManager{
     createBot(id, x, z, ry, teamColor){
         this.bots[id] = new bot({id:id, x:x, z:z, ry:ry, teamColor:teamColor, avatar:'./static/models/robot_1.glb'});
         this.bots[id].create(this.v);
+    }
+
+    getObjectFromSceneObject(sceneObject, checkFor) {
+        if (checkFor === "bot") {
+            for(let bot of Object.values(this.bots)) {
+                if (bot.objBot.children[0] === sceneObject) {
+                    return bot;
+                }
+            }
+        } else if (checkFor === "tile") {
+            for(let obj of Object.values(this.mapObjects)) {
+                if (obj.objTile === sceneObject) {
+                    return obj;
+                }
+            }
+        } else if (checkFor === "tileObject") {
+            for(let obj of Object.values(this.mapObjects)) {
+                if (obj.objObj === sceneObject) {
+                    return obj;
+                }
+            }
+        }
     }
 
     /*
@@ -51,6 +72,7 @@ class GameManager{
             this.map.push(current_line);
         }
     }
+
 }
 
 export default new GameManager();

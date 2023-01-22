@@ -1,10 +1,11 @@
 import "../actionDefinition.js"
 import {actions} from "../actions/actions.js"
+import GameObject from './gameObject.js';
 
-export default class Tile{
+
+export default class Tile extends GameObject{
     constructor(construct){
-        this.x = construct.x;
-        this.z = construct.z;
+        super(construct.id, "tile", construct.x, construct.z, 0.0);
         this.objTile = null;
         this.objObj = null;
     }
@@ -15,9 +16,13 @@ export default class Tile{
         Return : N/A
     */
     create(tile, obj, viewController){
-        viewController.createObject(this.x, 0, this.z, tile).then((objTile) => {this.objTile = objTile});
+        viewController.createObject(this.x, 0, this.z, tile).then((objTile) => {
+            this.objTile = objTile
+        });
         if (obj != 'air')
-            viewController.createObject(this.x, 0.5, this.z, obj).then((objObj) => {this.objObj = objObj});
+            viewController.createObject(this.x, 0.5, this.z, obj).then((objObj) => {
+                this.objObj = objObj
+            });
     }
     
     /* 
