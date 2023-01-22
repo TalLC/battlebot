@@ -5,6 +5,7 @@ from random import Random
 from math import pi
 import logging
 from time import time, sleep
+from datetime import timedelta
 from abc import ABC
 from queue import PriorityQueue
 from typing import TYPE_CHECKING
@@ -171,51 +172,48 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Action: Move
             if self.is_moving:
 
-                # If this is the first movement of this type, here is our starting point
-                # We will start to actually move next loop
+                # If this is the first movement of this type, we set the last move timestamp to one loop behind in
+                # order to let the bot move right now instead of waiting the next loop
                 if self.last_move_timestamp == 0.0:
-                    self.last_move_timestamp = time()
-                else:
-                    # A loop has elapsed, we move the bot on an equivalent distance
+                    self.last_move_timestamp = time() - timedelta(milliseconds=loop_wait_ms).total_seconds()
 
-                    # Get the timestamp delta between this loop and the previous one
-                    current_ts = time()
-                    interval_ts = current_ts - self.last_move_timestamp
+                # Get the timestamp delta between this loop and the previous one
+                current_ts = time()
+                interval_ts = current_ts - self.last_move_timestamp
 
-                    # traveled_distance = moving speed * movement duration
-                    traveled_distance = self.get_distance_from_time_and_speed(self.moving_speed, interval_ts)
+                # traveled_distance = moving speed * movement duration
+                traveled_distance = self.get_distance_from_time_and_speed(self.moving_speed, interval_ts)
 
-                    # Actually move the bot on the map
-                    self.move(traveled_distance)
+                # Actually move the bot on the map
+                self.move(traveled_distance)
 
-                    # Reset timestamp for next loop
-                    self.last_move_timestamp = time()
+                # Reset timestamp for next loop
+                self.last_move_timestamp = time()
 
             # Action: Turn
             if self.is_turning:
-                # If this is the first movement of this type, here is our starting point
-                # We will start to actually move next loop
+                # If this is the first movement of this type, we set the last move timestamp to one loop behind in
+                # order to let the bot move right now instead of waiting the next loop
                 if self.last_turn_timestamp == 0.0:
-                    self.last_turn_timestamp = time()
-                else:
-                    # A loop has elapsed, we turn equivalent radians
+                    self.last_turn_timestamp = time() - timedelta(milliseconds=loop_wait_ms).total_seconds()
 
-                    # Get the timestamp delta between this loop and the previous one
-                    current_ts = time()
-                    interval_ts = current_ts - self.last_turn_timestamp
+                # Get the timestamp delta between this loop and the previous one
+                current_ts = time()
+                interval_ts = current_ts - self.last_turn_timestamp
 
-                    # radians = turning speed * movement duration
-                    radians = self.get_turn_from_time_and_speed(self.turning_speed, interval_ts)
+                # radians = turning speed * movement duration
+                radians = self.get_turn_from_time_and_speed(self.turning_speed, interval_ts)
 
-                    # Actually move the bot on the map
-                    self.turn(radians)
+                # Actually move the bot on the map
+                self.turn(radians)
 
-                    # Reset timestamp for next loop
-                    self.last_turn_timestamp = time()
+                # Reset timestamp for next loop
+                self.last_turn_timestamp = time()
 
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
 
+    # Todo : A déplacer sur le scanner directement ?
     def _thread_scanning(self, e: Event):
         # Waiting interval between all increments
         loop_wait_ms = 100
@@ -254,31 +252,11 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         self._commands_queue.put(command)
 
-    def set_position(self, x: float, z: float, ry: float = 0.0):
-        """
-        Set the position and rotation of the bot.
-        """
-        self.x = x
-        self.z = z
-        self.ry = ry
-
     def shoot(self, angle: float) -> Target:
         """
         Called by Rest when the bot is ordered to shoot.
         Return the target that was hit (can be a GameObject or coordinates if nothing was hit).
         """
-        # # WIP
-        # print(f"{self.id} shooting at {angle}")
-        # from business.GameManager import GameManager
-        # game_map = GameManager().map
-        # r = random.Random()
-        # x = r.randint(0, game_map.width - 1)
-        # z = r.randint(0, game_map.height - 1)
-        # print(f"Impact at {x};{z}")
-        # target = Target(x=x, z=z)
-        # return target
-        # return Target(x=0, z=0)
-
         # Clamping the angle value to its limits according to the scanner capabilities
         shoot_angle = sorted((self.equipment.scanner.fov / -2, angle, self.equipment.scanner.fov / 2))[1]
 
@@ -336,29 +314,16 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Calculating new coordinates
         new_x, new_z = ShapesUtils.get_coordinates_at_distance(
-            (self.x, self.z), distance, self.ry
+            origin=(self.x, self.z), distance=distance, angle=self.ry
         )
 
         # Check if the destination is valid
-        if not self.bot_manager.game_manager.map.is_walkable_at(self.x + new_x, self.z + new_z):
+        if not self.bot_manager.game_manager.map.is_walkable_at(new_x, new_z):
             self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
             return
 
-        # collision = self.collision()
-        # if collision:
-        #     logging.info(f'-------------{self.name} COLLISION with {collision} -------------')
-        #     self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
-        #     sleep(0.1)
-        #     dest = calculate_point_coords(self.coordinates, distance=-1, angle=(self.ry - math.pi))
-        #     self.set_position(x=dest[0], z=dest[1], ry=self.ry)
-        #     logging.info(f"send new position to front ({dest[0]}-{dest[1]}")
-        #     ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
-        #     # ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
-        #
-        # else:
-
         # Moving the bot on the map
-        self.set_position(self.x + new_x, self.z + new_z, self.ry)
+        self.set_position(new_x, new_z, self.ry)
 
         # Sending new position over websocket
         ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
@@ -412,36 +377,3 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Callback when the bot is hurt.
         """
         ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
-
-    def collision(self):
-        neared_items = self.bot_manager.game_manager.get_items_on_map(bots_only=True, objects_only=False, radius=1,
-                                                                      origin=self.coordinates)
-
-        for item in neared_items:
-            # Determine object's class
-            if isinstance(item, Tile):
-
-                if item.tile_object.has_collision and item.tile_object.shape.intersection(self.shape):
-                    # Si l'objet a des collisions et si les formes de l'objet et du bot se touchent
-                    return item.tile_object.name
-
-                elif not item.is_walkable and (self.shape.centroid.distance(item.shape.centroid) <
-                                               ShapesUtils.get_radius(item.shape) + ShapesUtils.get_radius(self.shape)):
-                    # Si on ne peut pas marcher sur l'item et que la distance entre l'objet et le bot est faible
-                    return item.name
-
-            if isinstance(item, self.__class__) and item != self and item.shape.intersection(self.shape):
-                # Si l'objet est un bot
-                return item.name
-
-        return False
-
-    def knockback(self):
-        logging.debug("OOF")
-        logging.debug(f"before {self.coordinates}")
-        dest = ShapesUtils.get_coordinates_at_distance(self.coordinates, distance=1, angle=self.ry - math.pi)
-        self.set_position(x=dest[0], z=dest[1], ry=self.ry - math.pi)
-        ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
-        ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
-
-        logging.debug(f"after {self.coordinates}")
