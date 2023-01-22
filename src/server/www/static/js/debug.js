@@ -50,9 +50,10 @@ export default class Debug{
         for (const hit of this.raycastedObjects) {
             if (hit.object.type === "BoxHelper" || hit.object.type === "GridHelper") continue;
             let clickedObject;
+            let isParent;
 
             // On cherche si c'est un bot qui est sélectionné
-            clickedObject = GameManager.getObjectFromSceneObject(hit.object.parent, "bot");
+            clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent.parent, "bot");
             if (clickedObject) {
                 const bot = clickedObject;
                 this.setSelectedObject(hit.object, bot.id);
@@ -60,8 +61,17 @@ export default class Debug{
                 break;
             }
 
-            // On cherche si c'est une tile qui est sélectionné
-            clickedObject = GameManager.getObjectFromSceneObject(hit.object.parent, "tile");
+            // On cherche si c'est un objet de tuile qui est sélectionné
+            clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent, "tileObject");
+            if (clickedObject) {
+                const obj = clickedObject;
+                this.setSelectedObject(hit.object.parent, obj.id);
+                this.writeObjectInformations(obj);
+                break;
+            }
+
+            // On cherche si c'est une tuile qui est sélectionnée
+            clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent, "tile");
             if (clickedObject) {
                 const obj = clickedObject;
                 this.setSelectedObject(hit.object, obj.id);
@@ -90,7 +100,7 @@ export default class Debug{
 
         // Récupération des données
         let header = document.createElement('h1');
-        header.innerHTML = `BOT`;
+        header.innerHTML = `${bot.type} (${bot.modelName})`;
         
         let botId = document.createElement('h3');
         botId.innerHTML = `${bot.id}`;
@@ -106,13 +116,13 @@ export default class Debug{
         botRy.innerHTML = `Ry (Bot) = ${bot.ry}`;
 
         let botObjX = document.createElement('p');
-        botObjX.innerHTML = `X (obj) = ${bot.objBot.position.x}`;
+        botObjX.innerHTML = `X (obj) = ${bot.sceneObject.position.x}`;
 
         let botObjZ = document.createElement('p');
-        botObjZ.innerHTML = `Z (obj) = ${bot.objBot.position.z}`;
+        botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject.position.z}`;
 
         let botObjRy = document.createElement('p');
-        botObjRy.innerHTML = `Ry (obj) = ${bot.objBot.rotation.y}`;
+        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject.rotation.y}`;
 
         // Ajout des données au conteneur
         this.infoContainer.appendChild(header);
@@ -129,7 +139,7 @@ export default class Debug{
     writeObjectInformations(object) {
         // Récupération des données
         let header = document.createElement('h1');
-        header.innerHTML = `Tile`;
+        header.innerHTML = `${object.type} (${object.modelName})`;
         
         let objectX = document.createElement('p');
         objectX.innerHTML = `X = ${object.x}`;
