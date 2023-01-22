@@ -24,10 +24,24 @@ class GameManager{
         this.bots[id].create(this.v);
     }
 
-    getBotFromSceneObject(sceneObject) {
-        for(let bot of Object.values(this.bots)) {
-            if (bot.objBot.children[0] === sceneObject) {
-                return bot;
+    getObjectFromSceneObject(sceneObject, checkFor) {
+        if (checkFor === "bot") {
+            for(let bot of Object.values(this.bots)) {
+                if (bot.objBot.children[0] === sceneObject) {
+                    return bot;
+                }
+            }
+        } else if (checkFor === "tile") {
+            for(let obj of Object.values(this.mapObjects)) {
+                if (obj.objTile === sceneObject) {
+                    return obj;
+                }
+            }
+        } else if (checkFor === "tileObject") {
+            for(let obj of Object.values(this.mapObjects)) {
+                if (obj.objObj === sceneObject) {
+                    return obj;
+                }
             }
         }
     }

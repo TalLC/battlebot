@@ -29,8 +29,7 @@ export default class View3DController{
         this.debug = new Debug(this, "debug-container");
         
         this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
-        this.container.onclick = this.debug.clickObject.bind(this.debug);
-        this.container.ondblclick = this.debug.deselectObject.bind(this.debug);
+        this.container.ondblclick = this.debug.clickObject.bind(this.debug);
     }
 
     /*

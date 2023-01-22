@@ -45,13 +45,14 @@ export default class Debug{
     }
 
     clickObject(event) {
-
+        this.deselectObject();
+        
         for (const hit of this.raycastedObjects) {
             if (hit.object.type === "BoxHelper" || hit.object.type === "GridHelper") continue;
             let clickedObject;
 
             // On cherche si c'est un bot qui est sélectionné
-            clickedObject = GameManager.getBotFromSceneObject(hit.object.parent);
+            clickedObject = GameManager.getObjectFromSceneObject(hit.object.parent, "bot");
             if (clickedObject) {
                 const bot = clickedObject;
                 this.setSelectedObject(hit.object, bot.id);
@@ -59,13 +60,14 @@ export default class Debug{
                 break;
             }
 
-            // // On cherche si c'est un objet de la map qui est sélectionné
-            // clickedObject = gameManager.getObjectFromSceneObject(hit.object.parent);
-            // if (clickedObject) {
-            //     this.setSelectedObject(hit.object);
-            //     this.writeBotInformations(gameManager.getObjectFromSceneObject(hit.object.parent));
-            //     break;
-            // }
+            // On cherche si c'est une tile qui est sélectionné
+            clickedObject = GameManager.getObjectFromSceneObject(hit.object.parent, "tile");
+            if (clickedObject) {
+                const obj = clickedObject;
+                this.setSelectedObject(hit.object, obj.id);
+                this.writeObjectInformations(obj);
+                break;
+            }
         }
     }
 
@@ -125,7 +127,26 @@ export default class Debug{
     }
 
     writeObjectInformations(object) {
+        // Récupération des données
+        let header = document.createElement('h1');
+        header.innerHTML = `Tile`;
+        
+        let objectX = document.createElement('p');
+        objectX.innerHTML = `X = ${object.x}`;
 
+        let objectZ = document.createElement('p');
+        objectZ.innerHTML = `Z = ${object.z}`;
+
+        let objectRy = document.createElement('p');
+        objectRy.innerHTML = `Ry = ${object.ry}`;
+
+
+        // Ajout des données au conteneur
+        this.infoContainer.appendChild(header);
+        this.infoContainer.appendChild(document.createElement('hr'));
+        this.infoContainer.appendChild(objectX);
+        this.infoContainer.appendChild(objectZ);
+        this.infoContainer.appendChild(objectRy);
     }
 
     resetInformationsContainer() {

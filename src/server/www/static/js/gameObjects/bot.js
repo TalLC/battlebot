@@ -3,6 +3,7 @@ import "../actionDefinition.js"
 import {actions} from "../actions/actions.js"
 import GameObject from './gameObject.js';
 
+
 export default class Bot extends GameObject{
     constructor(construct){
         super(construct.id, "bot", construct.x, construct.z, construct.ry);
