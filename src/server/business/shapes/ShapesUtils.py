@@ -28,13 +28,15 @@ class ShapesUtils:
         return list_points[min_index]
 
     @staticmethod
-    def get_coordinates_at_distance(origin: tuple, distance: float, angle: float) -> tuple:
+    def get_coordinates_at_distance(origin: tuple, distance: float, angle: float, is_degrees: bool = False) -> tuple:
         """
         Calculate new coordinates based on the distance and the angle.
         """
+        # Convert angle from degrees to radians if needed
+        angle = radians(angle) if is_degrees else angle
         return (
-            origin[0] + distance * cos(radians(angle)),
-            origin[1] + distance * sin(radians(angle))
+            origin[0] + (distance * cos(angle)),
+            origin[1] + (distance * sin(angle))
         )
 
     @staticmethod
