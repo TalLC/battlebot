@@ -134,7 +134,9 @@ class ScannerModel(IScanner, ABC):
             Return linestring that represents a ray starting from the bot at an angle "angle"
         """
         # Calculate the end point of the ray
-        end_coords = ShapesUtils.get_coordinates_at_distance(self._bot.coordinates, self.distance, angle)
+        end_coords = ShapesUtils.get_coordinates_at_distance(
+            self._bot.coordinates, self.distance, angle, is_degrees=True
+        )
         # Create ray
         return ShapeFactory().create_shape(shape=Shape.LINE, coords=[self._bot.coordinates, end_coords])
 
