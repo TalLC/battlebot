@@ -15,7 +15,6 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
-from business.shapes.ShapeFactory import ShapeFactory, Shape
 from business.gameobjects.entity.bots.commands.BotStunCommand import BotStunCommand
 from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
@@ -31,7 +30,6 @@ from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStat
 from consumer.brokers.messages.stomp.BotStunningStatusMessage import BotStunningStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
-from consumer.webservices.messages.websocket.BotShootAtCoordinates import BotShootAtCoordinates
 from consumer.webservices.messages.websocket.HitMessage import HitMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
@@ -80,7 +78,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
     @property
     def shape(self) -> BaseGeometry:
-        return ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.2, resolution=3)
+        return ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.3, resolution=3)
 
     @shape.setter
     def shape(self, _):
@@ -270,14 +268,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         self._commands_queue.put(command)
 
-    def set_position(self, x: float, z: float, ry: float = 0.0):
-        """
-        Set the position and rotation of the bot.
-        """
-        self.x = x
-        self.z = z
-        self.ry = ry
-
     def shoot(self, angle: float) -> Target:
         """
         Called by Rest when the bot is ordered to shoot.
@@ -345,10 +335,10 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         if not self.collision():
             # Moving the bot on the map
-            self.set_position(self.x + new_x, self.z + new_z, self.ry)
+            self.set_position(new_x, new_z, self.ry)
 
-            # Sending new position over websocket
-            ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+        # Sending new position over websocket
+        ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
 
     def send_client_bot_properties(self) -> None:
         """
@@ -400,12 +390,15 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
 
-    def collision(self):
+    def collision(self) -> bool:
+        """
+        Check if the bot is colliding.
+        """
         collision_entity = None
+        # Get items arround the bot
         neared_items = self.bot_manager.game_manager.get_items_on_map(bots_only=True, objects_only=False, radius=1,
                                                                       origin=self.coordinates)
         for item in neared_items:
-            # Determine object's class
             if isinstance(item, Tile):
 
                 if item.tile_object.has_collision and item.tile_object.shape.intersection(self.shape):
@@ -426,31 +419,31 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         if collision_entity is not None:
             logging.info(f'-------------{self.name} COLLISION with {collision_entity} -------------')
-            logging.info(f"before bump ({self.x} ; {self.z}")
-            time_travelled = 1 / self.moving_speed
-            self.add_command_to_queue(BotStunCommand(priority=0))
-
-            Thread(target=self._thread_stunning, args=(time_travelled,)).start()
-
-            logging.info(f"before bump ({self.x} ; {self.z}")
-            logging.debug(f"orientation du bot : {math.degrees(self.ry)}, opposée : {abs(math.degrees(math.pi-self.ry))}")
-            logging.debug(f"orientation du bot : {self.ry}, opposée : {math.fmod(self.ry - math.pi, 2*math.pi)}")
-            dest = ShapesUtils.get_coordinates_at_distance(self.coordinates, distance=-1, angle=math.fmod(self.ry - math.pi, 2*math.pi))
-            self.set_position(x=dest[0], z=dest[1], ry=self.ry)
-            logging.info(f"after bump ({self.x} ; {self.z}")
-
-            ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
+            self.add_command_to_queue(BotStunCommand(priority=0, value=1))
+            self.knockback(1.5)
 
             return True
 
         return False
 
-    def knockback(self):
-        logging.debug("OOF")
-        logging.debug(f"before {self.coordinates}")
-        dest = ShapesUtils.get_coordinates_at_distance(origin=self.coordinates, distance=1, angle=self.ry - math.pi)
-        self.set_position(x=dest[0], z=dest[1], ry=self.ry - math.pi)
+    def knockback(self, distance: float) -> None:
+        """
+        Quickly knock the bot back.
+        """
+        # TODO : Correction -> Côté back le bot recule à l'impact. Côté front, il bump lorsqu'il recommence à bouger.
+        new_x, new_z = ShapesUtils.get_coordinates_at_distance(
+            origin=(self.x, self.z), distance=distance, angle=math.fmod(self.ry - math.pi, 2 * math.pi)
+        )
+        self.set_position(new_x, new_z, self.ry)
         ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
-        ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
 
-        logging.debug(f"after {self.coordinates}")
+    def stun(self, duration: float) -> None:
+        """
+        Stops the bot's actions and stuns it.
+        """
+        if self.is_moving:
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+        if self.is_turning:
+            self.add_command_to_queue(BotTurnCommand(priority=0, value='stop'))
+        # Start waiting thread
+        Thread(target=self._thread_stunning, args=(duration,)).start()
