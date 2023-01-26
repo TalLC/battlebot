@@ -27,3 +27,11 @@ class OrientedGameObject(GameObject):
                  shape: Polygon or None = None):
         super().__init__(name, x, z, shape)
         self._ry = ry
+
+    def set_position(self, x: float, z: float, ry: float = 0.0):
+        """
+        Set the position and rotation of the bot.
+        """
+        self.x = x
+        self.z = z
+        self.ry = ry

@@ -5,48 +5,6 @@ import sendRestMessage from './rest.js'
 let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let game = GameManager;
 let update = [];
-let loginId;
-
-/*
-    Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
-    Param : message -> correspont aux données pour un bot, reçu dans un appel websocket.
-    Return : N/A
-
-function doAction(message){
-    if(message.msg_type === 'BotUpdateMessage'){
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].objBot !== null){
-            // return la promise des actions du bot
-            for(let actionDef in actions){
-                let selected = actions[actionDef].actionSelector(message);
-                if(selected){
-                    let paramAction = actions[actionDef].eventwrapper(message);
-                    game.bots[message.bot_id].action(actionDef,paramAction);
-                }
-            }
-        }
-    }
-}
-*/
-/*
-    Fonction : Permet une animation fluide à chaque frame.
-    Param : N/A
-    Return : N/A
-
-function animate(){
-    requestAnimationFrame( animate );
-    if(update[0] !== undefined && update[0].messages !== undefined){
-        for(let i = 0; i < update[0].messages.length; i++){
-            //ajouter toute les promises à un tableau
-            doAction(update[0].messages[i]);
-        }
-        //promise.all ???
-        game.v.renderer.render( game.v.scene, game.v.camera );
-        update.shift();
-    }
-    else
-        game.v.renderer.render( game.v.scene, game.v.camera );
-}
-*/
 
 
 /*
@@ -60,12 +18,13 @@ function doAction(message){
     // console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].objBot){
+        if(game.bots[message.bot_id] && game.bots[message.bot_id].sceneObject){
             
             // Parcours des actions enregistrées
             for(let actionDef in actions){
 
-                // "selected" n'est pas null si actionSelector ne renvoi pas d'erreur ?
+                // Choix de l'action à effectuer suivant les arguments trouvés dans le message
+                // Todo : Se baser sur le type de message ?
                 let selected = actions[actionDef].actionSelector(message);
                 
                 if(selected){
@@ -89,16 +48,12 @@ function doAction(message){
     }
 
     return promise;
-    return promise.then(() => {
-        //requestAnimationFrame( animate );
-        //game.v.renderer.render( game.v.scene, game.v.camera );
-    });
 }
 
 /*
-Fonction : Permet une animation fluide à chaque frame.
-Param : N/A
-Return : N/A
+    Fonction : Permet une animation fluide à chaque frame.
+    Param : N/A
+    Return : N/A
 */
 function animate(){
     if(update[0] !== undefined && update[0].messages !== undefined){
@@ -140,13 +95,13 @@ ws.onmessage = async function(event) {
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.createBot(message.bot_id, message.x, message.z, message.ry, message.team_color);
+            game.addBot(message.bot_id, message.x, message.z, message.ry, message.team_color);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
             while(null in game.bots);
             console.log('Start game');
-            loginId = message.login_id;
-            sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: loginId});
+            game.loginId = message.login_id;
+            sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: game.loginId});
         }
     }
 };

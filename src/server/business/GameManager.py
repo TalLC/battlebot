@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 from time import sleep
 from threading import Thread, Event
-from typing import TYPE_CHECKING, Tuple, List, Union
+from typing import TYPE_CHECKING
 
 from common.config import CONFIG_GAME
 from common.Singleton import SingletonABCMeta
@@ -194,10 +194,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
 
     def get_items_on_map(self, bots_only: bool = True, objects_only: bool = True, collision_only: bool = True,
-                         radius: int = 0, origin: Tuple[float, float] = (0, 0)
-                         ) -> Union[List[Tile], List[TileObject], List[BotModel]]:
+                         radius: int = 0, origin: tuple[float, float] = (0, 0)
+                         ) -> list[Tile] or list[TileObject] or list[BotModel]:
         """
-            Return items from map. Parameters define what should be returned.
+        Return items from map. Parameters define what should be returned.
         """
         entities = list()
 

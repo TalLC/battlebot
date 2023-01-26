@@ -134,7 +134,9 @@ class ScannerModel(IScanner, ABC):
             Return linestring that represents a ray starting from the bot at an angle "angle"
         """
         # Calculate the end point of the ray
-        end_coords = ShapesUtils.get_coordinates_at_distance(self._bot.coordinates, self.distance, angle)
+        end_coords = ShapesUtils.get_coordinates_at_distance(
+            self._bot.coordinates, self.distance, angle, is_degrees=True
+        )
         # Create ray
         return ShapeFactory().create_shape(shape=Shape.LINE, coords=[self._bot.coordinates, end_coords])
 
@@ -167,7 +169,7 @@ class ScannerModel(IScanner, ABC):
                     if item.shape.intersection(ray):
                         # get all intersections points
                         points_list = item.shape.intersection(ray).boundary
-                        # get nearest point from bot
+                        # get the nearest point from bot
                         nearest_point = ShapesUtils.get_nearest_point(self._bot.shape.centroid, points_list)
                         obj_in_fov.append({
                             "distance": nearest_point.distance(self._bot.shape.centroid),

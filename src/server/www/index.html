@@ -2,20 +2,72 @@
 <html lang="fr">
 	<head>
 		<meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 		<title>My first three.js app</title>
+    <link rel="stylesheet" href="static/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap/bootstrap-icons.css">
 		<link rel="stylesheet" href="static/css/styles.css" />
 	</head>
 	<body>
-    <div id="ui-container">
-      <button id="ui-button-force-start" class="btn" type="button">Forcer le démarrage ▶️</button>
-      <button id="ui-button-add-bot" class="btn" type="button">Ajouter un bot 🤖</button>
-      <button id="ui-button-kill-bot" class="btn" type="button">Tuer un bot 🤖🔫</button>
-      <div>
-        La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 Equipe en vie
+    <div id="header-container" class="unselectable">
+      <div class="row">
+        <div class="col">
+          <button id="header-button-force-start" class="btn btn-primary" type="button">Forcer le démarrage ▶️</button>
+          <button id="header-button-add-bot" class="btn btn-primary" type="button">Ajouter un bot 🤖</button>
+          <button id="header-button-kill-bot" class="btn btn-primary" type="button">Tuer un bot 🤖🔫</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 équipe en vie
+        </div>
       </div>
     </div>
-    <div id="view-container"></div>
+    <div id="debug-container" class="unselectable">
+      <div id="info-container"></div>
+      <div id="remote-container">
+        <!-- Partie déplacements du bot -->
+        <div class="row g-0">
+          <div class="col-sm-4"></div>
+          <div class="col-sm-4 text-center">
+            <button id="button-remote-up" class="btn btn-primary btn-remote" type="button"><i class="bi bi-chevron-up"></i></button>
+          </div>
+          <div class="col-sm-4"></div>
+        </div>
+        <div class="row g-0">
+          <div class="col-sm-4 text-end">
+              <button id="button-remote-left" class="btn btn-primary btn-remote"><i class="bi bi-chevron-left"></i></button>
+          </div>
+          <div class="col-sm-4 text-center">
+            <button id="button-remote-stop" class="btn btn-primary btn-remote"><i class="bi bi-pause"></i></button>
+          </div>
+          <div class="col-sm-4 text-start">
+              <button id="button-remote-right" class="btn btn-primary btn-remote"><i class="bi bi-chevron-right"></i></button>
+          </div>
+        </div>
+        <!-- Partie gestion du bot -->
+        <div class="row sep-remote">
+          <hr>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <button id="button-remote-shoot" class="btn btn-primary btn-remote btn-action"><i class="bi bi-fire"></i> Tirer</button>
+          </div>
+          <div class="col-sm-6">
+            <input id="input-remote-angle" type="number" step="1.0" class="form-control input-action" placeholder="0,0°">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <button id="button-remote-kill" class="btn btn-danger btn-remote btn-action"><i class="bi bi-slash-circle"></i> Tuer le bot</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-container">
+      <canvas id="threejs-canvas"></canvas>
+    </div>
     <script type="importmap">
       {
         "imports": {
@@ -27,6 +79,7 @@
         }
       }
     </script>
+    <script src="static/js/bootstrap/bootstrap.bundle.min.js"></script>
 		<script type='module' src="static/js/script.js"></script>
 	</body>
 </html>

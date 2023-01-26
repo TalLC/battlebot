@@ -1,35 +1,23 @@
 import "../actionDefinition.js"
 import {actions} from "../actions/actions.js"
+import GameObject from './gameObject.js';
+import {colorStrToNumber} from '../utils.js'
 
-export default class Bot{
+
+export default class Bot extends GameObject{
     constructor(construct){
-        this.id = construct.id;
-        this.x = construct.x;
-        this.z = construct.z;
-        this.ry = construct.ry;
-        this.teamColor = this.colorStrToNumber(construct.teamColor);
+        super(construct.id, "bot", construct.x, 0.5, construct.z, construct.ry);
+        this.teamColor = colorStrToNumber(construct.teamColor);
+        this.modelName = construct.modelName;
+        this.sceneObject = null;
+
         this.shoot = false;
         this.hit = false;
         this.shieldHide = false;
         this.shieldRaise = false;
-        this.avatarPath = construct.avatar;
-        this.objBot = null;
         this.enrolled = false;
     }
 
-    /*  
-        Fonction : Permet la création/ajout à la scène du bot correspond à la classe.
-        Param : viewController -> Classe permettant la gestion des interactions avec la scène.
-        Return : N/A
-    */
-    create(viewController){
-        viewController.createBot(this.x, this.ry, this.z, this.teamColor, 'avatar', 0).then(
-            (objBot) => {
-                this.objBot = objBot
-            }
-        );
-    }
-    
     /* 
         Fonction : Permet l'appel à une action intéragissant avec le bot (action définit dans actionDefinition.js)
         Param : key -> contient le nom de l'action.
@@ -38,21 +26,6 @@ export default class Bot{
     */
     action(key,param){
         actions[key].action.call(this, param);
-    }
-
-
-    colorStrToNumber(strColor) {
-        // Default color
-        let numberColor = 0xffffff;
-        
-        try {
-            // Parsing string color
-            numberColor = Number(strColor);
-        } catch (error) {
-            console.error(`Could not cast "${strColor}" into a number`);
-        }
-
-        return numberColor;
     }
 
 }

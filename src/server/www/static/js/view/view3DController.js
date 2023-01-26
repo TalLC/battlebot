@@ -2,24 +2,35 @@ import * as THREE from 'three';
 import {OrbitControls} from 'controls/OrbitControls';
 import {GLTFLoader} from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
-import { MeshBasicMaterial } from 'three';
+import Debug from "../debug.js";
 
-export default class View3DController{
+
+export default class View3DController {
     constructor(viewContainerId, width = window.innerWidth, height = window.innerHeight){
-        const viewContainer = document.getElementById(viewContainerId);
+        this.container = document.getElementById(viewContainerId);
+        this.threejsCanvas = this.container.querySelector("#threejs-canvas");
+        this.renderer = new THREE.WebGLRenderer( { canvas: this.threejsCanvas } );
 
-        this.renderer = new THREE.WebGLRenderer();
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
         this.scene = new THREE.Scene();
-
+        
         let backColor = new THREE.Color(0xffffff);
         this.scene.background = backColor;
+
         this.initLight();
         this.loader = new GLTFLoader();
-        this.attach(viewContainer);
-        this.createCamera({left: width / - 50, right: width / 50, top: height / 50, bottom: height / - 50, near: -10000, far: 100000 }, {x: 2, y: 2, z: 2}, {x: 0, y: 0, z: 0});
-        this.createDebugGrid();
+        
+        this.camera = this.createCamera(
+            {left: width / - 32, right: width / 32, top: height / 32, bottom: height / - 32, near: 1, far: 1000 },
+            {x: 32, y: 50, z: 32},
+            {x: 0, y: 0, z: 0}
+        );
+
+        this.debug = new Debug(this, "debug-container");
+        
+        this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
+        this.container.ondblclick = this.debug.clickObject.bind(this.debug);
     }
 
     /*
@@ -58,21 +69,13 @@ export default class View3DController{
     */
     createCamera(frustum, position, lookAt){
         console.log('initialisation cam')
-        this.camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
-        this.camera.position.set(position.x, position.y, position.z);
-        this.camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-
+        const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
+        camera.position.set(position.x, position.y, position.z);
+        camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
+        this.controls = new OrbitControls(camera, this.renderer.domElement);
+        
         this.controls.update();
-        return this.camera;
-    }
-
-    createDebugGrid() {
-        console.log("ici");
-        const grid = new THREE.GridHelper(32, 32);
-        // grid.rotateX(-Math.PI / 2);
-        grid.position.set(15.5, 0.6, 15.5);
-        this.scene.add(grid);
+        return camera;
     }
 
     /*
@@ -87,21 +90,21 @@ export default class View3DController{
     }
 
     /*
-        Fonction : Permet la création/ajout à la scène d'un objet est appelé à chaque nouvelle objet (Arbre, Mur, Rocher, Sol, Eau...).
+        Fonction : Permet la création/ajout à la scène d'un objet. Est appelé à chaque nouvel objet (Arbre, Mur, Rocher, Sol, Eau...).
         Param : x -> Position en x de l'objet
                 y -> Position en y de l'objet
                 z -> Position en z de l'objet
-                objectName -> Nom de l'objet à créer
+                ry -> Rotation en y de l'objet
+                modelPath -> Chemin du fichier 3D à charger
         Return :  Une Promise qui retournera à terme l'objet de la scene afin de pouvoir intéragir avec en cas de destruction par exemple.
     */
-    createObject(x, y, z, objectName){
-        var model_path = graphicObjects[objectName];
-
-        return this.modelLoader(model_path).then(
+    createObject(x, y, z, ry, modelPath) {
+        return this.modelLoader(modelPath).then(
             (gltfData) => {
                 gltfData.scene.position.x = x;
                 gltfData.scene.position.y = y;
                 gltfData.scene.position.z = z;
+                gltfData.scene.rotation.y = ry;
                 gltfData.scene.receiveShadow = true;
                 gltfData.scene.castShadow = true;
                 this.scene.add(gltfData.scene);
@@ -111,39 +114,65 @@ export default class View3DController{
     }
 
     /*
-        Fonction : Permet la création/ajout à la scène d'un objet Bot est appelé à chaque nouveau Bot.
-        Param : x -> Position en x du Bot
-                z -> Position en z du Bot
-                ry -> Rotation autour de l'Axe y du Bot
-                objectName -> Nom de la liste contenant les différents avatars, on pourra imaginer plusieurs listes différentes pour différentes MAP ou équipes.
-                objectIndex -> Index correspondant à l'avatar souhaité dans la liste.
-        Return : Une Promise qui retournera à terme l'objet Bot de la scene afin de pouvoir intéragir avec.
+        Fonction : Permet la création/ajout d'un objet Bot à la scène.
+        Param : bot -> L'objet Bot dont on veut créer le modèle 3D
+        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir intéragir avec.
     */
-    createBot(x, ry, z, teamColor, objectName, objectIndex){
-        var model_path = objectIndex === undefined? graphicObjects[objectName] : graphicObjects[objectName][objectIndex];
+    createBot3D(bot) {
+        const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar'][bot.modelName];
+        return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then(sceneObject => {
+            // Peinture du bot de la couleur de l'équipe
+            const material = new THREE.MeshBasicMaterial(
+                {
+                    "color": bot.teamColor,
+                    "transparent": true,
+                    "opacity": 0.7
+                }
+            );
 
-        return this.modelLoader(model_path).then(
-            gltfData => {
-                gltfData.scene.position.x = x;
-                gltfData.scene.position.y = 0.5;
-                gltfData.scene.position.z = z;
-                gltfData.scene.rotation.y = ry;
-                
-                const material = new MeshBasicMaterial(
-                    {
-                        "color": teamColor,
-                        "transparent": true,
-                        "opacity": 0.7
-                    }
-                );
+            sceneObject.traverse((o) => {
+                if (o.isMesh) o.material = material;
+            });
 
-                gltfData.scene.traverse((o) => {
-                    if (o.isMesh) o.material = material;
-                });
+            bot.sceneObject = sceneObject;
+        });
+    }
 
-                this.scene.add(gltfData.scene);
-                return(gltfData.scene);
+    /*
+        Fonction : Permet la création/ajout d'un objet 3D à la scène (tile, tile object, ...).
+        Param : mapObject -> L'objet MapObject dont on veut créer le modèle 3D
+        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir intéragir avec.
+    */
+    createMapObject3D(mapObject) {
+        const modelPath = graphicObjects[mapObject.modelName];
+        if (modelPath) {
+            this.createObject(mapObject.x, mapObject.y, mapObject.z, mapObject.ry, modelPath).then(sceneObject => {
+                mapObject.sceneObject = sceneObject;
+            });
+        }
+    }
+
+    /*
+        Fonction : Efface complètement un objet de la scène ThreeJs.
+        Param : sceneObject -> L'objet à supprimer.
+        Return : N/A
+    */
+    disposeObject3D(sceneObject) {
+        if (!(sceneObject instanceof THREE.Object3D)) return false;
+
+        // for better memory management and performance
+        if (sceneObject.geometry) sceneObject.geometry.dispose();
+
+        if (sceneObject.material) {
+            if (sceneObject.material instanceof Array) {
+                // for better memory management and performance
+                sceneObject.material.forEach(material => material.dispose());
+            } else {
+                // for better memory management and performance
+                sceneObject.material.dispose();
             }
-        );
-   }
+        }
+        sceneObject.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
+    }
+
 }

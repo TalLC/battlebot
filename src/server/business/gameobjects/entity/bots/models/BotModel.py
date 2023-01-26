@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import math
 from random import Random
-from math import pi, cos, sin
+from math import pi
 import logging
 from time import time, sleep
+from datetime import timedelta
 from abc import ABC
 from queue import PriorityQueue
 from typing import TYPE_CHECKING
@@ -14,6 +15,7 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
+from business.shapes.ShapeFactory import ShapeFactory, Shape
 from business.gameobjects.entity.bots.commands.BotStunCommand import BotStunCommand
 from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
@@ -177,51 +179,48 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Action: Move
             if self.is_moving:
 
-                # If this is the first movement of this type, here is our starting point
-                # We will start to actually move next loop
+                # If this is the first movement of this type, we set the last move timestamp to one loop behind in
+                # order to let the bot move right now instead of waiting the next loop
                 if self.last_move_timestamp == 0.0:
-                    self.last_move_timestamp = time()
-                else:
-                    # A loop has elapsed, we move the bot on an equivalent distance
+                    self.last_move_timestamp = time() - timedelta(milliseconds=loop_wait_ms).total_seconds()
 
-                    # Get the timestamp delta between this loop and the previous one
-                    current_ts = time()
-                    interval_ts = current_ts - self.last_move_timestamp
+                # Get the timestamp delta between this loop and the previous one
+                current_ts = time()
+                interval_ts = current_ts - self.last_move_timestamp
 
-                    # traveled_distance = moving speed * movement duration
-                    traveled_distance = self.get_distance_from_time_and_speed(self.moving_speed, interval_ts)
+                # traveled_distance = moving speed * movement duration
+                traveled_distance = self.get_distance_from_time_and_speed(self.moving_speed, interval_ts)
 
-                    # Actually move the bot on the map
-                    self.move(traveled_distance)
+                # Actually move the bot on the map
+                self.move(traveled_distance)
 
-                    # Reset timestamp for next loop
-                    self.last_move_timestamp = time()
+                # Reset timestamp for next loop
+                self.last_move_timestamp = time()
 
             # Action: Turn
             if self.is_turning:
-                # If this is the first movement of this type, here is our starting point
-                # We will start to actually move next loop
+                # If this is the first movement of this type, we set the last move timestamp to one loop behind in
+                # order to let the bot move right now instead of waiting the next loop
                 if self.last_turn_timestamp == 0.0:
-                    self.last_turn_timestamp = time()
-                else:
-                    # A loop has elapsed, we turn equivalent radians
+                    self.last_turn_timestamp = time() - timedelta(milliseconds=loop_wait_ms).total_seconds()
 
-                    # Get the timestamp delta between this loop and the previous one
-                    current_ts = time()
-                    interval_ts = current_ts - self.last_turn_timestamp
+                # Get the timestamp delta between this loop and the previous one
+                current_ts = time()
+                interval_ts = current_ts - self.last_turn_timestamp
 
-                    # radians = turning speed * movement duration
-                    radians = self.get_turn_from_time_and_speed(self.turning_speed, interval_ts)
+                # radians = turning speed * movement duration
+                radians = self.get_turn_from_time_and_speed(self.turning_speed, interval_ts)
 
-                    # Actually move the bot on the map
-                    self.turn(radians)
+                # Actually move the bot on the map
+                self.turn(radians)
 
-                    # Reset timestamp for next loop
-                    self.last_turn_timestamp = time()
+                # Reset timestamp for next loop
+                self.last_turn_timestamp = time()
 
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
 
+    # Todo : A déplacer sur le scanner directement ?
     def _thread_scanning(self, e: Event):
         # Waiting interval between all increments
         loop_wait_ms = 100
@@ -284,7 +283,42 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Called by Rest when the bot is ordered to shoot.
         Return the target that was hit (can be a GameObject or coordinates if nothing was hit).
         """
-        return Target(x=0, z=0)
+        # Clamping the angle value to its limits according to the scanner capabilities
+        shoot_angle = sorted((self.equipment.scanner.fov / -2, angle, self.equipment.scanner.fov / 2))[1]
+
+        # Maximum fire distance depends on the weapon capabilities
+        shoot_max_distance = self.equipment.weapon.reach_distance
+
+        # Maximum end coordinate of the shoot
+        shoot_end_x, shoot_end_z = ShapesUtils.get_coordinates_at_distance(
+            (self.x, self.z), shoot_max_distance, self.ry + shoot_angle
+        )
+
+        # Gathering map objects
+        map_objects = self.bot_manager.game_manager.get_items_on_map(
+            bots_only=True, objects_only=True, collision_only=True, radius=shoot_max_distance, origin=self.coordinates
+        )
+        # Avoid shooting in our foot
+        map_objects.remove(self)
+
+        # Test which objects can be shot
+        closest_object: OrientedGameObject | None = None
+        touched_objects = ShapesUtils.cast_ray_on_objects((self.x, self.z), (shoot_end_x, shoot_end_z), map_objects)
+        if len(touched_objects):
+            sorted_objects = sorted(
+                touched_objects,
+                key=lambda obj: ShapesUtils.get_2d_distance_between((self.x, self.z), obj.coordinates)
+            )
+            closest_object = sorted_objects[0]
+
+        # If an object was shot, we return it
+        if closest_object is not None:
+            # We have one object that was shot
+            # return Target(id=closest_object.id)
+            return Target(x=closest_object.x, z=closest_object.z)
+        else:
+            # No object was harmed
+            return Target(x=shoot_end_x, z=shoot_end_z)
 
     def turn(self, radians: float):
         """
@@ -305,8 +339,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
 
         # Calculating new coordinates
-        new_x = cos(self.ry) * distance
-        new_z = sin(self.ry) * distance
+        new_x, new_z = ShapesUtils.get_coordinates_at_distance(
+            origin=(self.x, self.z), distance=distance, angle=self.ry
+        )
 
         if not self.collision():
             # Moving the bot on the map
