@@ -24,10 +24,10 @@ function action(moveCoordinate){
     //let posDest = this.sceneObject.position.clone();
     //posDest.set(moveCoordinate.x, 0.5, moveCoordinate.z);
     //this.sceneObject.position.lerp(posDest, 0.1);
-    this.sceneObject.position.x = moveCoordinate.x;
-    this.sceneObject.position.z = moveCoordinate.z;
-    this.x = moveCoordinate.x;
-    this.z = moveCoordinate.z;
+    this.sceneObject.position.x = moveCoordinate.x === undefined? this.sceneObject.position.x: moveCoordinate.x;
+    this.sceneObject.position.z = moveCoordinate.z === undefined? this.sceneObject.position.z: moveCoordinate.z;
+    this.x = moveCoordinate.x === undefined? this.x: moveCoordinate.x;
+    this.z = moveCoordinate.z === undefined? this.z: moveCoordinate.z;
 }
 
 /**

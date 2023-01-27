@@ -51,8 +51,10 @@ class BotUpdateMessage(IBotMessage):
 
     def json(self) -> dict:
         json = {'msg_type': self.msg_type, "bot_id": self.bot_id}
-        json |= {'move': {'x': self.x}} if self.x is not None else dict()
-        json |= {'move': {'z': self.z}} if self.z is not None else dict()
+        if self.x or self.z:
+            json['move'] = dict()
+            json['move'] |= {'x': self.x} if self.x is not None else dict()
+            json['move'] |= {'z': self.z} if self.z is not None else dict()
         json |= {'rotate': {'ry': self.ry}} if self.ry is not None else dict()
         json |= {'shoot': self.targets} if len(self.targets) > 0 else dict()
         json |= {'shield': {'status': self.shield}} if self.shield is not None else dict()
