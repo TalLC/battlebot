@@ -66,7 +66,7 @@ class ScannerModel(IScanner, ABC):
         # Thread's scanner
         self._thread_scanner = Thread(
             target=self._thread_scanning,
-            args=(self.bot._event_stop_threads,)
+            args=(self.bot.event_stop_threads,)
         ).start()
 
     def _thread_scanning(self, e: Event):

@@ -87,6 +87,10 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def ry_deg(self):
         return self.ry * (180 / pi)
 
+    @property
+    def event_stop_threads(self):
+        return self._event_stop_threads
+
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float):
         self.bot_manager = bot_manager
