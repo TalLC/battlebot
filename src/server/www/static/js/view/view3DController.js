@@ -33,6 +33,11 @@ export default class View3DController {
         this.container.ondblclick = this.debug.clickObject.bind(this.debug);
     }
 
+    render() {
+        this.debug.render();
+        this.renderer.render( this.scene, this.camera );
+    }
+
     /*
         Fonction : Permet l'affichage sur notre page html du ThreeJS
         Param : parentElement -> correspondant au body de notre page html

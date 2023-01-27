@@ -54,13 +54,13 @@ function animate(){
         }
         Promise.all(promises).then(() =>{
             requestAnimationFrame( animate );
-            game.v.renderer.render( game.v.scene, game.v.camera );
+            game.render();
         });
         update.shift();
     }
     else{
         requestAnimationFrame( animate );
-        game.v.renderer.render( game.v.scene, game.v.camera );
+        game.render();
     }
 }
 

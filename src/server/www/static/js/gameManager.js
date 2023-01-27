@@ -12,6 +12,14 @@ class GameManager {
         this.mapObjects = {};
     }
 
+    render() {
+        for (let bot of Object.values(this.bots)) {
+            bot.render();
+        }
+
+        this.v.render();
+    }
+
     /*
         Fonction : Permet la création de Bots dans le jeu.
         Param : id -> ID unique du Bot
@@ -62,11 +70,9 @@ class GameManager {
                 if (obj.sceneObject) {
                     if (obj.type === checkFor) {
                         if (obj.sceneObject === sceneObject) {
-                            console.log("Object found", obj);
                             return obj;
                         }
                         if (obj.sceneObject === sceneObject.parent) {
-                            console.log("Object found in parent", obj);
                             return obj;
                         }
                     }
