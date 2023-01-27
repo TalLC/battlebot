@@ -10,7 +10,6 @@ export default class Bot extends GameObject{
         this.teamColor = colorStrToNumber(construct.teamColor);
         this.modelName = construct.modelName;
         this.sceneObject = null;
-
         this.shoot = false;
         this.hit = false;
         this.shieldHide = false;
