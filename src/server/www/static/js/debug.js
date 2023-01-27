@@ -124,13 +124,13 @@ export default class Debug{
         botRy.innerHTML = `Ry (Bot) = ${bot.ry?.toFixed(3)}`;
 
         let botObjX = document.createElement('p');
-        botObjX.innerHTML = `X (obj) = ${bot.sceneObject?.position.x.toFixed(3)}`;
+        botObjX.innerHTML = `X (obj) = ${bot.sceneObject?.position.x?.toFixed(3)}`;
 
         let botObjZ = document.createElement('p');
-        botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject?.position.z.toFixed(3)}`;
+        botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject?.position.z?.toFixed(3)}`;
 
         let botObjRy = document.createElement('p');
-        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject?.rotation.y.toFixed(3)}`;
+        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject?.rotation.y?.toFixed(3)}`;
 
         // Ajout des données au conteneur
         this.infoContainer.appendChild(header);
