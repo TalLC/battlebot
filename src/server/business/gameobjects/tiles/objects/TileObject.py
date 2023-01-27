@@ -7,7 +7,6 @@ from business.gameobjects.OrientedGameObject import OrientedGameObject
 
 
 class TileObject(OrientedGameObject, IDestructible, ABC):
-
     def __init__(self, name: str, x: int, z: int, heading: float = 0.0, health: int = 0, has_collision: bool = False,
                  shape: Polygon or None = None):
         OrientedGameObject.__init__(self, name=name, ry=heading, x=x, z=z, shape=shape)

@@ -157,6 +157,7 @@ export default class View3DController {
         }
     }
 
+
     /*
         Fonction : Efface complètement un objet de la scène ThreeJs.
         Param : sceneObject -> L'objet à supprimer.

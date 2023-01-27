@@ -76,18 +76,28 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
     @property
     def shape(self) -> BaseGeometry:
-        return ShapeFactory().create_shape(Shape.CIRCLE, o=(self.x, self.z), radius=.2, resolution=3)
+        return ShapeFactory().create_shape(
+            self._collision_shape, o=(self.x, self.z), radius=self._collision_size, resolution=3
+        )
 
-    @shape.setter
-    def shape(self, _):
-        pass
+    # @shape.setter
+    # def shape(self, _):
+    #     pass
+
+    @property
+    def shape_name(self) -> str:
+        return self._shape_name
+
+    @property
+    def shape_size(self) -> float:
+        return self._shape_size
 
     @property
     def ry_deg(self):
         return self.ry * (180 / pi)
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
-                 turning_speed: float):
+                 turning_speed: float, shape_name: str, shape_size: float):
         self.bot_manager = bot_manager
 
         # Role name
@@ -100,6 +110,10 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         OrientedGameObject.__init__(self, name)
         IMoving.__init__(self, moving_speed, turning_speed)
         IDestructible.__init__(self, health, True)
+
+        # Collision Shape
+        self._shape_name = shape_name
+        self._shape_size = shape_size
 
         # Random starting point
         self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coordinates()

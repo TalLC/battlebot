@@ -87,7 +87,7 @@ ws.onmessage = async function(event) {
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.addBot(message.bot_id, message.x, message.z, -1 * message.ry, message.team_color);
+            game.addBot(message);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
             while(null in game.bots);

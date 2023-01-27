@@ -1,3 +1,4 @@
+import GameManager from './gameManager.js';
 import sendRestMessage from './rest.js'
 
 
@@ -17,6 +18,9 @@ export default class DebugUi {
         
         const buttonKillBot = headerContainer.querySelector("#header-button-kill-bot");
         buttonKillBot.onclick = this.killBot.bind(this);
+        
+        const buttonToggleCollisions = headerContainer.querySelector("#header-button-collisions");
+        buttonToggleCollisions.onclick = this.toggleCollisions.bind(this);
 
         // Remote
         this.remoteContainer = document.getElementById("remote-container");
@@ -58,6 +62,15 @@ export default class DebugUi {
         let botId = prompt("ID du bot :", "0-0-0-0-0");
         if (botId !== null && botId !== "") {
             sendRestMessage('PATCH', `/bots/${botId}/action/kill`, {"api_password": "password"});
+        }
+    }
+
+    toggleCollisions() {
+        for(const obj of Object.values(GameManager.bots)) {
+            obj.toggleCollisions();
+        }
+        for(const obj of Object.values(GameManager.mapObjects)) {
+            obj.toggleCollisions();
         }
     }
 
