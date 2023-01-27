@@ -1,7 +1,7 @@
 import GameManager from './gameManager.js';
 import {actions} from './actions/actions.js';
 import sendRestMessage from './rest.js'
-import * as TWEEN from 'tween';
+
 
 let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let game = GameManager;
@@ -19,32 +19,21 @@ function doAction(message){
     // console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].sceneObject){
+        if(game.bots[message.data.bot_id] && game.bots[message.data.bot_id].sceneObject){
             
             // Parcours des actions enregistrées
             for(let actionDef in actions){
 
                 // Choix de l'action à effectuer suivant les arguments trouvés dans le message
-                // Todo : Se baser sur le type de message ?
-                let selected = actions[actionDef].actionSelector(message);
+                let selected = actions[actionDef].actionSelector(message.data);
                 
                 if(selected){
-                    let paramAction = actions[actionDef].eventwrapper(message);
+                    let paramAction = actions[actionDef].eventwrapper(message.data);
                     promise = promise.then(() => {
-                        game.bots[message.bot_id].action(actionDef,paramAction);
+                        game.bots[message.data.bot_id].action(actionDef,paramAction);
                     });
                 }
             }
-        }
-    }
-    else if (message.msg_type === "BotShootAtCoordinates") {
-        let actionDef = "shoot";
-        let selected = actions[actionDef].actionSelector(message);
-        if (selected) {
-            let paramAction = actions[actionDef].eventwrapper(message);
-            promise = promise.then(() => {
-                game.bots[message.bot_id].action(actionDef, paramAction);
-            });
         }
     }
 
@@ -52,13 +41,14 @@ function doAction(message){
 }
 
 /*
-    Fonction : Permet une animation fluide à chaque frame.
+    Fonction : Permet l'affichage de la scene.
     Param : N/A
     Return : N/A
 */
-/*function animate(){
+function animate(){
     if(update[0] !== undefined && update[0].messages !== undefined){
         let promises = [];
+        console.log(update[0].messages)
         for(let i = 0; i < update[0].messages.length; i++){
             promises.push(doAction(update[0].messages[i]));
         }
@@ -72,10 +62,9 @@ function doAction(message){
         requestAnimationFrame( animate );
         game.v.renderer.render( game.v.scene, game.v.camera );
     }
-    requestAnimationFrame( animate );
-}*/
+}
 
-const box = document.createElement('div')
+/*const box = document.createElement('div')
 box.style.setProperty('background-color', '#008800')
 box.style.setProperty('width', '100px')
 box.style.setProperty('height', '100px')
@@ -101,6 +90,9 @@ const tween = new TWEEN.Tween(coords) // Create a new tween that modifies 'coord
     .repeat(50)
 
 animate(10000);
+*/
+
+animate();
 
 /*
     Fonction : Permet la récupération en continue des données reçues via websocket
