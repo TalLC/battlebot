@@ -2,6 +2,7 @@ import GameManager from './gameManager.js';
 import {actions} from './actions/actions.js';
 import sendRestMessage from './rest.js'
 
+
 let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let game = GameManager;
 let update = [];
@@ -24,10 +25,10 @@ function doAction(message){
             for(let actionDef in actions){
 
                 // Choix de l'action à effectuer suivant les arguments trouvés dans le message
-                // Todo : Se baser sur le type de message ?
                 let selected = actions[actionDef].actionSelector(message);
                 
                 if(selected){
+                    console.log(message.move)
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
                         game.bots[message.bot_id].action(actionDef,paramAction);
@@ -36,40 +37,31 @@ function doAction(message){
             }
         }
     }
-    else if (message.msg_type === "BotShootAtCoordinates") {
-        let actionDef = "shoot";
-        let selected = actions[actionDef].actionSelector(message);
-        if (selected) {
-            let paramAction = actions[actionDef].eventwrapper(message);
-            promise = promise.then(() => {
-                game.bots[message.bot_id].action(actionDef, paramAction);
-            });
-        }
-    }
 
     return promise;
 }
 
 /*
-    Fonction : Permet une animation fluide à chaque frame.
+    Fonction : Permet l'affichage de la scene.
     Param : N/A
     Return : N/A
 */
 function animate(){
     if(update[0] !== undefined && update[0].messages !== undefined){
         let promises = [];
+        console.log(update[0].messages)
         for(let i = 0; i < update[0].messages.length; i++){
             promises.push(doAction(update[0].messages[i]));
         }
         Promise.all(promises).then(() =>{
             requestAnimationFrame( animate );
-            game.v.renderer.render( game.v.scene, game.v.camera );
+            game.render();
         });
         update.shift();
     }
     else{
         requestAnimationFrame( animate );
-        game.v.renderer.render( game.v.scene, game.v.camera );
+        game.render();
     }
 }
 
@@ -95,7 +87,7 @@ ws.onmessage = async function(event) {
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.addBot(message.bot_id, message.x, message.z, message.ry, message.team_color);
+            game.addBot(message.bot_id, message.x, message.z, -1 * message.ry, message.team_color);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
             while(null in game.bots);

@@ -7,5 +7,13 @@ export default class GameObject{
         this.y = y;
         this.z = z;
         this.ry = ry;
+        this.debugBoxHelper;
+    }
+
+    render() {
+        // Si on a une boxHelper, on l'update pour suivre le déplacement de l'objet
+        if (this.debugBoxHelper) {
+            this.debugBoxHelper.update();
+        }
     }
 }

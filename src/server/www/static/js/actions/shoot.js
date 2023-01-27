@@ -8,8 +8,8 @@ import * as THREE from 'three';
     Param : message -> données reçu par le websocket pour le bot
     Return : un dictionnaire contenant les positions en x et en z "final" du bot
 */
-function eventwrapper(message){
-    return message;
+function eventwrapper(botState){
+    return {'bot_id': botState.bot_id, 'coordinates': botState.shoot};
 }
 
 /*
@@ -17,9 +17,7 @@ function eventwrapper(message){
     Param : message -> données reçu par le websocket
     Return : un booléen qui determine si l'action a été, et doit être animée.
 */
-function actionSelector(message){
-    return message.msg_type && message.msg_type === "BotShootAtCoordinates";
-}
+function actionSelector(botState){return !(botState.shoot === undefined);}
 
 /*
     Fonction : Qui affiche le tir du bot

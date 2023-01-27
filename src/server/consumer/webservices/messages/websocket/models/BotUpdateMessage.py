@@ -1,6 +1,5 @@
 from __future__ import annotations
 from consumer.webservices.messages.websocket.interfaces.IBotMessage import IBotMessage
-from consumer.webservices.messages.websocket.models.EnumStatus import EnumStatus
 from consumer.webservices.messages.websocket.models.Target import Target
 
 
@@ -15,25 +14,30 @@ class BotUpdateMessage(IBotMessage):
         return self._z
 
     @property
-    def targets(self) -> list:
-        return self._targets
-
-    @property
     def ry(self) -> float:
         return self._ry
 
     @property
-    def action(self) -> EnumStatus:
-        return self._action
+    def targets(self) -> list:
+        return self._targets
+
+    @property
+    def shield(self) -> bool:
+        return self._shield
+
+    @property
+    def hit(self) -> bool:
+        return self._hit
 
     def __init__(self, bot_id: str, x: float = None, z: float = None, ry: float = None,
-                 target: Target = None, action: EnumStatus = EnumStatus.NONE):
+                 target: Target = None, shield: bool = None, hit: bool = False):
         super().__init__(msg_type="BotUpdateMessage", bot_id=bot_id)
         self._x = x
         self._z = z
-        self._targets = [target] if target is not None else list()
         self._ry = ry
-        self._action = action
+        self._targets = [target.json()] if target is not None else list()
+        self._shield = shield
+        self._hit = hit
 
     def __add__(self, other: BotUpdateMessage):
         if self.bot_id != other.bot_id:
@@ -42,16 +46,17 @@ class BotUpdateMessage(IBotMessage):
         self._z = other.z if other.z is not None else self.z
         self._ry = other.ry if other.ry is not None else self.ry
         self._targets += other.targets if len(other.targets) > 0 else list()
-        self._action |= other.action
+        self._shield = other.shield if other.shield is not None else self.shield
+        self._hit = other.hit if other.hit else self.hit
 
     def json(self) -> dict:
-        sent_json = {
-            'bot_id': self.bot_id,
-            'msg_type': self.msg_type
-        }
-        sent_json |= {"x": self.x} if self.x else dict()
-        sent_json |= {"z": self.z} if self.z else dict()
-        sent_json |= {"ry": self.ry} if self.ry else dict()
-        sent_json |= {"targets": [t.json() for t in self.targets]} if len(self.targets) else dict()
-        sent_json |= {"action": self.action.value}
-        return sent_json
+        json = {'msg_type': self.msg_type, "bot_id": self.bot_id}
+        if self.x or self.z:
+            json['move'] = dict()
+            json['move'] |= {'x': self.x} if self.x is not None else dict()
+            json['move'] |= {'z': self.z} if self.z is not None else dict()
+        json |= {'rotate': {'ry': self.ry}} if self.ry is not None else dict()
+        json |= {'shoot': self.targets} if len(self.targets) > 0 else dict()
+        json |= {'shield': {'status': self.shield}} if self.shield is not None else dict()
+        json |= {'hit': {'status': self.hit}} if self.hit else dict()
+        return json

@@ -18,6 +18,8 @@ export default class Bot extends GameObject{
         this.enrolled = false;
     }
 
+
+
     /* 
         Fonction : Permet l'appel à une action intéragissant avec le bot (action définit dans actionDefinition.js)
         Param : key -> contient le nom de l'action.
