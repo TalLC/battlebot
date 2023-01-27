@@ -25,7 +25,6 @@ from consumer.ConsumerManager import ConsumerManager
 from business.gameobjects.tiles.Tile import Tile
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
-from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
 from consumer.brokers.messages.stomp.BotStunningStatusMessage import BotStunningStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
@@ -132,12 +131,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             args=(self._event_stop_threads,)
         ).start()
 
-        # Thread's scanner
-        self._thread_scanner = Thread(
-            target=self._thread_scanning,
-            args=(self._event_stop_threads,)
-        ).start()
-
     def stop(self):
         """
         Stops properly all bot activities.
@@ -217,20 +210,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
-
-    # Todo : A déplacer sur le scanner directement ?
-    def _thread_scanning(self, e: Event):
-        # Waiting interval between all increments
-        loop_wait_ms = 100
-        while not e.is_set():
-            if self.bot_manager.game_manager.is_started and self.equipment.scanner.activated:
-                detected_objects = self.equipment.scanner.scanning()
-                if detected_objects:
-                    ConsumerManager().mqtt.send_message(
-                        BotScannerDetectionMessage(self.id, detected_object_list=detected_objects))
-                sleep(self.equipment.scanner.interval)
-            else:
-                sleep(loop_wait_ms / 1000)
 
     def _thread_stunning(self, duration):
 
