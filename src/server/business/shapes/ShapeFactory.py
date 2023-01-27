@@ -42,7 +42,7 @@ class ShapeFactory:
 
         return Polygon([
             (o.x - width/2, o.y - width/2), (o.x + width/2, o.y - width/2),
-            (o.x + width/2, o.y + width), (o.x, o.y + width)])
+            (o.x + width/2, o.y + width/2), (o.x - width/2, o.y + width/2)])
 
     @staticmethod
     def create_circle(**kwargs):

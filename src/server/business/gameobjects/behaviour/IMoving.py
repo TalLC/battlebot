@@ -27,7 +27,7 @@ class IMoving(ABC):
     @property
     def turn_direction(self) -> str:
         """
-        Is the entity turning?
+        Return which direction the entity is turning to.
         """
         return self._turn_direction
 

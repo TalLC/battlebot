@@ -21,9 +21,9 @@ function actionSelector(botState){return botState.x || botState.z;}
 */
 function action(moveCoordinate){
     //let posDest = new THREE.Vector3(moveCoordinate.x, 0.5, moveCoordinate.z);
-    let posDest = this.objBot.position.clone();
+    let posDest = this.sceneObject.position.clone();
     posDest.set(moveCoordinate.x, 0.5, moveCoordinate.z);
-    this.objBot.position.lerp(posDest, 0.1);
+    this.sceneObject.position.lerp(posDest, 0.1);
     this.x = posDest.x;
     this.z = posDest.z;
 }
