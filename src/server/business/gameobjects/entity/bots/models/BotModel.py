@@ -16,6 +16,7 @@ from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
 from business.gameobjects.entity.bots.commands.BotStunCommand import BotStunCommand
+from business.gameobjects.entity.bots.models.CollisionHandler import BotCollisionHandler
 from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
@@ -113,6 +114,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # State
         self.is_stun = False
+
+        # Collision Handler
+        self.collision_handler = BotCollisionHandler(self)
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
@@ -373,52 +377,14 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
 
-    def collision(self) -> bool:
+    def collision(self) -> None:
         """
         Check if the bot is colliding.
         """
-        collision_entity = None
-        # Get items arround the bot
-        neared_items = self.bot_manager.game_manager.get_items_on_map(bots_only=True, objects_only=False, radius=1,
-                                                                      origin=self.coordinates)
-        for item in neared_items:
-            if isinstance(item, Tile):
-
-                if item.tile_object.has_collision and item.tile_object.shape.intersection(self.shape):
-                    # Si l'objet a des collisions et si les formes de l'objet et du bot se touchent
-                    collision_entity = item.tile_object.name
-                    break
-
-                elif not item.is_walkable and (self.shape.centroid.distance(item.shape.centroid) <
-                                               ShapesUtils.get_radius(item.shape) + ShapesUtils.get_radius(self.shape)):
-                    # Si on ne peut pas marcher sur l'item et que la distance entre l'objet et le bot est faible
-                    collision_entity = item.name
-                    break
-
-            if isinstance(item, self.__class__) and item != self and item.shape.intersection(self.shape):
-                # Si l'objet est un bot
-                collision_entity = item.name
-                break
-
-        if collision_entity is not None:
-            logging.info(f'-------------{self.name} COLLISION with {collision_entity} -------------')
-            self.add_command_to_queue(BotStunCommand(priority=0, value=1))
-            self.knockback(1.5)
-
+        if self.collision_handler.check_collision():
+            self.collision_handler.handle_collision()
             return True
-
         return False
-
-    def knockback(self, distance: float) -> None:
-        """
-        Quickly knock the bot back.
-        """
-        # TODO : Correction -> Côté back le bot recule à l'impact. Côté front, il bump lorsqu'il recommence à bouger.
-        new_x, new_z = ShapesUtils.get_coordinates_at_distance(
-            origin=(self.x, self.z), distance=distance, angle=math.fmod(self.ry - math.pi, 2 * math.pi)
-        )
-        self.set_position(new_x, new_z, self.ry)
-        ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
 
     def stun(self, duration: float) -> None:
         """
