@@ -19,18 +19,18 @@ function doAction(message){
     // console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.data.bot_id] && game.bots[message.data.bot_id].sceneObject){
+        if(game.bots[message.bot_id] && game.bots[message.bot_id].sceneObject){
             
             // Parcours des actions enregistrées
             for(let actionDef in actions){
 
                 // Choix de l'action à effectuer suivant les arguments trouvés dans le message
-                let selected = actions[actionDef].actionSelector(message.data);
+                let selected = actions[actionDef].actionSelector(message);
                 
                 if(selected){
-                    let paramAction = actions[actionDef].eventwrapper(message.data);
+                    let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
-                        game.bots[message.data.bot_id].action(actionDef,paramAction);
+                        game.bots[message.bot_id].action(actionDef,paramAction);
                     });
                 }
             }
