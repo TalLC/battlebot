@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 
 from consumer.ConsumerManager import ConsumerManager
+from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
 from consumer.webservices.messages.websocket.BotShootAtObjects import BotShootAtObjects
 from consumer.webservices.messages.websocket.BotShootAtCoordinates import BotShootAtCoordinates
 
@@ -21,7 +22,8 @@ class BotShootCommand(IBotCommand):
         Contains the function to execute.
         """
         target = arg.shoot(self.value)
-        if target.id:
-            ConsumerManager().websocket.send_message(BotShootAtObjects(arg.id, target.id))
-        else:
-            ConsumerManager().websocket.send_message(BotShootAtCoordinates(arg.id, {'x': target.x, 'y': target.z}))
+        ConsumerManager().websocket.send_message(BotUpdateMessage(bot_id=arg.id, target=target))
+        #if target.id:
+        #    ConsumerManager().websocket.send_message(BotShootAtObjects(arg.id, target.id))
+        #else:
+        #    ConsumerManager().websocket.send_message(BotShootAtCoordinates(arg.id, {'x': target.x, 'y': target.z}))
