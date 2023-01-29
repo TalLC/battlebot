@@ -309,8 +309,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # If an object was shot, we return it
         if closest_object is not None:
             # We have one object that was shot
-            # return Target(id=closest_object.id)
-            return Target(x=closest_object.x, z=closest_object.z)
+            return Target(id=closest_object.id)
         else:
             # No object was harmed
             return Target(x=shoot_end_x, z=shoot_end_z)
