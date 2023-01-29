@@ -6,9 +6,9 @@
 }
 
 .startgame-logo {
-    max-width: 100vw;
+    max-width: 60vw;
     max-height: 100vw;
-    padding-top: calc(var(--ui-header-height) + 2vw);
+    padding-top: calc(var(--ui-header-height) + 3vw);
 }
 
 .startgame-list {
