@@ -90,9 +90,10 @@ ws.onmessage = async function(event) {
             game.addBot(message);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
+            game.loginId = message.login_id;
             while(null in game.bots);
             console.log('Start game');
-            game.loginId = message.login_id;
+            game.start();
             sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: game.loginId});
         }
     }

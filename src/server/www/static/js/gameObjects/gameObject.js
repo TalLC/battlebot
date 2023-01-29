@@ -27,7 +27,7 @@ export default class GameObject{
     toggleCollisions() {
         if (this.sceneObject && this.type !== "tile") {
             if (this.collisionBox) {
-                GameManager.v.disposeObject3D( this.collisionBox );
+                GameManager.v.disposeSceneObject( this.collisionBox );
                 this.collisionBox = undefined;
             } else {
                 this.collisionBox = Object3DFactory.createCollisionBoxForGameObject(this);

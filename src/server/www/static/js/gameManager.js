@@ -1,4 +1,5 @@
 import View3DController from "./view/view3DController.js";
+import Object3DFactory from "./view/object3DFactory.js";
 import Bot from "./gameObjects/bot.js"
 import MapObject from "./gameObjects/mapObject.js"
 import {getRandomInt} from "./utils.js"
@@ -18,6 +19,14 @@ class GameManager {
         }
 
         this.v.render();
+    }
+
+    start() {
+        // Masquer la page d'attente
+        const startgameContainer = document.getElementById("startgame-container");
+        startgameContainer.hidden = true;
+
+        this.v.start();
     }
 
     /*
@@ -40,7 +49,9 @@ class GameManager {
             botData.model_name
         );
         console.log(this.bots[botData.id]);
-        this.v.createBot3D(this.bots[botData.id]);
+        Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
+            this.v.scene.add(sceneObject);
+        });
     }
 
     /*
@@ -63,7 +74,9 @@ class GameManager {
             mapObjectData.model
         );
         if (mapObjectData.model !== "air") {
-            this.v.createMapObject3D(this.mapObjects[mapObjectData.id]);
+            Object3DFactory.createMapObject3D(this.mapObjects[mapObjectData.id]).then(sceneObject => {
+                this.v.scene.add(sceneObject);
+            });
         }
     }
 

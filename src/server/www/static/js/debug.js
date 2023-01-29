@@ -27,6 +27,11 @@ export default class Debug{
         }
     }
 
+    start() {
+        // Affichage des informations de debug
+        this.container.hidden = false;
+    }
+
     createCameraHelper() {
         this.view.scene.add( new THREE.CameraHelper( this.view.camera ) );
     }
@@ -97,7 +102,7 @@ export default class Debug{
     deselectObject() {
         this.debugUi.setRemoteHidden(true);
         if (this.selectedObject && this.selectedObject.debugBoxHelper) {
-            this.view.disposeObject3D(this.selectedObject.debugBoxHelper);
+            this.view.disposeSceneObject(this.selectedObject.debugBoxHelper);
             this.selectedObject.debugBoxHelper = undefined;
         }
         this.selectedObject = undefined;

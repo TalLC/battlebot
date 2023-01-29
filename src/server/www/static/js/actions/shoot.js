@@ -58,6 +58,6 @@ function shootTo(bot, to) {
 
     // Wait for the promise to resolve, then remove the mesh from the scene
     laserPromise.then(() => {
-        GameManager.v.disposeObject3D(laserMesh);
+        GameManager.v.disposeSceneObject(laserMesh);
     });
 }

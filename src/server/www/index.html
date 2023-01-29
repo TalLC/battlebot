@@ -7,24 +7,41 @@
     <link rel="stylesheet" href="static/css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/bootstrap/bootstrap-icons.css">
 		<link rel="stylesheet" href="static/css/styles.css" />
+		<link rel="stylesheet" href="static/css/debug.css" />
+		<link rel="stylesheet" href="static/css/startgame.css" />
 	</head>
-	<body>
-    <div id="header-container" class="unselectable">
-      <div class="row">
-        <div class="col">
-          <button id="header-button-force-start" class="btn btn-primary" type="button">Forcer le démarrage ▶️</button>
-          <button id="header-button-add-bot" class="btn btn-primary" type="button">Ajouter un bot 🤖</button>
-          <button id="header-button-kill-bot" class="btn btn-primary" type="button">Tuer un bot 🤖🔫</button>
-          <button id="header-button-collisions" class="btn btn-primary" type="button">Afficher les collisions 💥</button>
-        </div>
+	<body data-bs-theme="dark">
+
+    <!-- Boutons de debug en haut de page -->
+    <div id="header-container" class="d-flex justify-content-center align-items-center unselectable">
+      <button id="header-button-force-start" class="btn btn-primary m-1" type="button">Forcer le démarrage ▶️</button>
+      <button id="header-button-add-bot" class="btn btn-primary m-1" type="button">Ajouter un bot 🤖</button>
+      <button id="header-button-kill-bot" class="btn btn-primary m-1" type="button">Tuer un bot 🤖🔫</button>
+      <button id="header-button-collisions" class="btn btn-primary m-1" type="button">Afficher les collisions 💥</button>
+    </div>
+
+    <!-- Page d'attente -->
+    <div id="startgame-container" class="container-fluid unselectable">
+      <div class="row justify-content-md-center">
+          <div class="col-md-auto">
+              <img id="map-img" class="startgame-logo unselectable" src="static/img/logo.png"/>
+          </div>
       </div>
-      <div class="row">
-        <div class="col">
-          La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 équipe en vie
-        </div>
+      <div class="row justify-content-md-center">
+          <div class="col-md-auto" style="height: 10vh;"></div>
+      </div>
+      <div class="container-fluid startgame-block-rounded">
+          <div class="row justify-content-xl-center">
+              <div class="col-xl-auto">
+                  <h1><span class="bi bi-hourglass-split"></span> En attente de connexion des IA...</h1>
+                  <p>La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 équipe en vie</p>
+              </div>
+          </div>
       </div>
     </div>
-    <div id="debug-container" class="unselectable">
+
+    <!-- Données de débug sur la droite -->
+    <div id="debug-container" class="unselectable" hidden>
       <div id="info-container"></div>
       <div id="remote-container" hidden>
         <!-- Partie déplacements du bot -->
@@ -66,9 +83,11 @@
       </div>
     </div>
 
-    <div id="view-container">
+    <!-- Contient l'affichage de la partie' -->
+    <div id="view-container" hidden>
       <canvas id="threejs-canvas"></canvas>
     </div>
+
     <script type="importmap">
       {
         "imports": {
@@ -83,5 +102,6 @@
     </script>
     <script src="static/js/bootstrap/bootstrap.bundle.min.js"></script>
 		<script type='module' src="static/js/script.js"></script>
+
 	</body>
 </html>
