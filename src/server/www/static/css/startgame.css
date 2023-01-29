@@ -1,0 +1,25 @@
+
+#startgame-container {
+    background-color: #000000;
+    min-height: 100%;
+    min-height: 100vh;
+}
+
+.startgame-logo {
+    max-width: 60vw;
+    max-height: 100vw;
+    padding-top: calc(var(--ui-header-height) + 3vw);
+}
+
+.startgame-list {
+    font-size: 14pt;
+    list-style-type: none;
+}
+
+.startgame-block-rounded {
+    width: 720px;
+    background-color: #0e0e0e;
+    padding: 10px;
+    border-radius: 30px;
+    backdrop-filter: blur(2px);
+}

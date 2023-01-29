@@ -28,7 +28,6 @@ function doAction(message){
                 let selected = actions[actionDef].actionSelector(message);
                 
                 if(selected){
-                    console.log(message.move)
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
                         game.bots[message.bot_id].action(actionDef,paramAction);
@@ -87,12 +86,13 @@ ws.onmessage = async function(event) {
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.addBot(message.bot_id, message.x, message.z, -1 * message.ry, message.team_color);
+            game.addBot(message);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
+            game.loginId = message.login_id;
             while(null in game.bots);
             console.log('Start game');
-            game.loginId = message.login_id;
+            game.start();
             sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: game.loginId});
         }
     }

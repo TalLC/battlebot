@@ -1,6 +1,6 @@
 import {ActionDefinition, actions} from "./actions.js";
 import GameManager from '../gameManager.js';
-import * as THREE from 'three';
+import Object3DFactory from "../view/object3DFactory.js";
 
 
 /*
@@ -9,7 +9,7 @@ import * as THREE from 'three';
     Return : un dictionnaire contenant les positions en x et en z "final" du bot
 */
 function eventwrapper(botState){
-    return {'bot_id': botState.bot_id, 'coordinates': botState.shoot};
+    return {'bot_id': botState.bot_id, 'targets': botState.shoot};
 }
 
 /*
@@ -27,8 +27,17 @@ function actionSelector(botState){return !(botState.shoot === undefined);}
 function action(parameters){
     const bot = GameManager.bots[parameters.bot_id];
 
-    for (let coordinates of parameters.coordinates) {
-        shootTo(bot, coordinates);
+    for (let target of parameters.targets) {
+        if (!target.id) {
+            shootTo(bot, target);
+        } else {
+            const targetObject = GameManager.getGameObjectFromId(target.id);
+            if (targetObject) {
+                shootTo(bot, targetObject.coordinates2D);
+            } else {
+                console.error(`L'objet ayant pour ID ${target.id} n'a pas été trouvé`);
+            }
+        }
     }
 }
 
@@ -39,11 +48,10 @@ actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
 
 
 function shootTo(bot, to) {
-    console.log(to);
-    const laserMesh = createLaserMesh(
+    const laserMesh = Object3DFactory.createLaserMesh(
         bot.teamColor,
-        new THREE.Vector3(bot.x, 1.5, bot.z),
-        new THREE.Vector3(to.x, 1.5, to.z)
+        [bot.x, 1.5, bot.z],
+        [to.x, 1.5, to.z]
     );
 
     //Add the mesh to the scene
@@ -58,35 +66,6 @@ function shootTo(bot, to) {
 
     // Wait for the promise to resolve, then remove the mesh from the scene
     laserPromise.then(() => {
-        GameManager.v.disposeObject3D(laserMesh);
+        GameManager.v.disposeSceneObject(laserMesh);
     });
-}
-
-function createLaserMesh(color, start, end) {
-    // Create a material
-    let lineMaterial = new THREE.MeshBasicMaterial({
-      color: color
-    });
-  
-    //calculate the distance between start and end point
-    let distance = start.distanceTo(end);
-    
-    //calculate the number of segments needed
-    const desired_detail_level = 2;
-    let segments = Math.ceil(distance / desired_detail_level);
-    
-    // Create a path for the tube
-    let path = new THREE.CatmullRomCurve3([start, end]);
-    
-    // Create the tube geometry
-    let tubeGeometry = new THREE.TubeGeometry(
-      path,
-      segments,
-      0.15,
-      8,
-      true
-    );
-  
-    // Create the tube mesh
-    return new THREE.Mesh(tubeGeometry, lineMaterial);
 }

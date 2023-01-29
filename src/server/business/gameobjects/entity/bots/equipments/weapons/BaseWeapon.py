@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class BaseWeapon(WeaponModel):
     _name = "Basic weapon"
     _damages: int = 5
-    _reach_distance: int = 3
+    _reach_distance: int = 10
 
     def __init__(self, bot: BotModel):
         super().__init__(bot, self._name, self._damages, self._reach_distance)
