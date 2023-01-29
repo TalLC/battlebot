@@ -54,15 +54,7 @@ class WebsocketProvider:
             # Sending all bots to webservice
             for bot in GameManager().bot_manager.get_bots():
                 await websocket.send_json(
-                    BotCreateMessage(
-                        bot_id=bot.id,
-                        x=bot.x,
-                        z=bot.z,
-                        ry=bot.ry,
-                        team_color=bot.team.color,
-                        collision_shape=bot.shape_name,
-                        collision_size=bot.shape_size
-                    ).json())
+                    BotCreateMessage(bot).json())
 
             # Sending token to the client in order to send it back using Rest when ready
             await websocket.send_json(DisplayClientLoginMessage(display_client).json())
