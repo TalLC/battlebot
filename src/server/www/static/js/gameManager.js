@@ -48,7 +48,6 @@ class GameManager {
             botData.shape_size,
             botData.model_name
         );
-        console.log(this.bots[botData.id]);
         Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
             this.v.scene.add(sceneObject);
         });
@@ -105,6 +104,15 @@ class GameManager {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    getGameObjectFromId(id) {
+        // On parcourt tous les objets de la map pour chercher l'id demandé
+        for(let obj of Object.values({...this.bots, ...this.mapObjects})) {
+            if (obj.id === id) {
+                return obj;
             }
         }
     }
