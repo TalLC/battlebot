@@ -28,7 +28,6 @@ function doAction(message){
                 let selected = actions[actionDef].actionSelector(message);
                 
                 if(selected){
-                    console.log(message.move)
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
                         game.bots[message.bot_id].action(actionDef,paramAction);
