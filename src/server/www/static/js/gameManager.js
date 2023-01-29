@@ -31,15 +31,16 @@ class GameManager {
         Return : N/A
     */
     addBot(botData) {
-        this.bots[botData.bot_id] = new Bot(
-            botData.bot_id,
+        this.bots[botData.id] = new Bot(
+            botData.id,
             botData.x, botData.z, -1 * botData.ry,
             botData.team_color,
-            botData.collision_shape.toLowerCase(),
-            botData.collision_size,
-            botData.model_name? botData.model_name : "default"
+            botData.shape_name.toLowerCase(),
+            botData.shape_size,
+            botData.model_name
         );
-        this.v.createBot3D(this.bots[botData.bot_id]);
+        console.log(this.bots[botData.id]);
+        this.v.createBot3D(this.bots[botData.id]);
     }
 
     /*
@@ -119,8 +120,8 @@ class GameManager {
                                 y: 0.0,
                                 z: tile['z'],
                                 ry: 0.0,
-                                collisionShape: tile['collision_shape'],
-                                collisionSize: tile['collision_size'],
+                                collisionShape: tile['shape_name'],
+                                collisionSize: tile['shape_size'],
                                 model: tile['name'].toLowerCase()
                             }
                         );
@@ -136,8 +137,8 @@ class GameManager {
                                     y: 0.5,
                                     z: tile['object']['z'],
                                     ry: ry,
-                                    collisionShape: tile['object']['collision_shape'],
-                                    collisionSize: tile['object']['collision_size'],
+                                    collisionShape: tile['object']['shape_name'],
+                                    collisionSize: tile['object']['shape_size'],
                                     model: tile['object']['name'].toLowerCase()
                                 }
                             );
