@@ -5,8 +5,8 @@ import {colorStrToNumber} from '../utils.js'
 
 
 export default class Bot extends GameObject{
-    constructor(id, x, z, ry, teamColor, collisionShape, collisionShize, modelName) {
-        super(id, "bot", x, 0.5, z, ry,  collisionShape, collisionShize);
+    constructor(id, x, z, ry, teamColor, collisionShape, collisionSize, modelName) {
+        super(id, "bot", x, 0.5, z, ry,  collisionShape, collisionSize);
         this.teamColor = colorStrToNumber(teamColor);
         this.modelName = modelName;
         this.sceneObject = null;
