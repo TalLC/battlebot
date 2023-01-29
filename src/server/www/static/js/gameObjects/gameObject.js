@@ -17,6 +17,14 @@ export default class GameObject{
         this.debugBoxHelper;
     }
 
+    get coordinates3D() {
+        return {x: this.x, z: this.z};
+    }
+
+    get coordinates2D() {
+        return {x: this.x, z: this.z};
+    }
+
     render() {
         // Si on a une boxHelper, on l'update pour suivre le déplacement de l'objet
         if (this.debugBoxHelper) {
