@@ -13,11 +13,16 @@ if TYPE_CHECKING:
 
 class Warrior(BotModel):
     _role = "Warrior"
+    _model_name = "default"
     _health_max: int = 100
     _moving_speed = 1.0
     _turning_speed = math.pi / 6  # 30°
     _shape_name = "CIRCLE"
     _shape_size = 0.2
+
+    @property
+    def model_name(self) -> str:
+        return self._model_name
 
     def __init__(self, bot_manager: BotManager, name: str):
         super().__init__(bot_manager, name, self._role, self._health_max, self._moving_speed, self._turning_speed,

@@ -6,7 +6,7 @@ from math import pi
 import logging
 from time import time, sleep
 from datetime import timedelta
-from abc import ABC
+from abc import ABC, abstractmethod
 from queue import PriorityQueue
 from typing import TYPE_CHECKING
 from threading import Thread, Event
@@ -77,7 +77,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     @property
     def shape(self) -> BaseGeometry:
         return ShapeFactory().create_shape(
-            self._collision_shape, o=(self.x, self.z), radius=self._collision_size, resolution=3
+            Shape.CIRCLE, o=(self.x, self.z), radius=self.shape_size, resolution=3
         )
 
     # @shape.setter
@@ -95,6 +95,13 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     @property
     def ry_deg(self):
         return self.ry * (180 / pi)
+
+    @abstractmethod
+    def model_name(self) -> str:
+        """
+        3D model to use.
+        """
+        raise NotImplementedError
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float, shape_name: str, shape_size: float):
