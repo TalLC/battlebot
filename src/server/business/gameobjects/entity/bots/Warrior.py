@@ -18,7 +18,7 @@ class Warrior(BotModel):
     _moving_speed = 1.0
     _turning_speed = math.pi / 6  # 30°
     _shape_name = "CIRCLE"
-    _shape_size = 0.2
+    _shape_size = 0.5
 
     @property
     def model_name(self) -> str:
