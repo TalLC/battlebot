@@ -13,6 +13,13 @@ class GameManager {
         this.mapObjects = {};
     }
 
+    get allGameObjects() {
+        return {
+            ...this.bots,
+            ...this.mapObjects
+        };
+    }
+
     render() {
         for (let bot of Object.values(this.bots)) {
             bot.render();
@@ -110,7 +117,7 @@ class GameManager {
 
     getGameObjectFromId(id) {
         // On parcourt tous les objets de la map pour chercher l'id demandé
-        for(let obj of Object.values({...this.bots, ...this.mapObjects})) {
+        for(let obj of Object.values(this.allGameObjects)) {
             if (obj.id === id) {
                 return obj;
             }
