@@ -286,7 +286,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Maximum end coordinate of the shoot
         shoot_end_x, shoot_end_z = ShapesUtils.get_coordinates_at_distance(
-            (self.x, self.z), shoot_max_distance, self.ry + shoot_angle
+            (self.x, self.z), shoot_max_distance, self.ry + math.radians(shoot_angle)
         )
 
         # Gathering map objects
