@@ -213,7 +213,7 @@ class Map:
             x = d['x']
             z = d['z']
             mat[x][z] = TileFactory.create_tile(
-                tile_type=d['tile'], x=d['x'], z=d['z'], tile_object=TileObjectFactory.create_tileobject(
+                tile_type=d['tile'], x=d['x'], z=d['z'], tile_object=TileObjectFactory.create_tile_object(
                     d['tile_object'], d['x'], d['z'])
             )
         return mat
