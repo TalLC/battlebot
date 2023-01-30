@@ -45,7 +45,7 @@ class Webservices(metaclass=SingletonABCMeta):
                         if isinstance(prev_message, BotUpdateMessage):
 
                             # We already had a message from this bot, let's add them
-                            if prev_message.bot_id == new_message.bot_id:
+                            if prev_message.id == new_message.id:
                                 prev_message += new_message
                                 has_been_merged = True
                                 continue
@@ -65,11 +65,11 @@ class Webservices(metaclass=SingletonABCMeta):
         self.__ws_tmp_queue.put(message)
 
     def dispatch_message_to_all_queues(self, message_list: [IWebsocketMessage]):
-        liste_json_message = [message.json() for message in message_list]
+        json_messages = [message.json() for message in message_list]
 
         json_message = {
-            'messages': liste_json_message,
-            'count': len(liste_json_message)
+            'messages': json_messages,
+            'count': len(json_messages)
         }
         for queue in self.__ws_client_queues:
             queue.put(item=json_message)
