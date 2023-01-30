@@ -15,9 +15,7 @@ from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.stomp.GameStatusMessage import GameStatusMessage
 
 if TYPE_CHECKING:
-    from business.gameobjects.entity.bots.models.BotModel import BotModel
-    from business.gameobjects.tiles.Tile import Tile
-    from business.gameobjects.tiles.objects.TileObject import TileObject
+    from business.gameobjects.GameObject import GameObject
 
 
 class GameManager(IGameManager, metaclass=SingletonABCMeta):
@@ -193,34 +191,48 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             bot.stop()
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
 
-    def get_items_on_map(self, bots_only: bool = True, objects_only: bool = True, collision_only: bool = True,
-                         radius: int = 0, origin: tuple[float, float] = (0, 0)
-                         ) -> list[Tile] or list[TileObject] or list[BotModel]:
+    def get_map_objects(self, bots: bool = True, tiles: bool = True, tile_objects: bool = True,
+                        collision_only: bool = True, radius: int = 0, origin: tuple[float, float] = (0, 0)
+                        ) -> list[GameObject]:
         """
-        Return items from map. Parameters define what should be returned.
+        Return objects from the map. Parameters define what should be returned.
         """
-        entities = list()
+        game_objects = list()
 
-        if radius == 0:
+        if radius <= 0:
             # All map
-            if objects_only:
+            if tile_objects:
                 # return TileObject
-                entities += self.map.tiles_grid.get_all_tiles_objects(collision_only=collision_only)
-            else:
+                game_objects += self.map.tiles_grid.get_all_tiles_objects(collision_only=collision_only)
+            if tiles:
                 # return Tile
-                entities += self.map.tiles_grid.get_all_tiles()
+                game_objects += self.map.tiles_grid.get_all_tiles()
+            if bots:
+                # Add bots to the list
+                game_objects += self.bot_manager.get_bots(connected_only=True)
         else:
             # Part of map
-            if objects_only:
+            if tile_objects:
                 # return TileObject
-                entities += self.map.tiles_grid.get_tiles_objects_in_radius(collision_only=collision_only,
-                                                                            origin=origin, radius=radius)
-            else:
+                game_objects += self.map.tiles_grid.get_tiles_objects_in_radius(
+                    collision_only=collision_only, origin=origin, radius=radius
+                )
+            if tiles:
                 # return Tile
-                entities += self.map.tiles_grid.get_tiles_in_radius(origin=origin, radius=radius)
+                game_objects += self.map.tiles_grid.get_tiles_in_radius(origin=origin, radius=radius)
+            if bots:
+                # Add bots to the list
+                game_objects += self.bot_manager.get_bots_in_radius(
+                    connected_only=True, origin=origin, radius=radius
+                )
 
-        if bots_only:
-            # Add bots to the list
-            entities += list(self.bot_manager.get_bots(connected_only=True))
+        return game_objects
 
-        return entities
+    def get_map_object_from_id(self, object_id: str) -> GameObject | None:
+        """
+        Return the game object corresponding to the specified id.
+        """
+        for game_object in self.get_map_objects(bots=True, tiles=True, tile_objects=True, collision_only=False):
+            if game_object.id == object_id:
+                return game_object
+        return None
