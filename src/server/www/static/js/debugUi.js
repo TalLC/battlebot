@@ -24,9 +24,6 @@ export default class DebugUi {
         // Header
         const headerContainer = document.getElementById("header-container");
 
-        const buttonForceStart = headerContainer.querySelector("#header-button-force-start");
-        buttonForceStart.onclick = this.forceStartGame.bind(this);
-
         const buttonKillBot = headerContainer.querySelector("#header-button-kill-bot");
         buttonKillBot.onclick = this.killBot.bind(this);
         
@@ -61,10 +58,6 @@ export default class DebugUi {
     }
 
     // Header
-    forceStartGame() {
-        sendRestMessage('PATCH', '/game/action/start', {"api_password": "password"});
-    }
-
     addBot() {
         sendRestMessage('PATCH', '/bots/action/add', {"api_password": "password"});
     }
