@@ -31,14 +31,44 @@ class GameManager {
     start() {
         // Masquer la page d'attente
         const startgameContainer = document.getElementById("startgame-container");
+        const startgameScrollContainer = document.getElementById("startgame-scroll-container");
+        startgameScrollContainer.hidden = true;
         startgameContainer.hidden = true;
+
+        // Suppression du défilement de texte
+        const startgameScrollText = startgameScrollContainer.querySelector("#startgame-scroll-text");
+        startgameScrollText.classList.remove("vertical-scrolling-text");
 
         this.v.start();
     }
 
+    destroyGameObject(gameObject) {
+        // Appel du destructeur de l'objet
+        gameObject.dispose();
+    }
+
+    destroyGameObjectFromId(id) {
+        // Récupération du GameObject à partir de l'id
+        const obj = this.getGameObjectFromId(id);
+
+        // Appel du destructeur de l'objet
+        if (obj) this.destroyGameObject(obj);
+    }
+    
+    removeGameObjectFromId(id) {
+        // Supprime un GameObject de son dictionnaire
+        delete this.mapObjects[id];
+        delete this.bots[id];
+    }
+
+    removeGameObject(gameObject) {
+        // Supprime un GameObject de son dictionnaire
+        this.removeGameObjectFromId(gameObject.id);
+    }
+
     /*
         Fonction : Permet la création de Bots dans le jeu.
-        Param : bot_id -> ID unique du Bot
+        Param : id -> ID unique du Bot
                 x -> Position en x
                 z -> Position en z
                 ry -> Rotation autour de l'axe y
