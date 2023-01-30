@@ -7,15 +7,26 @@ export default class DebugUi {
     constructor(debug) {
         this.debug = debug;
 
+        // Startgame
+        const startGameContainer = document.getElementById("startgame-container");
+        const buttonAddBot = startGameContainer.querySelector("#header-button-add-bot");
+        buttonAddBot.onclick = this.addBot.bind(this);
+        
+        // Scroll text
+        const scrollText = document.getElementById("startgame-scroll-text");
+        fetch('https://raw.githubusercontent.com/id-Software/DOOM/master/linuxdoom-1.10/g_game.c')
+            .then((response) => response.text())
+            .then((data) => {
+                scrollText.innerHTML = data;
+                scrollText.style.height = scrollText.scrollHeight;
+            });
+
         // Header
         const headerContainer = document.getElementById("header-container");
 
         const buttonForceStart = headerContainer.querySelector("#header-button-force-start");
         buttonForceStart.onclick = this.forceStartGame.bind(this);
-        
-        const buttonAddBot = headerContainer.querySelector("#header-button-add-bot");
-        buttonAddBot.onclick = this.addBot.bind(this);
-        
+
         const buttonKillBot = headerContainer.querySelector("#header-button-kill-bot");
         buttonKillBot.onclick = this.killBot.bind(this);
         

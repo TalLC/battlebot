@@ -4,23 +4,27 @@
 		<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 		<title>Battlebots - Alpha 0.3.0</title>
+    <link rel="stylesheet" href="static/css/fonts/vt323.css">
     <link rel="stylesheet" href="static/css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/bootstrap/bootstrap-icons.css">
 		<link rel="stylesheet" href="static/css/styles.css" />
 		<link rel="stylesheet" href="static/css/debug.css" />
 		<link rel="stylesheet" href="static/css/startgame.css" />
+		<link rel="stylesheet" href="static/css/scroll-text.css" />
 	</head>
 	<body data-bs-theme="dark">
 
     <!-- Boutons de debug en haut de page -->
-    <div id="header-container" class="d-flex justify-content-center align-items-center unselectable">
+    <div id="header-container" class="d-flex justify-content-center align-items-center unselectable" hidden>
       <button id="header-button-force-start" class="btn btn-primary m-1" type="button">Forcer le démarrage ▶️</button>
-      <button id="header-button-add-bot" class="btn btn-primary m-1" type="button">Ajouter un bot 🤖</button>
       <button id="header-button-kill-bot" class="btn btn-primary m-1" type="button">Tuer un bot 🤖🔫</button>
       <button id="header-button-collisions" class="btn btn-primary m-1" type="button">Afficher les collisions 💥</button>
     </div>
 
     <!-- Page d'attente -->
+    <div id="startgame-scroll-container">
+      <pre id="startgame-scroll-text" class="vertical-scrolling-text unselectable"></pre>
+    </div>
     <div id="startgame-container" class="container-fluid unselectable">
       <div class="row justify-content-md-center">
           <div class="col-md-auto">
@@ -31,13 +35,14 @@
           <div class="col-md-auto" style="height: 10vh;"></div>
       </div>
       <div class="container-fluid startgame-block-rounded">
-          <div class="row justify-content-xl-center">
-              <div class="col-xl-auto">
-                  <h1><span class="bi bi-hourglass-split"></span> En attente de connexion des IA...</h1>
-                  <p>La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 équipe en vie</p>
+          <div class="row justify-content-center">
+              <div id="stargame-messages" class="col-xl-auto">
+                  <h1>EN ATTENTE DE CONNEXION DES IA...</h1><span class="blinking-cursor">█</span>
+                  <p>LA PARTIE DÉMARRE À PARTIR DE 3 BOTS ET SE TERMINE LORSQU'IL NE RESTE QU'1 ÉQUIPE EN VIE</p>
               </div>
           </div>
       </div>
+      <button id="header-button-add-bot" class="btn btn-dark" type="button">Connecter un bot 🤖</button>
     </div>
 
     <!-- Données de débug sur la droite -->
