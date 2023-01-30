@@ -7,7 +7,7 @@ from business.gameobjects.tiles.objects.Wall import Wall
 class TileObjectFactory:
 
     @staticmethod
-    def create_tileobject(tile_object: str, x, z):
+    def create_tile_object(tile_object: str, x, z):
         if tile_object.lower() == "air":
             return Air(x=x, z=z)
         elif tile_object.lower() == "rock":

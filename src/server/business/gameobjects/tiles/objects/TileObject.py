@@ -4,6 +4,8 @@ from shapely.geometry import Polygon
 
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
+from consumer.ConsumerManager import ConsumerManager
+from consumer.webservices.messages.websocket.GameObjectDestroyMessage import GameObjectDestroyMessage
 
 
 class TileObject(OrientedGameObject, IDestructible, ABC):
@@ -21,3 +23,7 @@ class TileObject(OrientedGameObject, IDestructible, ABC):
 
     def __eq__(self, other):
         return self.name == other.name and self.x == other.x and self.z == other.z
+
+    def _on_death(self) -> None:
+        # Removing object on the display side
+        ConsumerManager().websocket.send_message(GameObjectDestroyMessage(self.id))
