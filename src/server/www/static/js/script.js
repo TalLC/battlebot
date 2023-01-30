@@ -19,7 +19,7 @@ function doAction(message){
     // console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].sceneObject){
+        if(game.bots[message.id] && game.bots[message.id].sceneObject){
             
             // Parcours des actions enregistrées
             for(let actionDef in actions){
@@ -30,11 +30,15 @@ function doAction(message){
                 if(selected){
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
-                        game.bots[message.bot_id].action(actionDef,paramAction);
+                        game.bots[message.id].action(actionDef,paramAction);
                     });
                 }
             }
         }
+    }
+    if (message.msg_type === 'GameObjectDestroyMessage'){
+        console.log('DestroyObject');
+        game.destroyGameObjectFromId(message.id);
     }
 
     return promise;
