@@ -17,6 +17,14 @@ export default class GameObject{
         this.debugBoxHelper;
     }
 
+    dispose() {
+        // Suppression de l'objet de la scene Three.js
+        GameManager.v.disposeSceneObject(this.sceneObject);
+
+        // Suppression du Gameobject
+        GameManager.removeGameObject(this);
+    }
+
     get coordinates3D() {
         return {x: this.x, z: this.z};
     }
