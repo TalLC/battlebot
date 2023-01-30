@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from business.shapes.ShapesUtils import ShapesUtils
 from business.gameobjects.tiles.TileFactory import TileFactory
-from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 from business.gameobjects.tiles.objects.TileObject import TileObject
 
 if TYPE_CHECKING:
@@ -18,7 +17,7 @@ if TYPE_CHECKING:
 class TilesGrid:
 
     @property
-    def tiles(self) -> list:
+    def tiles(self) -> list[Tile]:
         return self._tiles
 
     def __init__(self, tiles_matrix: [[Tile]]):
@@ -96,6 +95,40 @@ class TilesGrid:
                     "shape_size": tile.tile_object.shape_size
                 }
             })
+
+        return tiles_list
+
+    def json2(self, alive_tile_objects_only: bool = False) -> list[dict]:
+        """
+        Dumps the tile list in a serializable format.
+        """
+        tiles_list = list()
+        for tile in self.tiles:
+            tile_dict = {
+                "id": tile.id,
+                "name": tile.name,
+                "x": tile.x,
+                "z": tile.z,
+                "shape_name": tile.shape_name.lower() if tile.shape_name else str(),
+                "shape_size": tile.shape_size
+            }
+
+            if tile.tile_object.is_alive:
+                tile_object_dict = {
+                    "object": {
+                        "id": tile.tile_object.id,
+                        "name": tile.tile_object.name,
+                        "x": tile.tile_object.x,
+                        "z": tile.tile_object.z,
+                        "ry": tile.tile_object.ry,
+                        "shape_name": tile.tile_object.shape_name.lower() if tile.tile_object.shape_name else str(),
+                        "shape_size": tile.tile_object.shape_size
+                    }
+                }
+                tile_dict |= tile_object_dict
+
+            tiles_list.append(tile_dict)
+
         return tiles_list
 
 
@@ -203,14 +236,13 @@ class Map:
                 current_line.append(TileFactory.create_tile(tile_type='void', x=w, z=w))
             mat.append(current_line)
 
-        # On crée un obj Tile pour chaque cellule de la map
+        # On crée un tile object pour chaque cellule de la map
         for d in tiles_data:
             x = d['x']
             z = d['z']
-            mat[x][z] = TileFactory.create_tile(
-                tile_type=d['tile'], x=d['x'], z=d['z'], tile_object=TileObjectFactory.create_tile_object(
-                    d['tile_object'], d['x'], d['z'])
-            )
+            tmp_tile = TileFactory.create_tile(tile_type=d['tile'], x=d['x'], z=d['z'])
+            tmp_tile.set_tile_object(tile_object_name=d['tile_object'])
+            mat[x][z] = tmp_tile
         return mat
 
     @staticmethod
