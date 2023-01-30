@@ -9,7 +9,7 @@ import Object3DFactory from "../view/object3DFactory.js";
     Return : un dictionnaire contenant les positions en x et en z "final" du bot
 */
 function eventwrapper(botState){
-    return {'bot_id': botState.bot_id, 'targets': botState.shoot};
+    return {'id': botState.id, 'targets': botState.shoot};
 }
 
 /*
@@ -25,7 +25,7 @@ function actionSelector(botState){return !(botState.shoot === undefined);}
     Return : N/A
 */
 function action(parameters){
-    const bot = GameManager.bots[parameters.bot_id];
+    const bot = GameManager.bots[parameters.id];
 
     for (let target of parameters.targets) {
         if (!target.id) {
