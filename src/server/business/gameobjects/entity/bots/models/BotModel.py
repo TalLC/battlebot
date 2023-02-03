@@ -19,8 +19,7 @@ from business.gameobjects.entity.bots.handlers.CollisionHandler import Collision
 from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
-from business.shapes.ShapeFactory import ShapeFactory
-from business.shapes.ShapesUtils import ShapesUtils
+from business.shapes.ShapesUtils import ShapesUtils, ShapeFactory
 from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
@@ -80,7 +79,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         return ShapeFactory().create_shape(
             Shape.CIRCLE, o=(self.x, self.z), radius=self.shape_size, resolution=3
         )
-        
+
     @property
     def shape_name(self) -> str:
         return self._shape_name
@@ -103,7 +102,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         3D model to use.
         """
         raise NotImplementedError
-
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float, shape_name: str, shape_size: float):
