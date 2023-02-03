@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
 
 
-@dataclass(order=True)
+@dataclass(order=False)
 class BotStunCommand(IBotCommand):
     priority: float = float(datetime.now().timestamp())
     action: str = field(default="stun", compare=False)

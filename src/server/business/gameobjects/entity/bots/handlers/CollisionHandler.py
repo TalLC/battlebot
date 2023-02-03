@@ -7,7 +7,7 @@ from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 
 
-class BotCollisionHandler:
+class CollisionHandler:
 
     def __init__(self, bot):
         self._bot = bot

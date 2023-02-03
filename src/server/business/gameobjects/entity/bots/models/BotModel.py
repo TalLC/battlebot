@@ -15,15 +15,13 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
-from business.gameobjects.entity.bots.commands.BotStunCommand import BotStunCommand
-from business.gameobjects.entity.bots.models.CollisionHandler import BotCollisionHandler
+from business.gameobjects.entity.bots.handlers.CollisionHandler import CollisionHandler
 from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
 from business.shapes.ShapeFactory import ShapeFactory
 from business.shapes.ShapesUtils import ShapesUtils
 from consumer.ConsumerManager import ConsumerManager
-from business.gameobjects.tiles.Tile import Tile
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
@@ -116,7 +114,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self.is_stun = False
 
         # Collision Handler
-        self.collision_handler = BotCollisionHandler(self)
+        self.collision_handler = CollisionHandler(self)
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
