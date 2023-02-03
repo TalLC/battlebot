@@ -391,7 +391,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
 
-    def collision(self) -> None:
+    def collision(self) -> bool:
         """
         Check if the bot is colliding.
         """
