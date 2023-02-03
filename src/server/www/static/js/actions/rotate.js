@@ -21,15 +21,15 @@ function actionSelector(botState){return !(botState.rotate === undefined);}
     Return : N/A
 */
 function action(rotateCoordinate){
-    const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y}) 
-	.to({rotation: rotateCoordinate * -1}, 100) 
-	.easing(TWEEN.Easing.Linear.None) 
+    const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
+	.to({rotation: rotateCoordinate * -1}, 100)
+	.easing(TWEEN.Easing.Linear.None)
 	.onUpdate((coords) => {
         console.log(coords.rotation);
         this.sceneObject.rotation.y = coords.rotation;
         this.ry = this.sceneObject.rotation.y;
     })
-	.start() 
+	.start()
 }
 /**
 * @param param
