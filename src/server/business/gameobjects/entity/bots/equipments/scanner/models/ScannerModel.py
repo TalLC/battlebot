@@ -3,6 +3,8 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from itertools import groupby
+from threading import Thread, Event
+from time import sleep
 from typing import TYPE_CHECKING, List
 
 from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner import IScanner
@@ -10,6 +12,8 @@ from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import D
 from business.shapes.ShapeFactory import Shape, ShapeFactory
 from business.shapes.ShapesUtils import ShapesUtils
 from business.gameobjects.tiles.Tile import Tile
+from consumer.ConsumerManager import ConsumerManager
+from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
@@ -59,6 +63,25 @@ class ScannerModel(IScanner, ABC):
         self._activated = activated
         super().__init__()
 
+        # Thread's scanner
+        self._thread_scanner = Thread(
+            target=self._thread_scanning,
+            args=(self.bot.event_stop_threads,)
+        ).start()
+
+    def _thread_scanning(self, e: Event):
+        # Waiting interval between all increments
+        loop_wait_ms = 100
+        while not e.is_set():
+            if self.bot.bot_manager.game_manager.is_started and self.activated:
+                detected_objects = self.scanning()
+                if detected_objects:
+                    ConsumerManager().mqtt.send_message(
+                        BotScannerDetectionMessage(self.bot.id, detected_object_list=detected_objects))
+                sleep(self.interval)
+            else:
+                sleep(loop_wait_ms / 1000)
+
     def switch(self) -> None:
         self._activated = not self._activated
 
@@ -67,7 +90,7 @@ class ScannerModel(IScanner, ABC):
         min_angle = (self._bot.ry_deg - self._fov / 2) % 360
         max_angle = (self._bot.ry_deg + self._fov / 2) % 360
 
-        logging.info(f"[BOT {self._bot.name}] scanning from {min_angle} to {max_angle} [{self._distance}]")
+        logging.debug(f"[{self._bot.name}] scanning from {min_angle} to {max_angle} [{self._distance}]")
 
         return min_angle, max_angle
 
@@ -90,7 +113,8 @@ class ScannerModel(IScanner, ABC):
                             foreground_elements.append(elem1)
         return foreground_elements
 
-    def _create_detected_objects(self, elements: List[dict]) -> List[DetectedObject]:
+    @staticmethod
+    def _create_detected_objects(elements: List[dict]) -> List[DetectedObject]:
         """
             Return list of DetectedObject from raycasting's result.
         """
@@ -111,8 +135,7 @@ class ScannerModel(IScanner, ABC):
                 distance=sum([hit["distance"] for hit in hits_list])/len(hits_list)
             ))
 
-        for e in list_detected_obj:
-            logging.debug(f"{self._bot.name} : {e}")
+        # logging.debug(f"{self._bot.name} : {list_detected_obj}")
 
         return list_detected_obj
 

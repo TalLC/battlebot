@@ -15,15 +15,17 @@ from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.ClientConnection import ClientConnection
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
-from business.shapes.ShapeFactory import ShapeFactory, Shape
+from business.gameobjects.entity.bots.handlers.CollisionHandler import CollisionHandler
+from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
+from business.shapes.ShapeFactory import ShapeFactory
 from business.shapes.ShapesUtils import ShapesUtils
 from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
-from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
+from consumer.brokers.messages.stomp.BotStunningStatusMessage import BotStunningStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.HitMessage import HitMessage
@@ -78,11 +80,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         return ShapeFactory().create_shape(
             Shape.CIRCLE, o=(self.x, self.z), radius=self.shape_size, resolution=3
         )
-
-    # @shape.setter
-    # def shape(self, _):
-    #     pass
-
+        
     @property
     def shape_name(self) -> str:
         return self._shape_name
@@ -95,12 +93,17 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def ry_deg(self):
         return self.ry * (180 / pi)
 
+    @property
+    def event_stop_threads(self):
+        return self._event_stop_threads
+
     @abstractmethod
     def model_name(self) -> str:
         """
         3D model to use.
         """
         raise NotImplementedError
+
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float, shape_name: str, shape_size: float):
@@ -126,6 +129,12 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Random starting rotation
         self.ry = Random().randint(0, math.floor(2 * pi * 100)) / 100
 
+        # State
+        self.is_stun = False
+
+        # Collision Handler
+        self.collision_handler = CollisionHandler(self)
+
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
 
@@ -144,12 +153,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Thread handling continuous actions as moving and turning
         self._thread_continuous_actions = Thread(
             target=self._thread_handle_continuous_actions,
-            args=(self._event_stop_threads,)
-        ).start()
-
-        # Thread's scanner
-        self._thread_scanner = Thread(
-            target=self._thread_scanning,
             args=(self._event_stop_threads,)
         ).start()
 
@@ -233,19 +236,16 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
 
-    # Todo : A déplacer sur le scanner directement ?
-    def _thread_scanning(self, e: Event):
-        # Waiting interval between all increments
-        loop_wait_ms = 100
-        while not e.is_set():
-            if self.bot_manager.game_manager.is_started and self.equipment.scanner.activated:
-                detected_objects = self.equipment.scanner.scanning()
-                if detected_objects:
-                    ConsumerManager().mqtt.send_message(
-                        BotScannerDetectionMessage(self.id, detected_object_list=detected_objects))
-                sleep(self.equipment.scanner.interval)
-            else:
-                sleep(loop_wait_ms / 1000)
+    def _thread_stunning(self, duration):
+
+        # Envoyer un message pour dire que le bot est stun
+        self.is_stun = True
+        ConsumerManager().stomp.send_message(BotStunningStatusMessage(self._id, self.is_stun))
+        # wait
+        sleep(duration)
+        self.is_stun = False
+        # Envoyer un message pour dire que le bot n'est plus stun
+        ConsumerManager().stomp.send_message(BotStunningStatusMessage(self._id, self.is_stun))
 
     def _thread_stop_bot(self):
         # Stopping scanner
@@ -336,13 +336,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             origin=(self.x, self.z), distance=distance, angle=self.ry
         )
 
-        # Check if the destination is valid
-        if not self.bot_manager.game_manager.map.is_walkable_at(new_x, new_z):
-            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
-            return
-
-        # Moving the bot on the map
-        self.set_position(new_x, new_z, self.ry)
+        if not self.collision():
+            # Moving the bot on the map
+            self.set_position(new_x, new_z, self.ry)
 
         # Sending new position over websocket
         ConsumerManager().websocket.send_message(BotMoveMessage(self.id, self.x, self.z))
@@ -396,3 +392,23 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         Callback when the bot is hurt.
         """
         ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
+
+    def collision(self) -> None:
+        """
+        Check if the bot is colliding.
+        """
+        if self.collision_handler.check_collision():
+            self.collision_handler.handle_collision()
+            return True
+        return False
+
+    def stun(self, duration: float) -> None:
+        """
+        Stops the bot's actions and stuns it.
+        """
+        if self.is_moving:
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+        if self.is_turning:
+            self.add_command_to_queue(BotTurnCommand(priority=0, value='stop'))
+        # Start waiting thread
+        Thread(target=self._thread_stunning, args=(duration,)).start()
