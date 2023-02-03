@@ -391,6 +391,10 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
+            # Is bot stun
+            if bot.is_stun:
+                ErrorCode.throw(BOT_IS_STUN)
+
             # Sending shoot command to the bot
             bot.add_command_to_queue(BotShootCommand(value=model.angle))
 
@@ -418,6 +422,10 @@ class RestProvider:
             # Is bot alive
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
+
+            # Is bot stun
+            if bot.is_stun:
+                ErrorCode.throw(BOT_IS_STUN)
 
             # Sending turn command to the bot
             bot.add_command_to_queue(BotTurnCommand(value=model.direction))
@@ -450,6 +458,10 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
+            # Is bot stun
+            if bot.is_stun:
+                ErrorCode.throw(BOT_IS_STUN)
+
             # Sending move command to the bot
             bot.add_command_to_queue(BotMoveCommand(value=model.action))
 
@@ -480,6 +492,10 @@ class RestProvider:
             # Is bot alive
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
+
+            # Is bot stun
+            if bot.is_stun:
+                ErrorCode.throw(BOT_IS_STUN)
 
             if model.action.lower() == 'start':
                 return {"status": "ok", "message": "Bot is starting to use its shield."}
