@@ -79,10 +79,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             Shape.CIRCLE, o=(self.x, self.z), radius=self.shape_size, resolution=3
         )
 
-    # @shape.setter
-    # def shape(self, _):
-    #     pass
-
     @property
     def shape_name(self) -> str:
         return self._shape_name
