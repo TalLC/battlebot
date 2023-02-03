@@ -23,8 +23,9 @@ class CollisionHandler:
                 return other.name
 
     def check_bot_collision(self, other):
-        if isinstance(other, self._bot.__class__) and other != self._bot and other.shape.intersection(self._bot.shape):
-            return other.name
+        if isinstance(other, self._bot.__class__):
+            if other.has_collision and other != self._bot and other.shape.intersection(self._bot.shape):
+                return other.name
 
     def check_collision(self):
         self._collision_entity = None
@@ -44,7 +45,7 @@ class CollisionHandler:
         self.knockback()
         self._bot.stun(1.5)
 
-    def knockback(self, distance: float = 1.5, direction: float = None) -> None:
+    def knockback(self, distance: float = 0.5, direction: float = None) -> None:
         """
         Quickly knock the bot back.
         """
