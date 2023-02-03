@@ -28,8 +28,9 @@ class CollisionHandler:
 
     def check_collision(self):
         self._collision_entity = None
-        neared_items = self._bot.bot_manager.game_manager.get_items_on_map(
-            bots_only=True, objects_only=False, radius=1, origin=self._bot.coordinates)
+        neared_items = self._bot.bot_manager.game_manager.get_map_objects(
+            bots=True, tiles=True, tile_objects=True, collision_only=True, radius=1, origin=self._bot.coordinates
+        )
 
         for item in neared_items:
             self._collision_entity = self.check_env_collision(item) or self.check_bot_collision(item)
