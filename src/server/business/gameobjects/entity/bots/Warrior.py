@@ -5,7 +5,7 @@ from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.models.BotModel import BotModel
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
 from business.gameobjects.entity.bots.equipments.scanner.SimpleScanner import SimpleScanner
-from business.gameobjects.entity.bots.equipments.weapons.BaseWeapon import BaseWeapon
+from business.gameobjects.entity.bots.equipments.weapons.WeaponFactory import WeaponFactory
 
 if TYPE_CHECKING:
     from business.BotManager import BotManager
@@ -29,7 +29,7 @@ class Warrior(BotModel):
                          self._shape_name, self._shape_size)
 
         # Equipment initialization
-        self._equipment = Equipment(SimpleScanner(self), BaseWeapon(self))
+        self._equipment = Equipment(SimpleScanner(self), WeaponFactory.create_weapon(self, "base"))
 
     def __str__(self):
         return f"{self.role} {self.name} ({self.id}) - " \
