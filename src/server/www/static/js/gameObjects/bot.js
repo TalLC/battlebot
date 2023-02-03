@@ -5,10 +5,10 @@ import {colorStrToNumber} from '../utils.js'
 
 
 export default class Bot extends GameObject{
-    constructor(construct){
-        super(construct.id, "bot", construct.x, 0.5, construct.z, construct.ry);
-        this.teamColor = colorStrToNumber(construct.teamColor);
-        this.modelName = construct.modelName;
+    constructor(id, x, z, ry, teamColor, collisionShape, collisionSize, modelName) {
+        super(id, "bot", x, 0.5, z, ry,  collisionShape, collisionSize);
+        this.teamColor = colorStrToNumber(teamColor);
+        this.modelName = modelName;
         this.sceneObject = null;
         this.shoot = false;
         this.hit = false;
@@ -16,8 +16,6 @@ export default class Bot extends GameObject{
         this.shieldRaise = false;
         this.enrolled = false;
     }
-
-
 
     /* 
         Fonction : Permet l'appel à une action intéragissant avec le bot (action définit dans actionDefinition.js)

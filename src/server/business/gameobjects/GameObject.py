@@ -1,6 +1,6 @@
 import uuid
 
-from shapely.geometry import Polygon
+from shapely.geometry.base import BaseGeometry
 
 
 class GameObject:
@@ -9,19 +9,31 @@ class GameObject:
     """
 
     @property
-    def id(self):
+    def id(self) -> str:
         """
         Unique identifier.
         """
         return self._id
 
     @property
+    def name(self) -> str:
+        return self._name
+
+    @property
     def coordinates(self) -> tuple[float, float]:
         return self.x, self.z
 
-    def __init__(self, name: str = 'game_object', x: float = 0.0, z: float = 0.0, shape: Polygon or None = None):
+    @property
+    def shape(self) -> BaseGeometry:
+        return self._shape
+
+    @shape.setter
+    def shape(self, value):
+        self._shape = value
+
+    def __init__(self, name: str = 'game_object', x: float = 0.0, z: float = 0.0, shape: BaseGeometry or None = None):
         self._id = str(uuid.uuid4())
-        self.name = name
+        self._name = name
         self.x = x
         self.z = z
-        self.shape = shape
+        self._shape = shape

@@ -5,8 +5,8 @@ from random import Random
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from business.shapes.ShapesUtils import ShapesUtils
 from business.gameobjects.tiles.TileFactory import TileFactory
-from business.gameobjects.tiles.objects.TileObjectFactory import TileObjectFactory
 from business.gameobjects.tiles.objects.TileObject import TileObject
 
 if TYPE_CHECKING:
@@ -17,11 +17,10 @@ if TYPE_CHECKING:
 class TilesGrid:
 
     @property
-    def tiles(self) -> list:
+    def tiles(self) -> list[Tile]:
         return self._tiles
 
     def __init__(self, tiles_matrix: [[Tile]]):
-
         self._tiles = list()
 
         # Creating Tiles and Tile objects
@@ -46,14 +45,13 @@ class TilesGrid:
         """
         Get all tile objects from the map.
         """
-        tiles = list()
-        ox, oz = int(origin[0]), int(origin[1])
-        for x in range(ox - radius, ox + radius + 1):
-            for z in range(oz - radius, oz + radius + 1):
-                tmp_tile = self.get_tile_at(x=x, z=z)
-                if tmp_tile is not None:
-                    tiles.append(tmp_tile)
-        return tiles
+        # Filtering on radius
+        in_range_tiles = list()
+        for tile in self.get_all_tiles():
+            if ShapesUtils.get_2d_distance_between(origin, (tile.x, tile.z)) <= radius:
+                in_range_tiles.append(tile)
+
+        return in_range_tiles
 
     def get_all_tiles_objects(self, collision_only: bool = True) -> list[TileObject]:
         """
@@ -64,19 +62,15 @@ class TilesGrid:
 
     def get_tiles_objects_in_radius(self, collision_only: bool = True, origin: tuple = (0.0, 0.0), radius: int = 1):
         """
-            Get tiles objects in radius from the map
+        Get tiles objects in radius from the map
         """
-        tiles = list()
-        ox, oz = int(origin[0]), int(origin[1])
-        for x in range(ox - radius, ox + radius + 1):
-            for z in range(oz - radius, oz + radius + 1):
-                tmp_tile = self.get_tile_at(x=x, z=z)
-                if tmp_tile is not None:
-                    if collision_only and tmp_tile.tile_object.has_collision:
-                        tiles.append(tmp_tile.tile_object)
-                    elif not collision_only:
-                        tiles.append(tmp_tile.tile_object)
-        return tiles
+        # Filtering on radius
+        in_range_tile_objects = list()
+        for tile_object in self.get_all_tiles_objects(collision_only=collision_only):
+            if ShapesUtils.get_2d_distance_between(origin, (tile_object.x, tile_object.z)) <= radius:
+                in_range_tile_objects.append(tile_object)
+
+        return in_range_tile_objects
 
     def json(self) -> list[dict]:
         """
@@ -89,14 +83,52 @@ class TilesGrid:
                 "name": tile.name,
                 "x": tile.x,
                 "z": tile.z,
+                "shape_name": tile.shape_name.lower() if tile.shape_name else str(),
+                "shape_size": tile.shape_size,
                 "object": {
                     "id": tile.tile_object.id,
                     "name": tile.tile_object.name,
                     "x": tile.tile_object.x,
                     "z": tile.tile_object.z,
-                    "ry": tile.tile_object.ry
+                    "ry": tile.tile_object.ry,
+                    "shape_name": tile.tile_object.shape_name.lower() if tile.tile_object.shape_name else str(),
+                    "shape_size": tile.tile_object.shape_size
                 }
             })
+
+        return tiles_list
+
+    def json2(self, alive_tile_objects_only: bool = False) -> list[dict]:
+        """
+        Dumps the tile list in a serializable format.
+        """
+        tiles_list = list()
+        for tile in self.tiles:
+            tile_dict = {
+                "id": tile.id,
+                "name": tile.name,
+                "x": tile.x,
+                "z": tile.z,
+                "shape_name": tile.shape_name.lower() if tile.shape_name else str(),
+                "shape_size": tile.shape_size
+            }
+
+            if tile.tile_object.is_alive:
+                tile_object_dict = {
+                    "object": {
+                        "id": tile.tile_object.id,
+                        "name": tile.tile_object.name,
+                        "x": tile.tile_object.x,
+                        "z": tile.tile_object.z,
+                        "ry": tile.tile_object.ry,
+                        "shape_name": tile.tile_object.shape_name.lower() if tile.tile_object.shape_name else str(),
+                        "shape_size": tile.tile_object.shape_size
+                    }
+                }
+                tile_dict |= tile_object_dict
+
+            tiles_list.append(tile_dict)
+
         return tiles_list
 
 
@@ -204,14 +236,13 @@ class Map:
                 current_line.append(TileFactory.create_tile(tile_type='void', x=w, z=w))
             mat.append(current_line)
 
-        # On crée un obj Tile pour chaque cellule de la map
+        # On crée un tile object pour chaque cellule de la map
         for d in tiles_data:
             x = d['x']
             z = d['z']
-            mat[x][z] = TileFactory.create_tile(
-                tile_type=d['tile'], x=d['x'], z=d['z'], tile_object=TileObjectFactory.create_tileobject(
-                    d['tile_object'], d['x'], d['z'])
-            )
+            tmp_tile = TileFactory.create_tile(tile_type=d['tile'], x=d['x'], z=d['z'])
+            tmp_tile.set_tile_object(tile_object_name=d['tile_object'])
+            mat[x][z] = tmp_tile
         return mat
 
     @staticmethod

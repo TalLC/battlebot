@@ -1,9 +1,9 @@
 from __future__ import annotations
-from consumer.webservices.messages.websocket.interfaces.IBotMessage import IBotMessage
+from consumer.webservices.messages.websocket.interfaces.IObjectMessage import IObjectMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
 
-class BotUpdateMessage(IBotMessage):
+class BotUpdateMessage(IObjectMessage):
 
     @property
     def x(self) -> float:
@@ -31,7 +31,7 @@ class BotUpdateMessage(IBotMessage):
 
     def __init__(self, bot_id: str, x: float = None, z: float = None, ry: float = None,
                  target: Target = None, shield: bool = None, hit: bool = False):
-        super().__init__(msg_type="BotUpdateMessage", bot_id=bot_id)
+        super().__init__(msg_type="BotUpdateMessage", object_id=bot_id)
         self._x = x
         self._z = z
         self._ry = ry
@@ -40,7 +40,7 @@ class BotUpdateMessage(IBotMessage):
         self._hit = hit
 
     def __add__(self, other: BotUpdateMessage):
-        if self.bot_id != other.bot_id:
+        if self.id != other.id:
             raise ValueError("Bot ID must be equals!!")
         self._x = other.x if other.x is not None else self.x
         self._z = other.z if other.z is not None else self.z
@@ -50,7 +50,8 @@ class BotUpdateMessage(IBotMessage):
         self._hit = other.hit if other.hit else self.hit
 
     def json(self) -> dict:
-        json = {'msg_type': self.msg_type, "bot_id": self.bot_id}
+        json = super().json()
+        # json = {'msg_type': self.msg_type, "id": self.id}
         if self.x or self.z:
             json['move'] = dict()
             json['move'] |= {'x': self.x} if self.x is not None else dict()

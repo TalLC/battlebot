@@ -36,10 +36,8 @@ class WebsocketProvider:
             )
             logging.debug(f"Display {display_client.name} connected")
 
-            # Todo: déporter la création de map pour permettre la modification de la map avant le début de partie
-            logging.debug(f"Sending map to {display_client.name}")
-
             # Sending map information
+            logging.debug(f"Sending map to {display_client.name}")
             current_map = GameManager().map
             map_create_message = MapCreateMessage(map_id=current_map.id, height=current_map.height,
                                                   width=current_map.width, tiles_grid=current_map.tiles_grid)
@@ -54,13 +52,7 @@ class WebsocketProvider:
             # Sending all bots to webservice
             for bot in GameManager().bot_manager.get_bots():
                 await websocket.send_json(
-                    BotCreateMessage(
-                        bot_id=bot.id,
-                        x=bot.x,
-                        z=bot.z,
-                        ry=bot.ry,
-                        team_color=bot.team.color
-                    ).json())
+                    BotCreateMessage(bot).json())
 
             # Sending token to the client in order to send it back using Rest when ready
             await websocket.send_json(DisplayClientLoginMessage(display_client).json())

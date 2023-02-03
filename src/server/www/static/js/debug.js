@@ -6,6 +6,7 @@ import DebugUi from "./debugUi.js";
 export default class Debug{
 
     constructor(view3DController, debugContainerId) {
+        this.headerContainer = document.getElementById("header-container");
         this.container = document.getElementById(debugContainerId);
         this.infoContainer = this.container.querySelector("#info-container");
         this.view = view3DController;
@@ -25,6 +26,12 @@ export default class Debug{
             this.resetInformationsContainer();
             this.writeBotInformations(this.selectedObject);
         }
+    }
+
+    start() {
+        // Affichage des informations de debug
+        this.container.hidden = false;
+        this.headerContainer.hidden = false;
     }
 
     createCameraHelper() {
@@ -97,7 +104,7 @@ export default class Debug{
     deselectObject() {
         this.debugUi.setRemoteHidden(true);
         if (this.selectedObject && this.selectedObject.debugBoxHelper) {
-            this.view.disposeObject3D(this.selectedObject.debugBoxHelper);
+            this.view.disposeSceneObject(this.selectedObject.debugBoxHelper);
             this.selectedObject.debugBoxHelper = undefined;
         }
         this.selectedObject = undefined;
@@ -124,13 +131,13 @@ export default class Debug{
         botRy.innerHTML = `Ry (Bot) = ${bot.ry?.toFixed(3)}`;
 
         let botObjX = document.createElement('p');
-        botObjX.innerHTML = `X (obj) = ${bot.sceneObject?.position.x.toFixed(3)}`;
+        botObjX.innerHTML = `X (obj) = ${bot.sceneObject?.position.x?.toFixed(3)}`;
 
         let botObjZ = document.createElement('p');
-        botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject?.position.z.toFixed(3)}`;
+        botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject?.position.z?.toFixed(3)}`;
 
         let botObjRy = document.createElement('p');
-        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject?.rotation.y.toFixed(3)}`;
+        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject?.rotation.y?.toFixed(3)}`;
 
         // Ajout des données au conteneur
         this.infoContainer.appendChild(header);

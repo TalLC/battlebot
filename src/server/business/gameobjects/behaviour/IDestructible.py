@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class IDestructible:
+class IDestructible(ABC):
     _health_max = 0
     _health = 0
     _has_collision = False
@@ -50,9 +50,10 @@ class IDestructible:
             self._health -= damage
             if self._health <= 0:
                 self._health = 0
+                self.set_collisions(False)
                 self._on_death()
                 return
-        self._on_hurt()
+            self._on_hurt()
 
     def kill(self) -> None:
         """

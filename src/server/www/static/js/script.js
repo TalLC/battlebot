@@ -20,7 +20,7 @@ function doAction(message){
     // console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].sceneObject){
+        if(game.bots[message.id] && game.bots[message.id].sceneObject){
             
             // Parcours des actions enregistrées
             for(let actionDef in actions){
@@ -31,11 +31,15 @@ function doAction(message){
                 if(selected){
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
-                        game.bots[message.bot_id].action(actionDef,paramAction);
+                        game.bots[message.id].action(actionDef,paramAction);
                     });
                 }
             }
         }
+    }
+    if (message.msg_type === 'GameObjectDestroyMessage'){
+        console.log('DestroyObject');
+        game.destroyGameObjectFromId(message.id);
     }
 
     return promise;
@@ -70,7 +74,6 @@ function animate(){
 
 animate();
 
-
 /*
     Fonction : Permet la récupération en continue des données reçues via websocket
     Param : event -> Correspont au donnée de chaque appel websocket
@@ -91,12 +94,13 @@ ws.onmessage = async function(event) {
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.addBot(message.bot_id, message.x, message.z, -1 * message.ry, message.team_color);
+            game.addBot(message);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
+            game.loginId = message.login_id;
             while(null in game.bots);
             console.log('Start game');
-            game.loginId = message.login_id;
+            game.start();
             sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: game.loginId});
         }
     }

@@ -146,9 +146,9 @@ class ScannerModel(IScanner, ABC):
         """
         obj_in_fov = list()
 
-        detected_objects = self._bot.bot_manager.game_manager.get_items_on_map(bots_only=True, objects_only=False,
-                                                                               radius=self._distance,
-                                                                               origin=self._bot.coordinates)
+        detected_objects = self._bot.bot_manager.game_manager.get_map_objects(bots=True, tiles=True,
+                                                                              radius=self._distance,
+                                                                              origin=self._bot.coordinates)
         # Calculate the angles of the field of view
         min_angle, max_angle = self._get_fov_angles()
         # Init relative angle from bot
