@@ -1,4 +1,5 @@
 import View3DController from "./view/view3DController.js";
+import Object3DFactory from "./view/object3DFactory.js";
 import Bot from "./gameObjects/bot.js"
 import MapObject from "./gameObjects/mapObject.js"
 import {getRandomInt} from "./utils.js"
@@ -12,35 +13,76 @@ class GameManager {
         this.mapObjects = {};
     }
 
+    get allGameObjects() {
+        return {
+            ...this.bots,
+            ...this.mapObjects
+        };
+    }
+
+    render() {
+        for (let bot of Object.values(this.bots)) {
+            bot.render();
+        }
+
+        this.v.render();
+    }
+
+    start() {
+        // Masquer la page d'attente
+        const startgameContainer = document.getElementById("startgame-container");
+        startgameContainer.hidden = true;
+
+        this.v.start();
+    }
+
     /*
         Fonction : Permet la création de Bots dans le jeu.
-        Param : id -> ID unique du Bot
+        Param : bot_id -> ID unique du Bot
                 x -> Position en x
                 z -> Position en z
                 ry -> Rotation autour de l'axe y
-                teamColor -> Couleur de l'équipe à laquelle appartient le Bot
-                modelName -> Nom du modèle 3D représentant le bot
+                team_color -> Couleur de l'équipe à laquelle appartient le Bot
+                model_name -> Nom du modèle 3D représentant le bot
         Return : N/A
     */
-    addBot(id, x, z, ry, teamColor, modelName="default") {
-        this.bots[id] = new Bot({id:id, x:x, z:z, ry:ry, teamColor:teamColor, modelName:modelName});
-        this.v.createBot3D(this.bots[id]);
+    addBot(botData) {
+        this.bots[botData.id] = new Bot(
+            botData.id,
+            botData.x, botData.z, -1 * botData.ry,
+            botData.team_color,
+            botData.shape_name.toLowerCase(),
+            botData.shape_size,
+            botData.model_name
+        );
+        Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
+            this.v.scene.add(sceneObject);
+        });
     }
 
     /*
         Fonction : Permet la création d'un Map objects dans le jeu.
         Param : id -> ID unique de l'objet
+                type -> Type d'objet
                 x -> Position en x
                 y -> Position en y
                 z -> Position en z
                 ry -> Rotation autour de l'axe y
-                modelName -> Nom du modèle 3D représentant l'objet
+                model -> Nom du modèle 3D représentant l'objet
         Return : N/A
     */
-    addMapObject(id, type, x, y, z, ry, modelName=null) {
-        this.mapObjects[id] = new MapObject({id:id, type:type, x:x, y:y, z:z, ry:ry, modelName:modelName});
-        if (modelName !== "air") {
-            this.v.createMapObject3D(this.mapObjects[id]);
+    addMapObject(mapObjectData) {
+        this.mapObjects[mapObjectData.id] = new MapObject(
+            mapObjectData.id,
+            mapObjectData.type,
+            mapObjectData.x, mapObjectData.y, mapObjectData.z, mapObjectData.ry,
+            mapObjectData.collisionShape, mapObjectData.collisionSize,
+            mapObjectData.model
+        );
+        if (mapObjectData.model !== "air") {
+            Object3DFactory.createMapObject3D(this.mapObjects[mapObjectData.id]).then(sceneObject => {
+                this.v.scene.add(sceneObject);
+            });
         }
     }
 
@@ -62,15 +104,22 @@ class GameManager {
                 if (obj.sceneObject) {
                     if (obj.type === checkFor) {
                         if (obj.sceneObject === sceneObject) {
-                            console.log("Object found", obj);
                             return obj;
                         }
                         if (obj.sceneObject === sceneObject.parent) {
-                            console.log("Object found in parent", obj);
                             return obj;
                         }
                     }
                 }
+            }
+        }
+    }
+
+    getGameObjectFromId(id) {
+        // On parcourt tous les objets de la map pour chercher l'id demandé
+        for(let obj of Object.values(this.allGameObjects)) {
+            if (obj.id === id) {
+                return obj;
             }
         }
     }
@@ -91,12 +140,36 @@ class GameManager {
                     if (h === tile['x'] && w === tile['z']) {
                         
                         // Ajout de la Tile
-                        this.addMapObject(tile['id'], 'tile', tile['x'], 0.0, tile['z'], 0.0, tile['name'].toLowerCase());
+                        this.addMapObject(
+                            {
+                                id: tile['id'],
+                                type: 'tile',
+                                x: tile['x'],
+                                y: 0.0,
+                                z: tile['z'],
+                                ry: 0.0,
+                                collisionShape: tile['shape_name'],
+                                collisionSize: tile['shape_size'],
+                                model: tile['name'].toLowerCase()
+                            }
+                        );
                         
                         // Ajout du TileObject si présent
                         if (tile.object) {
                             const ry = getRandomInt(Math.floor(2 * Math.PI * 100)) / 100
-                            this.addMapObject(tile['object']['id'], 'tileObject', tile['object']['x'], 0.5, tile['object']['z'], ry, tile['object']['name'].toLowerCase());
+                            this.addMapObject(
+                                {
+                                    id: tile['object']['id'],
+                                    type: 'tileObject',
+                                    x: tile['object']['x'],
+                                    y: 0.5,
+                                    z: tile['object']['z'],
+                                    ry: ry,
+                                    collisionShape: tile['object']['shape_name'],
+                                    collisionSize: tile['object']['shape_size'],
+                                    model: tile['object']['name'].toLowerCase()
+                                }
+                            );
                         }
 
                         break;

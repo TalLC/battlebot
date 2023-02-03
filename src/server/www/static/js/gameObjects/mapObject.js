@@ -4,9 +4,9 @@ import GameObject from './gameObject.js';
 
 
 export default class MapObject extends GameObject{
-    constructor(construct){
-        super(construct.id, construct.type, construct.x, construct.y, construct.z, construct.ry);
-        this.modelName = construct.modelName;
+    constructor(id, type, x, y, z, ry, collisionShape, collisionSize, modelName) {
+        super(id, type, x, y, z, ry, collisionShape, collisionSize);
+        this.modelName = modelName;
         this.sceneObject = null;
     }
 

@@ -17,8 +17,19 @@ export default class Debug{
 
         // Raycasting pour sélectionner un objet
         this.raycastedObjects = [];
-        this.selectedObjectId;
-        this.selectedObjectBoxHelper;
+        this.selectedObject;
+    }
+
+    render() {
+        if (this.selectedObject && this.selectedObject.type === "bot") {
+            this.resetInformationsContainer();
+            this.writeBotInformations(this.selectedObject);
+        }
+    }
+
+    start() {
+        // Affichage des informations de debug
+        this.container.hidden = false;
     }
 
     createCameraHelper() {
@@ -50,14 +61,14 @@ export default class Debug{
         for (const hit of this.raycastedObjects) {
             if (hit.object.type === "BoxHelper" || hit.object.type === "GridHelper") continue;
             let clickedObject;
-            let isParent;
 
             // On cherche si c'est un bot qui est sélectionné
             clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent.parent, "bot");
             if (clickedObject) {
                 const bot = clickedObject;
-                this.setSelectedObject(hit.object, bot.id);
+                this.setSelectedObject(hit.object, bot);
                 this.writeBotInformations(bot);
+                this.debugUi.setRemoteHidden(false);
                 break;
             }
 
@@ -65,7 +76,7 @@ export default class Debug{
             clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent, "tileObject");
             if (clickedObject) {
                 const obj = clickedObject;
-                this.setSelectedObject(hit.object.parent, obj.id);
+                this.setSelectedObject(hit.object.parent, obj);
                 this.writeObjectInformations(obj);
                 break;
             }
@@ -74,26 +85,28 @@ export default class Debug{
             clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent, "tile");
             if (clickedObject) {
                 const obj = clickedObject;
-                this.setSelectedObject(hit.object, obj.id);
+                this.setSelectedObject(hit.object, obj);
                 this.writeObjectInformations(obj);
                 break;
             }
         }
     }
 
-    setSelectedObject(object, id) {
+    setSelectedObject(object, gameObject) {
         this.deselectObject();
-        this.selectedObjectId = id;
-        this.selectedObjectBoxHelper = new THREE.BoxHelper(object, 0xff00ff);
-        this.view.scene.add(this.selectedObjectBoxHelper);
+        this.selectedObject = gameObject;
+        this.selectedObject.debugBoxHelper = new THREE.BoxHelper(object, 0xff00ff);
+        this.view.scene.add(this.selectedObject.debugBoxHelper);
     }
 
     deselectObject() {
-        this.selectedObjectId = undefined;
-        this.resetInformationsContainer();
-        if (this.selectedObjectBoxHelper) {
-            this.view.disposeObject3D(this.selectedObjectBoxHelper);
+        this.debugUi.setRemoteHidden(true);
+        if (this.selectedObject && this.selectedObject.debugBoxHelper) {
+            this.view.disposeSceneObject(this.selectedObject.debugBoxHelper);
+            this.selectedObject.debugBoxHelper = undefined;
         }
+        this.selectedObject = undefined;
+        this.resetInformationsContainer();
     }
 
     writeBotInformations(bot) {
@@ -104,25 +117,25 @@ export default class Debug{
         
         let botId = document.createElement('h3');
         botId.innerHTML = `${bot.id}`;
-        botId.style.color = `#${bot.teamColor.getHexString()}`;
+        botId.style.color = `#${bot.teamColor?.getHexString()}`;
 
         let botX = document.createElement('p');
-        botX.innerHTML = `X (Bot) = ${bot.x}`;
+        botX.innerHTML = `X (Bot) = ${bot.x?.toFixed(3)}`;
 
         let botZ = document.createElement('p');
-        botZ.innerHTML = `Z (Bot) = ${bot.z}`;
+        botZ.innerHTML = `Z (Bot) = ${bot.z?.toFixed(3)}`;
 
         let botRy = document.createElement('p');
-        botRy.innerHTML = `Ry (Bot) = ${bot.ry}`;
+        botRy.innerHTML = `Ry (Bot) = ${bot.ry?.toFixed(3)}`;
 
         let botObjX = document.createElement('p');
-        botObjX.innerHTML = `X (obj) = ${bot.sceneObject.position.x}`;
+        botObjX.innerHTML = `X (obj) = ${bot.sceneObject?.position.x?.toFixed(3)}`;
 
         let botObjZ = document.createElement('p');
-        botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject.position.z}`;
+        botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject?.position.z?.toFixed(3)}`;
 
         let botObjRy = document.createElement('p');
-        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject.rotation.y}`;
+        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject?.rotation.y?.toFixed(3)}`;
 
         // Ajout des données au conteneur
         this.infoContainer.appendChild(header);
@@ -142,13 +155,13 @@ export default class Debug{
         header.innerHTML = `${object.type} (${object.modelName})`;
         
         let objectX = document.createElement('p');
-        objectX.innerHTML = `X = ${object.x}`;
+        objectX.innerHTML = `X = ${object.x?.toFixed(3)}`;
 
         let objectZ = document.createElement('p');
-        objectZ.innerHTML = `Z = ${object.z}`;
+        objectZ.innerHTML = `Z = ${object.z?.toFixed(3)}`;
 
         let objectRy = document.createElement('p');
-        objectRy.innerHTML = `Ry = ${object.ry}`;
+        objectRy.innerHTML = `Ry = ${object.ry?.toFixed(3)}`;
 
         // Ajout des données au conteneur
         this.infoContainer.appendChild(header);

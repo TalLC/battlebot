@@ -89,12 +89,16 @@ class TilesGrid:
                 "name": tile.name,
                 "x": tile.x,
                 "z": tile.z,
+                "shape_name": tile.shape_name.lower() if tile.shape_name else str(),
+                "shape_size": tile.shape_size,
                 "object": {
                     "id": tile.tile_object.id,
                     "name": tile.tile_object.name,
                     "x": tile.tile_object.x,
                     "z": tile.tile_object.z,
-                    "ry": tile.tile_object.ry
+                    "ry": tile.tile_object.ry,
+                    "shape_name": tile.tile_object.shape_name.lower() if tile.tile_object.shape_name else str(),
+                    "shape_size": tile.tile_object.shape_size
                 }
             })
         return tiles_list

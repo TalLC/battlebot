@@ -5,14 +5,14 @@ import {ActionDefinition, actions} from "./actions.js";
     Param : botState -> données reçu par le websocket pour le bot
     Return : un dictionnaire contenant les positions en x et en z "final" du bot
 */
-function eventwrapper(botState){return {x: botState.x === undefined? this.x: botState.x, z: botState.x === undefined? this.z: botState.z};}
+function eventwrapper(botState){return {x: botState.move.x === undefined? this.x: botState.move.x, z: botState.move.z === undefined? this.z: botState.move.z};}
 
 /*
     Fonction : Qui permet de determiner si le move à eu lieu
     Param : botState -> données reçu par le websocket pour le bot
     Return : un booléen qui determine si l'action a été, et doit être animée.
 */
-function actionSelector(botState){return botState.x || botState.z;}
+function actionSelector(botState){return !(botState.move === undefined);}
 
 /*
     Fonction : Qui permet de move un bot
@@ -21,11 +21,13 @@ function actionSelector(botState){return botState.x || botState.z;}
 */
 function action(moveCoordinate){
     //let posDest = new THREE.Vector3(moveCoordinate.x, 0.5, moveCoordinate.z);
-    let posDest = this.sceneObject.position.clone();
-    posDest.set(moveCoordinate.x, 0.5, moveCoordinate.z);
-    this.sceneObject.position.lerp(posDest, 0.1);
-    this.x = posDest.x;
-    this.z = posDest.z;
+    //let posDest = this.sceneObject.position.clone();
+    //posDest.set(moveCoordinate.x, 0.5, moveCoordinate.z);
+    //this.sceneObject.position.lerp(posDest, 0.1);
+    this.sceneObject.position.x = moveCoordinate.x === undefined? this.sceneObject.position.x: moveCoordinate.x;
+    this.sceneObject.position.z = moveCoordinate.z === undefined? this.sceneObject.position.z: moveCoordinate.z;
+    this.x = moveCoordinate.x === undefined? this.x: moveCoordinate.x;
+    this.z = moveCoordinate.z === undefined? this.z: moveCoordinate.z;
 }
 
 /**
