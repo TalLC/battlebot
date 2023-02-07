@@ -21,15 +21,15 @@ export default class DebugUi {
                 scrollText.style.height = scrollText.scrollHeight;
             });
 
-        // Header
-        const headerContainer = document.getElementById("header-container");
+        // Debug info
+        const headerContainer = document.getElementById("info-container-buttons");
 
-        const buttonKillBot = headerContainer.querySelector("#header-button-kill-bot");
+        const buttonKillBot = headerContainer.querySelector("#button-kill-bot");
         buttonKillBot.onclick = this.killBot.bind(this);
         
-        const buttonToggleCollisions = headerContainer.querySelector("#header-button-collisions");
+        const buttonToggleCollisions = headerContainer.querySelector("#button-collisions");
         buttonToggleCollisions.onclick = this.toggleCollisions.bind(this);
-
+        
         // Remote
         this.remoteContainer = document.getElementById("remote-container");
         

@@ -14,12 +14,6 @@
 	</head>
 	<body data-bs-theme="dark">
 
-    <!-- Boutons de debug en haut de page -->
-    <div id="header-container" class="d-flex justify-content-center align-items-center unselectable" hidden>
-      <button id="header-button-kill-bot" class="btn btn-primary m-1" type="button">Tuer un bot 🤖🔫</button>
-      <button id="header-button-collisions" class="btn btn-primary m-1" type="button">Afficher les collisions 💥</button>
-    </div>
-
     <!-- Page d'attente -->
     <div id="startgame-scroll-container">
       <pre id="startgame-scroll-text" class="vertical-scrolling-text unselectable"></pre>
@@ -46,7 +40,18 @@
 
     <!-- Données de débug sur la droite -->
     <div id="debug-container" class="unselectable" hidden>
-      <div id="info-container"></div>
+      <div id="info-container">
+        <div id="info-container-buttons">
+          <div class="row">
+            <button id="button-kill-bot" class="btn btn-primary m-1" type="button">Tuer un bot 🤖🔫</button>
+          </div>
+          <div class="row">
+            <button id="button-collisions" class="btn btn-primary m-1" type="button">Afficher les collisions 💥</button>
+          </div>
+        </div>
+        <hr>
+        <div id="info-container-text"></div>
+      </div>
       <div id="remote-container" hidden>
         <!-- Partie déplacements du bot -->
         <div class="row g-0">
@@ -100,6 +105,8 @@
           "stats.module":"./static/js/threejs/stats.module.js",
           "loaders/OBJLoader":"./static/js/threejs/OBJLoader.js",
           "loaders/GLTFLoader":"./static/js/threejs/GLTFLoader.js",
+          "loaders/FontLoader":"./static/js/threejs/FontLoader.js",
+          "geometries/TextGeometry":"./static/js/threejs/TextGeometry.js",
           "tween":"./static/js/tweenjs/tween.js"
         }
       }
