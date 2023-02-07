@@ -1,8 +1,10 @@
+import "./actions/gameActions/gameActionDefinition.js"
+import {actions} from "./actions/actions.js"
 import View3DController from "./view/view3DController.js";
 import Object3DFactory from "./view/object3DFactory.js";
 import Bot from "./gameObjects/bot.js"
 import MapObject from "./gameObjects/mapObject.js"
-import {getRandomInt} from "./utils.js"
+import {getRandomInt} from "./utils/utils.js"
 
 
 class GameManager {
@@ -18,6 +20,16 @@ class GameManager {
             ...this.bots,
             ...this.mapObjects
         };
+    }
+
+    /* 
+        Fonction : Permet l'appel à une action intéragissant avec le jeu
+        Param : key -> contient le nom de l'action.
+                param -> contient les paramètres nécéssaire à la réalisation de l'action.
+        Return : N/A
+    */
+    action(key,param){
+        actions[key].action.call(this, param);
     }
 
     render() {
@@ -42,9 +54,12 @@ class GameManager {
         this.v.start();
     }
 
-    destroyGameObject(gameObject) {
-        // Appel du destructeur de l'objet
-        gameObject.dispose();
+    hurtObjectFromId(id) {
+        // Récupération du GameObject à partir de l'id
+        const obj = this.getGameObjectFromId(id);
+
+        // Affichage du hit
+        if (obj) this.v.showHurtMessageForObject(obj);
     }
 
     destroyGameObjectFromId(id) {
@@ -52,7 +67,7 @@ class GameManager {
         const obj = this.getGameObjectFromId(id);
 
         // Appel du destructeur de l'objet
-        if (obj) this.destroyGameObject(obj);
+        if (obj) obj.dispose();
     }
     
     removeGameObjectFromId(id) {

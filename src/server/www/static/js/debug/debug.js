@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import GameManager from './gameManager.js';
+import GameManager from '../gameManager.js';
 import DebugUi from "./debugUi.js";
 
 

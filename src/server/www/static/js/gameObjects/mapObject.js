@@ -1,4 +1,4 @@
-import "../actionDefinition.js"
+import "../actions/botActions/botActionDefinition.js"
 import {actions} from "../actions/actions.js"
 import GameObject from './gameObject.js';
 

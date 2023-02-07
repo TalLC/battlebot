@@ -1,5 +1,5 @@
-import GameManager from './gameManager.js';
-import sendRestMessage from './rest.js'
+import GameManager from '../gameManager.js';
+import sendRestMessage from '../utils/rest.js'
 
 
 export default class DebugUi {

@@ -5,7 +5,7 @@ import {TextGeometry} from 'geometries/TextGeometry';
 
 
 import Config from "../config.js";
-import Debug from "../debug.js";
+import Debug from "../debug/debug.js";
 
 
 export default class View3DController {

@@ -1,8 +1,10 @@
-
+/*
+ Classe permettant de gérer la configuration de l'application front.
+*/
 
 class Config {
     constructor(){
-        this.debugMode = false;
+        this.debugMode = true;
     }
 
     isDebug() {

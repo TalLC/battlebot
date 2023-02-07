@@ -22,7 +22,9 @@ export default class GameObject{
         GameManager.v.disposeSceneObject(this.sceneObject);
 
         // Suppression du Gameobject
-        GameManager.removeGameObject(this);
+        // On attend un peu avant d'effacer l'entrée du dictionnaire pour éviter que le tir ne se joue après la suppression
+        new Promise((resolve) => setTimeout(() => resolve(), 1000))
+            .then(() => GameManager.removeGameObject(this));
     }
 
     get coordinates3D() {
