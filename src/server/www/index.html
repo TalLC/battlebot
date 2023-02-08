@@ -1,94 +1,128 @@
 <!doctype html>
 <html lang="fr">
-	<head>
-		<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-		<title>Battlebots - Alpha 0.3.0</title>
-    <link rel="stylesheet" href="static/css/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="static/css/bootstrap/bootstrap-icons.css">
-		<link rel="stylesheet" href="static/css/styles.css" />
-		<link rel="stylesheet" href="static/css/debug.css" />
-		<link rel="stylesheet" href="static/css/startgame.css" />
-	</head>
-	<body data-bs-theme="dark">
 
-    <!-- Boutons de debug en haut de page -->
-    <div id="header-container" class="d-flex justify-content-center align-items-center unselectable">
-      <button id="header-button-force-start" class="btn btn-primary m-1" type="button">Forcer le démarrage ▶️</button>
-      <button id="header-button-add-bot" class="btn btn-primary m-1" type="button">Ajouter un bot 🤖</button>
-      <button id="header-button-kill-bot" class="btn btn-primary m-1" type="button">Tuer un bot 🤖🔫</button>
-      <button id="header-button-collisions" class="btn btn-primary m-1" type="button">Afficher les collisions 💥</button>
-    </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Battlebots - Alpha 0.4.0</title>
+  <link rel="stylesheet" href="static/css/fonts/vt323.css">
+  <link rel="stylesheet" href="static/css/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="static/css/bootstrap/bootstrap-icons.css">
+  <link rel="stylesheet" href="static/css/styles.css" />
+  <link rel="stylesheet" href="static/css/debug.css" />
+  <link rel="stylesheet" href="static/css/startgame.css" />
+  <link rel="stylesheet" href="static/css/scroll-text.css" />
+</head>
 
-    <!-- Page d'attente -->
-    <div id="startgame-container" class="container-fluid unselectable">
-      <div class="row justify-content-md-center">
-          <div class="col-md-auto">
-              <img id="map-img" class="startgame-logo unselectable" src="static/img/logo.png"/>
-          </div>
-      </div>
-      <div class="row justify-content-md-center">
-          <div class="col-md-auto" style="height: 10vh;"></div>
-      </div>
-      <div class="container-fluid startgame-block-rounded">
-          <div class="row justify-content-xl-center">
-              <div class="col-xl-auto">
-                  <h1><span class="bi bi-hourglass-split"></span> En attente de connexion des IA...</h1>
-                  <p>La partie démarre à partir de 3 bots et se termine lorsqu'il ne reste qu'1 équipe en vie</p>
-              </div>
-          </div>
-      </div>
-    </div>
+<body data-bs-theme="dark">
 
-    <!-- Données de débug sur la droite -->
-    <div id="debug-container" class="unselectable" hidden>
-      <div id="info-container"></div>
-      <div id="remote-container" hidden>
-        <!-- Partie déplacements du bot -->
-        <div class="row g-0">
-          <div class="col-sm-4"></div>
-          <div class="col-sm-4 text-center">
-            <button id="button-remote-up" class="btn btn-primary btn-remote" type="button"><i class="bi bi-chevron-up"></i></button>
-          </div>
-          <div class="col-sm-4"></div>
+  <!-- Fenêtre de fin de jeu avec le récap de la partie -->
+  <div id="endgame-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-4">Fin de partie</h1>
         </div>
-        <div class="row g-0">
-          <div class="col-sm-4 text-end">
-              <button id="button-remote-left" class="btn btn-primary btn-remote"><i class="bi bi-chevron-left"></i></button>
-          </div>
-          <div class="col-sm-4 text-center">
-            <button id="button-remote-stop" class="btn btn-primary btn-remote"><i class="bi bi-pause"></i></button>
-          </div>
-          <div class="col-sm-4 text-start">
-              <button id="button-remote-right" class="btn btn-primary btn-remote"><i class="bi bi-chevron-right"></i></button>
+        <div class="modal-body">
+          <div class="row justify-content-md-center">
+            <div class="col-xl-auto text-center">
+              <h2>Vainqueur :</h2>
+              <h1 id="endgame-message-l1">N/A</h1>
+            </div>
           </div>
         </div>
-        <!-- Partie gestion du bot -->
-        <div class="row sep-remote">
-          <hr>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page d'attente -->
+  <div id="startgame-scroll-container">
+    <pre id="startgame-scroll-text" class="vertical-scrolling-text unselectable"></pre>
+  </div>
+  <div id="startgame-container" class="container-fluid unselectable">
+    <div class="row justify-content-md-center">
+      <div class="col-md-auto">
+        <img id="map-img" class="startgame-logo unselectable" src="static/img/logo.png" />
+      </div>
+    </div>
+    <div class="row justify-content-md-center">
+      <div class="col-md-auto" style="height: 10vh;"></div>
+    </div>
+    <div class="container-fluid startgame-block-rounded">
+      <div class="row justify-content-center">
+        <div id="startgame-messages" class="col-xl-auto text-center">
+          <h1>EN ATTENTE DE CONNEXION DES IA...</h1><span class="blinking-cursor">█</span>
+          <p>LA PARTIE DÉMARRE À PARTIR DE 3 BOTS ET SE TERMINE LORSQU'IL NE RESTE QU'1 ÉQUIPE EN VIE</p>
+        </div>
+      </div>
+    </div>
+    <button id="header-button-add-bot" class="btn btn-dark" type="button">Connecter un bot 🤖</button>
+  </div>
+
+  <!-- Données de débug sur la droite -->
+  <div id="debug-container" class="unselectable" hidden>
+    <div id="info-container">
+      <div id="info-container-buttons">
+        <div class="row">
+          <button id="button-kill-bot" class="btn btn-primary m-1" type="button">Tuer un bot 🤖🔫</button>
         </div>
         <div class="row">
-          <div class="col-sm-6">
-            <button id="button-remote-shoot" class="btn btn-primary btn-remote btn-action"><i class="bi bi-fire"></i> Tirer</button>
-          </div>
-          <div class="col-sm-6">
-            <input id="input-remote-angle" type="number" step="1.0" class="form-control input-action" placeholder="0,0°">
-          </div>
+          <button id="button-collisions" class="btn btn-primary m-1" type="button">Afficher les collisions 💥</button>
         </div>
-        <div class="row">
-          <div class="col-sm-12">
-            <button id="button-remote-kill" class="btn btn-danger btn-remote btn-action"><i class="bi bi-slash-circle"></i> Tuer le bot</button>
-          </div>
+      </div>
+      <hr>
+      <div id="info-container-text"></div>
+    </div>
+    <div id="remote-container" hidden>
+      <!-- Partie déplacements du bot -->
+      <div class="row g-0">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-center">
+          <button id="button-remote-up" class="btn btn-primary btn-remote" type="button"><i
+              class="bi bi-chevron-up"></i></button>
+        </div>
+        <div class="col-sm-4"></div>
+      </div>
+      <div class="row g-0">
+        <div class="col-sm-4 text-end">
+          <button id="button-remote-left" class="btn btn-primary btn-remote"><i class="bi bi-chevron-left"></i></button>
+        </div>
+        <div class="col-sm-4 text-center">
+          <button id="button-remote-stop" class="btn btn-primary btn-remote"><i class="bi bi-pause"></i></button>
+        </div>
+        <div class="col-sm-4 text-start">
+          <button id="button-remote-right" class="btn btn-primary btn-remote"><i
+              class="bi bi-chevron-right"></i></button>
+        </div>
+      </div>
+      <!-- Partie gestion du bot -->
+      <div class="row sep-remote">
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <button id="button-remote-shoot" class="btn btn-primary btn-remote btn-action"><i class="bi bi-fire"></i>
+            Tirer</button>
+        </div>
+        <div class="col-sm-6">
+          <input id="input-remote-angle" type="number" step="1.0" class="form-control input-action" placeholder="0,0°">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <button id="button-remote-kill" class="btn btn-danger btn-remote btn-action"><i
+              class="bi bi-slash-circle"></i> Tuer le bot</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Contient l'affichage de la partie' -->
-    <div id="view-container" hidden>
-      <canvas id="threejs-canvas"></canvas>
-    </div>
+  <!-- Contient l'affichage de la partie' -->
+  <div id="view-container" hidden>
+    <canvas id="threejs-canvas"></canvas>
+  </div>
 
-    <script type="importmap">
+  <script type="importmap">
       {
         "imports": {
           "three": "./static/js/threejs/three.module.js",
@@ -96,12 +130,15 @@
           "stats.module":"./static/js/threejs/stats.module.js",
           "loaders/OBJLoader":"./static/js/threejs/OBJLoader.js",
           "loaders/GLTFLoader":"./static/js/threejs/GLTFLoader.js",
+          "loaders/FontLoader":"./static/js/threejs/FontLoader.js",
+          "geometries/TextGeometry":"./static/js/threejs/TextGeometry.js",
           "tween":"./static/js/tweenjs/tween.js"
         }
       }
     </script>
-    <script src="static/js/bootstrap/bootstrap.bundle.min.js"></script>
-		<script type='module' src="static/js/script.js"></script>
+  <script src="static/js/bootstrap/bootstrap.bundle.min.js"></script>
+  <script type='module' src="static/js/script.js"></script>
 
-	</body>
+</body>
+
 </html>

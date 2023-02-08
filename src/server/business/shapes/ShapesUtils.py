@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from business.shapes.ShapeFactory import ShapeFactory, Shape
 
 if TYPE_CHECKING:
-    from business.gameobjects.OrientedGameObject import OrientedGameObject
+    from business.gameobjects.GameObject import GameObject
 
 
 class ShapesUtils:
@@ -47,7 +47,7 @@ class ShapesUtils:
         return element.exterior.distance(element.centroid)
 
     @staticmethod
-    def cast_ray_on_objects(start_coordinates: tuple, end_coordinates: tuple, objects: list[OrientedGameObject]):
+    def cast_ray_on_objects(start_coordinates: tuple, end_coordinates: tuple, objects: list[GameObject]):
         """
         Cast a ray and return the objects that are in the way.
         """

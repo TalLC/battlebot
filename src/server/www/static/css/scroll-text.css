@@ -1,0 +1,26 @@
+#startgame-scroll-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+}
+  
+.vertical-scrolling-text {
+    height: auto;
+    color: #ff3e68;
+    font-family: 'VT323';
+    font-size: x-large;
+    text-align: left;
+    margin-left: 2vw;
+    opacity: 0.1;
+    overflow: hidden;
+
+    /* transform: translateY(100%); */
+    animation: marquee 60s linear infinite;
+}
+
+@keyframes marquee {
+    from {transform: translateY(-100%);}
+    to {transform: translateY(10%);}
+}

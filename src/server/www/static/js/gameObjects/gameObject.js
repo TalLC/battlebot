@@ -17,8 +17,18 @@ export default class GameObject{
         this.debugBoxHelper;
     }
 
+    dispose() {
+        // Suppression de l'objet de la scene Three.js
+        GameManager.v.disposeSceneObject(this.sceneObject);
+
+        // Suppression du Gameobject
+        // On attend un peu avant d'effacer l'entrée du dictionnaire pour éviter que le tir ne se joue après la suppression
+        new Promise((resolve) => setTimeout(() => resolve(), 1000))
+            .then(() => GameManager.removeGameObject(this));
+    }
+
     get coordinates3D() {
-        return {x: this.x, z: this.z};
+        return {x: this.x, y: this.y, z: this.z};
     }
 
     get coordinates2D() {

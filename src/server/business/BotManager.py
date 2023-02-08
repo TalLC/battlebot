@@ -1,3 +1,4 @@
+from business.shapes.ShapesUtils import ShapesUtils
 from business.interfaces.IBotManager import IBotManager
 from business.gameobjects.entity.bots.models.BotModel import BotModel
 from business.gameobjects.entity.bots.BotFactory import BotFactory
@@ -24,16 +25,34 @@ class BotManager(IBotManager):
         else:
             return None
 
-    def get_bots(self, connected_only: bool = True) -> (BotModel,):
+    def get_bots(self, connected_only: bool = True, alive_only: bool = True) -> (BotModel,):
         """
         Get all connected bots.
         """
-        bots = tuple(self._BOTS.values())
+        return tuple(
+            bot for bot in self._BOTS.values()
+            if (not connected_only or (connected_only and bot.client_connection.is_connected))
+            and (not alive_only or (alive_only and bot.is_alive))
+        )
 
-        if connected_only:
-            bots = (bot for bot in self._BOTS.values() if bot.client_connection.is_connected is connected_only)
+    def get_bots_in_radius(self, connected_only: bool = True, alive_only: bool = True,
+                           origin: tuple = (0.0, 0.0), radius: int = 1) -> (BotModel,):
+        """
+        Get all connected bots.
+        """
+        bots = tuple(
+            bot for bot in self._BOTS.values()
+            if (not connected_only or (connected_only and bot.client_connection.is_connected))
+            and (not alive_only or (alive_only and bot.is_alive))
+        )
 
-        return tuple(bots)
+        # Filtering on radius
+        in_range_bots = list()
+        for bot in bots:
+            if ShapesUtils.get_2d_distance_between(origin, (bot.x, bot.z)) <= radius:
+                in_range_bots.append(bot)
+
+        return tuple(in_range_bots)
 
     def create_bot(self, bot_name, bot_type) -> BotModel:
         """

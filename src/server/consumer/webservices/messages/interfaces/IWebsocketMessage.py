@@ -10,6 +10,7 @@ class IWebsocketMessage(ABC):
     def __init__(self, msg_type: str):
         self._msg_type = msg_type
 
-    @abstractmethod
     def json(self) -> dict:
-        raise NotImplementedError()
+        return {
+            'msg_type': self.msg_type
+        }

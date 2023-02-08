@@ -1,14 +1,18 @@
 
 #startgame-container {
     background-color: #000000;
+    position: fixed;
+    top: 0;
+    left: 0;
     min-height: 100%;
     min-height: 100vh;
+    z-index: -1;
 }
 
 .startgame-logo {
     max-width: 60vw;
     max-height: 100vw;
-    padding-top: calc(var(--ui-header-height) + 3vw);
+    padding-top: 3vw;
 }
 
 .startgame-list {
@@ -17,9 +21,53 @@
 }
 
 .startgame-block-rounded {
-    width: 720px;
-    background-color: #0e0e0e;
-    padding: 10px;
+    font-family: 'VT323';
+    width: 40%;
+    /* background-color: #0e0e0e; */
+    padding: 30px;
     border-radius: 30px;
-    backdrop-filter: blur(2px);
+    /* backdrop-filter: blur(2px); */
+    /* border: solid 1px #de0f3c; */
+}
+
+#startgame-messages > h1 {
+    color: white;
+    font-size: 54px;
+    display: inline;
+    vertical-align: middle;
+}
+
+#startgame-messages > span {
+    color: white;
+    font-size: 30px;
+    display: inline;
+    vertical-align: middle;
+}
+
+#startgame-messages > p {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+.blinking-cursor {
+    animation: blink 1.5s infinite;
+    -webkit-animation: blink 1.5s infinite;
+    -moz-animation: blink 1.5s infinite;
+    -o-animation: blink 1.5s infinite;
+    -ms-animation: blink 1.5s infinite;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+    0% { opacity: 0; }
+    50% { opacity: 0; }
+    51% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+/* Debug */
+#header-button-add-bot {
+    position: fixed;
+    right: 15px;
+    bottom: 15px;
 }

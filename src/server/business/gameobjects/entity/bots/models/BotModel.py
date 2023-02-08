@@ -19,8 +19,7 @@ from business.gameobjects.entity.bots.handlers.CollisionHandler import Collision
 from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
-from business.shapes.ShapeFactory import ShapeFactory
-from business.shapes.ShapesUtils import ShapesUtils
+from business.shapes.ShapesUtils import ShapesUtils, ShapeFactory
 from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
@@ -28,10 +27,11 @@ from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStat
 from consumer.brokers.messages.stomp.BotStunningStatusMessage import BotStunningStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
-from consumer.webservices.messages.websocket.HitMessage import HitMessage
+from consumer.webservices.messages.websocket.GameObjectHurtMessage import GameObjectHurtMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
+    from business.gameobjects.GameObject import GameObject
     from business.BotManager import BotManager
     from shapely.geometry.base import BaseGeometry
     from business.TeamManager import Team
@@ -79,7 +79,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         return ShapeFactory().create_shape(
             Shape.CIRCLE, o=(self.x, self.z), radius=self.shape_size, resolution=3
         )
-        
+
     @property
     def shape_name(self) -> str:
         return self._shape_name
@@ -102,7 +102,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         3D model to use.
         """
         raise NotImplementedError
-
 
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float, shape_name: str, shape_size: float):
@@ -288,14 +287,14 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         )
 
         # Gathering map objects
-        map_objects = self.bot_manager.game_manager.get_items_on_map(
-            bots_only=True, objects_only=True, collision_only=True, radius=shoot_max_distance, origin=self.coordinates
+        map_objects = self.bot_manager.game_manager.get_map_objects(
+            bots=True, tiles=False, collision_only=True, radius=shoot_max_distance, origin=self.coordinates
         )
         # Avoid shooting in our foot
         map_objects.remove(self)
 
         # Test which objects can be shot
-        closest_object: OrientedGameObject | None = None
+        closest_object: GameObject | None = None
         touched_objects = ShapesUtils.cast_ray_on_objects((self.x, self.z), (shoot_end_x, shoot_end_z), map_objects)
         if len(touched_objects):
             sorted_objects = sorted(
@@ -390,9 +389,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         Callback when the bot is hurt.
         """
-        ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
+        ConsumerManager().websocket.send_message(GameObjectHurtMessage(self.id))
 
-    def collision(self) -> None:
+    def collision(self) -> bool:
         """
         Check if the bot is colliding.
         """

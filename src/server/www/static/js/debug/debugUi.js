@@ -1,5 +1,5 @@
-import GameManager from './gameManager.js';
-import sendRestMessage from './rest.js'
+import GameManager from '../gameManager.js';
+import sendRestMessage from '../utils/rest.js'
 
 
 export default class DebugUi {
@@ -7,21 +7,29 @@ export default class DebugUi {
     constructor(debug) {
         this.debug = debug;
 
-        // Header
-        const headerContainer = document.getElementById("header-container");
-
-        const buttonForceStart = headerContainer.querySelector("#header-button-force-start");
-        buttonForceStart.onclick = this.forceStartGame.bind(this);
-        
-        const buttonAddBot = headerContainer.querySelector("#header-button-add-bot");
+        // Startgame
+        const startGameContainer = document.getElementById("startgame-container");
+        const buttonAddBot = startGameContainer.querySelector("#header-button-add-bot");
         buttonAddBot.onclick = this.addBot.bind(this);
         
-        const buttonKillBot = headerContainer.querySelector("#header-button-kill-bot");
+        // Scroll text
+        const scrollText = document.getElementById("startgame-scroll-text");
+        fetch('https://raw.githubusercontent.com/id-Software/DOOM/master/linuxdoom-1.10/g_game.c')
+            .then((response) => response.text())
+            .then((data) => {
+                scrollText.innerHTML = data;
+                scrollText.style.height = scrollText.scrollHeight;
+            });
+
+        // Debug info
+        const headerContainer = document.getElementById("info-container-buttons");
+
+        const buttonKillBot = headerContainer.querySelector("#button-kill-bot");
         buttonKillBot.onclick = this.killBot.bind(this);
         
-        const buttonToggleCollisions = headerContainer.querySelector("#header-button-collisions");
+        const buttonToggleCollisions = headerContainer.querySelector("#button-collisions");
         buttonToggleCollisions.onclick = this.toggleCollisions.bind(this);
-
+        
         // Remote
         this.remoteContainer = document.getElementById("remote-container");
         
@@ -50,10 +58,6 @@ export default class DebugUi {
     }
 
     // Header
-    forceStartGame() {
-        sendRestMessage('PATCH', '/game/action/start', {"api_password": "password"});
-    }
-
     addBot() {
         sendRestMessage('PATCH', '/bots/action/add', {"api_password": "password"});
     }

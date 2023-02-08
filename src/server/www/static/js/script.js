@@ -1,6 +1,6 @@
 import GameManager from './gameManager.js';
 import {actions} from './actions/actions.js';
-import sendRestMessage from './rest.js'
+import sendRestMessage from './utils/rest.js'
 
 
 let ws = new WebSocket(`ws://${window.location.host}/ws`);
@@ -10,17 +10,16 @@ let update = [];
 
 /*
     Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
-    Param : message -> correspont aux données pour un bot, reçu dans un appel websocket.
+    Param : message -> correspond aux données pour un bot, reçu dans un appel websocket.
     Return : N/A
 */
 function doAction(message){
     // Création d'une promise vide
     let promise = Promise.resolve();
-    // console.log(message);
+    console.log(message.msg_type);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.bot_id] && game.bots[message.bot_id].sceneObject){
-            
+        if(game.bots[message.id] && game.bots[message.id].sceneObject){
             // Parcours des actions enregistrées
             for(let actionDef in actions){
 
@@ -30,9 +29,22 @@ function doAction(message){
                 if(selected){
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
-                        game.bots[message.bot_id].action(actionDef,paramAction);
+                        game.bots[message.id].action(actionDef,paramAction);
                     });
                 }
+            }
+        }
+    } else {
+        for(let actionDef in actions){
+
+            // Choix de l'action à effectuer suivant les arguments trouvés dans le message
+            let selected = actions[actionDef].actionSelector(message);
+            
+            if(selected){
+                let paramAction = actions[actionDef].eventwrapper(message);
+                promise = promise.then(() => {
+                    game.action(actionDef,paramAction);
+                });
             }
         }
     }
@@ -48,7 +60,7 @@ function doAction(message){
 function animate(){
     if(update[0] !== undefined && update[0].messages !== undefined){
         let promises = [];
-        console.log(update[0].messages)
+        // console.log(update[0].messages)
         for(let i = 0; i < update[0].messages.length; i++){
             promises.push(doAction(update[0].messages[i]));
         }

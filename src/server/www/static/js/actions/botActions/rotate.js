@@ -1,4 +1,4 @@
-import {ActionDefinition, actions} from "./actions.js";
+import {ActionDefinition, actions} from "../actions.js";
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action rotate.

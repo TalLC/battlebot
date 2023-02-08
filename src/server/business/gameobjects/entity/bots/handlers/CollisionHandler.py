@@ -23,13 +23,15 @@ class CollisionHandler:
                 return other.name
 
     def check_bot_collision(self, other):
-        if isinstance(other, self._bot.__class__) and other != self._bot and other.shape.intersection(self._bot.shape):
-            return other.name
+        if isinstance(other, self._bot.__class__):
+            if other.has_collision and other != self._bot and other.shape.intersection(self._bot.shape):
+                return other.name
 
     def check_collision(self):
         self._collision_entity = None
-        neared_items = self._bot.bot_manager.game_manager.get_items_on_map(
-            bots_only=True, objects_only=False, radius=1, origin=self._bot.coordinates)
+        neared_items = self._bot.bot_manager.game_manager.get_map_objects(
+            bots=True, tiles=True, tile_objects=True, collision_only=True, radius=1, origin=self._bot.coordinates
+        )
 
         for item in neared_items:
             self._collision_entity = self.check_env_collision(item) or self.check_bot_collision(item)
@@ -43,7 +45,7 @@ class CollisionHandler:
         self.knockback()
         self._bot.stun(1.5)
 
-    def knockback(self, distance: float = 1.5, direction: float = None) -> None:
+    def knockback(self, distance: float = 0.5, direction: float = None) -> None:
         """
         Quickly knock the bot back.
         """

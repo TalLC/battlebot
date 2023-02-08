@@ -10,5 +10,7 @@ class Water(Tile):
     def is_walkable(self) -> bool:
         return False
 
-    def __init__(self, x: int, z: int, tile_object: TileObject = Air()):
-        super().__init__(name=self._NAME, x=x, z=z, tile_object=tile_object)
+    def __init__(self, x: int, z: int, tile_object: TileObject = None):
+        super().__init__(
+            name=self._NAME, x=x, z=z, tile_object=Air(parent_tile=self) if tile_object is None else tile_object
+        )

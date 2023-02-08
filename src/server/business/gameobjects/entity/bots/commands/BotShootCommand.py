@@ -2,11 +2,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
+from business.gameobjects.behaviour.IDestructible import IDestructible
 
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
-from consumer.webservices.messages.websocket.BotShootAtObjects import BotShootAtObjects
-from consumer.webservices.messages.websocket.BotShootAtCoordinates import BotShootAtCoordinates
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
@@ -23,7 +22,9 @@ class BotShootCommand(IBotCommand):
         """
         target = arg.shoot(self.value)
         ConsumerManager().websocket.send_message(BotUpdateMessage(bot_id=arg.id, target=target))
-        #if target.id:
-        #    ConsumerManager().websocket.send_message(BotShootAtObjects(arg.id, target.id))
-        #else:
-        #    ConsumerManager().websocket.send_message(BotShootAtCoordinates(arg.id, {'x': target.x, 'y': target.z}))
+
+        # Hurting the target object
+        if target.id:
+            target_object = arg.bot_manager.game_manager.get_map_object_from_id(target.id)
+            if target_object and isinstance(target_object, IDestructible):
+                target_object.hurt(arg.equipment.weapon.damages)
