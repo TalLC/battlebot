@@ -25,12 +25,20 @@ export default class View3DController {
 	    this.scene.fog = new THREE.Fog( 0xa0d0da, 0.5, 500);
 
         this.initLight();
-        
+
+        // Camera OrthographicCamera
+        // this.camera = this.createCamera(
+        //     {left: width / - 32, right: width / 32, top: height / 32, bottom: height / - 32, near: 1, far: 1000 },
+        //     {x: 32, y: 50, z: 32},
+        //     {x: 0, y: 0, z: 0}
+        // );
+
         this.camera = this.createCamera(
             {left: width / - 32, right: width / 32, top: height / 32, bottom: height / - 32, near: 1, far: 1000 },
-            {x: 32, y: 50, z: 32},
-            {x: 0, y: 0, z: 0}
+            {x: 64, y: 64, z: 64},
+            {x: 16, y: 0, z: 16}
         );
+
 
         if (Config.isDebug()) {
             this.debug = new Debug(this, "debug-container");
@@ -64,7 +72,7 @@ export default class View3DController {
         new Promise((resolve) => {
             // Load the font
             let loader = new FontLoader();
-            loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (loadedFont) {
+            loader.load('static/fonts/helvetiker_bold.typeface.json', function (loadedFont) {
                 font = loadedFont;
                 resolve();
             });
@@ -120,7 +128,7 @@ export default class View3DController {
     initLight(){
         console.log('initialisation light');
         //Création de la lumière ambiante
-        const light = new THREE.AmbientLight(0xffffff, 0.8);
+        const light = new THREE.AmbientLight(0xffffff, 0.9);
         this.scene.add( light );
 
         //Création de la lumière orientée
@@ -162,12 +170,12 @@ export default class View3DController {
     */
     createCamera(frustum, position, lookAt){
         console.log('initialisation cam')
-        const camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 500 );
+        const camera = new THREE.PerspectiveCamera( 18, window.innerWidth / window.innerHeight, 1, 500 );
         // const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
         camera.position.set(position.x, position.y, position.z);
-        camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
         this.controls = new OrbitControls(camera, this.renderer.domElement);
-        
+        this.controls.target.set(lookAt.x, lookAt.y, lookAt.z);
+
         this.controls.update();
         return camera;
     }
