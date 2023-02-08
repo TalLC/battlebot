@@ -17,7 +17,7 @@ let update = [];
 function doAction(message){
     // Création d'une promise vide
     let promise = Promise.resolve();
-    // console.log(message);
+    console.log(message);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
         if(game.bots[message.id] && game.bots[message.id].sceneObject){
@@ -81,7 +81,6 @@ animate();
 */
 ws.onmessage = async function(event) {
     const message = JSON.parse(event.data);
-
     // Messages d'update multiples
     if (message.messages !== undefined) {
         update.push(message);

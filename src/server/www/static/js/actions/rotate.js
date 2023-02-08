@@ -20,14 +20,15 @@ function actionSelector(botState){return !(botState.rotate === undefined);}
     Param : rotateCoordinate -> rotation autour de l'axe y du bot
     Return : N/A
 */
+
 function action(rotateCoordinate){
+    const targetRotation = rotateCoordinate % (Math.PI * 2);
     const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
-	.to({rotation: rotateCoordinate * -1}, 100)
-	.easing(TWEEN.Easing.Linear.None)
+	.to({rotation: targetRotation}, 100)
+	.easing(TWEEN.Easing.Quadratic.InOut)
 	.onUpdate((coords) => {
         console.log(coords.rotation);
         this.sceneObject.rotation.y = coords.rotation;
-        this.ry = this.sceneObject.rotation.y;
     })
 	.start()
 }
