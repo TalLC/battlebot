@@ -82,6 +82,8 @@ GAME_NOT_STARTED = ErrorCode(name='GAME_NOT_STARTED', internal_code=0x00000602, 
                              label="The game is not started yet")
 GAME_ALREADY_STARTED = ErrorCode(name='GAME_ALREADY_STARTED', internal_code=0x00000603, http_code=500,
                                  label="The game is already started")
+GAME_IS_FULL = ErrorCode(name='GAME_IS_FULL', internal_code=0x00000604, http_code=500,
+                         label="The game is full")
 
 # Network Errors
 NETWORK_BANNED_IP_TEMP = ErrorCode(name='NETWORK_BANNED_IP_TEMP', internal_code=0x00000701, http_code=401,
