@@ -1,7 +1,7 @@
-import "../actionDefinition.js"
+import "../actions/botActions/botActionDefinition.js"
 import {actions} from "../actions/actions.js"
 import GameObject from './gameObject.js';
-import {colorStrToNumber} from '../utils.js'
+import {colorStrToNumber} from '../utils/utils.js'
 
 
 export default class Bot extends GameObject{

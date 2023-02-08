@@ -27,7 +27,7 @@ from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStat
 from consumer.brokers.messages.stomp.BotStunningStatusMessage import BotStunningStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
-from consumer.webservices.messages.websocket.HitMessage import HitMessage
+from consumer.webservices.messages.websocket.GameObjectHurtMessage import GameObjectHurtMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
@@ -387,9 +387,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         Callback when the bot is hurt.
         """
-        ConsumerManager().websocket.send_message(HitMessage(object_type="bot", object_id=self.id))
+        ConsumerManager().websocket.send_message(GameObjectHurtMessage(self.id))
 
-    def collision(self) -> None:
+    def collision(self) -> bool:
         """
         Check if the bot is colliding.
         """

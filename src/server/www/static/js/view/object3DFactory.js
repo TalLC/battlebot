@@ -52,13 +52,7 @@ class Object3DFactory {
         const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar'][bot.modelName];
         return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then(sceneObject => {
             // Peinture du bot de la couleur de l'équipe
-            const material = new THREE.MeshBasicMaterial(
-                {
-                    "color": bot.teamColor,
-                    "transparent": true,
-                    "opacity": 0.7
-                }
-            );
+            const material = new THREE.MeshBasicMaterial({ "color": bot.teamColor });
 
             sceneObject.traverse((o) => {
                 if (o.isMesh) o.material = material;
@@ -139,12 +133,6 @@ class Object3DFactory {
         return mesh;
     }
 
-    getPointInBetweenByPerc(pointA, pointB, percentage) {
-        var dir = pointB.clone().sub(pointA);
-        var len = dir.length();
-        dir = dir.normalize().multiplyScalar(len*percentage);
-        return pointA.clone().add(dir);
-    }
 }
 
 export default new Object3DFactory();

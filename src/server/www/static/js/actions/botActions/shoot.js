@@ -1,6 +1,6 @@
-import {ActionDefinition, actions} from "./actions.js";
-import GameManager from '../gameManager.js';
-import Object3DFactory from "../view/object3DFactory.js";
+import {ActionDefinition, actions} from "../actions.js";
+import GameManager from '../../gameManager.js';
+import Object3DFactory from "../../view/object3DFactory.js";
 
 
 /*
@@ -57,11 +57,11 @@ function shootTo(bot, to) {
     //Add the mesh to the scene
     GameManager.v.scene.add(laserMesh);
 
-    // Create a promise that resolves after 2 seconds
+    // Create a promise that resolves after 1 second
     const laserPromise = new Promise((resolve) => {
         setTimeout(() => {
             resolve();
-        }, 2000);
+        }, 1000);
     });
 
     // Wait for the promise to resolve, then remove the mesh from the scene

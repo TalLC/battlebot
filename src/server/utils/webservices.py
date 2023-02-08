@@ -1,5 +1,5 @@
 import json
-from time import time
+from time import time, sleep
 from datetime import timedelta
 from queue import SimpleQueue
 from threading import Thread, Event
@@ -18,8 +18,12 @@ class Webservices(metaclass=SingletonABCMeta):
         self._thread.start()
 
     def concatenate(self, e: Event):
-        # Message gathering interval
+        # We concatenate loop_wait_ms of incoming messages
         loop_wait_ms = 100
+
+        # We read the queue every reading_interval_ms
+        # ie: we can read a maximum of "loop_wait_ms / reading_interval_ms" messages in 1 loop
+        reading_interval_ms = 1
 
         # Message gathered and concatenated in the interval
         message_list: [IWebsocketMessage] = list()
@@ -32,31 +36,77 @@ class Webservices(metaclass=SingletonABCMeta):
             while time() < timer_end:
 
                 # Gathering a message
-                new_message = self.__ws_tmp_queue.get()
-                has_been_merged = False
+                while not self.__ws_tmp_queue.empty():
+                    new_message = self.__ws_tmp_queue.get(block=False)
+                    has_been_merged = False
 
-                # Checking type of message
-                if isinstance(new_message, BotUpdateMessage):
+                    # Checking type of message
+                    if isinstance(new_message, BotUpdateMessage):
 
-                    # Checking if we had another message from the same bot in the past
-                    for prev_message in message_list:
+                        # Checking if we had another message from the same bot in the past
+                        for prev_message in message_list:
 
-                        # If it was a message of type BotUpdateMessage, it can be concatenated
-                        if isinstance(prev_message, BotUpdateMessage):
+                            # If it was a message of type BotUpdateMessage, it can be concatenated
+                            if isinstance(prev_message, BotUpdateMessage):
 
-                            # We already had a message from this bot, let's add them
-                            if prev_message.id == new_message.id:
-                                prev_message += new_message
-                                has_been_merged = True
-                                continue
+                                # We already had a message from this bot, let's add them
+                                if prev_message.id == new_message.id:
+                                    prev_message += new_message
+                                    has_been_merged = True
+                                    continue
 
-                # We cannot merge this message with a previous one, adding it to the list
-                if not has_been_merged:
-                    message_list.append(new_message)
+                    # We cannot merge this message with a previous one, adding it to the list
+                    if not has_been_merged:
+                        message_list.append(new_message)
+
+                sleep(reading_interval_ms / 1000)
 
             # Sending message to all displays
-            self.dispatch_message_to_all_queues(message_list)
-            message_list = []
+            if len(message_list):
+                self.dispatch_message_to_all_queues(message_list)
+                message_list = []
+
+    # def concatenate(self, e: Event):
+    #     # Message gathering interval
+    #     loop_wait_ms = 100
+    #
+    #     # Message gathered and concatenated in the interval
+    #     message_list: [IWebsocketMessage] = list()
+    #
+    #     while not e.is_set():
+    #         # End of this loop in Now + loop_wait_ms
+    #         timer_end = time() + timedelta(milliseconds=loop_wait_ms).total_seconds()
+    #
+    #         # Get all messages in this interval and concatenates the ones that can be
+    #         while time() < timer_end:
+    #
+    #             # Gathering a message
+    #             new_message = self.__ws_tmp_queue.get()
+    #             has_been_merged = False
+    #
+    #             # Checking type of message
+    #             if isinstance(new_message, BotUpdateMessage):
+    #
+    #                 # Checking if we had another message from the same bot in the past
+    #                 for prev_message in message_list:
+    #
+    #                     # If it was a message of type BotUpdateMessage, it can be concatenated
+    #                     if isinstance(prev_message, BotUpdateMessage):
+    #
+    #                         # We already had a message from this bot, let's add them
+    #                         if prev_message.id == new_message.id:
+    #                             prev_message += new_message
+    #                             has_been_merged = True
+    #                             continue
+    #
+    #             # We cannot merge this message with a previous one, adding it to the list
+    #             if not has_been_merged:
+    #                 message_list.append(new_message)
+    #
+    #         # Sending message to all displays
+    #         if len(message_list):
+    #             self.dispatch_message_to_all_queues(message_list)
+    #             message_list = []
 
     def close_thread(self):
         self._event.set()

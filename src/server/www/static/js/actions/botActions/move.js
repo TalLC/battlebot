@@ -1,5 +1,4 @@
-import {ActionDefinition, actions} from "./actions.js";
-import * as TWEEN from 'tween';
+import {ActionDefinition, actions} from "../actions.js";
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
@@ -30,7 +29,7 @@ function action(moveCoordinate){
         this.x = this.sceneObject.position.x;
         this.z = this.sceneObject.position.z;
     })
-	.start() 
+	.start()
 }
 
 /**

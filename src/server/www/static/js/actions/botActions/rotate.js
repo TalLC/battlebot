@@ -1,5 +1,4 @@
-import {ActionDefinition, actions} from "./actions.js";
-import * as TWEEN from 'tween';
+import {ActionDefinition, actions} from "../actions.js";
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action rotate.
@@ -20,7 +19,6 @@ function actionSelector(botState){return !(botState.rotate === undefined);}
     Param : rotateCoordinate -> rotation autour de l'axe y du bot
     Return : N/A
 */
-
 function action(rotateCoordinate){
     const targetRotation = rotateCoordinate % (Math.PI * 2);
     const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
@@ -32,6 +30,7 @@ function action(rotateCoordinate){
     })
 	.start()
 }
+
 /**
 * @param param
 */

@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'controls/OrbitControls';
-import Debug from "../debug.js";
+import {FontLoader} from 'loaders/FontLoader';
+import {TextGeometry} from 'geometries/TextGeometry';
+
+
+import Config from "../config.js";
+import Debug from "../debug/debug.js";
+import object3DFactory from './object3DFactory.js';
 
 
 export default class View3DController {
@@ -24,14 +30,15 @@ export default class View3DController {
             {x: 0, y: 0, z: 0}
         );
 
-        this.debug = new Debug(this, "debug-container");
-        
-        this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
-        this.container.ondblclick = this.debug.clickObject.bind(this.debug);
+        if (Config.isDebug()) {
+            this.debug = new Debug(this, "debug-container");
+            this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
+            this.container.ondblclick = this.debug.clickObject.bind(this.debug);
+        }
     }
 
     render() {
-        this.debug.render();
+        if (Config.isDebug()) this.debug.render();
         this.renderer.render( this.scene, this.camera );
     }
 
@@ -39,7 +46,59 @@ export default class View3DController {
         // Affichage du viewport Three.js
         this.container.hidden = false;
 
-        this.debug.start();
+        if (Config.isDebug()) this.debug.start();
+    }
+
+    showHurtMessageForObject(obj) {
+        let font;
+
+        new Promise((resolve) => {
+            // Load the font
+            let loader = new FontLoader();
+            loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (loadedFont) {
+                font = loadedFont;
+                resolve();
+            });
+        })
+        .then(() => {
+            // Create the text using TextGeometry
+            const textGeometry = new TextGeometry("<hit>", {
+                font: font,
+                size: 0.5,
+                height: 0.001
+            });
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, transparent: true });
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+            // Position the text in the scene
+            textMesh.position.set(
+                obj.x,
+                obj.y + 5.0,
+                obj.z
+            );
+
+            // Add the text to the scene
+            this.scene.add(textMesh);
+            return textMesh;
+        })
+        .then((textMesh) => {
+            // Diminuer l'opcatier pour rendre le texte invisible
+            return new Promise((resolve) => {
+                let opacity = 1;
+                const interval = setInterval(() => {
+                    opacity -= 0.1;
+                    textMesh.material.opacity = opacity;
+                    if (opacity <= 0) {
+                        clearInterval(interval);
+                        resolve(textMesh);
+                    }
+                }, 100);
+            });
+        })
+        .then((textMesh) => {
+            // Supprimer l'objet de la scene
+            this.disposeSceneObject(textMesh);
+        });
     }
 
     /*

@@ -30,6 +30,3 @@ class Air(TileObject):
 
     def _on_death(self) -> None:
         pass
-
-    def _on_hurt(self) -> None:
-        pass

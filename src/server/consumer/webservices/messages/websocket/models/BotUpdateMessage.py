@@ -25,19 +25,14 @@ class BotUpdateMessage(IObjectMessage):
     def shield(self) -> bool:
         return self._shield
 
-    @property
-    def hit(self) -> bool:
-        return self._hit
-
     def __init__(self, bot_id: str, x: float = None, z: float = None, ry: float = None,
-                 target: Target = None, shield: bool = None, hit: bool = False):
+                 target: Target = None, shield: bool = None):
         super().__init__(msg_type="BotUpdateMessage", object_id=bot_id)
         self._x = x
         self._z = z
         self._ry = ry
         self._targets = [target.json()] if target is not None else list()
         self._shield = shield
-        self._hit = hit
 
     def __add__(self, other: BotUpdateMessage):
         if self.id != other.id:
@@ -47,7 +42,6 @@ class BotUpdateMessage(IObjectMessage):
         self._ry = other.ry if other.ry is not None else self.ry
         self._targets += other.targets if len(other.targets) > 0 else list()
         self._shield = other.shield if other.shield is not None else self.shield
-        self._hit = other.hit if other.hit else self.hit
 
     def json(self) -> dict:
         json = super().json()
@@ -59,5 +53,4 @@ class BotUpdateMessage(IObjectMessage):
         json |= {'rotate': {'ry': self.ry}} if self.ry is not None else dict()
         json |= {'shoot': self.targets} if len(self.targets) > 0 else dict()
         json |= {'shield': {'status': self.shield}} if self.shield is not None else dict()
-        json |= {'hit': {'status': self.hit}} if self.hit else dict()
         return json

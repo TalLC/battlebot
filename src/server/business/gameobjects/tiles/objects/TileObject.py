@@ -7,6 +7,7 @@ from shapely.geometry import Polygon
 from business.gameobjects.behaviour.IDestructible import IDestructible
 from business.gameobjects.OrientedGameObject import OrientedGameObject
 from consumer.ConsumerManager import ConsumerManager
+from consumer.webservices.messages.websocket.GameObjectHurtMessage import GameObjectHurtMessage
 from consumer.webservices.messages.websocket.GameObjectDestroyMessage import GameObjectDestroyMessage
 
 if TYPE_CHECKING:
@@ -49,3 +50,7 @@ class TileObject(OrientedGameObject, IDestructible, ABC):
         # Removing object on the display side
         self.tile.set_tile_object("air")
         ConsumerManager().websocket.send_message(GameObjectDestroyMessage(self.id))
+
+    def _on_hurt(self) -> None:
+        # Sending hurt message for display animation
+        ConsumerManager().websocket.send_message(GameObjectHurtMessage(self.id))

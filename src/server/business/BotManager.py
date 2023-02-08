@@ -25,26 +25,26 @@ class BotManager(IBotManager):
         else:
             return None
 
-    def get_bots(self, connected_only: bool = True) -> (BotModel,):
+    def get_bots(self, connected_only: bool = True, alive_only: bool = True) -> (BotModel,):
         """
         Get all connected bots.
         """
-        bots = tuple(self._BOTS.values())
+        return tuple(
+            bot for bot in self._BOTS.values()
+            if (not connected_only or (connected_only and bot.client_connection.is_connected))
+            and (not alive_only or (alive_only and bot.is_alive))
+        )
 
-        if connected_only:
-            bots = (bot for bot in self._BOTS.values() if bot.client_connection.is_connected is connected_only)
-
-        return tuple(bots)
-
-    def get_bots_in_radius(self, connected_only: bool = True,origin: tuple = (0.0, 0.0),
-                           radius: int = 1) -> (BotModel,):
+    def get_bots_in_radius(self, connected_only: bool = True, alive_only: bool = True,
+                           origin: tuple = (0.0, 0.0), radius: int = 1) -> (BotModel,):
         """
         Get all connected bots.
         """
-        bots = tuple(self._BOTS.values())
-
-        if connected_only:
-            bots = (bot for bot in self._BOTS.values() if bot.client_connection.is_connected is connected_only)
+        bots = tuple(
+            bot for bot in self._BOTS.values()
+            if (not connected_only or (connected_only and bot.client_connection.is_connected))
+            and (not alive_only or (alive_only and bot.is_alive))
+        )
 
         # Filtering on radius
         in_range_bots = list()

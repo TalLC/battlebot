@@ -1,14 +1,13 @@
 import * as THREE from 'three';
-import GameManager from './gameManager.js';
+import GameManager from '../gameManager.js';
 import DebugUi from "./debugUi.js";
 
 
 export default class Debug{
 
     constructor(view3DController, debugContainerId) {
-        this.headerContainer = document.getElementById("header-container");
         this.container = document.getElementById(debugContainerId);
-        this.infoContainer = this.container.querySelector("#info-container");
+        this.infoContainer = this.container.querySelector("#info-container-text");
         this.view = view3DController;
         this.debugUi = new DebugUi(this);
 
@@ -31,7 +30,6 @@ export default class Debug{
     start() {
         // Affichage des informations de debug
         this.container.hidden = false;
-        this.headerContainer.hidden = false;
     }
 
     createCameraHelper() {

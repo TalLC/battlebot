@@ -29,6 +29,3 @@ class Wall(TileObject):
             parent_tile=parent_tile, name=self._NAME, x=x, z=z, health=self._HEALTH_MAX, has_collision=True,
             shape=ShapeFactory().create_shape(shape=Shape.SQUARE, o=(self.x, self.z), width=self._shape_size)
         )
-
-    def _on_hurt(self) -> None:
-        pass
