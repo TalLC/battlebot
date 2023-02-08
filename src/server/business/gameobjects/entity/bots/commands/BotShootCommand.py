@@ -5,7 +5,7 @@ from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from business.gameobjects.behaviour.IDestructible import IDestructible
 
 from consumer.ConsumerManager import ConsumerManager
-from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
+from consumer.webservices.messages.websocket.BotUpdateMessage import BotUpdateMessage
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
