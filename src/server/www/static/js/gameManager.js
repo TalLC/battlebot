@@ -14,6 +14,15 @@ class GameManager {
         this.bots = {};
         this.mapObjects = {};
 
+        /* Page d'accueil */
+        // Scroll text
+        const scrollText = document.getElementById("startgame-scroll-text");
+        fetch('https://raw.githubusercontent.com/id-Software/DOOM/master/linuxdoom-1.10/g_game.c')
+            .then((response) => response.text())
+            .then((data) => {
+                scrollText.innerHTML = data;
+                scrollText.style.height = scrollText.scrollHeight;
+            });
 
         /* Endgame */
         this.endgameContainer = document.getElementById("endgame-container");
@@ -120,6 +129,11 @@ class GameManager {
         Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
             this.v.scene.add(sceneObject);
         });
+    }
+
+    killBot(id) {
+        const bot = this.getGameObjectFromId(id);
+        if (bot) bot.kill();
     }
 
     /*

@@ -12,6 +12,7 @@ from business.BotManager import BotManager
 from business.DisplayManager import DisplayManager
 from business.Map import Map
 from consumer.ConsumerManager import ConsumerManager
+from consumer.webservices.messages.websocket.GameEndMessage import GameEndMessage
 from consumer.brokers.messages.stomp.GameStatusMessage import GameStatusMessage
 
 if TYPE_CHECKING:
@@ -31,6 +32,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
     @property
     def is_started(self) -> bool:
         return self._is_started
+
+    @property
+    def is_full(self) -> bool:
+        return self.bot_manager.get_bots_count() >= self.max_players
 
     @property
     def max_players(self) -> int:
@@ -88,7 +93,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         Thread blocking operation. Waiting until all players are connected or until the event is triggered.
         """
         current_players_count = self.registered_players_count
-        while current_players_count < self._max_players and not e.is_set():
+        while not self.is_full and not e.is_set():
             # Check if a new player has been connected
             __tmp_p_count = self.registered_players_count
 
@@ -158,6 +163,11 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         if not e.is_set():
             self.stop_game()
             logging.debug("Game is finished")
+            bots_alive = self.bot_manager.get_bots(connected_only=True, alive_only=True)
+            winner_name = "Nobody"
+            if len(bots_alive):
+                winner_name = bots_alive[0].team.name
+            ConsumerManager().websocket.send_message(GameEndMessage(winner_name=winner_name))
         else:
             logging.debug("Game has been aborted")
 

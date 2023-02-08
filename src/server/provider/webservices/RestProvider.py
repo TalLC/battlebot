@@ -233,6 +233,10 @@ class RestProvider:
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
+            # Check if the game is full
+            if GameManager().is_full:
+                ErrorCode.throw(GAME_IS_FULL)
+
             # Check if the game is started
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
@@ -267,6 +271,10 @@ class RestProvider:
         @self.__app.post("/bots/action/register")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(model: BotsActionRegisterModel, _: Request):
+
+            # Check if the game is full
+            if GameManager().is_full:
+                ErrorCode.throw(GAME_IS_FULL)
 
             # Check if the game is already started
             if GameManager().is_started:

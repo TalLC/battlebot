@@ -1,11 +1,10 @@
-import json
 from time import time, sleep
 from datetime import timedelta
 from queue import SimpleQueue
 from threading import Thread, Event
 from common.Singleton import SingletonABCMeta
 from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
-from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
+from consumer.webservices.messages.websocket.BotUpdateMessage import BotUpdateMessage
 
 
 class Webservices(metaclass=SingletonABCMeta):

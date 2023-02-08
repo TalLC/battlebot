@@ -53,4 +53,13 @@ export default class GameObject{
             }
         }
     }
+
+    applyMaterial(material) {
+        console.log("apply new material");
+        this.sceneObject.traverse((o) => {
+            if (o.isMesh) {
+                o.material = material;
+            }
+        });
+    }
 }

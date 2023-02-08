@@ -7,10 +7,6 @@ let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let game = GameManager;
 let update = [];
 
-window.addEventListener('resize', onWindowResize, false)
-function onWindowResize() {
-    game.v.resize();
-}
 
 /*
     Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
@@ -33,7 +29,7 @@ function doAction(message){
                 if(selected){
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
-                        game.bots[message.id].action(actionDef,paramAction);
+                        game.bots[message.id].action(actionDef, paramAction);
                     });
                 }
             }
@@ -47,7 +43,7 @@ function doAction(message){
             if(selected){
                 let paramAction = actions[actionDef].eventwrapper(message);
                 promise = promise.then(() => {
-                    game.action(actionDef,paramAction);
+                    game.action(actionDef, paramAction);
                 });
             }
         }

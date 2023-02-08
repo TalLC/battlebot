@@ -28,6 +28,7 @@ from consumer.brokers.messages.stomp.BotStunningStatusMessage import BotStunning
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.GameObjectHurtMessage import GameObjectHurtMessage
+from consumer.webservices.messages.websocket.BotDeathMessage import BotDeathMessage
 from consumer.webservices.messages.websocket.models.Target import Target
 
 if TYPE_CHECKING:
@@ -384,6 +385,9 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # Disabling collisions
             self.set_collisions(False)
             logging.debug(f"[BOT {self.name}] Collisions disabled")
+
+            # Send death information to display
+            ConsumerManager().websocket.send_message(BotDeathMessage(self.id))
 
     def _on_hurt(self) -> None:
         """

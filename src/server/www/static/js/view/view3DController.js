@@ -33,18 +33,22 @@ export default class View3DController {
         //     {x: 0, y: 0, z: 0}
         // );
 
+        // Création de la caméra
         this.camera = this.createCamera(
-            {left: width / - 32, right: width / 32, top: height / 32, bottom: height / - 32, near: 1, far: 1000 },
             {x: 64, y: 64, z: 64},
             {x: 16, y: 0, z: 16}
         );
 
+
+        // Prise en charge du redimensionnement de fenêtre
+        window.onresize = this.resize.bind(this);
 
         if (Config.isDebug()) {
             this.debug = new Debug(this, "debug-container");
             this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
             this.container.ondblclick = this.debug.clickObject.bind(this.debug);
         }
+
     }
 
     render() {
@@ -168,9 +172,9 @@ export default class View3DController {
                 lookAt -> dicitonnaire contenant le position de la ou regarde la camera en x, y et z
         Return : La caméra créé, afin de pouvoir à terme gérer plusieurs caméras.
     */
-    createCamera(frustum, position, lookAt){
+    createCamera(position, lookAt){
         console.log('initialisation cam')
-        const camera = new THREE.PerspectiveCamera( 18, window.innerWidth / window.innerHeight, 1, 500 );
+        const camera = new THREE.PerspectiveCamera(18, window.innerWidth / window.innerHeight, 1, 500);
         // const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
         camera.position.set(position.x, position.y, position.z);
         this.controls = new OrbitControls(camera, this.renderer.domElement);

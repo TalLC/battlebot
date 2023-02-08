@@ -6,9 +6,6 @@ import graphicObjects from "./graphicObjects.js";
 class Object3DFactory {
     constructor() {
         this.loader = new GLTFLoader();
-        this.textureFiveTone = new THREE.TextureLoader().load('static/img/textures/fiveTone.jpg');
-        this.textureFiveTone.minFilter = THREE.NearestFilter;
-        this.textureFiveTone.magFilter = THREE.NearestFilter;
     }
 
 

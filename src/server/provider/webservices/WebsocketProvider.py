@@ -5,7 +5,7 @@ from fastapi import FastAPI, WebSocket
 from starlette import websockets
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from business.GameManager import GameManager
-from consumer.webservices.messages.websocket.models.DisplayClientLoginMessage import DisplayClientLoginMessage
+from consumer.webservices.messages.websocket.DisplayClientLoginMessage import DisplayClientLoginMessage
 from consumer.webservices.messages.websocket.MapCreateMessage import MapCreateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
