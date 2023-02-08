@@ -13,6 +13,12 @@ class GameManager {
         this.loginId;
         this.bots = {};
         this.mapObjects = {};
+
+
+        /* Endgame */
+        this.endgameContainer = document.getElementById("endgame-container");
+        this.endgameModal = document.getElementById("endgame-modal");
+        this.endgameMessageL1 = this.endgameModal.querySelector("#endgame-message-l1");
     }
 
     get allGameObjects() {
@@ -52,6 +58,17 @@ class GameManager {
         startgameScrollText.classList.remove("vertical-scrolling-text");
 
         this.v.start();
+    }
+
+    end(winnerName) {
+        // Définition du nom du gagnant
+        const endgameModalTemplate = document.getElementById("endgame-modal");
+        const endgameMessageL1 = endgameModalTemplate.querySelector("#endgame-message-l1");
+        endgameMessageL1.innerHTML = winnerName;
+
+        // Affichage du message de fin
+        const endgameModal = new bootstrap.Modal(endgameModalTemplate);
+        endgameModal.show();
     }
 
     hurtObjectFromId(id) {
