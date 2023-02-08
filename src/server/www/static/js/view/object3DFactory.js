@@ -133,12 +133,6 @@ class Object3DFactory {
         return mesh;
     }
 
-    getPointInBetweenByPerc(pointA, pointB, percentage) {
-        var dir = pointB.clone().sub(pointA);
-        var len = dir.length();
-        dir = dir.normalize().multiplyScalar(len*percentage);
-        return pointA.clone().add(dir);
-    }
 }
 
 export default new Object3DFactory();

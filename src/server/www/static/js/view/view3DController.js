@@ -6,6 +6,7 @@ import {TextGeometry} from 'geometries/TextGeometry';
 
 import Config from "../config.js";
 import Debug from "../debug/debug.js";
+import object3DFactory from './object3DFactory.js';
 
 
 export default class View3DController {
@@ -49,13 +50,9 @@ export default class View3DController {
     }
 
     showHurtMessageForObject(obj) {
-        console.log("cible", obj);
-
-        // Affichage temporaire d'un message de Hit
-
         let font;
 
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
             // Load the font
             let loader = new FontLoader();
             loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (loadedFont) {
@@ -70,9 +67,9 @@ export default class View3DController {
                 size: 0.5,
                 height: 0.001
             });
-            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, transparent: true });
             const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-            
+
             // Position the text in the scene
             textMesh.position.set(
                 obj.x,
@@ -85,89 +82,23 @@ export default class View3DController {
             return textMesh;
         })
         .then((textMesh) => {
-            let position = textMesh.position;
-            let targetY = 8.0;
-            let duration = 1000;
-            let startTime = performance.now();
-            let moveText = function () {
-                let elapsed = performance.now() - startTime;
-                textMesh.position.y = position.y + (targetY - position.y) * (elapsed / duration);
-                if (elapsed < duration) {
-                    requestAnimationFrame(moveText);
-                }
-            };
-            requestAnimationFrame(moveText);
-          })
-        .then(() => {
-            // Remove the text from the scene
-            this.scene.remove(textMesh);
+            // Diminuer l'opcatier pour rendre le texte invisible
+            return new Promise((resolve) => {
+                let opacity = 1;
+                const interval = setInterval(() => {
+                    opacity -= 0.1;
+                    textMesh.material.opacity = opacity;
+                    if (opacity <= 0) {
+                        clearInterval(interval);
+                        resolve(textMesh);
+                    }
+                }, 100);
+            });
+        })
+        .then((textMesh) => {
+            // Supprimer l'objet de la scene
+            this.disposeSceneObject(textMesh);
         });
-        
-        // let font;
-
-        // new Promise((resolve, reject) => {
-        //     // Load the font
-        //     let loader = new FontLoader();
-        //     loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (loadedFont) {
-        //         font = loadedFont;
-        //         resolve();
-        //     });
-        // })
-        // .then(() => {
-        //     // Create the text using TextGeometry
-        //     const textGeometry = new TextGeometry("<hit>>", {
-        //         font: font,
-        //         size: 0.5,
-        //         height: 0.001
-        //     });
-        //     const textMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        //     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-            
-        //     // Position the text in the scene
-        //     textMesh.position.set(
-        //         obj.x,
-        //         obj.y + 5.0,
-        //         obj.z
-        //     );
-
-        //     // Add the text to the scene
-        //     this.scene.add(textMesh);
-        
-        //     return new Promise((resolve) => {
-        //         setTimeout(() => {
-        //             resolve(textMesh);
-        //         }, 2000);
-        //     });
-        // })
-        // .then((textMesh) => {
-        //     // Remove the text from the scene
-        //     this.scene.remove(textMesh);
-        // });
-        
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-        // (new FontLoader()).load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', font => {
-        //     const textGeometry = new TextGeometry("<hit>", {
-        //         font,
-        //         size: 0.5,
-        //         height: 0.001
-        //     });
-            
-        //     const textMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        //     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-              
-        //     // Position the text in the scene
-        //     textMesh.position.set(
-        //         obj.x,
-        //         obj.y + 5.0,
-        //         obj.z
-        //     );
-
-        //     // Add the text to the existing scene
-        //     this.scene.add(textMesh);
-        // }).then((resolve) => setTimeout(() => resolve(), 1000)).then(this.disposeSceneObject(textMesh))
     }
 
     /*
