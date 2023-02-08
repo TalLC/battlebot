@@ -28,7 +28,7 @@ export default class GameObject{
     }
 
     get coordinates3D() {
-        return {x: this.x, z: this.z};
+        return {x: this.x, y: this.y, z: this.z};
     }
 
     get coordinates2D() {
