@@ -6,6 +6,9 @@ import graphicObjects from "./graphicObjects.js";
 class Object3DFactory {
     constructor() {
         this.loader = new GLTFLoader();
+        this.textureFiveTone = new THREE.TextureLoader().load('static/img/textures/fiveTone.jpg');
+        this.textureFiveTone.minFilter = THREE.NearestFilter;
+        this.textureFiveTone.magFilter = THREE.NearestFilter;
     }
 
 
@@ -36,8 +39,22 @@ class Object3DFactory {
                 gltfData.scene.position.y = y;
                 gltfData.scene.position.z = z;
                 gltfData.scene.rotation.y = ry;
-                gltfData.scene.receiveShadow = true;
-                gltfData.scene.castShadow = true;
+                gltfData.scene.traverse((o) => {
+                    if (o.isMesh) {
+                        const matMap = o.material.map;
+                        const matColor = o.material.color;
+                        const material = new THREE.MeshPhongMaterial({
+                            color: matColor,
+                            emissive: 0x000000,
+                            specular: 0x111111,
+                            map: matMap,
+                            side: THREE.DoubleSide
+                        });
+                        o.material = material;
+                        o.receiveShadow = true;
+                        o.castShadow = true;
+                    }
+                });
                 return(gltfData.scene);
             }
         );
@@ -52,10 +69,14 @@ class Object3DFactory {
         const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar'][bot.modelName];
         return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then(sceneObject => {
             // Peinture du bot de la couleur de l'équipe
-            const material = new THREE.MeshBasicMaterial({ "color": bot.teamColor });
+            // const material = new THREE.MeshPhongMaterial({ "color": bot.teamColor });
+            // const material = new THREE.MeshToonMaterial({
+            //     color: bot.teamColor,
+            //     gradientMap: this.textureFiveTone
+            // });
 
             sceneObject.traverse((o) => {
-                if (o.isMesh) o.material = material;
+                if (o.isMesh) o.material.color = bot.teamColor;
             });
 
             bot.sceneObject = sceneObject;
@@ -84,9 +105,7 @@ class Object3DFactory {
         const end = new THREE.Vector3(...endArray);
 
         // Create a material
-        const material = new THREE.MeshBasicMaterial({
-          color: color
-        });
+        const material = new THREE.MeshBasicMaterial({ "color": color });
 
         // edge from X to Y
         var direction = new THREE.Vector3().subVectors(end, start);
