@@ -2,6 +2,7 @@ import "../actions/botActions/botActionDefinition.js"
 import {actions} from "../actions/actions.js"
 import GameObject from './gameObject.js';
 import {colorStrToNumber} from '../utils/utils.js'
+import * as THREE from 'three';
 
 
 export default class Bot extends GameObject{
@@ -26,6 +27,18 @@ export default class Bot extends GameObject{
     */
     action(key,param){
         actions[key].action.call(this, param);
+    }
+
+    kill() {
+        this.applyMaterial(
+            new THREE.MeshPhongMaterial(
+                {
+                    color: 0x424242,
+                    transparent: true,
+                    opacity: 0.7
+                }
+            )
+        );
     }
 
 }
