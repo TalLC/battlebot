@@ -17,10 +17,12 @@ export default class View3DController {
 
         this.size = {width:width, height:height};
         this.renderer.setSize(this.size.width, this.size.height);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
         this.scene = new THREE.Scene();
-        
-        let backColor = new THREE.Color(0xffffff);
-        this.scene.background = backColor;
+	    this.scene.background = new THREE.Color( 0xa0d0da );
+	    this.scene.fog = new THREE.Fog( 0xa0d0da, 0.5, 500);
 
         this.initLight();
         
@@ -40,6 +42,13 @@ export default class View3DController {
     render() {
         if (Config.isDebug()) this.debug.render();
         this.renderer.render( this.scene, this.camera );
+    }
+
+    resize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.render();
     }
 
     start() {
@@ -76,7 +85,8 @@ export default class View3DController {
                 obj.y + 5.0,
                 obj.z
             );
-
+            textMesh.lookAt(this.camera.position);
+            
             // Add the text to the scene
             this.scene.add(textMesh);
             return textMesh;
@@ -88,6 +98,7 @@ export default class View3DController {
                 const interval = setInterval(() => {
                     opacity -= 0.1;
                     textMesh.material.opacity = opacity;
+                    textMesh.lookAt(this.camera.position);
                     if (opacity <= 0) {
                         clearInterval(interval);
                         resolve(textMesh);
@@ -109,26 +120,50 @@ export default class View3DController {
     initLight(){
         console.log('initialisation light');
         //Création de la lumière ambiante
-        const light = new THREE.AmbientLight( 0xffffff , 1.5);
+        const light = new THREE.AmbientLight(0xffffff, 0.8);
         this.scene.add( light );
 
         //Création de la lumière orientée
-        const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
-        directionalLight.position.x = -10;
-        directionalLight.position.z = -10;
-        this.scene.add( directionalLight );
+        const directionalLight = new THREE.DirectionalLight(0xe6faff, 1.0);
+        directionalLight.position.x = 8.0;
+        directionalLight.position.y = 16.0;
+        directionalLight.position.z = 8.0;
+        directionalLight.target.position.set(16, 0, 16);
+        directionalLight.target.updateMatrixWorld();
+        directionalLight.castShadow = true;
+        directionalLight.shadow.camera.top = 32;
+        directionalLight.shadow.camera.bottom = -32;
+        directionalLight.shadow.camera.left = 32;
+        directionalLight.shadow.camera.right = -32;
+        directionalLight.shadow.bias = -0.01;
+
+        directionalLight.shadow.mapSize.width = 1024; // default
+        directionalLight.shadow.mapSize.height = 1024; // default
+        directionalLight.shadow.camera.near = 0.001; // default
+        directionalLight.shadow.camera.far = 55;
+        directionalLight.shadow.radius = 1;
+        this.scene.add(directionalLight);
+
+        if (Config.isDebug()) {
+            const dlHelper = new THREE.DirectionalLightHelper(directionalLight, 3);
+            this.scene.add(dlHelper);
+
+            const shadowCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+            this.scene.add(shadowCameraHelper);
+        }
     }
 
     /*
         Fonction : Permet la création d'une camera afin de visualiser la scène
-        Param : frustrum -> dictionaire definissant zone de la vision de la caméra
+        Param : frustrum -> dictionnaire definissant zone de la vision de la caméra
                 position -> dictionnaire contenant la position de la caméra en x, y et z.
                 lookAt -> dicitonnaire contenant le position de la ou regarde la camera en x, y et z
         Return : La caméra créé, afin de pouvoir à terme gérer plusieurs caméras.
     */
     createCamera(frustum, position, lookAt){
         console.log('initialisation cam')
-        const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
+        const camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 500 );
+        // const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
         camera.position.set(position.x, position.y, position.z);
         camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
         this.controls = new OrbitControls(camera, this.renderer.domElement);

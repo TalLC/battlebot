@@ -7,6 +7,10 @@ let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let game = GameManager;
 let update = [];
 
+window.addEventListener('resize', onWindowResize, false)
+function onWindowResize() {
+    game.v.resize();
+}
 
 /*
     Fonction : Permet la réalistion des actions pour un des bots, reçu dans un appel websocket.
