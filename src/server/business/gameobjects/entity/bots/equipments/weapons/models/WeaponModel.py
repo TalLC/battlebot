@@ -44,22 +44,24 @@ class WeaponModel(IWeapon, ABC):
         self._can_shoot: bool = True
 
     def __str__(self) -> str:
-        return f"{self.name} (damages: {self.damages}, reach: {self.reach_distance})"
+        return f"{self.name} (damages: {self.damages}, reach: {self.reach_distance}), cooldown: {self._cooldown_ms / 1000}"
 
-    def _thread_reload(self, duration):
-
-        # Envoyer un message pour dire que l'arme n'est plus disponible'
+    def _thread_reload(self, duration_ms: int):
+        """
+            Stop the weapon from shooting for the specified duration.
+        """
+        # Envoyer un message pour dire que l'arme n'est plus disponible
         self._can_shoot = False
-        #ConsumerManager().stomp.send_message(BotWeaponStatusMessage(self._bot.id, self._can_shoot))
+        ConsumerManager().stomp.send_message(BotWeaponStatusMessage(self._bot.id, self._can_shoot))
         # wait
-        sleep(duration)
-        self._can_shoot = True
+        sleep(duration_ms / 1000)
         # Envoyer un message pour dire que l'arme est de nouveau disponible
-        #ConsumerManager().stomp.send_message(BotWeaponStatusMessage(self._bot.id, self._can_shoot))
+        self._can_shoot = True
+        ConsumerManager().stomp.send_message(BotWeaponStatusMessage(self._bot.id, self._can_shoot))
 
     def reload(self):
         """
             Block usage weapons .
         """
         # Start waiting thread
-        Thread(target=self._thread_reload, args=(self._cooldown_ms/1000,)).start()
+        Thread(target=self._thread_reload, args=(self._cooldown_ms,)).start()
