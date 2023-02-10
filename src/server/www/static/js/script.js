@@ -1,5 +1,6 @@
 import GameManager from './gameManager.js';
 import {actions} from './actions/actions.js';
+import * as TWEEN from 'tween';
 import sendRestMessage from './utils/rest.js'
 
 
@@ -16,10 +17,11 @@ let update = [];
 function doAction(message){
     // Création d'une promise vide
     let promise = Promise.resolve();
-    console.log(message.msg_type);
+    //console.log(message.msg_type);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
         if(game.bots[message.id] && game.bots[message.id].sceneObject){
+            
             // Parcours des actions enregistrées
             for(let actionDef in actions){
 
@@ -39,7 +41,7 @@ function doAction(message){
 
             // Choix de l'action à effectuer suivant les arguments trouvés dans le message
             let selected = actions[actionDef].actionSelector(message);
-            
+
             if(selected){
                 let paramAction = actions[actionDef].eventwrapper(message);
                 promise = promise.then(() => {
@@ -66,12 +68,14 @@ function animate(){
         }
         Promise.all(promises).then(() =>{
             requestAnimationFrame( animate );
+            TWEEN.update();
             game.render();
         });
         update.shift();
     }
     else{
         requestAnimationFrame( animate );
+        TWEEN.update();
         game.render();
     }
 }
@@ -85,7 +89,6 @@ animate();
 */
 ws.onmessage = async function(event) {
     const message = JSON.parse(event.data);
-
     // Messages d'update multiples
     if (message.messages !== undefined) {
         update.push(message);

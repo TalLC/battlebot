@@ -225,7 +225,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
                 # radians = turning speed * movement duration
                 radians = self.get_turn_from_time_and_speed(self.turning_speed, interval_ts)
-
                 # Actually move the bot on the map
                 self.turn(radians)
 
@@ -321,7 +320,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             self.ry -= radians
         elif self.turn_direction == 'right':
             self.ry += radians
-
         # Sending new rotation over websocket
         ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
 
