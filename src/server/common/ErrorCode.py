@@ -62,8 +62,8 @@ BOT_BAD_COMMAND_ARGS = ErrorCode(name='BOT_BAD_COMMAND_ARGS', internal_code=0x00
                                  label="Bad bot command argument(s)")
 BOT_IS_DEAD = ErrorCode(name='BOT_IS_DEAD', internal_code=0x00000303, http_code=409,
                         label="The bot is dead")
-BOT_IS_STUN = ErrorCode(name='BOT_IS_STUN', internal_code=0x00000304, http_code=409,
-                        label="The bot is stun")
+BOT_IS_STUNNED = ErrorCode(name='BOT_IS_STUNNED', internal_code=0x00000304, http_code=409,
+                           label="The bot is stunned")
 
 # Display errors
 DISPLAY_CLIENT_ID_DOES_NOT_EXISTS = ErrorCode(name='DISPLAY_CLIENT_ID_DOES_NOT_EXISTS', internal_code=0x00000401,
