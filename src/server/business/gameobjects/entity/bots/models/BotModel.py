@@ -24,7 +24,6 @@ from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
-from consumer.brokers.messages.stomp.BotStunningStatusMessage import BotStunningStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.GameObjectHurtMessage import GameObjectHurtMessage
@@ -116,23 +115,18 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Parents initializations
         OrientedGameObject.__init__(self, name)
-        IMoving.__init__(self, moving_speed, turning_speed)
+        IMoving.__init__(self, entity=self, moving_speed=moving_speed, turning_speed=turning_speed)
         IDestructible.__init__(self, health, True)
 
-        # Collision Shape
+        # Collision
         self._shape_name = shape_name
         self._shape_size = shape_size
+        self._collision_handler = CollisionHandler(self)
 
         # Random starting point
         self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coordinates()
         # Random starting rotation
         self.ry = Random().randint(0, math.floor(2 * pi * 100)) / 100
-
-        # State
-        self.is_stun = False
-
-        # Collision Handler
-        self.collision_handler = CollisionHandler(self)
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
@@ -234,17 +228,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
             # Waiting before next loop
             sleep(loop_wait_ms / 1000)
-
-    def _thread_stunning(self, duration):
-
-        # Envoyer un message pour dire que le bot est stun
-        self.is_stun = True
-        ConsumerManager().stomp.send_message(BotStunningStatusMessage(self._id, self.is_stun))
-        # wait
-        sleep(duration)
-        self.is_stun = False
-        # Envoyer un message pour dire que le bot n'est plus stun
-        ConsumerManager().stomp.send_message(BotStunningStatusMessage(self._id, self.is_stun))
 
     def _thread_stop_bot(self):
         # Stopping scanner
@@ -395,6 +378,18 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         ConsumerManager().websocket.send_message(GameObjectHurtMessage(self.id))
 
+    def stun(self, duration_ms: float) -> None:
+        """
+        Stops the entity actions and stuns it.
+        """
+        if self.is_moving:
+            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
+        if self.is_turning:
+            self.add_command_to_queue(BotTurnCommand(priority=0, value='stop'))
+
+        # Start waiting thread
+        Thread(target=self._thread_stunning, args=(duration_ms,)).start()
+
     def collision(self) -> bool:
         """
         Check if the bot is colliding.
@@ -403,14 +398,3 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             self.collision_handler.handle_collision()
             return True
         return False
-
-    def stun(self, duration: float) -> None:
-        """
-        Stops the bot's actions and stuns it.
-        """
-        if self.is_moving:
-            self.add_command_to_queue(BotMoveCommand(priority=0, value='stop'))
-        if self.is_turning:
-            self.add_command_to_queue(BotTurnCommand(priority=0, value='stop'))
-        # Start waiting thread
-        Thread(target=self._thread_stunning, args=(duration,)).start()
