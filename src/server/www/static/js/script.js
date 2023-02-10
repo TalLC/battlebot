@@ -75,7 +75,7 @@ function animate(){
     }
     else{
         requestAnimationFrame( animate );
-        TWEEN.update()
+        TWEEN.update();
         game.render();
     }
 }

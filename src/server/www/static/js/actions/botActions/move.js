@@ -1,4 +1,5 @@
 import {ActionDefinition, actions} from "../actions.js";
+import * as TWEEN from 'tween';
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
