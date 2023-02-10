@@ -28,5 +28,13 @@ class IWeapon(ABC):
         """ Range of the weapon """
         raise NotImplementedError()
 
+    @property
+    def can_shoot(self) -> bool:
+        """ Weapon availability """
+        raise NotImplementedError()
+
+    def reload(self):
+        raise NotImplementedError()
+
     def __str__(self) -> str:
         raise NotImplementedError()
