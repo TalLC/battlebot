@@ -241,7 +241,7 @@ class RestProvider:
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
 
-            logging.info("Adding a test bot:")
+            logging.debug("Adding a test bot:")
             bot_count = GameManager().bot_manager.get_bots_count()
             bot = GameManager().bot_manager.create_bot(f"BOT TEST {bot_count}", "warrior")
             del GameManager().bot_manager._BOTS[bot.id]
@@ -259,8 +259,6 @@ class RestProvider:
                 bot.client_connection.source_stomp_id,
                 bot.client_connection.source_mqtt_id
             )
-
-            logging.info(GameManager().bot_manager.get_bot("0-0-0-0-0"))
 
             return {"status": "ok", "message": "The bot has been added", "bot_id": bot.id}
 
