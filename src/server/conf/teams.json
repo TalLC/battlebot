@@ -1,18 +1,18 @@
 [
   {
-      "id": "teamid1",
+      "id": "team-id-1",
       "size": 1,
       "name": "Blue team",
       "color": "0x0042aa"
   },
   {
-      "id": "teamid2",
+      "id": "team-id-2",
       "size": 1,
       "name": "Red team",
       "color": "0xaa0000"
   },
   {
-      "id": "teamid3",
+      "id": "team-id-3",
       "size": 1,
       "name": "Green team",
       "color": "0x00bb00"
