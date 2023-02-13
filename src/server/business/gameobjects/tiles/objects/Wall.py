@@ -26,6 +26,7 @@ class Wall(TileObject):
 
     def __init__(self, parent_tile: Tile, x: float = 0.0, z: float = 0.0):
         super().__init__(
-            parent_tile=parent_tile, name=self._NAME, x=x, z=z, health=self._HEALTH_MAX, has_collision=True,
+            parent_tile=parent_tile, name=self._NAME, object_type="wall", x=x, z=z, health=self._HEALTH_MAX,
+            has_collision=True,
             shape=ShapeFactory().create_shape(shape=Shape.SQUARE, o=(self.x, self.z), width=self._shape_size)
         )

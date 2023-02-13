@@ -96,6 +96,13 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
     def event_stop_threads(self):
         return self._event_stop_threads
 
+    @property
+    def collision_handler(self) -> CollisionHandler:
+        """
+        3D model to use.
+        """
+        return self._collision_handler
+
     @abstractmethod
     def model_name(self) -> str:
         """
@@ -114,7 +121,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self._equipment: Equipment = Equipment()
 
         # Parents initializations
-        OrientedGameObject.__init__(self, name)
+        OrientedGameObject.__init__(self, name=name, object_type="bot")
         IMoving.__init__(self, entity=self, moving_speed=moving_speed, turning_speed=turning_speed)
         IDestructible.__init__(self, health, True)
 

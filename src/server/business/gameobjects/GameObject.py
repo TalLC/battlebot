@@ -20,6 +20,10 @@ class GameObject:
         return self._name
 
     @property
+    def object_type(self) -> str:
+        return self._object_type
+
+    @property
     def coordinates(self) -> tuple[float, float]:
         return self.x, self.z
 
@@ -31,9 +35,11 @@ class GameObject:
     def shape(self, value):
         self._shape = value
 
-    def __init__(self, name: str = 'game_object', x: float = 0.0, z: float = 0.0, shape: BaseGeometry or None = None):
+    def __init__(self, name: str = 'game_object', object_type: str = 'object', x: float = 0.0, z: float = 0.0,
+                 shape: BaseGeometry or None = None):
         self._id = str(uuid.uuid4())
         self._name = name
+        self._object_type = object_type
         self.x = x
         self.z = z
         self._shape = shape
