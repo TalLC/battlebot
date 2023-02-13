@@ -1,4 +1,5 @@
 import {ActionDefinition, actions} from "../actions.js";
+import TWEEN from 'tween';
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action rotate.
@@ -15,22 +16,73 @@ function eventwrapper(botState){return botState.rotate.ry === undefined? this.ry
 function actionSelector(botState){return !(botState.rotate === undefined);}
 
 /*
-    Fonction : Qui permet de rotate un bot
+    Fonction : Qui permet de rotate un bot 
     Param : rotateCoordinate -> rotation autour de l'axe y du bot
     Return : N/A
 */
 function action(rotateCoordinate){
-    //let quat = new THREE.Quaternion(0, 0, 0, 0);
-    //let quat = this.sceneObject.quaternion.clone();
-    //let rot = new THREE.Euler(0, -1 * rotateCoordinate, 0);
-    //let rot = this.sceneObject.rotation.clone();
-    //rot.set(0, -1 * rotateCoordinate, 0);
-    //quat.setFromEuler(rot);
-    //this.sceneObject.quaternion.slerp(quat, 0.1);
-    this.sceneObject.rotation.y = (-1 * rotateCoordinate);
-    this.ry = (-1 * rotateCoordinate);
+    this.sceneObject.rotation.y = -1 * rotateCoordinate;
+    this.ry = -1 * rotateCoordinate;
 }
 
+/*
+    Fonction : Qui permet de rotate un bot avec TWEEN
+    Param : rotateCoordinate -> rotation autour de l'axe y du bot
+    Return : N/A
+
+function action(rotateCoordinate){
+    const targetRotation = -1 * rotateCoordinate;
+    console.log("ry " + this.ry + " new " + targetRotation);
+    if(Math.abs(targetRotation - this.ry) < 1){
+        this.ry = targetRotation;
+        const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
+	    .to({rotation: targetRotation}, 100)
+	    .easing(TWEEN.Easing.Linear.None)
+    	.onUpdate((coords) => {
+            this.sceneObject.rotation.y = coords.rotation;
+        })
+	    .start()
+    }
+    else if (targetRotation > -0.5){
+        this.ry = targetRotation;
+        const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
+	    .to({rotation: Math.PI * 2 * -1}, 100)
+	    .easing(TWEEN.Easing.Linear.None)
+    	.onUpdate((coords) => {
+            this.sceneObject.rotation.y = coords.rotation;
+        })
+	    .start()
+        .onComplete(() => {
+            this.sceneObject.rotation.y = 0;
+            const last = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
+            .to({rotation: targetRotation}, 100)
+            .easing(TWEEN.Easing.Linear.None)
+            .onUpdate((coords) => {
+                this.sceneObject.rotation.y = coords.rotation;
+            })
+            .start()})
+    }
+    else{
+        this.ry = targetRotation;
+        const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
+	    .to({rotation: 0}, 100)
+	    .easing(TWEEN.Easing.Linear.None)
+    	.onUpdate((coords) => {
+            this.sceneObject.rotation.y = coords.rotation;
+        })
+	    .start()
+        .onComplete(() => {
+            this.sceneObject.rotation.y = Math.PI * 2 * -1;
+            const last = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
+            .to({rotation: targetRotation}, 100)
+            .easing(TWEEN.Easing.Linear.None)
+            .onUpdate((coords) => {
+                this.sceneObject.rotation.y = coords.rotation;
+            })
+            .start()})
+    }
+}
+*/
 /**
 * @param param
 */

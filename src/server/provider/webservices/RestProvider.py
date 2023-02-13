@@ -401,6 +401,10 @@ class RestProvider:
             if bot.is_stunned:
                 ErrorCode.throw(BOT_IS_STUNNED)
 
+            # Weapon unavailable
+            if not bot.equipment.weapon.can_shoot:
+                ErrorCode.throw(BOT_WEAPON_UNAVAILABLE)
+
             # Sending shoot command to the bot
             bot.add_command_to_queue(BotShootCommand(value=model.angle))
 

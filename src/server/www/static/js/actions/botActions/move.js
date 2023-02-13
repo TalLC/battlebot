@@ -1,4 +1,5 @@
 import {ActionDefinition, actions} from "../actions.js";
+import * as TWEEN from 'tween';
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
@@ -20,14 +21,16 @@ function actionSelector(botState){return !(botState.move === undefined);}
     Return : N/A
 */
 function action(moveCoordinate){
-    //let posDest = new THREE.Vector3(moveCoordinate.x, 0.5, moveCoordinate.z);
-    //let posDest = this.sceneObject.position.clone();
-    //posDest.set(moveCoordinate.x, 0.5, moveCoordinate.z);
-    //this.sceneObject.position.lerp(posDest, 0.1);
-    this.sceneObject.position.x = moveCoordinate.x === undefined? this.sceneObject.position.x: moveCoordinate.x;
-    this.sceneObject.position.z = moveCoordinate.z === undefined? this.sceneObject.position.z: moveCoordinate.z;
-    this.x = moveCoordinate.x === undefined? this.x: moveCoordinate.x;
-    this.z = moveCoordinate.z === undefined? this.z: moveCoordinate.z;
+    const tween = new TWEEN.Tween({x: this.sceneObject.position.x, z: this.sceneObject.position.z})
+	.to({x: moveCoordinate.x , z: moveCoordinate.z}, 100)
+	.easing(TWEEN.Easing.Linear.None)
+	.onUpdate((coords) => {
+        this.sceneObject.position.x = coords.x;
+        this.sceneObject.position.z = coords.z;
+        this.x = this.sceneObject.position.x;
+        this.z = this.sceneObject.position.z;
+    })
+	.start()
 }
 
 /**

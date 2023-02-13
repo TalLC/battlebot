@@ -64,6 +64,8 @@ BOT_IS_DEAD = ErrorCode(name='BOT_IS_DEAD', internal_code=0x00000303, http_code=
                         label="The bot is dead")
 BOT_IS_STUNNED = ErrorCode(name='BOT_IS_STUNNED', internal_code=0x00000304, http_code=409,
                            label="The bot is stunned")
+BOT_WEAPON_UNAVAILABLE = ErrorCode(name='BOT_WEAPON_UNAVAILABLE', internal_code=0x00000305, http_code=409,
+                               label='The Weapon is unavailable')
 
 # Display errors
 DISPLAY_CLIENT_ID_DOES_NOT_EXISTS = ErrorCode(name='DISPLAY_CLIENT_ID_DOES_NOT_EXISTS', internal_code=0x00000401,
