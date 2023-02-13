@@ -130,12 +130,11 @@ class ScannerModel(IScanner, ABC):
             list_detected_obj.append(DetectedObject(
                 obj_id=obj_id,
                 name=hits_list[0]['name'],
+                object_type=hits_list[0]['object_type'],
                 a_from=min([hit["angle"] for hit in hits_list]),
                 a_to=max([hit["angle"] for hit in hits_list]),
                 distance=sum([hit["distance"] for hit in hits_list])/len(hits_list)
             ))
-
-        # logging.debug(f"{self._bot.name} : {list_detected_obj}")
 
         return list_detected_obj
 
@@ -197,6 +196,7 @@ class ScannerModel(IScanner, ABC):
                         obj_in_fov.append({
                             "distance": nearest_point.distance(self._bot.shape.centroid),
                             "name": item.name,
+                            "object_type": item.object_type,
                             "angle": relative_angle,
                             "obj_id": item.id
                         })

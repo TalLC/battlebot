@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import logging
-from utils.rest import Rest
-from utils.BotMqtt import BotMqtt
-from utils.BotStomp import BotStomp
+from battlebotslib.utils.rest import Rest
+from battlebotslib.utils.BotMqtt import BotMqtt
+from battlebotslib.utils.BotStomp import BotStomp
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import logging
 from queue import SimpleQueue
-from utils.stomp import STOMP
-from common.Messages import Messages
+from battlebotslib.utils.stomp import STOMP
+from battlebotslib.common.Messages import Messages
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ConnectionManager import ConnectionManager
+    from battlebotslib.ConnectionManager import ConnectionManager
 
 
 class StompListener(STOMP.ConnectionListener):

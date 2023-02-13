@@ -1,7 +1,8 @@
+import json
 import logging
 import requests
-from common.config import CONFIG_REST
-from common.Singleton import SingletonABCMeta
+from battlebotslib.common.config import CONFIG_REST
+from battlebotslib.common.Singleton import SingletonABCMeta
 
 
 class RestException(Exception):
@@ -35,16 +36,19 @@ class Rest(metaclass=SingletonABCMeta):
             requests_func = self._http_session.get
 
         r = requests_func(f"{self.rest_server}{endpoint}", json=payload if payload is not None else dict())
-        logging.debug(f"[REST] {method.lower()} {endpoint} - Response: {r.json()}")
 
         if r.ok:
             return r.json()
         else:
-            if 'detail' in r.json():
-                # Raising a RestException using values from details
-                raise RestException(**r.json()['detail'])
-
-        logging.error(f"[REST] Bad response from Rest API:\n{r.json()}")
+            try:
+                if 'detail' in r.json():
+                    # Raising a RestException using values from details
+                    raise RestException(**r.json()['detail'])
+            except json.JSONDecodeError:
+                pass
+            
+        logging.error(f"[REST] {method.lower()} {endpoint} - Bad response from Rest API:\n"
+                      f"Response: {r.status_code} - {r.text}")
 
     def enroll_new_bot(self, team_id: str, bot_name: str) -> str:
         """

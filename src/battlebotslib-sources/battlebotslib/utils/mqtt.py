@@ -2,8 +2,8 @@ import logging
 import json
 from time import sleep
 from paho.mqtt import client as mqtt_client
-from common.config import CONFIG_MQTT
-from common.Singleton import SingletonABCMeta
+from battlebotslib.common.config import CONFIG_MQTT
+from battlebotslib.common.Singleton import SingletonABCMeta
 
 
 class MQTT(metaclass=SingletonABCMeta):
