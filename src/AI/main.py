@@ -18,6 +18,8 @@ G_BOT_HEALTH = 100
 G_BOT_IS_MOVING = False
 G_BOT_IS_TURNING = False
 G_BOT_TURN_DIRECTION = str()
+G_BOT_IS_STUNNED = False
+G_WEAPON_CAN_SHOOT = True
 
 G_BOT_TARGETS_QUEUE = SimpleQueue()
 
@@ -61,15 +63,15 @@ def handle_scanner_message(message: dict):
             for detected_object in message['data']:
                 # Checking if an object is detected
                 if detected_object['name'] is not None:
-                    angle = (detected_object['from'] + detected_object['to']) / 2
+                    target_angle = (detected_object['from'] + detected_object['to']) / 2
                     logging.info(
                         f"[SCANNER] {detected_object['name']} detected at a distance of "
-                        f"{detected_object['distance']} ({angle}°)"
+                        f"{detected_object['distance']} ({target_angle}°)"
                     )
 
                     # We want to shoot at trees and bots
                     if detected_object['object_type'] in ['tree', 'bot']:
-                        G_BOT_TARGETS_QUEUE.put(angle)
+                        G_BOT_TARGETS_QUEUE.put(target_angle)
         else:
             logging.error("Not an object detection scanner message")
     except:
@@ -95,17 +97,29 @@ def handle_game_message(message: dict):
             # Bot moving update message
             elif message['msg_type'] == 'moving_status':
                 global G_BOT_IS_MOVING
-                # The message tells us the bot has stopped moving
-                if not message['data']['value']:
-                    # Bot has been stopped
-                    G_BOT_IS_MOVING = False
+                # The message tells us if the bot is moving or not
+                G_BOT_IS_MOVING = message['data']['value']
+            # But stunning update message
+            elif message['msg_type'] == 'stunning_status':
+                global G_BOT_IS_STUNNED
+                # The message tells us if the bot is stunned or not
+                G_BOT_IS_STUNNED = message['data']['value']
             # Bot turning update message
             elif message['msg_type'] == 'turning_status':
                 global G_BOT_IS_TURNING
+                global G_BOT_TURN_DIRECTION
                 # The message tells us the bot has stopped turning
-                if not message['data']['value']:
+                if message['data']['value'] == 'stop':
                     # Bot has been stopped
                     G_BOT_IS_TURNING = False
+                else:
+                    # Turn direction
+                    G_BOT_IS_TURNING = True
+                    G_BOT_TURN_DIRECTION = message['data']['value']
+            # Weapon availability status
+            elif message['msg_type'] == 'weapon_can_shoot':
+                global G_WEAPON_CAN_SHOOT
+                G_WEAPON_CAN_SHOOT = message['data']['value']
         else:
             logging.error("Not a game message")
     except:
@@ -166,37 +180,33 @@ if __name__ == "__main__":
         game_message_thread_event = Event()
         Thread(target=thread_read_game_queue, args=(game_message_thread_event, bot)).start()
 
+        # Randomize directions and durations
+        seed = random.randrange(sys.maxsize)
+        rand_gen = random.Random(seed)
+
+        # Waiting for the game to start
+        while not G_GAME_IS_STARTED:
+            sleep(0.1)
+
+        # Game is started
+        show_bot_stats()
+
         try:
-            # Randomize directions and durations
-            seed = random.randrange(sys.maxsize)
-            rand_gen = random.Random(seed)
+            # Big AI time
+            bot.move('start')
+            sleep(rand_gen.randint(2, 7))
+            G_BOT_TURN_DIRECTION = rand_gen.choice(['left', 'right'])
+            bot.turn(G_BOT_TURN_DIRECTION)
 
-            # Waiting for the game to start
-            while not G_GAME_IS_STARTED:
-                sleep(0.1)
+            last_direction_change_ts = datetime.now()
+            while G_BOT_HEALTH > 0 and G_GAME_IS_STARTED:
+                # Analyze stuff
+                # Compiling matrix
+                # Optimizing core mainframe
+                # Make vary much complex decisions
+                # Go to sleep
 
-            # Game is started
-            show_bot_stats()
-
-            try:
-                # Big AI time
-                bot.move('start')
-                G_BOT_IS_MOVING = True
-
-                sleep(rand_gen.randint(2, 7))
-
-                G_BOT_TURN_DIRECTION = 'right'
-                bot.turn(G_BOT_TURN_DIRECTION)
-                G_BOT_IS_TURNING = True
-
-                last_direction_change_ts = datetime.now()
-                while G_BOT_HEALTH > 0 and G_GAME_IS_STARTED:
-                    # Analyze stuff
-                    # Compiling matrix
-                    # Optimizing core mainframe
-                    # Make vary much complex decisions
-                    # Go to sleep
-
+                if not G_BOT_IS_STUNNED:
                     if not G_BOT_TARGETS_QUEUE.empty():
                         angle = G_BOT_TARGETS_QUEUE.get(block=False)
                         bot.shoot(angle)
@@ -207,32 +217,23 @@ if __name__ == "__main__":
                                 > timedelta(seconds=rand_gen.randint(1, 4)):
                             last_direction_change_ts = datetime.now()
                             bot.turn('stop')
-                            G_BOT_IS_TURNING = False
                         # If the bot is going forward for at least x seconds, we make him turn
                         elif not G_BOT_IS_TURNING and datetime.now() - last_direction_change_ts \
                                 > timedelta(seconds=rand_gen.randint(2, 7)):
                             last_direction_change_ts = datetime.now()
                             G_BOT_TURN_DIRECTION = rand_gen.choice(['left', 'right'])
                             bot.turn(G_BOT_TURN_DIRECTION)
-                            G_BOT_IS_TURNING = True
                     else:
-                        # G_BOT_TURN_DIRECTION = get_opposite_direction(G_BOT_TURN_DIRECTION)
                         G_BOT_TURN_DIRECTION = rand_gen.choice(['left', 'right'])
                         bot.turn(G_BOT_TURN_DIRECTION)
-                        G_BOT_IS_TURNING = True
                         sleep(rand_gen.randint(1, 10))
                         bot.move('start')
-                        G_BOT_IS_MOVING = True
 
-                    sleep(0.1)
+                sleep(0.1)
 
-            except BotAi.RestException as ex:
-                if ex.name == 'BOT_IS_STUNNED':
-                    pass
-
-            if not G_GAME_IS_STARTED:
-                logging.info("Game has been stopped")
-                stop()
+        except BotAi.RestException as ex:
+            if ex.name == 'BOT_IS_STUNNED':
+                pass
 
         except KeyboardInterrupt:
             logging.info("Bot has been aborted")
@@ -243,3 +244,7 @@ if __name__ == "__main__":
                 stop()
             else:
                 raise
+
+        if not G_GAME_IS_STARTED:
+            logging.info("Game has been stopped")
+            stop()
