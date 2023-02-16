@@ -183,8 +183,9 @@ class ScannerModel(IScanner, ABC):
             for item in detected_objects:
                 # keep only TileObjects with collision and Bots
                 if isinstance(item, Tile):
-                    item = item.tile_object
-                    if not item.has_collision:
+                    tile = item
+                    tile_object = item.tile_object
+                    if not tile_object.has_collision or tile.is_walkable:
                         continue
 
                 if item != self._bot:
