@@ -97,6 +97,7 @@ class Rest(metaclass=SingletonABCMeta):
     def bot_action_move(self, bot_id: str, state: str):
         """
         Start or stop moving the bot forward.
+        Accepted values: start, stop
         """
         method = "patch"
         endpoint = f"/bots/{bot_id}/action/move"
@@ -108,6 +109,7 @@ class Rest(metaclass=SingletonABCMeta):
     def bot_action_turn(self, bot_id: str, direction: str):
         """
         Start or stop turning the bot in one direction.
+        Accepted values: left, right, stop
         """
         method = "patch"
         endpoint = f"/bots/{bot_id}/action/turn"
@@ -119,6 +121,7 @@ class Rest(metaclass=SingletonABCMeta):
     def bot_action_shoot(self, bot_id: str, angle: float):
         """
         Shoot at the desired angle.
+        Accepted value: and angle in degrees.
         """
         method = "patch"
         endpoint = f"/bots/{bot_id}/action/shoot"

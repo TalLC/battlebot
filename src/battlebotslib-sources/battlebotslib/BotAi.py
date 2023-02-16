@@ -73,12 +73,12 @@ class BotAi:
         """
         return self.connection_manager.stomp_queue.get()
 
-    def move(self, state: str):
+    def move(self, state: bool):
         """
         Start or stop moving the bot forward.
-        Accepted values: start, stop
         """
-        Rest().bot_action_move(self.bot_id, state)
+        state_str = "start" if state else "stop"
+        Rest().bot_action_move(self.bot_id, state_str)
 
     def turn(self, direction: str):
         """
