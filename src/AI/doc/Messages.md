@@ -214,6 +214,13 @@ Donne des informations relatives à l'état du bot.
         "data": {
             "value": false
         }
+    },
+    {
+        "msg_type": "weapon_can_shoot",
+        "source": "bot",
+        "data": {
+            "value": false
+        }
     }]
 }
 ```
