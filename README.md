@@ -1,5 +1,8 @@
-# Battlebots
+![logo](https://github.com/TalLC/battlebot/raw/main/img/logo.png)
+
 Plateforme de gestion de combat de robots virtuels.
+
+---
 
 # Serveur
 
