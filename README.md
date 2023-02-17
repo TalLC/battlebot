@@ -15,9 +15,8 @@ Un fichier `requirements.txt` est fourni et il faut avoir la lib client install�
 - [Code source](src/AI)
 
 ### Configuration
-On a plusieurs fichiers de config pour les connexions aux services Rest, STOMP et MQTT ainsi que pour les informations du bot (nom et équipe) :
-- [Config du bot](src/AI/bot1.json)
-- [Informations de connexions](src/AI/conf)
+- [Config du bot](src/AI/bot1.json) (nom et id d'équipe)
+- [Informations de connexions](src/AI/conf) (Rest, STOMP et MQTT)
 
 ## Lib client Python
 ### Build la lib
