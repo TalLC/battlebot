@@ -1,4 +1,5 @@
-src/server/activemq/
+src/server/activemq/data/
+src/server/activemq/tmp/
 src/AI/bot_id.tmp
 
 # Byte-compiled / optimized / DLL files
