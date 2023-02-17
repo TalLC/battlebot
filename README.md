@@ -12,11 +12,18 @@ Plateforme de gestion de combat de robots virtuels.
 - [Java JRE 1.8 (64 bits)](https://www.java.com/fr/download/manual.jsp) (pré-requis)
 
 ### Lancement
-- 
+- Lancer le fichier [server/activemq/start.bat](src/server/activemq/start.bat)
 
 ### Console
 - [Web console](https://127.0.0.1:8162/) : admin/admin
   - Pour les navigateurs basés sur Chromium, taper `thisisunsafe` sur votre clavier si la page est bloquée à cause du certificat auto signé
+
+## Python
+Activer l'environnement virtuel du serveur, puis lancer la commande :
+```
+python.exe -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30
+```
+
 
 # Client
 ## IA de test
