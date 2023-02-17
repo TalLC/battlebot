@@ -6,6 +6,18 @@ Plateforme de gestion de combat de robots virtuels.
 
 # Serveur
 
+## ActiveMQ
+
+### Installation
+- [Java JRE 1.8 (64 bits)](https://www.java.com/fr/download/manual.jsp) (pré-requis)
+
+### Lancement
+- 
+
+### Console
+- [Web console](https://127.0.0.1:8162/) : admin/admin
+  - Pour les navigateurs basés sur Chromium, taper `thisisunsafe` sur votre clavier si la page est bloquée à cause du certificat auto signé
+
 # Client
 ## IA de test
 
