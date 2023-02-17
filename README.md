@@ -10,7 +10,7 @@ Plateforme de gestion de combat de robots virtuels.
 ## IA de test
 
 ### Pré-requis
-Un script Python d'IA de test a été créé pour illustrer l'utilisation de la lib cliente.  
+Un script Python d'IA de test a été créée pour illustrer l'utilisation de la lib cliente.  
 Un fichier `requirements.txt` est fourni et il faut avoir la lib client installée pour utiliser cette IA.
 - [Code source](src/AI)
 
