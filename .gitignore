@@ -2,9 +2,8 @@ src/server/activemq/data/
 src/server/activemq/tmp/
 src/AI/bot_id.tmp
 
-src/_package/
 src/battlebots-server-package.zip
-src/battlebots-client-lib.zip
+src/battlebotslib.zip
 
 
 # Byte-compiled / optimized / DLL files
