@@ -21,6 +21,7 @@ del /Q _package\activemq\data\*.log
 rmdir /S /Q _package\activemq\data\kahadb
 rmdir /S /Q _package\activemq\data\tmp
 rmdir /S /Q _package\venv
+del /Q _package\*.bak
 
 rem Zip du package
 cd _package
