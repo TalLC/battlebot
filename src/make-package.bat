@@ -5,32 +5,58 @@ rem ---------------------------------
 
 rem Suppression de l'ancienne version
 del /Q battlebots-server-package.zip
+del /Q battlebotslib.zip
 
-rem Création du dossier de package serveur final
-rmdir /S /Q _package
-mkdir _package
+rem Partie serveur
+rem --------------
+rem Création du dossier de serveur temporaire
+set tmp_server=_tmp_server
+rmdir /S /Q %tmp_server%
+mkdir %tmp_server%
 
 rem Recopie du code Python Serveur
-robocopy /E server _package
+robocopy /E server %tmp_server%
 
 rem Suppression des dossiers inutiles
-rmdir /S /Q _package\.idea
-rmdir /S /Q _package\__pycache__
-rmdir /S /Q _package\activemq_config
-del /Q _package\activemq\data\*.log
-rmdir /S /Q _package\activemq\data\kahadb
-rmdir /S /Q _package\activemq\data\tmp
-rmdir /S /Q _package\venv
-del /Q _package\*.bak
+rmdir /S /Q %tmp_server%\.idea
+rmdir /S /Q %tmp_server%\__pycache__
+rmdir /S /Q %tmp_server%\activemq_config
+del /Q %tmp_server%\activemq\data\*.log
+rmdir /S /Q %tmp_server%\activemq\data\kahadb
+rmdir /S /Q %tmp_server%\activemq\data\tmp
+rmdir /S /Q %tmp_server%\venv
+del /Q %tmp_server%\*.bak
 
 rem Zip du package serveur
-cd _package
+cd %tmp_server%
 ..\7za.exe a -tzip -r ..\battlebots-server-package *
 cd ..
 
-rem Zip du package de la lib client
-cd battlebotslib-sources
-..\7za.exe a -tzip -r ..\battlebots-client-lib *
+rem Suppression du dossier temporaire
+rmdir /S /Q %tmp_server%
+
+
+rem Partie lib client
+rem -----------------
+rem Création du dossier de package temporaire
+set tmp_lib=_tmp_lib
+rmdir /S /Q %tmp_lib%
+mkdir %tmp_lib%
+mkdir %tmp_lib%\battlebotslib
+
+rem Recopie du code Python Serveur
+robocopy /E battlebotslib %tmp_lib%\battlebotslib
+
+rem Suppression des dossiers inutiles
+rmdir /S /Q %tmp_lib%\battlebotslib\.idea
+
+rem Zip du package serveur
+cd %tmp_lib%
+..\7za.exe a -tzip -r ..\battlebotslib *
 cd ..
+
+rem Suppression du dossier temporaire
+rmdir /S /Q %tmp_lib%
+
 
 pause
