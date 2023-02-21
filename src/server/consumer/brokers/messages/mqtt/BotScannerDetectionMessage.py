@@ -15,6 +15,7 @@ class BotScannerDetectionMessage(IScannerMessage):
                     "from": detected.a_from,
                     "to": detected.a_to,
                     "name": detected.name,
+                    "object_type": detected.object_type,
                     "distance": detected.distance
                 }
             )

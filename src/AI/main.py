@@ -4,20 +4,28 @@ import logging
 import random
 from datetime import datetime, timedelta
 from time import sleep
-from threading import Event, Thread
-from lib_ai.BotAi import BotAi
-
-
 from pathlib import Path
+from threading import Event, Thread
+from battlebotslib.BotAi import BotAi
+from queue import SimpleQueue
 
+# Bot config
 G_BOT_ID_TMP_FILE = Path('bot_id.tmp')
 G_BOT_CONFIG = json.loads(Path('bot1.json').read_text())
+
+# Game information
 G_GAME_IS_STARTED = False
 
-G_BOT_HEALTH = 100
-G_BOT_IS_MOVING = False
-G_BOT_IS_TURNING = False
-G_BOT_TURN_DIRECTION = str()
+# Bot information
+G_BOT_HEALTH: int = 999     # Depends on the bot type, we need to read this information from the game messages
+G_BOT_IS_MOVING: bool = False
+G_BOT_IS_TURNING: bool = False
+G_BOT_TURN_DIRECTION: str = str()
+G_BOT_IS_STUNNED: bool = False
+G_WEAPON_CAN_SHOOT: bool = True
+
+# Will be used to store all the objects to shoot at
+G_BOT_TARGETS_QUEUE: SimpleQueue = SimpleQueue()
 
 
 def check_for_existing_bot_id() -> str:
@@ -31,10 +39,23 @@ def check_for_existing_bot_id() -> str:
 
 
 def thread_read_scanner_queue(e: Event, bot_ai: BotAi):
+    """
+    Thread continuously reading messages from the bot scanner queue.
+    """
     while not e.is_set():
         scanner_message = bot_ai.read_scanner()
         logging.debug(f"[SCANNER] {scanner_message}")
         handle_scanner_message(scanner_message)
+
+
+def thread_read_game_queue(e: Event, bot_ai: BotAi):
+    """
+    Thread continuously reading messages from the game queue.
+    """
+    while not e.is_set():
+        game_message = bot_ai.read_game_message()
+        logging.debug(f"[GAME] {game_message}")
+        handle_game_message(game_message)
 
 
 def handle_scanner_message(message: dict):
@@ -42,26 +63,35 @@ def handle_scanner_message(message: dict):
     Handle a new scanner message.
     """
     try:
-        if 'msg_type' in message and message['msg_type'] == 'object_detection':
+        if message['msg_type'] == "object_detection":
+            # Browsing detected objects
             for detected_object in message['data']:
-                # Checking if an object is detected
-                if detected_object['name'] is not None:
-                    angle = (detected_object['from'] + detected_object['to']) / 2
-                    logging.info(
-                        f"[SCANNER] {detected_object['name']} detected at a distance of "
-                        f"{detected_object['distance']} ({angle}r)"
-                    )
+                is_valid_target = False
+                target = None
+                match detected_object['object_type']:
+                    # We want to shoot at trees and bots
+                    case "tree":
+                        is_valid_target = True
+                        target = detected_object
+                    case "bot":
+                        is_valid_target = True
+                        target = detected_object
+                    # We cannot walk on water
+                    case "tile":
+                        if detected_object["name"].lower() == "water":
+                            logging.debug("WATER WATER WATER!!!")
+                    case _:
+                        pass
+
+                if is_valid_target:
+                    target_angle = (target['from'] + target['to']) / 2
+                    logging.info(f"[SCANNER] {target['name']} detected at a distance of "
+                                 f"{target['distance']} ({target_angle}°)")
+                    G_BOT_TARGETS_QUEUE.put(target_angle)
         else:
-            logging.error("Not an object detection scanner message")
+            logging.error(f"Unknown scanner message: {message}")
     except:
-        logging.error("Bad scanner message format")
-
-
-def thread_read_game_queue(e: Event, bot_ai: BotAi):
-    while not e.is_set():
-        game_message = bot_ai.read_game_message()
-        logging.debug(f"[GAME] {game_message}")
-        handle_game_message(game_message)
+        logging.error(f"Bad scanner message format: {message}")
 
 
 def handle_game_message(message: dict):
@@ -69,27 +99,41 @@ def handle_game_message(message: dict):
     Handle a new game message.
     """
     try:
-        if 'msg_type' in message:
-            # Health update message
-            if message['msg_type'] == 'health_status':
+        match message['msg_type']:
+            case "health_status":
                 global G_BOT_HEALTH
-                current_health = message['data']['value']
-                G_BOT_HEALTH = current_health
-                logging.info(f"[BOT] Health: {current_health}")
-            # Game update message
-            if message['msg_type'] == 'game_status':
+                # Bot health update
+                G_BOT_HEALTH = message['data']['value']
+                show_bot_stats()
+            case "game_status":
                 global G_GAME_IS_STARTED
+                # Game is running or stopped
                 G_GAME_IS_STARTED = message['data']
-            # Bot moving update message
-            elif message['msg_type'] == 'moving_status':
+            case "stunning_status":
+                global G_BOT_IS_STUNNED
+                # Bot is stunned or not
+                G_BOT_IS_STUNNED = message['data']['value']
+            case "moving_status":
                 global G_BOT_IS_MOVING
-                if not message['data']['value']:
+                # Bot is moving or not
+                G_BOT_IS_MOVING = message['data']['value']
+            case "turning_status":
+                global G_BOT_IS_TURNING
+                global G_BOT_TURN_DIRECTION
+                if message['data']['value'] == 'stop':
                     # Bot has been stopped
-                    G_BOT_IS_MOVING = False
-        else:
-            logging.error("Not an object detection scanner message")
+                    G_BOT_IS_TURNING = False
+                else:
+                    # Turn direction
+                    G_BOT_IS_TURNING = True
+                    G_BOT_TURN_DIRECTION = message['data']['value']
+            case "weapon_can_shoot":
+                global G_WEAPON_CAN_SHOOT
+                G_WEAPON_CAN_SHOOT = message['data']['value']
+            case _:
+                logging.error(f"Unknown game message: {message}")
     except:
-        logging.error("Bad scanner message format")
+        logging.error(f"Bad game message format: {message}")
 
 
 def get_opposite_direction(direction: str) -> str:
@@ -146,72 +190,45 @@ if __name__ == "__main__":
         game_message_thread_event = Event()
         Thread(target=thread_read_game_queue, args=(game_message_thread_event, bot)).start()
 
+        # Randomize directions and durations
+        rand_gen = random.Random()
+
+        # Waiting for the game to start
+        while not G_GAME_IS_STARTED:
+            sleep(0.1)
+
+        # Game is started
+        show_bot_stats()
+
         try:
-            # Randomize directions and durations
-            seed = random.randrange(sys.maxsize)
-            rand_gen = random.Random(seed)
-
-            # Waiting for the game to start
-            while not G_GAME_IS_STARTED:
-                sleep(0.1)
-
-            # Game is started
-            show_bot_stats()
-
             # Big AI time
-            bot.move('start')
-            G_BOT_IS_MOVING = True
-
-            sleep(rand_gen.randint(2, 7))
-
-            G_BOT_TURN_DIRECTION = 'right'
-            bot.turn(G_BOT_TURN_DIRECTION)
-            G_BOT_IS_TURNING = True
 
             last_direction_change_ts = datetime.now()
             while G_BOT_HEALTH > 0 and G_GAME_IS_STARTED:
-                # Analyze stuff
-                # Compiling matrix
-                # Optimizing core mainframe
-                # Make vary much complex decisions
-                # Go to sleep
+                try:
+                    if not G_BOT_TARGETS_QUEUE.empty():
+                        bot.shoot(G_BOT_TARGETS_QUEUE.get(block=False))
 
-                if G_BOT_IS_MOVING:
-                    # If the bot is urning en rond for at least x seconds, we stop turning
-                    if G_BOT_IS_TURNING and datetime.now() - last_direction_change_ts \
-                            > timedelta(seconds=rand_gen.randint(1, 4)):
-                        last_direction_change_ts = datetime.now()
-                        bot.turn('stop')
-                        G_BOT_IS_TURNING = False
-                    # If the bot is going forward for at least x seconds, we make him turn
-                    elif not G_BOT_IS_TURNING and datetime.now() - last_direction_change_ts \
-                            > timedelta(seconds=rand_gen.randint(2, 7)):
-                        last_direction_change_ts = datetime.now()
-                        G_BOT_TURN_DIRECTION = rand_gen.choice(['left', 'right'])
-                        bot.turn(G_BOT_TURN_DIRECTION)
-                        G_BOT_IS_TURNING = True
-                else:
-                    # G_BOT_TURN_DIRECTION = get_opposite_direction(G_BOT_TURN_DIRECTION)
-                    G_BOT_TURN_DIRECTION = rand_gen.choice(['left', 'right'])
-                    bot.turn(G_BOT_TURN_DIRECTION)
-                    G_BOT_IS_TURNING = True
-                    sleep(rand_gen.randint(1, 10))
-                    bot.move('start')
-                    G_BOT_IS_MOVING = True
+                    if not G_BOT_IS_MOVING:
+                        bot.move(True)
 
-                sleep(0.1)
+                    if not G_BOT_IS_TURNING:
+                        bot.turn(rand_gen.choice(['left', 'right']))
+                    elif G_BOT_IS_TURNING and datetime.now() - last_turn_ts > timedelta(seconds=5):
+                        bot.turn(rand_gen.choice(['left', 'right']))
+                        last_turn_ts = datetime.now()
 
-            if not G_GAME_IS_STARTED:
+                except BotAi.RestException as ex:
+                    pass
+
+            # Game has stopped or the bot is dead
+            if G_BOT_HEALTH <= 0:
+                logging.info("Bot is dead")
+
+            elif not G_GAME_IS_STARTED:
                 logging.info("Game has been stopped")
-                stop()
+            stop()
 
         except KeyboardInterrupt:
             logging.info("Bot has been aborted")
             stop()
-
-        except BotAi.RestException as ex:
-            if ex.name == 'GAME_NOT_STARTED':
-                logging.info("Game has been stopped")
-                stop()
-            else:
-                raise

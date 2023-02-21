@@ -1,31 +1,34 @@
 [
   {
-      "size": 3000,
+      "id": "team-id-1",
+      "size": 1,
       "name": "Blue team",
       "color": "0x0042aa"
   },
   {
-      "size": 3,
+      "id": "team-id-2",
+      "size": 1,
       "name": "Red team",
       "color": "0xaa0000"
   },
   {
-      "size": 3,
+      "id": "team-id-3",
+      "size": 1,
       "name": "Green team",
       "color": "0x00bb00"
   },
   {
-      "size": 3,
+      "size": 1,
       "name": "Yellow team",
       "color": "0xffcc00"
   },
   {
-      "size": 3,
+      "size": 1,
       "name": "Black team",
       "color": "0x101010"
   },
   {
-      "size": 3,
+      "size": 1,
       "name": "White team",
       "color": "0xdadada"
   }

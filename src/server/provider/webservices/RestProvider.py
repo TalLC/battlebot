@@ -241,7 +241,7 @@ class RestProvider:
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
 
-            logging.info("Adding a test bot:")
+            logging.debug("Adding a test bot:")
             bot_count = GameManager().bot_manager.get_bots_count()
             bot = GameManager().bot_manager.create_bot(f"BOT TEST {bot_count}", "warrior")
             del GameManager().bot_manager._BOTS[bot.id]
@@ -259,8 +259,6 @@ class RestProvider:
                 bot.client_connection.source_stomp_id,
                 bot.client_connection.source_mqtt_id
             )
-
-            logging.info(GameManager().bot_manager.get_bot("0-0-0-0-0"))
 
             return {"status": "ok", "message": "The bot has been added", "bot_id": bot.id}
 
@@ -399,9 +397,13 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
+            # Is bot stunned
+            if bot.is_stunned:
+                ErrorCode.throw(BOT_IS_STUNNED)
+
+            # Weapon unavailable
+            if not bot.equipment.weapon.can_shoot:
+                ErrorCode.throw(BOT_WEAPON_UNAVAILABLE)
 
             # Sending shoot command to the bot
             bot.add_command_to_queue(BotShootCommand(value=model.angle))
@@ -431,9 +433,9 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
+            # Is bot stunned
+            if bot.is_stunned:
+                ErrorCode.throw(BOT_IS_STUNNED)
 
             # Sending turn command to the bot
             bot.add_command_to_queue(BotTurnCommand(value=model.direction))
@@ -466,9 +468,9 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
+            # Is bot stunned
+            if bot.is_stunned:
+                ErrorCode.throw(BOT_IS_STUNNED)
 
             # Sending move command to the bot
             bot.add_command_to_queue(BotMoveCommand(value=model.action))
@@ -501,9 +503,9 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
+            # Is bot stunned
+            if bot.is_stunned:
+                ErrorCode.throw(BOT_IS_STUNNED)
 
             if model.action.lower() == 'start':
                 return {"status": "ok", "message": "Bot is starting to use its shield."}

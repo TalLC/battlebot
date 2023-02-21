@@ -21,6 +21,7 @@ class BotShootCommand(IBotCommand):
         Contains the function to execute.
         """
         target = arg.shoot(self.value)
+        arg.equipment.weapon.reload()
         ConsumerManager().websocket.send_message(BotUpdateMessage(bot_id=arg.id, target=target))
 
         # Hurting the target object
