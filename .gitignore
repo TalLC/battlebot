@@ -2,6 +2,11 @@ src/server/activemq/data/
 src/server/activemq/tmp/
 src/AI/bot_id.tmp
 
+src/server/third-party/
+src/battlebots-server-package.zip
+src/battlebotslib.zip
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
