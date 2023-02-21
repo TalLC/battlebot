@@ -43,7 +43,7 @@ class Object3DFactory {
                         const material = new THREE.MeshPhongMaterial({
                             color: matColor,
                             emissive: 0x000000,
-                            specular: 0x111111,
+                            specular: 0x05050a,
                             map: matMap,
                             side: THREE.DoubleSide
                         });
