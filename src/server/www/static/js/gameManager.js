@@ -206,6 +206,7 @@ class GameManager {
         Return : N/A
     */
     createMap(mapData) {
+        const tileRotations = [ -2*Math.PI, -Math.PI, 0.0, Math.PI, 2*Math.PI ]
         for (let h = 0; h < mapData.height; h++)
         {
             for (let w = 0; w < mapData.width; w++)
@@ -223,7 +224,7 @@ class GameManager {
                                 x: tile['x'],
                                 y: 0.0,
                                 z: tile['z'],
-                                ry: 0.0,
+                                ry: tileRotations[Math.floor(Math.random() * tileRotations.length)],
                                 collisionShape: tile['shape_name'],
                                 collisionSize: tile['shape_size'],
                                 model: tile['name'].toLowerCase()

@@ -5,9 +5,7 @@ Plateforme de gestion de combat de robots virtuels.
 ---
 
 # Serveur
-
 ## ActiveMQ
-
 ### Installation
 - [Java JRE 1.8 (64 bits)](https://www.java.com/fr/download/manual.jsp) (pré-requis)
 
@@ -19,6 +17,9 @@ Plateforme de gestion de combat de robots virtuels.
   - Pour les navigateurs basés sur Chromium, taper `thisisunsafe` sur votre clavier si la page est bloquée à cause du certificat auto signé
 
 ## Python
+### Installation
+- [Python 3.10 (64 bits)](https://www.python.org/ftp/python/3.10.10/python-3.10.10-amd64.exe') (pré-requis)
+
 Activer l'environnement virtuel du serveur, puis lancer la commande :
 ```
 python.exe -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30
@@ -27,7 +28,6 @@ python.exe -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30
 
 # Client
 ## IA de test
-
 ### Pré-requis
 Un script Python d'IA de test a été créée pour illustrer l'utilisation de la lib cliente.  
 Un fichier `requirements.txt` est fourni et il faut avoir la lib client installée pour utiliser cette IA.
