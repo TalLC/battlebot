@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"login_id\": \"0751fb30-d841-4d99-b34b-15c0c3c8ec73\"\r\n}",
+							"raw": "{\r\n    \"login_id\": \"87cba717-6d36-4b1c-aab7-c2b50efc4986\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -262,6 +262,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/kill",
 							"protocol": "http",
@@ -281,8 +290,33 @@
 							"variable": [
 								{
 									"key": "bot_id",
-									"value": ""
+									"value": "0-0-0-0-0"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /bots/action/add",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/bots/action/add",
+							"path": [
+								"bots",
+								"action",
+								"add"
 							]
 						}
 					},
@@ -401,7 +435,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"angle\": 42.0\r\n}",
+							"raw": "{\r\n    \r\n    \"angle\": 0.0\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -427,7 +461,7 @@
 							"variable": [
 								{
 									"key": "bot_id",
-									"value": "199dc97d-d97d-4fa1-a451-459b29a07632"
+									"value": "0-0-0-0-0"
 								}
 							]
 						}
@@ -441,7 +475,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"action\": \"stop\"\r\n}",
+							"raw": "{\r\n    \"action\": \"start\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -467,7 +501,7 @@
 							"variable": [
 								{
 									"key": "bot_id",
-									"value": "0-0-0-0-0"
+									"value": "0-0-0-0-2"
 								}
 							]
 						}
