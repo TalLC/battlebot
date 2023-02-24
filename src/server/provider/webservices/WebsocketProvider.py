@@ -8,6 +8,7 @@ from business.GameManager import GameManager
 from consumer.webservices.messages.websocket.DisplayClientLoginMessage import DisplayClientLoginMessage
 from consumer.webservices.messages.websocket.MapCreateMessage import MapCreateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
+from consumer.webservices.messages.websocket.GameInfoMessage import GameInfoMessage
 from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
 
@@ -35,6 +36,12 @@ class WebsocketProvider:
                 host=websocket.client.host, port=websocket.client.port, websocket_headers=websocket.headers
             )
             logging.debug(f"Display {display_client.name} connected")
+
+            # Sending game information
+            logging.debug(f"Sending game information to {display_client.name}")
+            game_info_message = GameInfoMessage(is_debug=GameManager().is_debug, map_id=GameManager().map.id,
+                                                max_players=GameManager().max_players)
+            await websocket.send_json(game_info_message.json())
 
             # Sending map information
             logging.debug(f"Sending map to {display_client.name}")
