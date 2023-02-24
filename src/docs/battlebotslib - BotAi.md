@@ -18,7 +18,7 @@ La classe `BotAi` fournit une interface haut niveau pour interagir avec le serve
 
 - `enroll(self, bot_id: str = str()) -> str` : Inscrit ou réinscrit un bot sur le serveur. Donner un identificateur de bot existant vous permet de connecter ce bot sans en ajouter un nouveau au jeu. Retourne l'identificateur du bot attribué par le serveur.
 
-- `read_scanner(self) -> dict` : Lit et retire un élément de la file d'attente du scanner. Retourne un dictionnaire contenant les données.
+- `read_scanner(self) -> dict` : Lit et retire un élément de la file d'attente du scanner. Retourne un dictionnaire contenant les données.  
 **Exemples**
   - Un arbre et un bot sont détectés:
     ```json
@@ -44,7 +44,7 @@ La classe `BotAi` fournit une interface haut niveau pour interagir avec le serve
     }
     ```
 
-- `read_game_message(self) -> dict` : Lit et retire un élément de la file d'attente de messages de jeu. Retourne un dictionnaire contenant les données. 
+- `read_game_message(self) -> dict` : Lit et retire un élément de la file d'attente de messages de jeu. Retourne un dictionnaire contenant les données.  
 **Exemples**
   - État de la partie:
     ```json
