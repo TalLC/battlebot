@@ -1,3 +1,5 @@
+import { initGameManager } from './gameManager.js';
+import { initGameConfig } from './config.js';
 import GameManager from './gameManager.js';
 import {actions} from './actions/actions.js';
 import * as TWEEN from 'tween';
@@ -5,7 +7,6 @@ import sendRestMessage from './utils/rest.js'
 
 
 let ws = new WebSocket(`ws://${window.location.host}/ws`);
-let game = GameManager;
 let update = [];
 
 
@@ -20,7 +21,7 @@ function doAction(message){
     //console.log(message.msg_type);
     if (message.msg_type === "BotUpdateMessage") {
         // On vérifie si le bot existe
-        if(game.bots[message.id] && game.bots[message.id].sceneObject){
+        if(GameManager().bots[message.id] && GameManager().bots[message.id].sceneObject){
             
             // Parcours des actions enregistrées
             for(let actionDef in actions){
@@ -31,7 +32,7 @@ function doAction(message){
                 if(selected){
                     let paramAction = actions[actionDef].eventwrapper(message);
                     promise = promise.then(() => {
-                        game.bots[message.id].action(actionDef, paramAction);
+                        GameManager().bots[message.id].action(actionDef, paramAction);
                     });
                 }
             }
@@ -45,7 +46,7 @@ function doAction(message){
             if(selected){
                 let paramAction = actions[actionDef].eventwrapper(message);
                 promise = promise.then(() => {
-                    game.action(actionDef, paramAction);
+                    GameManager().action(actionDef, paramAction);
                 });
             }
         }
@@ -69,18 +70,16 @@ function animate(){
         Promise.all(promises).then(() =>{
             requestAnimationFrame( animate );
             TWEEN.update();
-            game.render();
+            GameManager().render();
         });
         update.shift();
     }
     else{
         requestAnimationFrame( animate );
         TWEEN.update();
-        game.render();
+        GameManager().render();
     }
 }
-
-animate();
 
 /*
     Fonction : Permet la récupération en continue des données reçues via websocket
@@ -95,20 +94,32 @@ ws.onmessage = async function(event) {
     }
     // Messages seuls
     else {
-        if (message.msg_type == 'MapCreateMessage'){
+        if (message.msg_type == 'GameInfoMessage'){
+            console.log('GameInfoMessage');
+            
+            console.log(message);
+            // Création de la config du jeu
+            initGameConfig(message);
+
+            // On a besoin de la config du jeu pour déclarer le GameManager
+            initGameManager();
+
+            animate();
+        }
+        else if (message.msg_type == 'MapCreateMessage'){
             console.log('CreateMapWS');
-            game.createMap(message);
+            GameManager().createMap(message);
         }
         else if (message.msg_type == 'BotCreateMessage'){
             console.log('CreateBot');
-            game.addBot(message);
+            GameManager().addBot(message);
         }
         else if (message.msg_type == 'DisplayClientLoginMessage'){
-            game.loginId = message.login_id;
-            while(null in game.bots);
+            GameManager().loginId = message.login_id;
+            while(null in GameManager().bots);
             console.log('Start game');
-            game.start();
-            sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: game.loginId});
+            GameManager().start();
+            sendRestMessage('PATCH', '/display/clients/action/ready', {login_id: GameManager().loginId});
         }
     }
 };

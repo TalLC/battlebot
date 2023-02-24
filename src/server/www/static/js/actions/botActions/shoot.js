@@ -25,13 +25,13 @@ function actionSelector(botState){return !(botState.shoot === undefined);}
     Return : N/A
 */
 function action(parameters){
-    const bot = GameManager.bots[parameters.id];
+    const bot = GameManager().bots[parameters.id];
 
     for (let target of parameters.targets) {
         if (!target.id) {
             shootTo(bot, target);
         } else {
-            const targetObject = GameManager.getGameObjectFromId(target.id);
+            const targetObject = GameManager().getGameObjectFromId(target.id);
             if (targetObject) {
                 shootTo(bot, targetObject.coordinates2D);
             } else {
@@ -55,7 +55,7 @@ function shootTo(bot, to) {
     );
 
     //Add the mesh to the scene
-    GameManager.v.scene.add(laserMesh);
+    GameManager().v.scene.add(laserMesh);
 
     // Create a promise that resolves after 1 second
     const laserPromise = new Promise((resolve) => {
@@ -66,6 +66,6 @@ function shootTo(bot, to) {
 
     // Wait for the promise to resolve, then remove the mesh from the scene
     laserPromise.then(() => {
-        GameManager.v.disposeSceneObject(laserMesh);
+        GameManager().v.disposeSceneObject(laserMesh);
     });
 }
