@@ -73,7 +73,22 @@ class Object3DFactory {
             // });
 
             sceneObject.traverse((o) => {
-                if (o.isMesh) o.material.color = bot.teamColor;
+                if (o.isMesh) {
+                    if (o.material.map) {
+                        const matMap = o.material.map;
+                        const material = new THREE.MeshPhongMaterial({
+                            color: o.material.color,
+                            emissive: o.material.emissive,
+                            specular: o.material.specular,
+                            map: matMap,
+                            side: THREE.DoubleSide
+                        });
+                        o.material = material;
+                    } else {
+                        // On éclairci la peinture du Bot
+                        o.material.color = new THREE.Color(bot.teamColor).add(new THREE.Color(0x202020));
+                    }
+                }
             });
 
             bot.sceneObject = sceneObject;
