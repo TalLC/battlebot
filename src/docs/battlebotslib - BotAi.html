@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>BotAi</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+/* From extension ms-toolsai.jupyter */
+/* These classnames are inherited from bootstrap, but are present in most notebook renderers */
+
+.alert {
+    width: auto;
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.alert > *:last-child {
+    margin-bottom: 0;
+}
+#preview > .alert:last-child {
+    /* Prevent this being set to zero by the default notebook stylesheet */
+    padding-bottom: 1em;
+}
+
+.alert-success {
+    /* Note there is no suitable color available, so we just copy "info" */
+    background-color: var(--theme-info-background);
+    color: var(--theme-info-foreground);
+}
+.alert-info {
+    background-color: var(--theme-info-background);
+    color: var(--theme-info-foreground);
+}
+.alert-warning {
+    background-color: var(--theme-warning-background);
+    color: var(--theme-warning-foreground);
+}
+.alert-danger {
+    background-color: var(--theme-error-background);
+    color: var(--theme-error-foreground);
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="botai">BotAi</h1>
+<p>La classe <code>BotAi</code> fournit une interface haut niveau pour interagir avec le serveur de combat de bots. Il permet à un client de s'inscrire avec un bot, de lire les messages entrants du serveur et de réaliser des actions telles que se déplacer, tourner et tirer.</p>
+<h2 id="propriétés-de-la-classe">Propriétés de la classe</h2>
+<ul>
+<li><code>bot_id</code> : une propriété en lecture seule qui retourne l'identificateur du bot attribué par le serveur.</li>
+</ul>
+<h2 id="méthodes-de-la-classe">Méthodes de la classe</h2>
+<ul>
+<li>
+<p><code>__init__(self, bot_name: str, team_id: str)</code> : Initialise l'instance de <code>BotAi</code> avec le <code>bot_name</code> et le <code>team_id</code> donnés.</p>
+</li>
+<li>
+<p><code>__enter__(self)</code> : Permet l'utilisation de la déclaration <code>with</code> pour s'assurer que la méthode <code>close</code> est appelée.</p>
+</li>
+<li>
+<p><code>__exit__(self, exc_type, exc_val, exc_tb)</code> : Appelé lorsqu'une déclaration <code>with</code> est quittée.</p>
+</li>
+<li>
+<p><code>close(self)</code> : Ferme tous les threads ouverts.</p>
+</li>
+<li>
+<p><code>enroll(self, bot_id: str = str()) -&gt; str</code> : Inscrit ou réinscrit un bot sur le serveur. Donner un identificateur de bot existant vous permet de connecter ce bot sans en ajouter un nouveau au jeu. Retourne l'identificateur du bot attribué par le serveur.</p>
+</li>
+<li>
+<p><code>read_scanner(self) -&gt; dict</code> : Lit et retire un élément de la file d'attente du scanner. Retourne un dictionnaire contenant les données.<br>
+<strong>Exemples</strong></p>
+<ul>
+<li>Un arbre et un bot sont détectés:<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;msg_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object_detection&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;scanner&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">&quot;from&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">26.5</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;to&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">31</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;object_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;tree&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Tree&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;distance&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">6.844473640068633</span>
+        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-punctuation">{</span>
+            <span class="hljs-attr">&quot;from&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">34</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;to&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">39.5</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;object_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bot&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;MyBot01&quot;</span><span class="hljs-punctuation">,</span>
+            <span class="hljs-attr">&quot;distance&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">5.777348380771669</span>
+        <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>read_game_message(self) -&gt; dict</code> : Lit et retire un élément de la file d'attente de messages de jeu. Retourne un dictionnaire contenant les données.<br>
+<strong>Exemples</strong></p>
+<ul>
+<li>État de la partie:<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;msg_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;game_status&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;server&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li>Points de vies restants au bot:<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;msg_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;health_status&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bot&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">95</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li>Si le bot a été assomé (déplacements impossibles):<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;msg_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stunning_status&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bot&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li>Si le bot a commencé ou arrêté de se déplacer:<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;msg_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;moving_status&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bot&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li>Si le bot a commencé ou arrêté de tourner:<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;msg_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;turning_status&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bot&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+<li>Si l'arme du bot peut tirer ou non (rechargement):'<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;msg_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;weapon_can_shoot&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bot&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>move(self, state: bool)</code> : Commence ou arrête de faire avancer le bot. <code>state</code> peut être soit <code>True</code> ou <code>False</code>.</p>
+</li>
+<li>
+<p><code>turn(self, direction: str)</code> : Commence ou arrête de tourner le bot dans une direction. <code>direction</code> peut être <code>&quot;left&quot;</code>, <code>&quot;right&quot;</code> ou <code>&quot;stop&quot;</code>.</p>
+</li>
+<li>
+<p><code>shoot(self, angle: float)</code> : Tire à l'angle souhaité, spécifié en degrés.</p>
+</li>
+</ul>
+<h2 id="exceptions">Exceptions</h2>
+<ul>
+<li><code>RestException</code> : Levée en cas d'erreur lors d'un appel d'API REST.</li>
+</ul>
+<h2 id="exemple-dutilisation">Exemple d'utilisation</h2>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> logging
+<span class="hljs-keyword">from</span> time <span class="hljs-keyword">import</span> sleep
+<span class="hljs-keyword">from</span> threading <span class="hljs-keyword">import</span> Event, Thread
+<span class="hljs-keyword">from</span> queue <span class="hljs-keyword">import</span> SimpleQueue
+<span class="hljs-keyword">from</span> battlebotslib.BotAi <span class="hljs-keyword">import</span> BotAi
+
+
+<span class="hljs-comment"># Game information</span>
+G_GAME_IS_STARTED = <span class="hljs-literal">False</span>
+
+<span class="hljs-comment"># Bot information</span>
+G_BOT_HEALTH: <span class="hljs-built_in">int</span> = <span class="hljs-number">999</span>     <span class="hljs-comment"># Depends on the bot type, we need to read this information from the game messages</span>
+G_BOT_IS_MOVING: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span>
+G_BOT_IS_TURNING: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span>
+G_BOT_TURN_DIRECTION: <span class="hljs-built_in">str</span> = <span class="hljs-built_in">str</span>()
+G_BOT_IS_STUNNED: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span>
+G_WEAPON_CAN_SHOOT: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">True</span>
+
+<span class="hljs-comment"># Will be used to store all the objects to shoot at</span>
+G_BOT_TARGETS_QUEUE: SimpleQueue = SimpleQueue()
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">thread_read_scanner_queue</span>(<span class="hljs-params">e: Event, bot_ai: BotAi</span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    Thread continuously reading messages from the bot scanner queue.
+    &quot;&quot;&quot;</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> e.is_set():
+        scanner_message = bot_ai.read_scanner()
+        logging.debug(<span class="hljs-string">f&quot;[SCANNER] <span class="hljs-subst">{scanner_message}</span>&quot;</span>)
+        handle_scanner_message(scanner_message)
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">thread_read_game_queue</span>(<span class="hljs-params">e: Event, bot_ai: BotAi</span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    Thread continuously reading messages from the game queue.
+    &quot;&quot;&quot;</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> e.is_set():
+        game_message = bot_ai.read_game_message()
+        logging.debug(<span class="hljs-string">f&quot;[GAME] <span class="hljs-subst">{game_message}</span>&quot;</span>)
+        handle_game_message(game_message)
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_scanner_message</span>(<span class="hljs-params">message: <span class="hljs-built_in">dict</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    Handle a new scanner message.
+    &quot;&quot;&quot;</span>
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">if</span> message[<span class="hljs-string">&#x27;msg_type&#x27;</span>] == <span class="hljs-string">&quot;object_detection&quot;</span>:
+            <span class="hljs-comment"># Browsing detected objects</span>
+            <span class="hljs-keyword">for</span> detected_object <span class="hljs-keyword">in</span> message[<span class="hljs-string">&#x27;data&#x27;</span>]:
+                is_valid_target = <span class="hljs-literal">False</span>
+                target = <span class="hljs-literal">None</span>
+                match detected_object[<span class="hljs-string">&#x27;object_type&#x27;</span>]:
+                    <span class="hljs-comment"># We want to shoot at trees and bots</span>
+                    case <span class="hljs-string">&quot;tree&quot;</span>:
+                        is_valid_target = <span class="hljs-literal">True</span>
+                        target = detected_object
+                    case <span class="hljs-string">&quot;bot&quot;</span>:
+                        is_valid_target = <span class="hljs-literal">True</span>
+                        target = detected_object
+                    <span class="hljs-comment"># We cannot walk on water</span>
+                    case <span class="hljs-string">&quot;tile&quot;</span>:
+                        <span class="hljs-keyword">if</span> detected_object[<span class="hljs-string">&quot;name&quot;</span>].lower() == <span class="hljs-string">&quot;water&quot;</span>:
+                            logging.debug(<span class="hljs-string">&quot;WATER WATER WATER!!!&quot;</span>)
+                    case _:
+                        <span class="hljs-keyword">pass</span>
+
+                <span class="hljs-keyword">if</span> is_valid_target:
+                    target_angle = (target[<span class="hljs-string">&#x27;from&#x27;</span>] + target[<span class="hljs-string">&#x27;to&#x27;</span>]) / <span class="hljs-number">2</span>
+                    logging.info(<span class="hljs-string">f&quot;[SCANNER] <span class="hljs-subst">{target[<span class="hljs-string">&#x27;name&#x27;</span>]}</span> detected at a distance of &quot;</span>
+                                 <span class="hljs-string">f&quot;<span class="hljs-subst">{target[<span class="hljs-string">&#x27;distance&#x27;</span>]}</span> (<span class="hljs-subst">{target_angle}</span>°)&quot;</span>)
+                    G_BOT_TARGETS_QUEUE.put(target_angle)
+        <span class="hljs-keyword">else</span>:
+            logging.error(<span class="hljs-string">f&quot;Unknown scanner message: <span class="hljs-subst">{message}</span>&quot;</span>)
+    <span class="hljs-keyword">except</span>:
+        logging.error(<span class="hljs-string">f&quot;Bad scanner message format: <span class="hljs-subst">{message}</span>&quot;</span>)
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_game_message</span>(<span class="hljs-params">message: <span class="hljs-built_in">dict</span></span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    Handle a new game message.
+    &quot;&quot;&quot;</span>
+    <span class="hljs-keyword">try</span>:
+        match message[<span class="hljs-string">&#x27;msg_type&#x27;</span>]:
+            case <span class="hljs-string">&quot;health_status&quot;</span>:
+                <span class="hljs-keyword">global</span> G_BOT_HEALTH
+                <span class="hljs-comment"># Bot health update</span>
+                G_BOT_HEALTH = message[<span class="hljs-string">&#x27;data&#x27;</span>][<span class="hljs-string">&#x27;value&#x27;</span>]
+                show_bot_stats()
+            case <span class="hljs-string">&quot;game_status&quot;</span>:
+                <span class="hljs-keyword">global</span> G_GAME_IS_STARTED
+                <span class="hljs-comment"># Game is running or stopped</span>
+                G_GAME_IS_STARTED = message[<span class="hljs-string">&#x27;data&#x27;</span>]
+            case <span class="hljs-string">&quot;stunning_status&quot;</span>:
+                <span class="hljs-keyword">global</span> G_BOT_IS_STUNNED
+                <span class="hljs-comment"># Bot is stunned or not</span>
+                G_BOT_IS_STUNNED = message[<span class="hljs-string">&#x27;data&#x27;</span>][<span class="hljs-string">&#x27;value&#x27;</span>]
+            case <span class="hljs-string">&quot;moving_status&quot;</span>:
+                <span class="hljs-keyword">global</span> G_BOT_IS_MOVING
+                <span class="hljs-comment"># Bot is moving or not</span>
+                G_BOT_IS_MOVING = message[<span class="hljs-string">&#x27;data&#x27;</span>][<span class="hljs-string">&#x27;value&#x27;</span>]
+            case <span class="hljs-string">&quot;turning_status&quot;</span>:
+                <span class="hljs-keyword">global</span> G_BOT_IS_TURNING
+                <span class="hljs-keyword">global</span> G_BOT_TURN_DIRECTION
+                <span class="hljs-keyword">if</span> message[<span class="hljs-string">&#x27;data&#x27;</span>][<span class="hljs-string">&#x27;value&#x27;</span>] == <span class="hljs-string">&#x27;stop&#x27;</span>:
+                    <span class="hljs-comment"># Bot has been stopped</span>
+                    G_BOT_IS_TURNING = <span class="hljs-literal">False</span>
+                <span class="hljs-keyword">else</span>:
+                    <span class="hljs-comment"># Turn direction</span>
+                    G_BOT_IS_TURNING = <span class="hljs-literal">True</span>
+                    G_BOT_TURN_DIRECTION = message[<span class="hljs-string">&#x27;data&#x27;</span>][<span class="hljs-string">&#x27;value&#x27;</span>]
+            case <span class="hljs-string">&quot;weapon_can_shoot&quot;</span>:
+                <span class="hljs-keyword">global</span> G_WEAPON_CAN_SHOOT
+                G_WEAPON_CAN_SHOOT = message[<span class="hljs-string">&#x27;data&#x27;</span>][<span class="hljs-string">&#x27;value&#x27;</span>]
+            case _:
+                logging.error(<span class="hljs-string">f&quot;Unknown game message: <span class="hljs-subst">{message}</span>&quot;</span>)
+    <span class="hljs-keyword">except</span>:
+        logging.error(<span class="hljs-string">f&quot;Bad game message format: <span class="hljs-subst">{message}</span>&quot;</span>)
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">show_bot_stats</span>():
+    logging.info(<span class="hljs-string">f&quot;Health: <span class="hljs-subst">{G_BOT_HEALTH}</span>&quot;</span>)
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    <span class="hljs-comment"># Logging</span>
+    logging.basicConfig(
+        level=logging.DEBUG, datefmt=<span class="hljs-string">&#x27;%d/%m/%Y %I:%M:%S&#x27;</span>, <span class="hljs-built_in">format</span>=<span class="hljs-string">&#x27;[%(levelname)s] %(asctime)s - %(message)s&#x27;</span>
+    )
+
+    <span class="hljs-comment"># Creating a new Bot</span>
+    <span class="hljs-keyword">with</span> BotAi(bot_name=<span class="hljs-string">&quot;MyBot&quot;</span>, team_id=<span class="hljs-string">&quot;team-id-1&quot;</span>) <span class="hljs-keyword">as</span> bot:
+        <span class="hljs-keyword">def</span> <span class="hljs-title function_">stop</span>():
+            <span class="hljs-comment"># Closing messages reading threads</span>
+            scanner_message_thread_event.<span class="hljs-built_in">set</span>()
+            game_message_thread_event.<span class="hljs-built_in">set</span>()
+
+        <span class="hljs-comment"># Enrolling the new bot on the server</span>
+        bot_id = bot.enroll()
+
+        <span class="hljs-comment"># Bot scanner messages handler thread</span>
+        scanner_message_thread_event = Event()
+        Thread(target=thread_read_scanner_queue, args=(scanner_message_thread_event, bot)).start()
+
+        <span class="hljs-comment"># Game messages handler thread</span>
+        game_message_thread_event = Event()
+        Thread(target=thread_read_game_queue, args=(game_message_thread_event, bot)).start()
+
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-comment"># Waiting for the game to start</span>
+            <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> G_GAME_IS_STARTED:
+                sleep(<span class="hljs-number">0.1</span>)
+
+            <span class="hljs-comment"># While the bot is alive and the game is running</span>
+            <span class="hljs-keyword">while</span> G_BOT_HEALTH &gt; <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> G_GAME_IS_STARTED:
+                <span class="hljs-comment"># ############################################################</span>
+                <span class="hljs-comment">#</span>
+                <span class="hljs-comment"># AI logic goes here. Example:</span>
+                <span class="hljs-comment">#</span>
+                <span class="hljs-comment"># try:</span>
+                <span class="hljs-comment">#     if not G_BOT_TARGETS_QUEUE.empty():</span>
+                <span class="hljs-comment">#         bot.shoot(G_BOT_TARGETS_QUEUE.get(block=False))</span>
+                <span class="hljs-comment">#     if not G_BOT_IS_MOVING:</span>
+                <span class="hljs-comment">#         bot.move(True)</span>
+                <span class="hljs-comment">#     if not G_BOT_IS_TURNING:</span>
+                <span class="hljs-comment">#         bot.turn(random.choice([&#x27;left&#x27;, &#x27;right&#x27;]))</span>
+                <span class="hljs-comment"># except BotAi.RestException as ex:</span>
+                <span class="hljs-comment">#     pass</span>
+                <span class="hljs-comment"># </span>
+                <span class="hljs-comment"># ############################################################</span>
+            
+            <span class="hljs-comment"># Game has stopped or the bot is dead</span>
+            <span class="hljs-keyword">if</span> G_BOT_HEALTH &lt;= <span class="hljs-number">0</span>:
+                logging.info(<span class="hljs-string">&quot;Bot is dead&quot;</span>)
+            <span class="hljs-keyword">elif</span> <span class="hljs-keyword">not</span> G_GAME_IS_STARTED:
+                logging.info(<span class="hljs-string">&quot;Game has been stopped&quot;</span>)
+
+            stop()
+
+        <span class="hljs-keyword">except</span> KeyboardInterrupt:
+            logging.info(<span class="hljs-string">&quot;Bot has been aborted&quot;</span>)
+            stop()
+
+</code></pre>
+
+        
+        
+    </body>
+    </html>
