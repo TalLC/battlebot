@@ -2,8 +2,8 @@
 cls
 chcp 65001 >nul
 rem ---------------------------------
-rem Suppression du mode debug
-del /Q conf\debug.dat 2> nul
+rem Lancement en mode debug
+echo is_debug=true >conf\debug.dat
 
 rem utilisation du Java portable
 set JAVA_HOME="%cd%\third-party\jre1.8.0"

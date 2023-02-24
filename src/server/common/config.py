@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from conf.models.DebugConfig import DebugConfig
 from conf.models.GameConfig import GameConfig
 from conf.models.TeamsConfig import TeamsConfig
 from conf.models.NetworkSecurityConfig import NetworkSecurityConfig
@@ -9,6 +10,8 @@ from conf.models.STOMPConfig import STOMPConfig
 
 
 # Config files
+CONFIG_DEBUG = DebugConfig(is_debug=True if Path('conf', 'debug.dat').exists() else False)
+
 CONFIG_GAME = GameConfig(**json.loads(Path('conf', 'game.json').read_text()))
 
 CONFIG_TEAMS = list()
