@@ -1,6 +1,6 @@
 import logging
 from fastapi import FastAPI
-from common.config import CONFIG_DEBUG, CONFIG_TEAMS
+from common.config import CONFIG_GAME, CONFIG_TEAMS
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
 from provider.security.NetworkSecurity import NetworkSecurity
@@ -17,7 +17,7 @@ uvicorn_logger = logging.getLogger("uvicorn")
 uvicorn_logger.removeHandler(uvicorn_logger.handlers[0])
 
 # # Setting up basic logging config
-logging.basicConfig(level=logging.DEBUG if CONFIG_DEBUG.is_debug else logging.INFO,
+logging.basicConfig(level=logging.DEBUG if CONFIG_GAME.is_debug else logging.INFO,
                     datefmt='%d/%m/%Y %I:%M:%S', format='[%(levelname)s] %(asctime)s - %(message)s')
 
 
