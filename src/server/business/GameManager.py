@@ -22,6 +22,10 @@ if TYPE_CHECKING:
 class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     @property
+    def is_debug(self) -> bool:
+        return self._is_debug
+
+    @property
     def is_client_ready(self) -> bool:
         return self._is_client_ready
 
@@ -49,6 +53,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._is_client_ready = False
         self._are_bots_ready = False
         self._is_started = False
+        self._is_debug = CONFIG_GAME.max_players
         self._max_players = CONFIG_GAME.max_players
         self.team_manager = TeamManager(self)
         self.bot_manager = BotManager(self)
