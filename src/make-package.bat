@@ -39,9 +39,9 @@ if not exist %third_party%\%java_final_dir%\ (
     ..\..\7za.exe x "%java_package%.tar.gz" -o* -y > nul
     ..\..\7za.exe x "%java_package%.tar" -o* -y > nul
     move "%java_package%\%java_package_dir%" "%java_final_dir%"
-    ping 127.0.0.1 -n 2> nul
+    ping 127.0.0.1 -n 2 > nul
     rmdir /S /Q "%java_package%.tar"
-    ping 127.0.0.1 -n 2> nul
+    ping 127.0.0.1 -n 2 > nul
     rmdir /S /Q "%java_package%"
     del /Q "%java_package%.tar.gz"
     cd ..\..
@@ -54,9 +54,9 @@ if not exist %third_party%\%python_final_dir%\ (
     powershell.exe -Command "$ProgressPreference = 'SilentlyContinue';Invoke-WebRequest -Uri 'https://github.com/winpython/winpython/releases/download/5.3.20221233/%python_package%.exe' -OutFile '%third_party%\%python_package%.exe';
     cd %third_party%
     "%python_package%.exe" -o* -y
-    ping 127.0.0.1 -n 2> nul
+    ping 127.0.0.1 -n 2 > nul
     move "%python_package%\%python_package_dir%" "%python_final_dir%"
-    ping 127.0.0.1 -n 2> nul
+    ping 127.0.0.1 -n 2 > nul
     rmdir /S /Q "%python_package%"
     del /Q "%python_package%.exe"
     cd ..\..
@@ -69,9 +69,9 @@ if not exist %third_party%\%amq_final_dir%\ (
     powershell.exe -Command "$ProgressPreference = 'SilentlyContinue';Invoke-WebRequest -Uri 'https://www.apache.org/dyn/closer.cgi?filename=/activemq/5.16.6/%amq_package%.zip&action=download' -OutFile '%third_party%\%amq_package%.zip';
     cd %third_party%
     ..\..\7za.exe x "%amq_package%.zip" -o* -y > nul
-    ping 127.0.0.1 -n 2> nul
+    ping 127.0.0.1 -n 2 > nul
     move "%amq_package%\%amq_package_dir%" "%amq_final_dir%"
-    ping 127.0.0.1 -n 2> nul
+    ping 127.0.0.1 -n 2 > nul
     rmdir /S /Q "%amq_package%"
     del /Q "%amq_package%.zip"
     cd ..\..
@@ -124,7 +124,7 @@ robocopy /E battlebotslib %tmp_lib%\battlebotslib > nul
 
 rem Suppression des dossiers inutiles
 echo - Suppression des dossiers inutiles
-rmdir /S /Q %tmp_lib%\battlebotslib\.idea
+rmdir /S /Q %tmp_lib%\battlebotslib\.idea 2> nul
 
 rem Zip du package lib client
 echo - Zip du package lib client
