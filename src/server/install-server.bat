@@ -14,7 +14,8 @@ echo 888   d88P d8888888888     888         888     888      888        888   d8
 echo 8888888P" d88P     888     888         888     88888888 8888888888 8888888P"   "Y88888P"     888     "Y8888P"  
 echo.
 
-set python_path=third-party\python3.10
+set third_party=third-party
+set python_path=%third_party%\python3.10
 
 echo.
 echo.
@@ -24,10 +25,9 @@ rem Création de l'environnement virtuel
 echo Création de l'environnement virtuel...
 %python_path%\python.exe -m venv venv
 
-rem Installation des packages PIP
-rem On passe --use-pep517 pour la compatibilité avec la lib paho-mqtt
-echo Installation des paquets pip...
-venv\Scripts\pip.exe install --use-pep517 -r requirements.txt
+rem Recopie des packages PIP
+echo Recopie des paquets pip...
+cd %third_party%
+robocopy /E python_venv_libs ..\venv\Lib\ > nul
 
-:end
 pause
