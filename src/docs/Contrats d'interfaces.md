@@ -1,4 +1,6 @@
 
+# Rest
+
 - [Rest](#rest)
   - [`PATCH /display/clients/action/ready`](#patch-displayclientsactionready)
   - [`POST /bots/action/register`](#post-botsactionregister)
@@ -20,14 +22,12 @@
   - [BotWeaponStatusMessage](#botweaponstatusmessage)
 
 
-# Rest
-
 Voici les endpoints disponibles via l'API Rest.
 
 ## `PATCH /display/clients/action/ready`
 Définir le client d'affichage comme prêt si les jetons correspondent.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -48,7 +48,7 @@ Définir le client d'affichage comme prêt si les jetons correspondent.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -81,7 +81,7 @@ Définir le client d'affichage comme prêt si les jetons correspondent.
 ## `POST /bots/action/register`
 Crée un nouvel objet bot et l'ajoute à l'équipe spécifiée.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -108,7 +108,7 @@ Crée un nouvel objet bot et l'ajoute à l'équipe spécifiée.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -147,12 +147,12 @@ Crée un nouvel objet bot et l'ajoute à l'équipe spécifiée.
 ## `GET /bots/{bot_id}/action/request_connection`
 Demande des IDs de connexion pour valider la connexion à tous les services. Envoie 3 IDs au client en utilisant REST, STOMP et MQTT. Le client doit renvoyer ces IDs sur l'endpoint `/bots/{bot_id}/action/check_connection` pour valider la connexion.
 
-### Path parameters
+**Path parameters**
 | Nom | Description |
 | --- | ----------- |
 | bot_id | L'ID du bot qui demande une connexion |
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -191,12 +191,12 @@ Demande des IDs de connexion pour valider la connexion à tous les services. Env
 ## `PATCH /bots/{bot_id}/action/check_connection`
 Vérifie si les IDs trouvés par le client sont ceux attendus pour valider la connexion du client à tous les services.
 
-### Path parameters
+**Path parameters**
 | Nom | Description |
 | --- | ----------- |
 | bot_id | L'ID du robot à connecter |
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -231,7 +231,7 @@ Vérifie si les IDs trouvés par le client sont ceux attendus pour valider la co
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -264,12 +264,12 @@ Vérifie si les IDs trouvés par le client sont ceux attendus pour valider la co
 ## `PATCH /bots/{bot_id}/action/shoot`
 Fait tirer le robot à l'angle relatif désiré.
 
-### Path parameters
+**Path parameters**
 | Nom | Description |
 | ---- | ----------- |
 | bot_id | L'ID du robot qui doit tirer |
 
-### Payload
+**Payload**
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -292,7 +292,7 @@ Fait tirer le robot à l'angle relatif désiré.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -327,12 +327,12 @@ Fait tirer le robot à l'angle relatif désiré.
 ## `PATCH /bots/{bot_id}/action/turn`
 Commence à faire tourner le robot spécifié vers la gauche ou la droite.
 
-### Path parameters
+**Path parameters**
 | Nom | Description |
 | ---- | ----------- |
 | bot_id | L'ID du robot à faire tourner |
 
-### Payload
+**Payload**
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -355,7 +355,7 @@ Commence à faire tourner le robot spécifié vers la gauche ou la droite.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -390,12 +390,12 @@ Commence à faire tourner le robot spécifié vers la gauche ou la droite.
 ## `PATCH /bots/{bot_id}/action/move`
 Commence à déplacer le robot spécifié vers l'avant.
 
-### Path parameters
+**Path parameters**
 | Nom | Description |
 | ---- | ----------- |
 | bot_id | L'ID du robot à faire bouger |
 
-### Payload
+**Payload**
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -418,7 +418,7 @@ Commence à déplacer le robot spécifié vers l'avant.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",

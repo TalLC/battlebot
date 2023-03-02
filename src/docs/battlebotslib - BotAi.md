@@ -1,5 +1,12 @@
 # BotAi
 
+- [BotAi](#botai)
+  - [Propriétés de la classe](#propriétés-de-la-classe)
+  - [Méthodes de la classe](#méthodes-de-la-classe)
+  - [Exceptions](#exceptions)
+  - [Exemple d'utilisation](#exemple-dutilisation)
+
+
 La classe `BotAi` fournit une interface haut niveau pour interagir avec le serveur de combat de bots. Il permet à un client de s'inscrire avec un bot, de lire les messages entrants du serveur et de réaliser des actions telles que se déplacer, tourner et tirer.
 
 ## Propriétés de la classe
