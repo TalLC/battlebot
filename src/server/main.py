@@ -1,6 +1,6 @@
 import logging
 from fastapi import FastAPI
-from common.config import CONFIG_TEAMS
+from common.config import CONFIG_GAME, CONFIG_TEAMS
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
 from provider.security.NetworkSecurity import NetworkSecurity
@@ -17,8 +17,8 @@ uvicorn_logger = logging.getLogger("uvicorn")
 uvicorn_logger.removeHandler(uvicorn_logger.handlers[0])
 
 # # Setting up basic logging config
-logging.basicConfig(level=logging.DEBUG, datefmt='%d/%m/%Y %I:%M:%S',
-                    format='[%(levelname)s] %(asctime)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG if CONFIG_GAME.is_debug else logging.INFO,
+                    datefmt='%d/%m/%Y %I:%M:%S', format='[%(levelname)s] %(asctime)s - %(message)s')
 
 
 app = FastAPI()  # Entry point for Uvicorn
@@ -30,8 +30,9 @@ async def startup() -> None:
     for team in CONFIG_TEAMS:
         GameManager().team_manager.create_team(team.size, team.name, team.color, team.id)
 
+    logging.info("[MAIN] Created teams:")
     for team in GameManager().team_manager.get_teams():
-        print(team)
+        logging.info(team)
 
     # Services
     # # Starting consumer services
@@ -43,21 +44,6 @@ async def startup() -> None:
     NetworkSecurity()  # Initializing ban ip module
     provider_manager = ProviderManager(app)
     provider_manager.start_all()
-
-    # DEBUG: BOT de test
-    # print("Enrôlement d'un bot de test :")
-    # bot = GameManager().bot_manager.create_bot("BOT TEST 01", "warrior")
-    # bot._id = "0-0-0-0-0"
-    # GameManager().team_manager.get_team("test-team-no-ai").add_bot(bot)
-    # GameManager().bot_manager._BOTS = dict()
-    # GameManager().bot_manager._BOTS[bot._id] = bot
-    # bot.client_connection.connect(
-    #     bot.client_connection.source_request_id,
-    #     bot.client_connection.source_stomp_id,
-    #     bot.client_connection.source_mqtt_id
-    # )
-    # print(GameManager().bot_manager.get_bot("0-0-0-0-0"))
-    ##########################################
 
 
 @app.on_event('shutdown')

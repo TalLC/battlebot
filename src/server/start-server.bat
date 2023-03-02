@@ -2,12 +2,15 @@
 cls
 chcp 65001 >nul
 rem ---------------------------------
+rem Suppression du mode debug
+venv\Scripts\python.exe third-party\set-debug.py debug=false
+
 rem utilisation du Java portable
 set JAVA_HOME="%cd%\third-party\jre1.8.0"
 
 rem Lancement de ActiveMQ
 echo Lancement des brokers ActiveMQ
-start cmd /C activemq\bin\activemq.bat start
+start cmd /C %cd%\third-party\activemq\bin\activemq.bat start
 
 rem Attente de 10 secondes
 echo Laisser le temps à ActiveMQ de démarrer (quelques secondes)

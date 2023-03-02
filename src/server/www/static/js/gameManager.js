@@ -1,23 +1,37 @@
+import GameConfig from './config.js';
 import "./actions/gameActions/gameActionDefinition.js"
-import {actions} from "./actions/actions.js"
+import { actions } from "./actions/actions.js"
 import View3DController from "./view/view3DController.js";
 import Object3DFactory from "./view/object3DFactory.js";
 import Bot from "./gameObjects/bot.js"
 import MapObject from "./gameObjects/mapObject.js"
-import {getRandomInt} from "./utils/utils.js"
+import { getRandomInt } from "./utils/utils.js"
 
+let instance;
+export default function getInstance() {
+    return instance;
+};
+
+export function initGameManager() {
+    instance = new GameManager();
+};
 
 class GameManager {
-    constructor(){
+    constructor() {
         this.v = new View3DController("view-container");
         this.loginId;
         this.bots = {};
         this.mapObjects = {};
 
         /* Page d'accueil */
+        // Nombre de joueurs
+        const startgameContainer = document.getElementById("startgame-container");
+        let startgameMessagesRules = startgameContainer.querySelector("#startgame-messages-rules");
+        startgameMessagesRules.innerHTML = `LA PARTIE DÉMARRE À PARTIR DE ${GameConfig().maxPlayers} BOTS ET SE TERMINE LORSQU'IL NE RESTE QU'1 ÉQUIPE EN VIE`;
+        
         // Scroll text
         const scrollText = document.getElementById("startgame-scroll-text");
-        fetch('https://raw.githubusercontent.com/id-Software/DOOM/master/linuxdoom-1.10/g_game.c')
+        fetch('static/txt/scrolling-text.txt')
             .then((response) => response.text())
             .then((data) => {
                 scrollText.innerHTML = data;
@@ -258,4 +272,3 @@ class GameManager {
 
 }
 
-export default new GameManager();

@@ -1,12 +1,9 @@
 import * as THREE from 'three';
-import {OrbitControls} from 'controls/OrbitControls';
-import {FontLoader} from 'loaders/FontLoader';
-import {TextGeometry} from 'geometries/TextGeometry';
-
-
-import Config from "../config.js";
+import { OrbitControls } from 'controls/OrbitControls';
+import { FontLoader } from 'loaders/FontLoader';
+import { TextGeometry } from 'geometries/TextGeometry';
+import GameConfig from '../config.js';
 import Debug from "../debug/debug.js";
-import object3DFactory from './object3DFactory.js';
 
 
 export default class View3DController {
@@ -39,11 +36,10 @@ export default class View3DController {
             {x: 16, y: 0, z: 16}
         );
 
-
         // Prise en charge du redimensionnement de fenêtre
         window.onresize = this.resize.bind(this);
 
-        if (Config.isDebug()) {
+        if (GameConfig().isDebug) {
             this.debug = new Debug(this, "debug-container");
             this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
             this.container.ondblclick = this.debug.clickObject.bind(this.debug);
@@ -52,7 +48,7 @@ export default class View3DController {
     }
 
     render() {
-        if (Config.isDebug()) this.debug.render();
+        if (GameConfig().isDebug) this.debug.render();
         this.renderer.render( this.scene, this.camera );
     }
 
@@ -67,7 +63,7 @@ export default class View3DController {
         // Affichage du viewport Three.js
         this.container.hidden = false;
 
-        if (Config.isDebug()) this.debug.start();
+        if (GameConfig().isDebug) this.debug.start();
     }
 
     showHurtMessageForObject(obj) {
@@ -156,7 +152,7 @@ export default class View3DController {
         directionalLight.shadow.radius = 1;
         this.scene.add(directionalLight);
 
-        if (Config.isDebug()) {
+        if (GameConfig().isDebug) {
             const dlHelper = new THREE.DirectionalLightHelper(directionalLight, 3);
             this.scene.add(dlHelper);
 

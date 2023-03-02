@@ -1,8 +1,10 @@
-src/server/activemq/data/
-src/server/activemq/tmp/
+src/server/activemq/
 src/AI/bot_id.tmp
 
-src/server/third-party/
+src/server/third-party/activemq/
+src/server/third-party/jre1.8.0/
+src/server/third-party/python3.10/
+
 src/battlebots-server-package.zip
 src/battlebotslib.zip
 

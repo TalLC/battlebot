@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Contrats d'interfaces.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="rest">Rest</h1>
+<ul>
+<li><a href="#rest">Rest</a>
+<ul>
+<li><a href="#patch-displayclientsactionready"><code>PATCH /display/clients/action/ready</code></a></li>
+<li><a href="#post-botsactionregister"><code>POST /bots/action/register</code></a></li>
+<li><a href="#get-botsbot_idactionrequest_connection"><code>GET /bots/{bot_id}/action/request_connection</code></a></li>
+<li><a href="#patch-botsbot_idactioncheck_connection"><code>PATCH /bots/{bot_id}/action/check_connection</code></a></li>
+<li><a href="#patch-botsbot_idactionshoot"><code>PATCH /bots/{bot_id}/action/shoot</code></a></li>
+<li><a href="#patch-botsbot_idactionturn"><code>PATCH /bots/{bot_id}/action/turn</code></a></li>
+<li><a href="#patch-botsbot_idactionmove"><code>PATCH /bots/{bot_id}/action/move</code></a></li>
+</ul>
+</li>
+<li><a href="#mqtt">MQTT</a>
+<ul>
+<li><a href="#servermqttidmessage">ServerMqttIdMessage</a></li>
+<li><a href="#botscannerdetectionmessage">BotScannerDetectionMessage</a></li>
+</ul>
+</li>
+<li><a href="#stomp">STOMP</a>
+<ul>
+<li><a href="#serverstompidmessage">ServerStompIdMessage</a></li>
+<li><a href="#gamestatusmessage">GameStatusMessage</a></li>
+<li><a href="#bothealthstatusmessage">BotHealthStatusMessage</a></li>
+<li><a href="#botstunningstatusmessage">BotStunningStatusMessage</a></li>
+<li><a href="#botmovingstatusmessage">BotMovingStatusMessage</a></li>
+<li><a href="#botturningstatusmessage">BotTurningStatusMessage</a></li>
+<li><a href="#botweaponstatusmessage">BotWeaponStatusMessage</a></li>
+</ul>
+</li>
+</ul>
+<p>Voici les endpoints disponibles via l'API Rest.</p>
+<h2 id="patch-displayclientsactionready"><code>PATCH /display/clients/action/ready</code></h2>
+<p>Définir le client d'affichage comme prêt si les jetons correspondent.</p>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données d'identification de connexion"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"login_id"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"login_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'identifiant de connexion du client."</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"login_id"</span>: <span class="hljs-string">"551ef811-d241-40f8-8de4-3600ce73aee9"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse de validation de jeton"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'état de l'opération de validation du jeton."</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Un message qui décrit le résultat de l'opération de validation du jeton."</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"Tokens are matching"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Tokens are matching"</span>
+    }]
+}
+</div></code></pre>
+<h2 id="post-botsactionregister"><code>POST /bots/action/register</code></h2>
+<p>Crée un nouvel objet bot et l'ajoute à l'équipe spécifiée.</p>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données d'enregistrement du bot"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"team_id"</span>,
+        <span class="hljs-string">"bot_name"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"team_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'ID de l'équipe à laquelle le bot doit être ajouté."</span>
+        },
+        <span class="hljs-attr">"bot_name"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Le nom du bot."</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"team_id"</span>: <span class="hljs-string">"given-team-id"</span>,
+        <span class="hljs-attr">"bot_name"</span>: <span class="hljs-string">"MyBot"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse d'enregistrement du bot"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>,
+        <span class="hljs-string">"bot_id"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Le statut de l'opération d'enregistrement du bot."</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Un message qui décrit le résultat de l'opération d'enregistrement du bot."</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"The bot has been successfully registered"</span>
+        },
+        <span class="hljs-attr">"bot_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'ID du bot enregistré."</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"The bot has been successfully registered"</span>,
+        <span class="hljs-attr">"bot_id"</span>: <span class="hljs-string">"ed758294-5d3e-4f4b-bad3-ab95839eb9de"</span>
+    }]
+}
+</div></code></pre>
+<h2 id="get-botsbotidactionrequestconnection"><code>GET /bots/{bot_id}/action/request_connection</code></h2>
+<p>Demande des IDs de connexion pour valider la connexion à tous les services. Envoie 3 IDs au client en utilisant REST, STOMP et MQTT. Le client doit renvoyer ces IDs sur l'endpoint <code>/bots/{bot_id}/action/check_connection</code> pour valider la connexion.</p>
+<p><strong>Path parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bot_id</td>
+<td>L'ID du bot qui demande une connexion</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse de validation de connexion"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>,
+        <span class="hljs-string">"request_id"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut de la validation de connexion"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Un message qui indique que les ID MQTT et STOMP ont été dispatchés."</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"Messages sent from STOMP and MQTT"</span>
+        },
+        <span class="hljs-attr">"request_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"ID Rest pour la validation de la connexion"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Messages sent from STOMP and MQTT"</span>,
+        <span class="hljs-attr">"request_id"</span>: <span class="hljs-string">"0b5b9041-8bf0-45f2-a824-9d34e6a1c327"</span>
+    }]
+}
+</div></code></pre>
+<h2 id="patch-botsbotidactioncheckconnection"><code>PATCH /bots/{bot_id}/action/check_connection</code></h2>
+<p>Vérifie si les IDs trouvés par le client sont ceux attendus pour valider la connexion du client à tous les services.</p>
+<p><strong>Path parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bot_id</td>
+<td>L'ID du robot à connecter</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de connexion"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"rest_id"</span>,
+        <span class="hljs-string">"stomp_id"</span>,
+        <span class="hljs-string">"mqtt_id"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"rest_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'ID REST fourni par le client."</span>
+        },
+        <span class="hljs-attr">"stomp_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'ID STOMP fourni par le client."</span>
+        },
+        <span class="hljs-attr">"mqtt_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'ID MQTT fourni par le client."</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [
+        {
+            <span class="hljs-attr">"rest_id"</span>: <span class="hljs-string">"0b5b9041-8bf0-45f2-a824-9d34e6a1c327"</span>,
+            <span class="hljs-attr">"stomp_id"</span>: <span class="hljs-string">"3ac537f1-88f5-4c97-bfb8-2cfdf2f89e92"</span>,
+            <span class="hljs-attr">"mqtt_id"</span>: <span class="hljs-string">"4242a3a5-3f4b-4e1f-bb4b-18d33f261d56"</span>
+        }
+    ]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse à la connexion du bot"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Le statut de l'opération de connexion du bot."</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Un message qui décrit le résultat de l'opération de connexion du bot."</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"Your bot is successfully connected"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Your bot is successfully connected"</span>
+    }]
+}
+</div></code></pre>
+<h2 id="patch-botsbotidactionshoot"><code>PATCH /bots/{bot_id}/action/shoot</code></h2>
+<p>Fait tirer le robot à l'angle relatif désiré.</p>
+<p><strong>Path parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bot_id</td>
+<td>L'ID du robot qui doit tirer</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de tir du bot"</span>,
+  <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"required"</span>: [
+    <span class="hljs-string">"angle"</span>
+  ],
+  <span class="hljs-attr">"properties"</span>: {
+    <span class="hljs-attr">"angle"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"int"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"L'angle auquel le robot doit tirer, en degrés."</span>
+    }
+  },
+  <span class="hljs-attr">"examples"</span>: [
+    {
+      <span class="hljs-attr">"angle"</span>: <span class="hljs-number">42</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse de tir du bot"</span>,
+  <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"required"</span>: [
+    <span class="hljs-string">"status"</span>,
+    <span class="hljs-string">"message"</span>
+  ],
+  <span class="hljs-attr">"properties"</span>: {
+    <span class="hljs-attr">"status"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Le statut de l'opération de tir du robot."</span>,
+      <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+    },
+    <span class="hljs-attr">"message"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Un message qui décrit l'angle auquel le robot a tiré."</span>,
+      <span class="hljs-attr">"const"</span>: <span class="hljs-string">"Fired at {angle}°"</span>
+    }
+  },
+  <span class="hljs-attr">"examples"</span>: [
+    {
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Fired at 42°"</span>
+    }
+  ]
+}
+</div></code></pre>
+<h2 id="patch-botsbotidactionturn"><code>PATCH /bots/{bot_id}/action/turn</code></h2>
+<p>Commence à faire tourner le robot spécifié vers la gauche ou la droite.</p>
+<p><strong>Path parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bot_id</td>
+<td>L'ID du robot à faire tourner</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de rotation du bot"</span>,
+  <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"required"</span>: [
+    <span class="hljs-string">"direction"</span>
+  ],
+  <span class="hljs-attr">"properties"</span>: {
+    <span class="hljs-attr">"direction"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"La direction dans laquelle faire tourner le robot. Les valeurs valides sont 'left', 'right' et 'stop'"</span>
+    }
+  },
+  <span class="hljs-attr">"examples"</span>: [
+    {
+      <span class="hljs-attr">"direction"</span>: <span class="hljs-string">"left"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse de rotation du bot"</span>,
+  <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"required"</span>: [
+    <span class="hljs-string">"status"</span>,
+    <span class="hljs-string">"message"</span>
+  ],
+  <span class="hljs-attr">"properties"</span>: {
+    <span class="hljs-attr">"status"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Le statut de l'opération de rotation du robot."</span>,
+      <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+    },
+    <span class="hljs-attr">"message"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Un message qui décrit la rotation demandée."</span>,
+      <span class="hljs-attr">"const"</span>: <span class="hljs-string">"^Bot is starting to turn (left|right|stop)$"</span>
+    }
+  },
+  <span class="hljs-attr">"examples"</span>: [
+    {
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Bot is starting to turn left"</span>
+    }
+  ]
+}
+</div></code></pre>
+<h2 id="patch-botsbotidactionmove"><code>PATCH /bots/{bot_id}/action/move</code></h2>
+<p>Commence à déplacer le robot spécifié vers l'avant.</p>
+<p><strong>Path parameters</strong></p>
+<table>
+<thead>
+<tr>
+<th>Nom</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bot_id</td>
+<td>L'ID du robot à faire bouger</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de déplacement du bot"</span>,
+  <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"required"</span>: [
+    <span class="hljs-string">"action"</span>
+  ],
+  <span class="hljs-attr">"properties"</span>: {
+    <span class="hljs-attr">"action"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Ordre de déplacement du robot. Les valeurs valides sont 'start' et 'stop'"</span>
+    }
+  },
+  <span class="hljs-attr">"examples"</span>: [
+    {
+      <span class="hljs-attr">"action"</span>: <span class="hljs-string">"start"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse de déplacement du bot"</span>,
+  <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"required"</span>: [
+    <span class="hljs-string">"status"</span>,
+    <span class="hljs-string">"message"</span>
+  ],
+  <span class="hljs-attr">"properties"</span>: {
+    <span class="hljs-attr">"status"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Le statut de l'opération de déplacement du robot."</span>,
+      <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+    },
+    <span class="hljs-attr">"message"</span>: {
+      <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Un message qui décrit le déplacement demandé."</span>
+    }
+  },
+  <span class="hljs-attr">"examples"</span>: [
+    {
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Bot is starting to move"</span>
+    },
+    {
+      <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Bot has stopped moving"</span>
+    }
+  ]
+}
+</div></code></pre>
+<h1 id="mqtt">MQTT</h1>
+<p>Voici les messages reçus par le client sur la file de messages MQTT. MQTT est seulement utilisé pour recevoir des messages de ce que le bot a dans son champs de vision.</p>
+<h2 id="servermqttidmessage">ServerMqttIdMessage</h2>
+<p>Identifiant envoyé au client pour valider le fonctionnement de la connexion à MQTT. Cet identifiant est à renvoyer au serveur via l'API Rest.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT/BOT/{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"mqtt_id"</span>
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"server"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"The mqtt id to return using Rest"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"str"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"mqtt_id"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"server"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-string">"4242a3a5-3f4b-4e1f-bb4b-18d33f261d56"</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="botscannerdetectionmessage">BotScannerDetectionMessage</h2>
+<p>Informations sur les objets détectés par le bot (type d'objet, distance, angle auquel ils se trouvent).</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT/BOT/{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"object_detection"</span>
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"scanner"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"array"</span>,
+            <span class="hljs-attr">"items"</span>: {
+                <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Detected object(s)"</span>,
+                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+                <span class="hljs-attr">"required"</span>: [
+                    <span class="hljs-string">"from"</span>,
+                    <span class="hljs-string">"to"</span>,
+                    <span class="hljs-string">"object_type"</span>,
+                    <span class="hljs-string">"name"</span>,
+                    <span class="hljs-string">"distance"</span>
+                ],
+                <span class="hljs-attr">"properties"</span>: {
+                    <span class="hljs-attr">"from"</span>: {
+                        <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Angle from which the object starts to be seen by the bot"</span>,
+                        <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>
+                    },
+                    <span class="hljs-attr">"to"</span>: {
+                        <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Angle from which the object is not visible anymore by the bot"</span>,
+                        <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>
+                    },
+                    <span class="hljs-attr">"object_type"</span>: {
+                        <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of the detected object"</span>,
+                        <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>
+                    },
+                    <span class="hljs-attr">"name"</span>: {
+                        <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Name of the detected object"</span>,
+                        <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>
+                    },
+                    <span class="hljs-attr">"distance"</span>: {
+                        <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Distance from the bot to the object"</span>,
+                        <span class="hljs-attr">"type"</span>: <span class="hljs-string">"float"</span>
+                    }
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [
+        {
+            <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"object_detection"</span>,
+            <span class="hljs-attr">"source"</span>: <span class="hljs-string">"scanner"</span>,
+            <span class="hljs-attr">"data"</span>: [
+                {
+                    <span class="hljs-attr">"from"</span>: <span class="hljs-number">26.5</span>,
+                    <span class="hljs-attr">"to"</span>: <span class="hljs-number">31</span>,
+                    <span class="hljs-attr">"object_type"</span>: <span class="hljs-string">"tree"</span>,
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Tree"</span>,
+                    <span class="hljs-attr">"distance"</span>: <span class="hljs-number">6.844473640068633</span>
+                },
+                {
+                    <span class="hljs-attr">"from"</span>: <span class="hljs-number">34</span>,
+                    <span class="hljs-attr">"to"</span>: <span class="hljs-number">39.5</span>,
+                    <span class="hljs-attr">"object_type"</span>: <span class="hljs-string">"bot"</span>,
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"MyBot01"</span>,
+                    <span class="hljs-attr">"distance"</span>: <span class="hljs-number">5.777348380771669</span>
+                }
+            ]
+        }
+    ]
+}
+</div></code></pre>
+<h1 id="stomp">STOMP</h1>
+<p>Voici les messages reçus par le client sur la file de messages STOMP. STOMP est utilisé pour recevoir les messages du jeu ou sur ce qui arrive au bot (perte de PV, arrêt, etc.).</p>
+<h2 id="serverstompidmessage">ServerStompIdMessage</h2>
+<p>Identifiant envoyé au client pour valider le fonctionnement de la connexion à STOMP. Cet identifiant est à renvoyer au serveur via l'API Rest.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"stomp_id"</span>
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"server"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"The stomp id to return using Rest"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"str"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"stomp_id"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"server"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-string">"3ac537f1-88f5-4c97-bfb8-2cfdf2f89e92"</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="gamestatusmessage">GameStatusMessage</h2>
+<p>Informe le client du démarrage et de l'arrêt de la partie.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"game_status"</span>
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"server"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Wether the game is started or not"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"boolean"</span>,
+                    <span class="hljs-attr">"default"</span>: <span class="hljs-literal">false</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"game_status"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"server"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-literal">false</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="bothealthstatusmessage">BotHealthStatusMessage</h2>
+<p>Donne le nombre de PV du bot.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"health_status"</span>,
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"bot"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Bot HP"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"int"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"health_status"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-number">95</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="botstunningstatusmessage">BotStunningStatusMessage</h2>
+<p>État d'étourdissement du bot.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"stunning_status"</span>,
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"bot"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Is the bot stunned?"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"bool"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"stunning_status"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-literal">true</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="botmovingstatusmessage">BotMovingStatusMessage</h2>
+<p>État de déplacement du bot.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"moving_status"</span>,
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"bot"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Is the bot moving?"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"bool"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"moving_status"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-literal">true</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="botturningstatusmessage">BotTurningStatusMessage</h2>
+<p>État de rotation du bot.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"turning_status"</span>,
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"bot"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Direction of the rotation"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"str"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"turning_status"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-string">"left"</span>
+        }
+    },
+    {
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"turning_status"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-string">"right"</span>
+        }
+    },
+    {
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"turning_status"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-string">"stop"</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="botweaponstatusmessage">BotWeaponStatusMessage</h2>
+<p>État de l'arme du bot.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"weapon_can_shoot"</span>,
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"bot"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Can the weapon shoot?"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"bool"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"weapon_can_shoot"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-literal">true</span>
+        }
+    }]
+}
+</div></code></pre>
+
+</body>
+</html>
