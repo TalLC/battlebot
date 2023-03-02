@@ -1,4 +1,6 @@
 
+# Rest
+
 - [Rest](#rest)
   - [`POST /admin/action/ban`](#post-adminactionban)
   - [`PATCH /admin/action/unban`](#patch-adminactionunban)
@@ -11,12 +13,10 @@
   - [`PATCH /bots/{bot_id}/action/kill`](#patch-botsbot_idactionkill)
 
 
-# Rest
-
 ## `POST /admin/action/ban`
 Bannir l'adresse IP spécifiée d'une source spécifique.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -69,7 +69,7 @@ Bannir l'adresse IP spécifiée d'une source spécifique.
 ```
 
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -101,7 +101,7 @@ Bannir l'adresse IP spécifiée d'une source spécifique.
 ## `PATCH /admin/action/unban`
 Débannir l'adresse IP spécifiée pour une source spécifique.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -135,7 +135,7 @@ Débannir l'adresse IP spécifiée pour une source spécifique.
 ```
 
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -167,7 +167,7 @@ Débannir l'adresse IP spécifiée pour une source spécifique.
 ## `PATCH /game/action/start`
 Démarrer la partie en cours.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -188,7 +188,7 @@ Démarrer la partie en cours.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -221,7 +221,7 @@ Démarrer la partie en cours.
 ## `PATCH /game/action/select_map`
 Sélectionner la carte.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -248,7 +248,7 @@ Sélectionner la carte.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -281,7 +281,7 @@ Sélectionner la carte.
 ## `GET /display/clients/action/list`
 Retourne des informations sur les clients d'affichage présents et passés.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -308,7 +308,7 @@ Retourne des informations sur les clients d'affichage présents et passés.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -342,7 +342,7 @@ Retourne des informations sur les clients d'affichage présents et passés.
 ## `GET /display/clients/action/get_by_id`
 Trouve un client d'affichage par son ID.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -369,7 +369,7 @@ Trouve un client d'affichage par son ID.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -402,7 +402,7 @@ Trouve un client d'affichage par son ID.
 
 Trouve un client d'affichage par son token.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -430,7 +430,7 @@ Trouve un client d'affichage par son token.
 ```
 
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -462,7 +462,7 @@ Trouve un client d'affichage par son token.
 ## `PATCH /bots/action/add`
 Ajoute un bot sans IA dans le jeu.
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -483,7 +483,7 @@ Ajoute un bot sans IA dans le jeu.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -522,12 +522,12 @@ Ajoute un bot sans IA dans le jeu.
 ## `PATCH /bots/{bot_id}/action/kill`
 Tue le bot spécifié.
 
-### Path parameters
+**Path parameters**
 | Nom | Description |
 | --- | ----------- |
 | bot_id | L'ID du bot à tuer |
 
-### Payload
+**Payload**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -548,7 +548,7 @@ Tue le bot spécifié.
 }
 ```
 
-### Return
+**Return**
 ```json
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",

@@ -9,12 +9,7 @@ from conf.models.STOMPConfig import STOMPConfig
 
 
 # Config files
-__game = json.loads(Path('conf', 'game.json').read_text())
-CONFIG_GAME = GameConfig(
-    is_debug=True if Path('conf', 'debug.dat').exists() else False,
-    map_id=__game['map_id'],
-    max_players=__game['max_players']
-)
+CONFIG_GAME = GameConfig(**json.loads(Path('conf', 'game.json').read_text()))
 
 CONFIG_TEAMS = list()
 __teams = json.loads(Path('conf', 'teams.json').read_text())

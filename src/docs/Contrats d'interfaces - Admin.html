@@ -1,82 +1,372 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Rest</title>
-        <style>
-/* From extension vscode.github */
+<html>
+<head>
+<title>Contrats d'interfaces - Admin.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-.vscode-dark img[src$=\#gh-light-mode-only],
-.vscode-light img[src$=\#gh-dark-mode-only] {
-	display: none;
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
 }
 
-/* From extension ms-toolsai.jupyter */
-/* These classnames are inherited from bootstrap, but are present in most notebook renderers */
-
-.alert {
-    width: auto;
-    padding: 1em;
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-.alert > *:last-child {
-    margin-bottom: 0;
-}
-#preview > .alert:last-child {
-    /* Prevent this being set to zero by the default notebook stylesheet */
-    padding-bottom: 1em;
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
 }
 
-.alert-success {
-    /* Note there is no suitable color available, so we just copy "info" */
-    background-color: var(--theme-info-background);
-    color: var(--theme-info-foreground);
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
 }
-.alert-info {
-    background-color: var(--theme-info-background);
-    color: var(--theme-info-foreground);
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
 }
-.alert-warning {
-    background-color: var(--theme-warning-background);
-    color: var(--theme-warning-foreground);
+
+body.showEditorSelection .code-line {
+	position: relative;
 }
-.alert-danger {
-    background-color: var(--theme-error-background);
-    color: var(--theme-error-foreground);
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
 }
 
 </style>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
-<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+
 <style>
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
-                font-size: 14px;
-                line-height: 1.6;
-            }
-        </style>
-        <style>
-.task-list-item {
-    list-style-type: none;
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
 }
 
-.task-list-item-checkbox {
-    margin-left: -20px;
-    vertical-align: middle;
-    pointer-events: none;
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
 }
 </style>
-        
-    </head>
-    <body class="vscode-body vscode-light">
-        <ul>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="rest">Rest</h1>
+<ul>
 <li><a href="#rest">Rest</a>
 <ul>
 <li><a href="#post-adminactionban"><code>POST /admin/action/ban</code></a></li>
@@ -91,464 +381,463 @@
 </ul>
 </li>
 </ul>
-<h1 id="rest">Rest</h1>
 <h2 id="post-adminactionban"><code>POST /admin/action/ban</code></h2>
 <p>Bannir l'adresse IP spécifiée d'une source spécifique.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données de banissement&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;host&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;source&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;reason&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;definitive&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;host&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;IP à bannir&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Source dont on veut ban l&#x27;IP&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;reason&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Raison du ban&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;definitive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bool&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Banissement définitif ou temporaire avec déban automatique ?&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;host&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10.0.0.2&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;rest&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;reason&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Tricherie&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;definitive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;host&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10.0.0.3&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;websocket&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;reason&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Too many connections in a short delay&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;definitive&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse au banissement&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;banned&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;banned&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Adresse IP bannie&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;banned&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10.0.0.2&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de banissement"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>,
+        <span class="hljs-string">"host"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"reason"</span>,
+        <span class="hljs-string">"definitive"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        },
+        <span class="hljs-attr">"host"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"IP à bannir"</span>
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Source dont on veut ban l'IP"</span>
+        },
+        <span class="hljs-attr">"reason"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Raison du ban"</span>
+        },
+        <span class="hljs-attr">"definitive"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"bool"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Banissement définitif ou temporaire avec déban automatique ?"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>,
+        <span class="hljs-attr">"host"</span>: <span class="hljs-string">"10.0.0.2"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"rest"</span>,
+        <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"Tricherie"</span>,
+        <span class="hljs-attr">"definitive"</span>: <span class="hljs-literal">true</span>
+    },
+    {
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>,
+        <span class="hljs-attr">"host"</span>: <span class="hljs-string">"10.0.0.3"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"websocket"</span>,
+        <span class="hljs-attr">"reason"</span>: <span class="hljs-string">"Too many connections in a short delay"</span>,
+        <span class="hljs-attr">"definitive"</span>: <span class="hljs-literal">false</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse au banissement"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"banned"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"banned"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Adresse IP bannie"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"banned"</span>: <span class="hljs-string">"10.0.0.2"</span>
+    }]
+}
+</div></code></pre>
 <h2 id="patch-adminactionunban"><code>PATCH /admin/action/unban</code></h2>
 <p>Débannir l'adresse IP spécifiée pour une source spécifique.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données de débanissement&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;host&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;source&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;host&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;IP à débannir&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Source dont on veut déban l&#x27;IP&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;host&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10.0.0.2&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;rest&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse au débanissement&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;message&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Adresse IP débannie&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;10.0.0.2 unbanned&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de débanissement"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>,
+        <span class="hljs-string">"host"</span>,
+        <span class="hljs-string">"source"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        },
+        <span class="hljs-attr">"host"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"IP à débannir"</span>
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Source dont on veut déban l'IP"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>,
+        <span class="hljs-attr">"host"</span>: <span class="hljs-string">"10.0.0.2"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"rest"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse au débanissement"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Adresse IP débannie"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"10.0.0.2 unbanned"</span>
+    }]
+}
+</div></code></pre>
 <h2 id="patch-gameactionstart"><code>PATCH /game/action/start</code></h2>
 <p>Démarrer la partie en cours.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données d&#x27;identification admin&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse au démarrage de la partie&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;message&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Etat de la partie&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Game is started&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Game is started&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h2 id="patch-gameactionselect_map"><code>PATCH /game/action/select_map</code></h2>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données d'identification admin"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse au démarrage de la partie"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Etat de la partie"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"Game is started"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Game is started"</span>
+    }]
+}
+</div></code></pre>
+<h2 id="patch-gameactionselectmap"><code>PATCH /game/action/select_map</code></h2>
 <p>Sélectionner la carte.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données de changement de map&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;map_name&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;map_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Nom de la map à charger&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;map_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;test_map_16_16&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse au changement de map&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;message&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Etat du chargement de la map&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Map is loaded.&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Map is loaded.&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de changement de map"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>,
+        <span class="hljs-string">"map_name"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        },
+        <span class="hljs-attr">"map_name"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Nom de la map à charger"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>,
+        <span class="hljs-attr">"map_name"</span>: <span class="hljs-string">"test_map_16_16"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse au changement de map"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Etat du chargement de la map"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"Map is loaded."</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Map is loaded."</span>
+    }]
+}
+</div></code></pre>
 <h2 id="get-displayclientsactionlist"><code>GET /display/clients/action/list</code></h2>
 <p>Retourne des informations sur les clients d'affichage présents et passés.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données de recherche des clients web&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;connected_only&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;connected_only&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;bool&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Ne rechercher que les client connectés actuellement&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;connected_only&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse à la récupération des clients web&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;clients&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;clients&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;list&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Liste des objets clients trouvés&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;clients&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-          <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
-        <span class="hljs-punctuation">]</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h2 id="get-displayclientsactionget_by_id"><code>GET /display/clients/action/get_by_id</code></h2>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de recherche des clients web"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>,
+        <span class="hljs-string">"connected_only"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        },
+        <span class="hljs-attr">"connected_only"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"bool"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Ne rechercher que les client connectés actuellement"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>,
+        <span class="hljs-attr">"connected_only"</span>: <span class="hljs-literal">true</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse à la récupération des clients web"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"clients"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"clients"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"list"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Liste des objets clients trouvés"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"clients"</span>: [
+          {}
+        ]
+    }]
+}
+</div></code></pre>
+<h2 id="get-displayclientsactiongetbyid"><code>GET /display/clients/action/get_by_id</code></h2>
 <p>Trouve un client d'affichage par son ID.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données de recherche de client web&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;client_id&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;integer&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ID du client à rechercher&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse à la récupération du client web&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;client&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Objet client trouvé&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h2 id="get-displayclientsactionget_by_token"><code>GET /display/clients/action/get_by_token</code></h2>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de recherche de client web"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>,
+        <span class="hljs-string">"client_id"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        },
+        <span class="hljs-attr">"client_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"integer"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"ID du client à rechercher"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>,
+        <span class="hljs-attr">"client_id"</span>: <span class="hljs-number">1</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse à la récupération du client web"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"client"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"client"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Objet client trouvé"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"client"</span>: {}
+    }]
+}
+</div></code></pre>
+<h2 id="get-displayclientsactiongetbytoken"><code>GET /display/clients/action/get_by_token</code></h2>
 <p>Trouve un client d'affichage par son token.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données de recherche de client web&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;client_token&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client_token&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Token du client à rechercher&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client_token&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;688c14bd-4b0a-414e-b037-ebf35080642b&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse à la récupération du client web&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;client&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Objet client trouvé&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;client&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données de recherche de client web"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>,
+        <span class="hljs-string">"client_token"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        },
+        <span class="hljs-attr">"client_token"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Token du client à rechercher"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>,
+        <span class="hljs-attr">"client_token"</span>: <span class="hljs-string">"688c14bd-4b0a-414e-b037-ebf35080642b"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse à la récupération du client web"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"client"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"client"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Objet client trouvé"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"client"</span>: {}
+    }]
+}
+</div></code></pre>
 <h2 id="patch-botsactionadd"><code>PATCH /bots/action/add</code></h2>
 <p>Ajoute un bot sans IA dans le jeu.</p>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données d&#x27;identification admin&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse à l&#x27;ajout de bot&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;message&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;bot_id&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Etat de l&#x27;ajout du bot&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;The bot has been added&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;bot_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ID du bot ajouté&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;The bot has been added&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;bot_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;a78e716a-315b-435d-b36c-fa4c7410ea26&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h2 id="patch-botsbot_idactionkill"><code>PATCH /bots/{bot_id}/action/kill</code></h2>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données d'identification admin"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse à l'ajout de bot"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>,
+        <span class="hljs-string">"bot_id"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Etat de l'ajout du bot"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"The bot has been added"</span>
+        },
+        <span class="hljs-attr">"bot_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"ID du bot ajouté"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"The bot has been added"</span>,
+        <span class="hljs-attr">"bot_id"</span>: <span class="hljs-string">"a78e716a-315b-435d-b36c-fa4c7410ea26"</span>
+    }]
+}
+</div></code></pre>
+<h2 id="patch-botsbotidactionkill"><code>PATCH /bots/{bot_id}/action/kill</code></h2>
 <p>Tue le bot spécifié.</p>
-<h3 id="path-parameters">Path parameters</h3>
+<p><strong>Path parameters</strong></p>
 <table>
 <thead>
 <tr>
@@ -563,60 +852,58 @@
 </tr>
 </tbody>
 </table>
-<h3 id="payload">Payload</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Données d&#x27;identification admin&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;api_password&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mot de passe admin Rest&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;api_password&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;password&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<h3 id="return">Return</h3>
-<pre><code class="language-json"><span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;$schema&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Réponse au kill de bot&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-string">&quot;status&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;message&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-string">&quot;bot_id&quot;</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Statut du traitement de la demande&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Etat de l&#x27;opération&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;const&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;The bot has been killed&quot;</span>
-        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;bot_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span><span class="hljs-punctuation">,</span>
-            <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ID du bot tué&quot;</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-attr">&quot;examples&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">{</span>
-        <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ok&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;The bot has been killed&quot;</span><span class="hljs-punctuation">,</span>
-        <span class="hljs-attr">&quot;bot_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;a78e716a-315b-435d-b36c-fa4c7410ea26&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
+<p><strong>Payload</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Données d'identification admin"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"api_password"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"api_password"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Mot de passe admin Rest"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"api_password"</span>: <span class="hljs-string">"password"</span>
+    }]
+}
+</div></code></pre>
+<p><strong>Return</strong></p>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"Réponse au kill de bot"</span>,
+    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"status"</span>,
+        <span class="hljs-string">"message"</span>,
+        <span class="hljs-string">"bot_id"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"status"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Statut du traitement de la demande"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"ok"</span>
+        },
+        <span class="hljs-attr">"message"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Etat de l'opération"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"The bot has been killed"</span>
+        },
+        <span class="hljs-attr">"bot_id"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"string"</span>,
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"ID du bot tué"</span>
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"status"</span>: <span class="hljs-string">"ok"</span>,
+        <span class="hljs-attr">"message"</span>: <span class="hljs-string">"The bot has been killed"</span>,
+        <span class="hljs-attr">"bot_id"</span>: <span class="hljs-string">"a78e716a-315b-435d-b36c-fa4c7410ea26"</span>
+    }]
+}
+</div></code></pre>
 
-        <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
-        
-    </body>
-    </html>
+</body>
+</html>
