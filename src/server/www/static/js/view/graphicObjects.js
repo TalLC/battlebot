@@ -6,5 +6,6 @@ export default {
     'tree':'/static/models/tree_small.glb',
     'rock':'/static/models/rock.glb',
     'ground':'/static/models/ground.glb',
-    'water':'/static/models/water.glb'
+    'water':'/static/models/water.glb',
+    'desintegrator':'/static/models/desintegrator.glb'
 };

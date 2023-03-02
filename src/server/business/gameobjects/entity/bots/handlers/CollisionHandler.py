@@ -20,6 +20,13 @@ class CollisionHandler:
         self._collision_entity = None
 
     def check_env_collision(self, other):
+        try:
+            if other.name == "Desintegrator":
+                logging.debug("Boum ! Ciao robot !")
+                self._bot.kill()
+        except AttributeError:
+            pass
+
         if isinstance(other, Tile):
             if other.tile_object.has_collision and other.tile_object.shape.intersection(self._bot.shape):
                 return other.tile_object.name
