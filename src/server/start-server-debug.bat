@@ -3,7 +3,7 @@ cls
 chcp 65001 >nul
 rem ---------------------------------
 rem Lancement en mode debug
-echo is_debug=true >conf\debug.dat
+venv\Scripts\python.exe third-party\set-debug.py debug=true
 
 rem utilisation du Java portable
 set JAVA_HOME="%cd%\third-party\jre1.8.0"

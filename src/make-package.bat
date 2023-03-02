@@ -125,6 +125,7 @@ robocopy /E battlebotslib %tmp_lib%\battlebotslib > nul
 rem Suppression des dossiers inutiles
 echo - Suppression des dossiers inutiles
 rmdir /S /Q %tmp_lib%\battlebotslib\.idea 2> nul
+rmdir /S /Q %tmp_lib%\battlebotslib\venv 2> nul
 
 rem Zip du package lib client
 echo - Zip du package lib client
