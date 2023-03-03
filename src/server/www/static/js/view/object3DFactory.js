@@ -38,6 +38,13 @@ class Object3DFactory {
                 gltfData.scene.rotation.y = ry;
                 gltfData.scene.traverse((o) => {
                     if (o.isMesh) {
+                        let transparent = false;
+                        let opacity = 1;
+                        if (o.name === "desintegrator") {
+                            transparent = true;
+                            opacity = 0;
+                        }
+
                         const matMap = o.material.map;
                         const matColor = o.material.color;
                         const material = new THREE.MeshPhongMaterial({
@@ -45,7 +52,9 @@ class Object3DFactory {
                             emissive: 0x000000,
                             specular: 0x05050a,
                             map: matMap,
-                            side: THREE.DoubleSide
+                            side: THREE.DoubleSide,
+                            transparent: transparent,
+                            opacity: opacity
                         });
                         o.material = material;
                         o.receiveShadow = true;
