@@ -48,8 +48,30 @@ class Object3DFactory {
         Param : bot -> L'objet Bot dont on veut créer le modèle 3D
         Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir intéragir avec.
     */
+    createBullet3D(bot) {
+        const modelPath = graphicObjects['shoot']
+        return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then(bullet => {
+            // Peinture du bot de la couleur de l'équipe
+            const material = new THREE.MeshBasicMaterial({ 
+                color : bot.teamColor, 
+        });
+    
+            bullet.traverse((o) => {
+                if (o.isMesh) o.material = material;
+            });
+    
+            bot.bullet = bullet;
+            return bullet;
+        });
+    }
+
+    /*
+        Fonction : Permet la création/ajout d'un objet Bot à la scène.
+        Param : bot -> L'objet Bot dont on veut créer le modèle 3D
+        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir intéragir avec.
+    */
     createBot3D(bot) {
-        const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar'][bot.modelName];
+        const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar']['default']
         return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then(sceneObject => {
             // Peinture du bot de la couleur de l'équipe
             const material = new THREE.MeshBasicMaterial({ "color": bot.teamColor });

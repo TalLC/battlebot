@@ -123,6 +123,29 @@ class GameManager {
     }
 
     /*
+        Fonction : Permet la création d'un tir dans le jeu.
+        Param : id -> ID unique du Bot
+                x -> Position en x
+                z -> Position en z
+                ry -> Rotation autour de l'axe y
+                team_color -> Couleur de l'équipe à laquelle appartient le Bot
+                model_name -> Nom du modèle 3D représentant le bot
+        Return : N/A
+    */
+    addBullet(botData) {
+            return Object3DFactory.createBullet3D(this.bots[botData.id]).then(bullet => {
+                this.bots[botData.id].bullet = bullet;
+                console.log(bullet);
+                this.v.scene.add(bullet);
+                return bullet;
+            });
+        }
+
+    removeBullet(bullet){
+        this.v.disposeSceneObject(bullet);
+    }
+
+    /*
         Fonction : Permet la création d'un Map objects dans le jeu.
         Param : id -> ID unique de l'objet
                 type -> Type d'objet

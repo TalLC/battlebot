@@ -1,7 +1,8 @@
 import {ActionDefinition, actions} from "../actions.js";
 import GameManager from '../../gameManager.js';
-import Object3DFactory from "../../view/object3DFactory.js";
-
+import TWEEN from 'tween';
+import object3DFactory from "../../view/object3DFactory.js";
+import gameManager from "../../gameManager.js";
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
@@ -29,11 +30,38 @@ function action(parameters){
 
     for (let target of parameters.targets) {
         if (!target.id) {
-            shootTo(bot, target);
+            gameManager.addBullet(bot).then(bullet => {
+                console.log(bullet);
+                const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
+                .to({x: target.x , z: target.z}, 10000)
+                .easing(TWEEN.Easing.Linear.None)
+                .onUpdate((coords) => {
+                    bullet.position.x = coords.x;
+                    bullet.position.z = coords.z;
+                    if (bullet.position.x === target.x && bullet.position.z === target.z){
+                        gameManager.removeBullet(bullet);
+                    }
+                })
+                .start()
+            });
+
         } else {
             const targetObject = GameManager.getGameObjectFromId(target.id);
             if (targetObject) {
-                shootTo(bot, targetObject.coordinates2D);
+                gameManager.addBullet(bot).then(bullet => {
+                    console.log(GameManager.bots[bot.id].bullet);
+                    const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
+                    .to({x: targetObject.coordinates2D.x , z: targetObject.coordinates2D.z}, 10000)
+                    .easing(TWEEN.Easing.Linear.None)
+                    .onUpdate((coords) => {
+                        bullet.position.x = coords.x;
+                        bullet.position.z = coords.z;
+                        if (bullet.position.x === targetObject.coordinates2D.x && bullet.position.z === targetObject.coordinates2D.z){
+                            gameManager.removeBullet(bullet);
+                        }
+                    })
+                    .start()
+                });
             } else {
                 console.error(`L'objet ayant pour ID ${target.id} n'a pas été trouvé`);
             }
@@ -45,27 +73,3 @@ function action(parameters){
 * @param param
 */
 actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
-
-
-function shootTo(bot, to) {
-    const laserMesh = Object3DFactory.createLaserMesh(
-        bot.teamColor,
-        [bot.x, 1.5, bot.z],
-        [to.x, 1.5, to.z]
-    );
-
-    //Add the mesh to the scene
-    GameManager.v.scene.add(laserMesh);
-
-    // Create a promise that resolves after 1 second
-    const laserPromise = new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, 1000);
-    });
-
-    // Wait for the promise to resolve, then remove the mesh from the scene
-    laserPromise.then(() => {
-        GameManager.v.disposeSceneObject(laserMesh);
-    });
-}

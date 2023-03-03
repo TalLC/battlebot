@@ -15,6 +15,7 @@ export default class Bot extends GameObject{
         this.shieldHide = false;
         this.shieldRaise = false;
         this.enrolled = false;
+        this.bullet = null;
     }
 
     /* 
