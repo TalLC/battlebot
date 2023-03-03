@@ -1,34 +1,35 @@
 [
   {
-      "id": "test-team-no-ai",
-      "size": 3000,
+      "id": "team-id-1",
+      "size": 1,
       "name": "Blue team",
-      "color": "0x0000ff"
+      "color": "0x0042aa"
   },
   {
-      "id": "test-team",
-      "size": 3,
+      "id": "team-id-2",
+      "size": 1,
       "name": "Red team",
-      "color": "0xff0000"
+      "color": "0xaa0000"
   },
   {
-      "size": 3,
+      "id": "team-id-3",
+      "size": 1,
       "name": "Green team",
-      "color": "0x00ff00"
+      "color": "0x00bb00"
   },
   {
-      "size": 3,
+      "size": 1,
       "name": "Yellow team",
-      "color": "0xffff00"
+      "color": "0xffcc00"
   },
   {
-      "size": 3,
+      "size": 1,
       "name": "Black team",
-      "color": "0x000000"
+      "color": "0x101010"
   },
   {
-      "size": 3,
+      "size": 1,
       "name": "White team",
-      "color": "0xffffff"
+      "color": "0xdadada"
   }
 ]

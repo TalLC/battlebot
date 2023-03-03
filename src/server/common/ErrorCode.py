@@ -62,8 +62,8 @@ BOT_BAD_COMMAND_ARGS = ErrorCode(name='BOT_BAD_COMMAND_ARGS', internal_code=0x00
                                  label="Bad bot command argument(s)")
 BOT_IS_DEAD = ErrorCode(name='BOT_IS_DEAD', internal_code=0x00000303, http_code=409,
                         label="The bot is dead")
-BOT_IS_STUN = ErrorCode(name='BOT_IS_STUN', internal_code=0x00000304, http_code=409,
-                        label="The bot is stun")
+BOT_IS_STUNNED = ErrorCode(name='BOT_IS_STUNNED', internal_code=0x00000304, http_code=409,
+                           label="The bot is stunned")
 BOT_WEAPON_UNAVAILABLE = ErrorCode(name='BOT_WEAPON_UNAVAILABLE', internal_code=0x00000305, http_code=409,
                                label='The Weapon is unavailable')
 
@@ -84,6 +84,8 @@ GAME_NOT_STARTED = ErrorCode(name='GAME_NOT_STARTED', internal_code=0x00000602, 
                              label="The game is not started yet")
 GAME_ALREADY_STARTED = ErrorCode(name='GAME_ALREADY_STARTED', internal_code=0x00000603, http_code=500,
                                  label="The game is already started")
+GAME_IS_FULL = ErrorCode(name='GAME_IS_FULL', internal_code=0x00000604, http_code=500,
+                         label="The game is full")
 
 # Network Errors
 NETWORK_BANNED_IP_TEMP = ErrorCode(name='NETWORK_BANNED_IP_TEMP', internal_code=0x00000701, http_code=401,

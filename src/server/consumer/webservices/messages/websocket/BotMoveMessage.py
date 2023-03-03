@@ -1,4 +1,4 @@
-from consumer.webservices.messages.websocket.models.BotUpdateMessage import BotUpdateMessage
+from consumer.webservices.messages.websocket.BotUpdateMessage import BotUpdateMessage
 
 
 class BotMoveMessage(BotUpdateMessage):

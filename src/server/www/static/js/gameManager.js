@@ -1,19 +1,42 @@
+import GameConfig from './config.js';
 import "./actions/gameActions/gameActionDefinition.js"
-import {actions} from "./actions/actions.js"
+import { actions } from "./actions/actions.js"
 import View3DController from "./view/view3DController.js";
 import Object3DFactory from "./view/object3DFactory.js";
 import Bot from "./gameObjects/bot.js"
 import MapObject from "./gameObjects/mapObject.js"
-import {getRandomInt} from "./utils/utils.js"
+import { getRandomInt } from "./utils/utils.js"
 
+let instance;
+export default function getInstance() {
+    return instance;
+};
+
+export function initGameManager() {
+    instance = new GameManager();
+};
 
 class GameManager {
-    constructor(){
+    constructor() {
         this.v = new View3DController("view-container");
         this.loginId;
         this.bots = {};
         this.mapObjects = {};
 
+        /* Page d'accueil */
+        // Nombre de joueurs
+        const startgameContainer = document.getElementById("startgame-container");
+        let startgameMessagesRules = startgameContainer.querySelector("#startgame-messages-rules");
+        startgameMessagesRules.innerHTML = `LA PARTIE DÉMARRE À PARTIR DE ${GameConfig().maxPlayers} BOTS ET SE TERMINE LORSQU'IL NE RESTE QU'1 ÉQUIPE EN VIE`;
+        
+        // Scroll text
+        const scrollText = document.getElementById("startgame-scroll-text");
+        fetch('static/txt/scrolling-text.txt')
+            .then((response) => response.text())
+            .then((data) => {
+                scrollText.innerHTML = data;
+                scrollText.style.height = scrollText.scrollHeight;
+            });
 
         /* Endgame */
         this.endgameContainer = document.getElementById("endgame-container");
@@ -122,6 +145,11 @@ class GameManager {
         });
     }
 
+    killBot(id) {
+        const bot = this.getGameObjectFromId(id);
+        if (bot) bot.kill();
+    }
+
     /*
         Fonction : Permet la création d'un tir dans le jeu.
         Param : id -> ID unique du Bot
@@ -215,6 +243,7 @@ class GameManager {
         Return : N/A
     */
     createMap(mapData) {
+        const tileRotations = [ -2*Math.PI, -Math.PI, 0.0, Math.PI, 2*Math.PI ]
         for (let h = 0; h < mapData.height; h++)
         {
             for (let w = 0; w < mapData.width; w++)
@@ -232,7 +261,7 @@ class GameManager {
                                 x: tile['x'],
                                 y: 0.0,
                                 z: tile['z'],
-                                ry: 0.0,
+                                ry: tileRotations[Math.floor(Math.random() * tileRotations.length)],
                                 collisionShape: tile['shape_name'],
                                 collisionSize: tile['shape_size'],
                                 model: tile['name'].toLowerCase()
@@ -266,4 +295,3 @@ class GameManager {
 
 }
 
-export default new GameManager();

@@ -25,7 +25,8 @@ class Air(TileObject):
 
     def __init__(self, parent_tile: Tile, x: float = 0.0, z: float = 0.0):
         super().__init__(
-            parent_tile=parent_tile, name=self._NAME, x=x, z=z, health=self._HEALTH_MAX, has_collision=False
+            parent_tile=parent_tile, object_type="air", name=self._NAME, x=x, z=z, health=self._HEALTH_MAX,
+            has_collision=False
         )
 
     def _on_death(self) -> None:

@@ -45,7 +45,7 @@ class Tile(GameObject, ABC):
         self._shape_size = 1.0
 
         super().__init__(
-            name, x, z, ShapeFactory().create_shape(Shape.SQUARE, o=(x, z), width=self._shape_size)
+            name, "tile", x, z, ShapeFactory().create_shape(Shape.SQUARE, o=(x, z), width=self._shape_size)
         )
 
     def set_tile_object(self, tile_object_name: str):

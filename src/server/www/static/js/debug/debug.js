@@ -63,7 +63,7 @@ export default class Debug{
             let clickedObject;
 
             // On cherche si c'est un bot qui est sélectionné
-            clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent.parent, "bot");
+            clickedObject = GameManager().getGameObjectFromSceneObject(hit.object.parent.parent, "bot");
             if (clickedObject) {
                 const bot = clickedObject;
                 this.setSelectedObject(hit.object, bot);
@@ -73,7 +73,7 @@ export default class Debug{
             }
 
             // On cherche si c'est un objet de tuile qui est sélectionné
-            clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent, "tileObject");
+            clickedObject = GameManager().getGameObjectFromSceneObject(hit.object.parent, "tileObject");
             if (clickedObject) {
                 const obj = clickedObject;
                 this.setSelectedObject(hit.object.parent, obj);
@@ -82,7 +82,7 @@ export default class Debug{
             }
 
             // On cherche si c'est une tuile qui est sélectionnée
-            clickedObject = GameManager.getGameObjectFromSceneObject(hit.object.parent, "tile");
+            clickedObject = GameManager().getGameObjectFromSceneObject(hit.object.parent, "tile");
             if (clickedObject) {
                 const obj = clickedObject;
                 this.setSelectedObject(hit.object, obj);

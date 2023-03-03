@@ -1,6 +1,8 @@
 from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
+
+from business.gameobjects.entity.bots.handlers.CollisionHandler import CollisionHandler
 from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.models.BotModel import BotModel
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment

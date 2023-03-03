@@ -23,7 +23,6 @@ from provider.webservices.rest.models.BotsIdActionCheckConnectionModel import Bo
 from provider.webservices.rest.models.BotsIdActionShootModel import BotsIdActionShootModel
 from provider.webservices.rest.models.BotsIdActionTurnModel import BotsIdActionTurnModel
 from provider.webservices.rest.models.BotsIdActionMoveModel import BotsIdActionMoveModel
-from provider.webservices.rest.models.BotsIdActionShieldRaiseModel import BotsIdActionShieldRaiseModel
 from provider.webservices.rest.models.AdminActionSelectMapModel import AdminActionSelectMapModel
 
 
@@ -51,7 +50,6 @@ class RestProvider:
         self.__bots_id_action_shoot()
         self.__bots_id_action_turn()
         self.__bots_id_action_move()
-        self.__bots_id_action_shield_raise()
         logging.info("[REST] All endpoints registered")
 
     def __admin_action_ban(self):
@@ -233,11 +231,15 @@ class RestProvider:
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
+            # Check if the game is full
+            if GameManager().is_full:
+                ErrorCode.throw(GAME_IS_FULL)
+
             # Check if the game is started
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
 
-            logging.info("Adding a test bot:")
+            logging.debug("Adding a test bot:")
             bot_count = GameManager().bot_manager.get_bots_count()
             bot = GameManager().bot_manager.create_bot(f"BOT TEST {bot_count}", "warrior")
             del GameManager().bot_manager._BOTS[bot.id]
@@ -256,8 +258,6 @@ class RestProvider:
                 bot.client_connection.source_mqtt_id
             )
 
-            logging.info(GameManager().bot_manager.get_bot("0-0-0-0-0"))
-
             return {"status": "ok", "message": "The bot has been added", "bot_id": bot.id}
 
     def __bots_action_register(self):
@@ -267,6 +267,10 @@ class RestProvider:
         @self.__app.post("/bots/action/register")
         @NetworkSecurityDecorators.rest_ban_check
         async def action(model: BotsActionRegisterModel, _: Request):
+
+            # Check if the game is full
+            if GameManager().is_full:
+                ErrorCode.throw(GAME_IS_FULL)
 
             # Check if the game is already started
             if GameManager().is_started:
@@ -391,9 +395,9 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
+            # Is bot stunned
+            if bot.is_stunned:
+                ErrorCode.throw(BOT_IS_STUNNED)
 
             # Weapon unavailable
             if not bot.equipment.weapon.can_shoot:
@@ -427,9 +431,9 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
+            # Is bot stunned
+            if bot.is_stunned:
+                ErrorCode.throw(BOT_IS_STUNNED)
 
             # Sending turn command to the bot
             bot.add_command_to_queue(BotTurnCommand(value=model.direction))
@@ -462,9 +466,9 @@ class RestProvider:
             if not bot.is_alive:
                 ErrorCode.throw(BOT_IS_DEAD)
 
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
+            # Is bot stunned
+            if bot.is_stunned:
+                ErrorCode.throw(BOT_IS_STUNNED)
 
             # Sending move command to the bot
             bot.add_command_to_queue(BotMoveCommand(value=model.action))
@@ -473,35 +477,3 @@ class RestProvider:
                 return {"status": "ok", "message": "Bot is starting to move"}
             elif model.action == 'stop':
                 return {"status": "ok", "message": "Bot has stopped moving"}
-
-    def __bots_id_action_shield_raise(self):
-        """
-        Raise or lower the shield of the specified bot.
-        """
-        @self.__app.patch("/bots/{bot_id}/action/shield_raise")
-        @NetworkSecurityDecorators.rest_ban_check
-        async def action(bot_id: str, model: BotsIdActionShieldRaiseModel, _: Request):
-
-            # Check if the game is not started
-            if not GameManager().is_started:
-                ErrorCode.throw(GAME_NOT_STARTED)
-
-            # Does bot exists
-            if not GameManager().bot_manager.does_bot_exists(bot_id):
-                ErrorCode.throw(BOT_DOES_NOT_EXISTS)
-
-            # Fetching corresponding Bot
-            bot = GameManager().bot_manager.get_bot(bot_id)
-
-            # Is bot alive
-            if not bot.is_alive:
-                ErrorCode.throw(BOT_IS_DEAD)
-
-            # Is bot stun
-            if bot.is_stun:
-                ErrorCode.throw(BOT_IS_STUN)
-
-            if model.action.lower() == 'start':
-                return {"status": "ok", "message": "Bot is starting to use its shield."}
-            elif model.action.lower() == 'stop':
-                return {"status": "ok", "message": "Bot has stopped to use its shield."}

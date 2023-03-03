@@ -2,7 +2,6 @@ import {ActionDefinition, actions} from "../actions.js";
 import GameManager from '../../gameManager.js';
 import TWEEN from 'tween';
 import object3DFactory from "../../view/object3DFactory.js";
-import gameManager from "../../gameManager.js";
 
 /*
     Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
@@ -26,11 +25,11 @@ function actionSelector(botState){return !(botState.shoot === undefined);}
     Return : N/A
 */
 function action(parameters){
-    const bot = GameManager.bots[parameters.id];
+    const bot = GameManager().bots[parameters.id];
 
     for (let target of parameters.targets) {
         if (!target.id) {
-            gameManager.addBullet(bot).then(bullet => {
+            GameManager().addBullet(bot).then(bullet => {
                 console.log(bullet);
                 const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
                 .to({x: target.x , z: target.z}, 10000)
@@ -39,16 +38,16 @@ function action(parameters){
                     bullet.position.x = coords.x;
                     bullet.position.z = coords.z;
                     if (bullet.position.x === target.x && bullet.position.z === target.z){
-                        gameManager.removeBullet(bullet);
+                        GameManager().removeBullet(bullet);
                     }
                 })
                 .start()
             });
 
         } else {
-            const targetObject = GameManager.getGameObjectFromId(target.id);
+            const targetObject = GameManager().getGameObjectFromId(target.id);
             if (targetObject) {
-                gameManager.addBullet(bot).then(bullet => {
+                GameManager().addBullet(bot).then(bullet => {
                     console.log(GameManager.bots[bot.id].bullet);
                     const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
                     .to({x: targetObject.coordinates2D.x , z: targetObject.coordinates2D.z}, 10000)
@@ -57,7 +56,7 @@ function action(parameters){
                         bullet.position.x = coords.x;
                         bullet.position.z = coords.z;
                         if (bullet.position.x === targetObject.coordinates2D.x && bullet.position.z === targetObject.coordinates2D.z){
-                            gameManager.removeBullet(bullet);
+                            GameManager().removeBullet(bullet);
                         }
                     })
                     .start()

@@ -1,19 +1,32 @@
+from __future__ import annotations
+
 import logging
 from math import fmod, pi
+from typing import TYPE_CHECKING
 
 from business.gameobjects.tiles.Tile import Tile
 from business.shapes.ShapesUtils import ShapesUtils
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 
+if TYPE_CHECKING:
+    from business.gameobjects.entity.bots.models.BotModel import BotModel
+
 
 class CollisionHandler:
 
-    def __init__(self, bot):
+    def __init__(self, bot: BotModel):
         self._bot = bot
         self._collision_entity = None
 
     def check_env_collision(self, other):
+        try:
+            if other.name == "Desintegrator":
+                logging.debug("Boum ! Ciao robot !")
+                self._bot.kill()
+        except AttributeError:
+            pass
+
         if isinstance(other, Tile):
             if other.tile_object.has_collision and other.tile_object.shape.intersection(self._bot.shape):
                 return other.tile_object.name

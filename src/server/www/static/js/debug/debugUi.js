@@ -9,18 +9,10 @@ export default class DebugUi {
 
         // Startgame
         const startGameContainer = document.getElementById("startgame-container");
-        const buttonAddBot = startGameContainer.querySelector("#header-button-add-bot");
+        const buttonAddBot = startGameContainer.querySelector("#debug-button-add-bot");
+        buttonAddBot.hidden = false;
         buttonAddBot.onclick = this.addBot.bind(this);
         
-        // Scroll text
-        const scrollText = document.getElementById("startgame-scroll-text");
-        fetch('https://raw.githubusercontent.com/id-Software/DOOM/master/linuxdoom-1.10/g_game.c')
-            .then((response) => response.text())
-            .then((data) => {
-                scrollText.innerHTML = data;
-                scrollText.style.height = scrollText.scrollHeight;
-            });
-
         // Debug info
         const headerContainer = document.getElementById("info-container-buttons");
 
@@ -70,10 +62,10 @@ export default class DebugUi {
     }
 
     toggleCollisions() {
-        for(const obj of Object.values(GameManager.bots)) {
+        for(const obj of Object.values(GameManager().bots)) {
             obj.toggleCollisions();
         }
-        for(const obj of Object.values(GameManager.mapObjects)) {
+        for(const obj of Object.values(GameManager().mapObjects)) {
             obj.toggleCollisions();
         }
     }

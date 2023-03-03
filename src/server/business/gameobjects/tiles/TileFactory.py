@@ -1,3 +1,4 @@
+from business.gameobjects.tiles.Desintegrator import Desintegrator
 from business.gameobjects.tiles.Ground import Ground
 from business.gameobjects.tiles.Tile import Tile
 from business.gameobjects.tiles.Void import Void
@@ -14,3 +15,5 @@ class TileFactory:
             return Water(x=x, z=z)
         elif tile_type.lower() == "void":
             return Void(x=x, z=z)
+        elif tile_type.lower() == "desintegrator":
+            return Desintegrator(x=x, z=z)

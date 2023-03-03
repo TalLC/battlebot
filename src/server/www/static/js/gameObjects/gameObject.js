@@ -19,12 +19,12 @@ export default class GameObject{
 
     dispose() {
         // Suppression de l'objet de la scene Three.js
-        GameManager.v.disposeSceneObject(this.sceneObject);
+        GameManager().v.disposeSceneObject(this.sceneObject);
 
         // Suppression du Gameobject
         // On attend un peu avant d'effacer l'entrée du dictionnaire pour éviter que le tir ne se joue après la suppression
         new Promise((resolve) => setTimeout(() => resolve(), 1000))
-            .then(() => GameManager.removeGameObject(this));
+            .then(() => GameManager().removeGameObject(this));
     }
 
     get coordinates3D() {
@@ -45,12 +45,21 @@ export default class GameObject{
     toggleCollisions() {
         if (this.sceneObject && this.type !== "tile") {
             if (this.collisionBox) {
-                GameManager.v.disposeSceneObject( this.collisionBox );
+                GameManager().v.disposeSceneObject( this.collisionBox );
                 this.collisionBox = undefined;
             } else {
                 this.collisionBox = Object3DFactory.createCollisionBoxForGameObject(this);
                 this.sceneObject.add( this.collisionBox );
             }
         }
+    }
+
+    applyMaterial(material) {
+        console.log("apply new material");
+        this.sceneObject.traverse((o) => {
+            if (o.isMesh) {
+                o.material = material;
+            }
+        });
     }
 }
