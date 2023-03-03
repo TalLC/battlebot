@@ -152,13 +152,13 @@ export default class View3DController {
         directionalLight.shadow.radius = 1;
         this.scene.add(directionalLight);
 
-        if (GameConfig().isDebug) {
-            const dlHelper = new THREE.DirectionalLightHelper(directionalLight, 3);
-            this.scene.add(dlHelper);
+        // if (GameConfig().isDebug) {
+        //     const dlHelper = new THREE.DirectionalLightHelper(directionalLight, 3);
+        //     this.scene.add(dlHelper);
 
-            const shadowCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
-            this.scene.add(shadowCameraHelper);
-        }
+        //     const shadowCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+        //     this.scene.add(shadowCameraHelper);
+        // }
     }
 
     /*
