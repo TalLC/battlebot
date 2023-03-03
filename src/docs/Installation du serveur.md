@@ -15,6 +15,8 @@
   - [Bots factices](#bots-factices)
     - [Ajouter des bots](#ajouter-des-bots)
     - [Contrôler un bot](#contrôler-un-bot)
+  - [Troubleshooting](#troubleshooting)
+    - [La console web ActiveMQ est bloquée pour problème de certificat](#la-console-web-activemq-est-bloquée-pour-problème-de-certificat)
 
 
 Vous devez avoir obtenu le fichier `battlebots-server-package.zip` au préalable. Ce fichier contient tout ce qu'il faut pour faire tourner le serveur Battlebots en local.
@@ -179,4 +181,10 @@ Sur la page d'attente de Battlebots, vous remarquerez un bouton `Connecter un bo
 ### Contrôler un bot
 
 Double cliquez sur un bot à l'écran, une télécommande va s'afficher sur la droite de l'écran pour prendre le contrôle du bot.
+
+## Troubleshooting
+
+### La console web ActiveMQ est bloquée pour problème de certificat
+
+C'est souvent dû à l'utilisation d'un certificat auto signé pour héberger le site. Sous Firefox on peut continuer malgré le message mais pour les navigateurs basés sur Chromium, il faut taper `thisisunsafe` sur votre clavier pour passer à la suite.
 
