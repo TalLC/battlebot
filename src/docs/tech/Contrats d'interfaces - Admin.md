@@ -1,3 +1,32 @@
+<link rel="stylesheet" type="text/css" href="../style/style.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-theme.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-code.css">
+
+<!-- Side navigation -->
+<div class="sidebar">
+  <h1>Sommaire</h1>
+  
+  <a href="../Manuel%20du%20participant.html">Manuel du participant</a>
+  <br/>
+  <span>Serveur</span>
+  <ul>
+    <li><a href="../serveur/Installation%20du%20serveur.html">Installation du serveur</a></li>
+    <li><a href="../serveur/Configuration%20du%20serveur.html">Configuration du serveur</a></li>
+  </ul>
+  <span>Client</span>
+  <ul>
+    <li><a href="../client/Installation%20de%20la%20lib%20Python.html">Installation de la lib Python</a></li>
+  </ul>
+  <span>Technique</span>
+  <ul>
+    <li><a href="battlebotslib%20-%20BotAi.html">battlebotslib - BotAi</a></li>
+    <li><a href="Contrats%20d'interfaces.html">Contrats d'interfaces</a></li>
+    <li><a href="Contrats%20d'interfaces%20-%20Admin.html">Contrats d'interfaces - Admin</a></li>
+  </ul>
+</div>
+
+<!-- Page content -->
+<div class="main">
 
 # Rest
 
@@ -582,3 +611,9 @@ Tue le bot spécifié.
     }]
 }
 ```
+
+---
+
+[⬆️ Retour](#top) - _Contrats d'interfaces - Admin_
+
+</div>
