@@ -3,15 +3,19 @@ cls
 chcp 65001 >nul
 rem ---------------------------------
 
+set server-package-name=battlebots-server-package
+set lib-package-name=battlebotslib
+set doc-package-name=battlebots-documentation
+
 rem Suppression de l'ancienne version
 echo - Suppression des anciennes versions
 del /Q battlebots-server-package.zip 2> nul
 del /Q battlebotslib.zip 2> nul
+del /Q battlebots-documentation.zip 2> nul
 
 rem Partie serveur
 rem --------------
-rem Création du dossier de serveur temporaire
-set tmp_server=_tmp_server
+rem Dossier contenant les applis externes
 set third_party=server\third-party
 rem Python
 set python_package=Winpython64-3.10.9.0dot
@@ -28,7 +32,9 @@ set amq_final_dir=activemq
 set amq_config_dir=activemq_config
 
 rem Création du dossier de package temporaire
+set tmp_server=_tmp_server
 rmdir /S /Q %tmp_server% 2> nul
+mkdir %tmp_server%
 
 rem Téléchargement de Java JRE 1.8
 echo - Check du third party Java
@@ -85,8 +91,7 @@ cd ..\..
 
 rem Recopie du code Python Serveur
 echo - Recopie du code Python Serveur
-mkdir %tmp_server%
-robocopy /E server %tmp_server%  > nul
+robocopy /E server %tmp_server% > nul
 
 rem Suppression des dossiers inutiles
 echo - Suppression des dossiers inutiles
@@ -103,7 +108,7 @@ del /Q %tmp_server%\*.bak 2> nul
 rem Zip du package serveur
 echo - Zip du package serveur
 cd %tmp_server%
-..\7za.exe a -tzip -r ..\battlebots-server-package * > nul
+..\7za.exe a -tzip -r ..\%server-package-name% * > nul
 cd ..
 
 rem Suppression du dossier temporaire
@@ -115,6 +120,7 @@ rem Partie lib client
 rem -----------------
 rem Création du dossier de package temporaire
 set tmp_lib=_tmp_lib
+rmdir /S /Q %tmp_lib% 2> nul
 mkdir %tmp_lib%
 mkdir %tmp_lib%\battlebotslib
 
@@ -130,11 +136,40 @@ rmdir /S /Q %tmp_lib%\battlebotslib\venv 2> nul
 rem Zip du package lib client
 echo - Zip du package lib client
 cd %tmp_lib%
-..\7za.exe a -tzip -r ..\battlebotslib * > nul
+..\7za.exe a -tzip -r ..\%lib-package-name% * > nul
 cd ..
 
 rem Suppression du dossier temporaire
 echo - Suppression du dossier temporaire %tmp_lib%
 rmdir /S /Q %tmp_lib% 2> nul
+
+
+rem Partie documentation
+rem --------------------
+rem Création du dossier de package temporaire
+set tmp_doc=_tmp_doc
+rmdir /S /Q %tmp_doc% 2> nul
+mkdir %tmp_doc%
+
+rem Recopie de la doc
+echo - Recopie de la documentation
+robocopy /E docs %tmp_doc% > nul
+
+rem Suppression des fichiers inutiles
+echo - Suppression des fichiers inutiles
+del /Q %tmp_doc%\*.md 2> nul
+del /Q %tmp_doc%\client\*.md 2> nul
+del /Q %tmp_doc%\serveur\*.md 2> nul
+del /Q %tmp_doc%\tech\*.md 2> nul
+del /Q %tmp_doc%\style\*.bak 2> nul
+rmdir /S /Q %tmp_doc%\packaging\ > nul
+
+rem Zip du package documentation
+echo - Zip du package documentation
+cd %tmp_doc%
+..\7za.exe a -tzip -r ..\%doc-package-name% * > nul
+cd ..
+
+rmdir /S /Q %tmp_doc% 2> nul
 
 pause
