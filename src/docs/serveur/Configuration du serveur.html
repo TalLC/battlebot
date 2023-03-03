@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Packaging client et serveur.md</title>
+<title>Configuration du serveur.md</title>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
 <style>
@@ -365,108 +365,103 @@ code {
           : 'default'
     });
   </script>
-<h1 id="packaging-client-et-serveur">Packaging client et serveur</h1>
+<link rel="stylesheet" type="text/css" href="../style/style.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-theme.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-code.css">
+<!-- Side navigation -->
+<div class="sidebar">
+  <h1>Sommaire</h1>
+<p><a href="../Manuel%20du%20participant.html">Manuel du participant</a>
+<br/>
+<span>Serveur</span></p>
+  <ul>
+    <li><a href="Installation%20du%20serveur.html">Installation du serveur</a></li>
+    <li><a href="Configuration%20du%20serveur.html">Configuration du serveur</a></li>
+  </ul>
+  <span>Client</span>
+  <ul>
+    <li><a href="../client/Installation%20de%20la%20lib%20Python.html">Installation de la lib Python</a></li>
+  </ul>
+  <span>Technique</span>
+  <ul>
+    <li><a href="../tech/battlebotslib%20-%20BotAi.html">battlebotslib - BotAi</a></li>
+    <li><a href="../tech/Contrats%20d'interfaces.html">Contrats d'interfaces</a></li>
+    <li><a href="../tech/Contrats%20d'interfaces%20-%20Admin.html">Contrats d'interfaces - Admin</a></li>
+  </ul>
+</div>
+<!-- Page content -->
+<div class="main">
+<h1 id="configuration-du-serveur">Configuration du serveur</h1>
 <ul>
-<li><a href="#packaging-client-et-serveur">Packaging client et serveur</a>
+<li><a href="#configuration-du-serveur">Configuration du serveur</a>
 <ul>
-<li><a href="#build-de-la-lib-client">Build de la lib client</a>
+<li><a href="#nombre-de-joueurs-en-jeu">Nombre de joueurs en jeu</a></li>
+<li><a href="#carte-de-jeu">Carte de jeu</a></li>
+<li><a href="#mode-debug">Mode debug</a></li>
+<li><a href="#%C3%A9quipes">Équipes</a></li>
+<li><a href="#brokers-et-api-rest">Brokers et API Rest</a></li>
+<li><a href="#bots-factices">Bots factices</a>
 <ul>
-<li><a href="#pr%C3%A9requis-au-build-du-package">Prérequis au build du package</a></li>
-<li><a href="#build-la-lib">Build la lib</a></li>
-<li><a href="#installation-de-la-lib">Installation de la lib</a></li>
+<li><a href="#ajouter-des-bots">Ajouter des bots</a></li>
+<li><a href="#contr%C3%B4ler-un-bot">Contrôler un bot</a></li>
 </ul>
 </li>
-<li><a href="#packaging">Packaging</a>
+<li><a href="#troubleshooting">Troubleshooting</a>
 <ul>
-<li><a href="#dossier-serveur-third-party">Dossier serveur third-party</a></li>
-<li><a href="#cr%C3%A9er-les-packages">Créer les packages</a></li>
+<li><a href="#la-console-web-activemq-est-bloqu%C3%A9e-pour-probl%C3%A8me-de-certificat">La console web ActiveMQ est bloquée pour problème de certificat</a></li>
+<li><a href="#erreur-activemq--user-user-is-not-authorized-to-create">Erreur ActiveMQ : User user is not authorized to create...</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<h2 id="build-de-la-lib-client">Build de la lib client</h2>
-<p>Le package client se trouve dans <code>battlebot\src\battlebotslib</code>. Les sources sont dans le sous-dossier <code>battlebotslib</code> (c'est ce code qui est appelé quand on importe le package dans Python).<br>
-La classe principale que les joueurs vont utiliser est <code>BotAi</code> :</p>
-<pre class="hljs"><code><div><span class="hljs-keyword">from</span> battlebotslib.BotAi <span class="hljs-keyword">import</span> BotAi
+<h2 id="nombre-de-joueurs-en-jeu">Nombre de joueurs en jeu</h2>
+<p>Le définition du nombre de joueurs se fait via le fichier <code>conf\game.json</code> et le champs <code>max_players</code>.</p>
+<p>Actuellement, le nombre maximum de joueurs est également le nombre de joueurs requis pour démarrer la partie.</p>
+<h2 id="carte-de-jeu">Carte de jeu</h2>
+<p>Le choix de la carte se fait via le fichier <code>conf\game.json</code> et le champs <code>map_id</code> (nom du fichier map).</p>
+<p>Pour être prise en compte, la carte doit être présente dans le dossier <code>data\maps\</code>.</p>
+<h2 id="mode-debug">Mode debug</h2>
+<p>En passant par les scripts de lancement, le mode debug set automatiquement.</p>
+<p>Pour l'activer/désactiver manuellement, il faut modifier le fichier <code>conf\game.json</code> et passer la valeur de <code>is_debug</code> à <code>true</code> ou <code>false.</code></p>
+<h2 id="%C3%A9quipes">Équipes</h2>
+<p>Les équipes sont déclarées dans le fichier <code>conf\teams.json</code>. L'ID d'une équipe peut être défini dans ce fichier, sinon il sera généré automatiquement au lancement du serveur.</p>
+<p>Vous les retrouverez tous dans la console au lancement du serveur, sous cette forme :</p>
+<pre class="hljs"><code><div>[INFO] 02/03/2023 05:41:23 - [MAIN] Created teams:
+[INFO] 02/03/2023 05:41:23 - Blue team (team-id-1) - COLOR: 0x0042aa, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Red team (team-id-2) - COLOR: 0xaa0000, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Green team (team-id-3) - COLOR: 0x00bb00, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Yellow team (f7e09fcc-73dc-466e-9ce6-3da97aaf5c15) - COLOR: 0xffcc00, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Black team (f873a159-518b-4db5-8598-5e859435e07a) - COLOR: 0x101010, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - White team (d6214344-e3d3-4b6f-925a-6e51936d8150) - COLOR: 0xdadada, BOTS: 0/1
 </div></code></pre>
-<p>Quand on fait une modification dans le code du paquet, il faut le rebuild pour pouvoir le réinstaller via PIP.</p>
-<h3 id="pr%C3%A9requis-au-build-du-package">Prérequis au build du package</h3>
+<h2 id="brokers-et-api-rest">Brokers et API Rest</h2>
+<p>Les informations de connexion aux brokers et le mot de passe admin de l'API Rest (par défaut : <code>password</code>) sont disponibles respectivement dans les fichiers :</p>
 <ul>
-<li>Créer votre venv dans ce dossier (<code>battlebot\src\battlebotslib</code>) :
-<ul>
-<li><code>python3 -m venv venv</code></li>
+<li><code>rest.json</code></li>
+<li><code>mqtt.conf</code></li>
+<li><code>stomp.conf</code></li>
 </ul>
-</li>
-<li>Activer l'environnement :
-<ul>
-<li><code>venv\Scripts\activate.bat</code></li>
-</ul>
-</li>
-<li>Installer les prérequis au build
-<ul>
-<li><code>pip install wheel setuptools twine</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="build-la-lib">Build la lib</h3>
-<ul>
-<li>Toujours dans le dossier <code>battlebot\src\battlebotslib</code>, build la lib :
-<ul>
-<li><code>python setup.py bdist_wheel</code></li>
-</ul>
-</li>
-</ul>
-<p>Un fichier <code>.whl</code> est créé dans le dossier <code>dist</code>, c'est lui que l'on va passer en paramètre de PIP pour installer le package.</p>
-<h3 id="installation-de-la-lib">Installation de la lib</h3>
-<ul>
-<li>Se placer dans son dossier de projet IA</li>
-<li>Créer un <code>venv</code> si ce n'est pas déjà fait</li>
-<li>Installer le paquet via PIP :
-<ul>
-<li><code>pip install dist\battlebotslib-0.4.0-py3-none-any.whl</code></li>
-</ul>
-</li>
-</ul>
-<p>En cas de modification du code de la lib, il faudra désinstaller le package avant de le réinstaller :</p>
-<ul>
-<li><code>pip uninstall dist\battlebotslib-0.4.0-py3-none-any.whl</code></li>
-</ul>
-<h2 id="packaging">Packaging</h2>
-<h3 id="dossier-serveur-third-party">Dossier serveur third-party</h3>
-<p>Le dossier <code>battlebot\src\server\third-party</code> existe pour contenir les application tierces et fichiers de configuration. On y retrouve notamment :</p>
-<ul>
-<li>(*) Java JRE 8u361</li>
-<li>(*) Python portable 3.10</li>
-<li>(*) ActiveMQ 5.16.6</li>
-<li>Configuration pour ActiveMQ</li>
-<li>Libs pour le venv serveur Python</li>
-</ul>
-<p><em>(*) non présent sur Git car téléchargés lors de la création du package</em></p>
-<h3 id="cr%C3%A9er-les-packages">Créer les packages</h3>
-<p>Lancer le script <code>battlebot\src\make-package.bat</code> et le laisser dérouler.<br>
-Ce script s'occupe de :</p>
-<ul>
-<li>Packager la partie serveur :
-<ul>
-<li>Télécharger Java JRE 8u361 dans <code>third-party\jre1.8.0</code> si le dossier n'existe pas déjà</li>
-<li>Télécharger Python 3.10 dans <code>third-party\python3.10</code> si le dossier n'existe pas déjà</li>
-<li>Télécharger ActiveMQ 5.16.6 dans <code>third-party\activemq</code> si le dossier n'existe pas déjà</li>
-<li>Recopier les fichiers de configuration de <code>third-party\activemq_config</code> dans <code>third-party\activemq</code></li>
-<li>Recopier tout le dossier <code>battlebot\src\server\</code> dans un répertoire temporaire</li>
-<li>Le nettoyer des fichiers dont on veut se débarasser (<code>.idea</code>, <code>__pycache__</code>, <code>venv</code>, ...)</li>
-<li>Zipper le dossier temporaire dans un fichier <code>battlebots-server-package.zip</code></li>
-</ul>
-</li>
-<li>Packager la lib client
-<ul>
-<li>Recopier tout le dossier <code>battlebot\src\battlebotslib\</code> dans un répertoire temporaire</li>
-<li>Le nettoyer des fichiers dont on veut se débarasser (<code>.idea</code>, <code>venv</code>, ...)</li>
-<li>Zipper le dossier temporaire dans un fichier <code>battlebotslib.zip</code></li>
-</ul>
-</li>
-</ul>
-<p>Les fichiers zip générés sont prêt à être transmis aux joueurs.</p>
+<h2 id="bots-factices">Bots factices</h2>
+<p>Des bots sans IA peuvent être ajoutés à votre partie. Ils permettent de remplir le nombre de joueurs requis sans avoir à connecter plusieurs IA.</p>
+<p>Le mode debug du serveur est indispensable pour ajouter et contrôler des bots factices.</p>
+<p>Ils peuvent également être contrôlés manuellement depuis l'interface Web, ce qui est pratique pour tirer sur sa propre IA et déclencher les messages de dégâts.</p>
+<h3 id="ajouter-des-bots">Ajouter des bots</h3>
+<p>Démarrez le serveur en mode debug et lancez l'interface du jeu (<a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>).</p>
+<p>Sur la page d'attente de Battlebots, vous remarquerez un bouton <code>Connecter un bot</code> en bas à droite. Ce bouton permet d'ajouter un bot sans IA à la partie :</p>
+<img src="../img/debug-add-bot.png"> 
+<p>Il prendra la première équipe disponible sans joueurs.</p>
+<p>Si vous n'avez pas ce bouton, c'est que le serveur n'est pas lancé en mode debug.</p>
+<h3 id="contr%C3%B4ler-un-bot">Contrôler un bot</h3>
+<p>Double cliquez sur un bot à l'écran, une télécommande va s'afficher sur la droite de l'écran pour prendre le contrôle du bot.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="la-console-web-activemq-est-bloqu%C3%A9e-pour-probl%C3%A8me-de-certificat">La console web ActiveMQ est bloquée pour problème de certificat</h3>
+<p>C'est souvent dû à l'utilisation d'un certificat auto signé pour héberger le site. Sous Firefox on peut continuer malgré le message mais pour les navigateurs basés sur Chromium, il faut taper <code>thisisunsafe</code> sur votre clavier pour passer à la suite.</p>
+<h3 id="erreur-activemq--user-user-is-not-authorized-to-create">Erreur ActiveMQ : User user is not authorized to create...</h3>
+<p>Vérifiez vos informations de connexion aux services STOMP et MQTT, il peut s'agir d'une mauvaise notation du nom de file à écouter (inversion entre les <code>.</code> utilisés par STOMP et les <code>/</code> utilisés par MQTT).</p>
+<hr>
+<p><a href="#top">⬆️ Retour</a> - <em>Configuration du serveur</em></p>
+</div>
 
 </body>
 </html>

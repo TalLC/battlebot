@@ -1,3 +1,4 @@
+
 # Packaging client et serveur
 
 - [Packaging client et serveur](#packaging-client-et-serveur)
@@ -76,3 +77,7 @@ Ce script s'occupe de :
   - Zipper le dossier temporaire dans un fichier `battlebotslib.zip`
 
 Les fichiers zip générés sont prêt à être transmis aux joueurs.
+
+---
+
+[⬆️ Retour](#top) - _Packaging client et serveur_
