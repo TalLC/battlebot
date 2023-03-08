@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c8f790cd-f2da-4ddc-9cfc-4b55cfb8caf4",
+		"_postman_id": "e95131b3-f451-447c-aa3e-f7b792ddaa2a",
 		"name": "Battlebot",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -23,13 +23,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/display/clients/action/ready",
+							"raw": "http://{{host}}:8000/display/clients/action/ready",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -62,13 +59,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/admin/action/ban",
+							"raw": "http://{{host}}:8000/admin/action/ban",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -95,13 +89,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/admin/action/unban",
+							"raw": "http://{{host}}:8000/admin/action/unban",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -128,13 +119,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/game/action/select_map",
+							"raw": "http://{{host}}:8000/game/action/select_map",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -164,13 +152,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/display/clients/action/list",
+							"raw": "http://{{host}}:8000/display/clients/action/list",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -201,13 +186,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/display/clients/action/get_by_id",
+							"raw": "http://{{host}}:8000/display/clients/action/get_by_id",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -238,13 +220,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/display/clients/action/get_by_token",
+							"raw": "http://{{host}}:8000/display/clients/action/get_by_token",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -272,13 +251,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/kill",
+							"raw": "http://{{host}}:8000/bots/:bot_id/action/kill",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -312,7 +288,12 @@
 							}
 						},
 						"url": {
-							"raw": "/bots/action/add",
+							"raw": "http://{{host}}:8000/bots/action/add",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "8000",
 							"path": [
 								"bots",
 								"action",
@@ -342,13 +323,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/bots/action/register",
+							"raw": "http://{{host}}:8000/bots/action/register",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -366,13 +344,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/request_connection?bot_id=VIBB11ST",
+							"raw": "http://{{host}}:8000/request_connection?bot_id=VIBB11ST",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -394,13 +369,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/check_connection?bot_id=VIBB11ST&request_id=Y03KJPA0&stomp_id&mqtt_id",
+							"raw": "http://{{host}}:8000/check_connection?bot_id=VIBB11ST&request_id=Y03KJPA0&stomp_id&mqtt_id",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -443,13 +415,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/shoot",
+							"raw": "http://{{host}}:8000/bots/:bot_id/action/shoot",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -483,13 +452,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/move",
+							"raw": "http://{{host}}:8000/bots/:bot_id/action/move",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -523,13 +489,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/turn",
+							"raw": "http://{{host}}:8000/bots/:bot_id/action/turn",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -568,13 +531,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8000/game/action/start",
+							"raw": "http://{{host}}:8000/game/action/start",
 							"protocol": "http",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
 							"port": "8000",
 							"path": [
@@ -587,6 +547,32 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "127.0.0.1"
 		}
 	]
 }
