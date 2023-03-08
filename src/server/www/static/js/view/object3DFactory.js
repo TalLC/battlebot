@@ -27,7 +27,7 @@ class Object3DFactory {
                 z -> Position en z de l'objet
                 ry -> Rotation en y de l'objet
                 modelPath -> Chemin du fichier 3D à charger
-        Return :  Une Promise qui retournera à terme l'objet de la scene afin de pouvoir intéragir avec en cas de destruction par exemple.
+        Return :  Une Promise qui retournera à terme l'objet de la scene afin de pouvoir interagir avec en cas de destruction par exemple.
     */
     createObject(x, y, z, ry, modelPath) {
         return this.modelLoader(modelPath).then(
@@ -69,7 +69,7 @@ class Object3DFactory {
     /*
         Fonction : Permet la création/ajout d'un objet Bot à la scène.
         Param : bot -> L'objet Bot dont on veut créer le modèle 3D
-        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir intéragir avec.
+        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir interagir avec.
     */
     createBot3D(bot) {
         const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar'][bot.modelName];
@@ -108,7 +108,7 @@ class Object3DFactory {
     /*
         Fonction : Permet la création/ajout d'un objet 3D à la scène (tile, tile object, ...).
         Param : mapObject -> L'objet MapObject dont on veut créer le modèle 3D
-        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir intéragir avec.
+        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir interagir avec.
     */
     createMapObject3D(mapObject) {
         const modelPath = graphicObjects[mapObject.modelName];

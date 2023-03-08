@@ -66,7 +66,7 @@ export default class Debug{
             clickedObject = GameManager().getGameObjectFromSceneObject(hit.object.parent.parent, "bot");
             if (clickedObject) {
                 const bot = clickedObject;
-                this.setSelectedObject(hit.object, bot);
+                this.setSelectedObject(hit.object.parent, bot);
                 this.writeBotInformations(bot);
                 this.debugUi.setRemoteHidden(false);
                 break;

@@ -220,7 +220,7 @@ class GameManager {
         Return : N/A
     */
     createMap(mapData) {
-        const tileRotations = [ -2*Math.PI, -Math.PI, 0.0, Math.PI, 2*Math.PI ]
+        const tileRotations = [-Math.PI, -Math.PI/2, 0.0, Math.PI/2]
         for (let h = 0; h < mapData.height; h++)
         {
             for (let w = 0; w < mapData.width; w++)
