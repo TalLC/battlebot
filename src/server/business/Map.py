@@ -212,10 +212,10 @@ class Map:
         Returns a random spawnable position.
         """
         rand = Random()
-        max_x = self.width - 2
-        max_z = self.height - 2
-        min_x = 1
-        min_z = 1
+        max_x = self.width - 3
+        max_z = self.height - 3
+        min_x = 2
+        min_z = 2
         spawn_x = rand.randint(min_x, max_x)
         spawn_z = rand.randint(min_z, max_z)
 
