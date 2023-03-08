@@ -203,7 +203,7 @@ if __name__ == "__main__":
         try:
             # Big AI time
 
-            last_direction_change_ts = datetime.now()
+            last_turn_ts = datetime.now()
             while G_BOT_HEALTH > 0 and G_GAME_IS_STARTED:
                 try:
                     if not G_BOT_TARGETS_QUEUE.empty():
