@@ -212,14 +212,16 @@ class Map:
         Returns a random spawnable position.
         """
         rand = Random()
-        max_x = self.width - 1
-        max_z = self.height - 1
-        spawn_x = rand.randint(0, max_x)
-        spawn_z = rand.randint(0, max_z)
+        max_x = self.width - 2
+        max_z = self.height - 2
+        min_x = 1
+        min_z = 1
+        spawn_x = rand.randint(min_x, max_x)
+        spawn_z = rand.randint(min_z, max_z)
 
         while not self.is_walkable_at(spawn_x, spawn_z):
-            spawn_x = rand.randint(0, max_x)
-            spawn_z = rand.randint(0, max_z)
+            spawn_x = rand.randint(min_x, max_x)
+            spawn_z = rand.randint(min_z, max_z)
 
         return spawn_x, spawn_z
 
