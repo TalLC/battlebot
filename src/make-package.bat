@@ -122,16 +122,10 @@ rem Création du dossier de package temporaire
 set tmp_lib=_tmp_lib
 rmdir /S /Q %tmp_lib% 2> nul
 mkdir %tmp_lib%
-mkdir %tmp_lib%\battlebotslib
 
 rem Recopie de la lib client
 echo - Recopie de la lib client
-robocopy /E battlebotslib %tmp_lib%\battlebotslib > nul
-
-rem Suppression des dossiers inutiles
-echo - Suppression des dossiers inutiles
-rmdir /S /Q %tmp_lib%\battlebotslib\.idea 2> nul
-rmdir /S /Q %tmp_lib%\battlebotslib\venv 2> nul
+robocopy /E battlebotslib\dist %tmp_lib% > nul
 
 rem Zip du package lib client
 echo - Zip du package lib client
