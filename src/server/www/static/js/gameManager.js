@@ -164,6 +164,7 @@ class GameManager {
             return Object3DFactory.createBullet3D(this.bots[botData.id]).then(bullet => {
                 this.bots[botData.id].bullet = bullet;
                 console.log(bullet);
+                bullet.position.y = 2.5;
                 this.v.scene.add(bullet);
                 return bullet;
             });

@@ -32,7 +32,7 @@ function action(parameters){
             GameManager().addBullet(bot).then(bullet => {
                 console.log(bullet);
                 const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
-                .to({x: target.x , z: target.z}, 10000)
+                .to({x: target.x , z: target.z}, 100)
                 .easing(TWEEN.Easing.Linear.None)
                 .onUpdate((coords) => {
                     bullet.position.x = coords.x;
@@ -48,14 +48,14 @@ function action(parameters){
             const targetObject = GameManager().getGameObjectFromId(target.id);
             if (targetObject) {
                 GameManager().addBullet(bot).then(bullet => {
-                    console.log(GameManager.bots[bot.id].bullet);
+                    console.log(bullet);
                     const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
-                    .to({x: targetObject.coordinates2D.x , z: targetObject.coordinates2D.z}, 10000)
+                    .to({x: targetObject.x , z: targetObject.z}, 100)
                     .easing(TWEEN.Easing.Linear.None)
                     .onUpdate((coords) => {
                         bullet.position.x = coords.x;
                         bullet.position.z = coords.z;
-                        if (bullet.position.x === targetObject.coordinates2D.x && bullet.position.z === targetObject.coordinates2D.z){
+                        if (bullet.position.x === targetObject.x && bullet.position.z === targetObject.z){
                             GameManager().removeBullet(bullet);
                         }
                     })
