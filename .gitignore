@@ -1,14 +1,11 @@
-src/server/activemq/
-src/AI/bot_id.tmp
+server/activemq/
 
-src/server/third-party/activemq/
-src/server/third-party/jre1.8.0/
-src/server/third-party/python3.10/
+server/third-party/activemq/
+server/third-party/jre1.8.0/
+server/third-party/python3.10/
 
-src/battlebots-server-package.zip
-src/battlebotslib.zip
-src/battlebots-documentation.zip
-
+battlebots-server-package.zip
+battlebots-documentation.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
