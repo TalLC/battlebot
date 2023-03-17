@@ -13,13 +13,8 @@
     <li><a href="../serveur/Installation%20du%20serveur.html">Installation du serveur</a></li>
     <li><a href="../serveur/Configuration%20du%20serveur.html">Configuration du serveur</a></li>
   </ul>
-  <span>Client</span>
-  <ul>
-    <li><a href="../client/Installation%20de%20la%20lib%20Python.html">Installation de la lib Python</a></li>
-  </ul>
   <span>Technique</span>
   <ul>
-    <li><a href="battlebotslib%20-%20BotAi.html">battlebotslib - BotAi</a></li>
     <li><a href="Contrats%20d'interfaces.html">Contrats d'interfaces</a></li>
     <li><a href="Contrats%20d'interfaces%20-%20Admin.html">Contrats d'interfaces - Admin</a></li>
   </ul>

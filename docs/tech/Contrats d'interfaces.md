@@ -13,13 +13,8 @@
     <li><a href="../serveur/Installation%20du%20serveur.html">Installation du serveur</a></li>
     <li><a href="../serveur/Configuration%20du%20serveur.html">Configuration du serveur</a></li>
   </ul>
-  <span>Client</span>
-  <ul>
-    <li><a href="../client/Installation%20de%20la%20lib%20Python.html">Installation de la lib Python</a></li>
-  </ul>
   <span>Technique</span>
   <ul>
-    <li><a href="battlebotslib%20-%20BotAi.html">battlebotslib - BotAi</a></li>
     <li><a href="Contrats%20d'interfaces.html">Contrats d'interfaces</a></li>
     <li><a href="Contrats%20d'interfaces%20-%20Admin.html">Contrats d'interfaces - Admin</a></li>
   </ul>
@@ -45,6 +40,8 @@
   - [ServerStompIdMessage](#serverstompidmessage)
   - [GameStatusMessage](#gamestatusmessage)
   - [BotHealthStatusMessage](#bothealthstatusmessage)
+  - [BotMovingSpeedStatusMessage](#botmovingspeedstatusmessage)
+  - [BotTurningSpeedStatusMessage](#botturningspeedstatusmessage)
   - [BotStunningStatusMessage](#botstunningstatusmessage)
   - [BotMovingStatusMessage](#botmovingstatusmessage)
   - [BotTurningStatusMessage](#botturningstatusmessage)
@@ -772,6 +769,104 @@ Donne le nombre de PV du bot.
         "source": "bot",
         "data": {
             "value": 95
+        }
+    }]
+}
+```
+
+## BotMovingSpeedStatusMessage
+
+Donne la vitesse de déplacement max actuelle du bot.
+
+  * Queue: **BATTLEBOT.BOT.{bot_id}**
+  * Producer: **server**
+  * Consumer: **client**
+  * Payload:
+
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "required": [
+        "msg_type",
+        "source",
+        "data"
+    ],
+    "properties": {
+        "msg_type": {
+            "description": "Type of information",
+            "const": "moving_speed_status",
+        },
+        "source": {
+            "description": "Where does the information comes from",
+            "const": "bot"
+        },
+        "data": {
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "properties": {
+                "value": {
+                    "description": "Bot max moving speed in unit per second",
+                    "type": "float"
+                }
+            }
+        }
+    },
+    "examples": [{
+        "msg_type": "moving_speed_status",
+        "source": "bot",
+        "data": {
+            "value": 1.0
+        }
+    }]
+}
+```
+
+## BotTurningSpeedStatusMessage
+
+Donne la vitesse de rotation max actuelle du bot.
+
+  * Queue: **BATTLEBOT.BOT.{bot_id}**
+  * Producer: **server**
+  * Consumer: **client**
+  * Payload:
+
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "required": [
+        "msg_type",
+        "source",
+        "data"
+    ],
+    "properties": {
+        "msg_type": {
+            "description": "Type of information",
+            "const": "turning_speed_status",
+        },
+        "source": {
+            "description": "Where does the information comes from",
+            "const": "bot"
+        },
+        "data": {
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "properties": {
+                "value": {
+                    "description": "Bot max turning speed in radians per second",
+                    "type": "float"
+                }
+            }
+        }
+    },
+    "examples": [{
+        "msg_type": "turning_speed_status",
+        "source": "bot",
+        "data": {
+            "value": 0.52359877559829887307710723054658
         }
     }]
 }

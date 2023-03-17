@@ -4,12 +4,12 @@ chcp 65001 >nul
 rem ---------------------------------
 
 set server-package-name=battlebots-server-package
-set doc-package-name=battlebots-documentation
+set doc-package-name=battlebots-server-doc
 
 rem Suppression de l'ancienne version
 echo - Suppression des anciennes versions
-del /Q battlebots-server-package.zip 2> nul
-del /Q battlebots-documentation.zip 2> nul
+del /Q %server-package-name%.zip 2> nul
+del /Q %doc-package-name%.zip 2> nul
 
 rem Partie serveur
 rem --------------
@@ -128,9 +128,13 @@ robocopy /E docs %tmp_doc% > nul
 rem Suppression des fichiers inutiles
 echo - Suppression des fichiers inutiles
 del /Q %tmp_doc%\*.md 2> nul
+del /Q %tmp_doc%\*.bak 2> nul
 del /Q %tmp_doc%\client\*.md 2> nul
+del /Q %tmp_doc%\client\*.bak 2> nul
 del /Q %tmp_doc%\serveur\*.md 2> nul
+del /Q %tmp_doc%\serveur\*.bak 2> nul
 del /Q %tmp_doc%\tech\*.md 2> nul
+del /Q %tmp_doc%\tech\*.bak 2> nul
 del /Q %tmp_doc%\style\*.bak 2> nul
 rmdir /S /Q %tmp_doc%\packaging\ > nul
 
