@@ -195,15 +195,18 @@ class ScannerModel(IScanner, ABC):
                     if item.shape.intersection(ray):
                         # get all intersections points
                         points_list = item.shape.intersection(ray).boundary
-                        # get the nearest point from bot
-                        nearest_point = ShapesUtils.get_nearest_point(self._bot.shape.centroid, points_list)
-                        obj_in_fov.append({
-                            "distance": nearest_point.distance(self._bot.shape.centroid),
-                            "name": item.name,
-                            "object_type": item.object_type,
-                            "angle": relative_angle,
-                            "obj_id": item.id
-                        })
+                        
+                        # TODO: Parfois la liste de points renvoyée est vide alors qu'elle ne devrait pas
+                        if len(points_list):
+                            # get the nearest point from bot
+                            nearest_point = ShapesUtils.get_nearest_point(self._bot.shape.centroid, points_list)
+                            obj_in_fov.append({
+                                "distance": nearest_point.distance(self._bot.shape.centroid),
+                                "name": item.name,
+                                "object_type": item.object_type,
+                                "angle": relative_angle,
+                                "obj_id": item.id
+                            })
             relative_angle += self._precision
 
         # keep only objects in the foreground
