@@ -1,19 +1,23 @@
-import GameConfig from './config.js';
-import "./actions/gameActions/gameActionDefinition.js"
+import GameManager from './gameManager.js';
 import Object3DFactory from "./view/object3DFactory.js";
 import MapObject from "./gameObjects/mapObject.js"
 import { getRandomInt } from "./utils/utils.js"
 
 
-export default class MapManager {
-    constructor(gameManager) {
-        this.gameManager = gameManager;
-        this.id;
-        this.height;
-        this.width;
-        this.mapObjects = [];
-        this.tileRotations = [-Math.PI, -Math.PI/2, 0.0, Math.PI/2]
+let instance;
 
+export class MapManager {
+    constructor() {
+        if (!instance) {
+            instance = this;
+            this.id;
+            this.height;
+            this.width;
+            this.mapObjects = [];
+            this.tileRotations = [-Math.PI, -Math.PI/2, 0.0, Math.PI/2]
+        }
+
+        return instance;
     }
 
     loadMap(mapData) {
@@ -58,7 +62,7 @@ export default class MapManager {
         );
         if (mapObjectData.model !== "air") {
             Object3DFactory.createMapObject3D(this.mapObjects[mapObjectData.id]).then(sceneObject => {
-                this.gameManager.viewController.scene.add(sceneObject);
+                GameManager().viewController.scene.add(sceneObject);
             });
         }
     }
@@ -106,3 +110,5 @@ export default class MapManager {
     }
 
 }
+
+export default new MapManager();
