@@ -4,8 +4,8 @@ import { actions } from "./actions/actions.js"
 import View3DController from "./view/view3DController.js";
 import Object3DFactory from "./view/object3DFactory.js";
 import Bot from "./gameObjects/bot.js"
-import MapObject from "./gameObjects/mapObject.js"
-import { getRandomInt } from "./utils/utils.js"
+import MapManager from "./mapManager.js"
+
 
 let instance;
 export default function getInstance() {
@@ -18,10 +18,10 @@ export function initGameManager() {
 
 class GameManager {
     constructor() {
-        this.v = new View3DController("view-container");
+        this.viewController = new View3DController(this, "view-container");
+        this.mapManager = new MapManager(this);
         this.loginId;
         this.bots = {};
-        this.mapObjects = {};
 
         /* Page d'accueil */
         // Nombre de joueurs
@@ -47,14 +47,14 @@ class GameManager {
     get allGameObjects() {
         return {
             ...this.bots,
-            ...this.mapObjects
+            ...this.mapManager.mapObjects
         };
     }
 
     /* 
-        Fonction : Permet l'appel à une action intéragissant avec le jeu
+        Fonction : Permet l'appel à une action interagissant avec le jeu
         Param : key -> contient le nom de l'action.
-                param -> contient les paramètres nécéssaire à la réalisation de l'action.
+                param -> contient les paramètres nécessaire à la réalisation de l'action.
         Return : N/A
     */
     action(key,param){
@@ -66,7 +66,7 @@ class GameManager {
             bot.render();
         }
 
-        this.v.render();
+        this.viewController.render();
     }
 
     start() {
@@ -80,7 +80,7 @@ class GameManager {
         const startgameScrollText = startgameScrollContainer.querySelector("#startgame-scroll-text");
         startgameScrollText.classList.remove("vertical-scrolling-text");
 
-        this.v.start();
+        this.viewController.start();
     }
 
     end(winnerName) {
@@ -94,12 +94,60 @@ class GameManager {
         endgameModal.show();
     }
 
+    /*
+        Fonction : Permet la réalisation des actions pour un des bots, reçu dans un appel websocket.
+        Param : message -> correspond aux données pour un bot, reçu dans un appel websocket.
+        Return : N/A
+    */
+    doAction(message){
+        // Création d'une promise vide
+        let promise = Promise.resolve();
+
+        //logger.debug(message.msg_type);
+        
+        if (message.msg_type === "BotUpdateMessage") {
+            // On vérifie si le bot existe
+            if (this.bots[message.id] && this.bots[message.id].sceneObject) {
+                
+                // Parcours des actions enregistrées
+                for(let actionDef in actions) {
+    
+                    // Choix de l'action à effectuer suivant les arguments trouvés dans le message
+                    let selected = actions[actionDef].actionSelector(message);
+                    
+                    if(selected){
+                        let paramAction = actions[actionDef].eventWrapper(message);
+                        promise = promise.then(() => {
+                            this.bots[message.id].action(actionDef, paramAction);
+                        });
+                    }
+                }
+            }
+        } else {
+            for (let actionDef in actions) {
+    
+                // Choix de l'action à effectuer suivant les arguments trouvés dans le message
+                let selected = actions[actionDef].actionSelector(message);
+    
+                if (selected){
+                    let paramAction = actions[actionDef].eventWrapper(message);
+                    promise = promise.then(() => {
+                        this.action(actionDef, paramAction);
+                    });
+                }
+            }
+        }
+    
+        return promise;
+    }
+    
+
     hurtObjectFromId(id) {
         // Récupération du GameObject à partir de l'id
         const obj = this.getGameObjectFromId(id);
 
         // Affichage du hit
-        if (obj) this.v.showHurtMessageForObject(obj);
+        if (obj) this.viewController.showHurtMessageForObject(obj);
     }
 
     destroyGameObjectFromId(id) {
@@ -112,7 +160,7 @@ class GameManager {
     
     removeGameObjectFromId(id) {
         // Supprime un GameObject de son dictionnaire
-        delete this.mapObjects[id];
+        delete this.mapManager.mapObjects[id];
         delete this.bots[id];
     }
 
@@ -134,14 +182,14 @@ class GameManager {
     addBot(botData) {
         this.bots[botData.id] = new Bot(
             botData.id,
-            botData.x, botData.z, -1 * botData.ry,
+            botData.x, botData.z, botData.ry,
             botData.team_color,
             botData.shape_name.toLowerCase(),
             botData.shape_size,
             botData.model_name
         );
         Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
-            this.v.scene.add(sceneObject);
+            this.viewController.scene.add(sceneObject);
         });
     }
 
@@ -150,31 +198,6 @@ class GameManager {
         if (bot) bot.kill();
     }
 
-    /*
-        Fonction : Permet la création d'un Map objects dans le jeu.
-        Param : id -> ID unique de l'objet
-                type -> Type d'objet
-                x -> Position en x
-                y -> Position en y
-                z -> Position en z
-                ry -> Rotation autour de l'axe y
-                model -> Nom du modèle 3D représentant l'objet
-        Return : N/A
-    */
-    addMapObject(mapObjectData) {
-        this.mapObjects[mapObjectData.id] = new MapObject(
-            mapObjectData.id,
-            mapObjectData.type,
-            mapObjectData.x, mapObjectData.y, mapObjectData.z, mapObjectData.ry,
-            mapObjectData.collisionShape, mapObjectData.collisionSize,
-            mapObjectData.model
-        );
-        if (mapObjectData.model !== "air") {
-            Object3DFactory.createMapObject3D(this.mapObjects[mapObjectData.id]).then(sceneObject => {
-                this.v.scene.add(sceneObject);
-            });
-        }
-    }
 
     /*
         Fonction : Retrouve un GameObject à partir d'un objet de la scène ThreeJs.
@@ -190,7 +213,7 @@ class GameManager {
                 }
             }
         } else if (checkFor === "tileObject" || checkFor === "tile") {
-            for(let obj of Object.values(this.mapObjects)) {
+            for(let obj of Object.values(this.mapManager.mapObjects)) {
                 if (obj.sceneObject) {
                     if (obj.type === checkFor) {
                         if (obj.sceneObject === sceneObject) {
@@ -210,62 +233,6 @@ class GameManager {
         for(let obj of Object.values(this.allGameObjects)) {
             if (obj.id === id) {
                 return obj;
-            }
-        }
-    }
-
-    /*
-        Fonction : Permet la création/stockage dans une liste de la MAP en appelant la fonction de création d'objet pour chaque tuile/objet.
-        Param : mapData -> Les données de la MAP reçu depuis le back avec toute les tuiles/objets.
-        Return : N/A
-    */
-    createMap(mapData) {
-        const tileRotations = [-Math.PI, -Math.PI/2, 0.0, Math.PI/2]
-        for (let h = 0; h < mapData.height; h++)
-        {
-            for (let w = 0; w < mapData.width; w++)
-            {
-                for (let tile in mapData['tiles_grid'])
-                 {
-                    tile = mapData['tiles_grid'][tile];
-                    if (h === tile['x'] && w === tile['z']) {
-                        
-                        // Ajout de la Tile
-                        this.addMapObject(
-                            {
-                                id: tile['id'],
-                                type: 'tile',
-                                x: tile['x'],
-                                y: 0.0,
-                                z: tile['z'],
-                                ry: tileRotations[Math.floor(Math.random() * tileRotations.length)],
-                                collisionShape: tile['shape_name'],
-                                collisionSize: tile['shape_size'],
-                                model: tile['name'].toLowerCase()
-                            }
-                        );
-                        
-                        // Ajout du TileObject si présent
-                        if (tile.object) {
-                            const ry = getRandomInt(Math.floor(2 * Math.PI * 100)) / 100
-                            this.addMapObject(
-                                {
-                                    id: tile['object']['id'],
-                                    type: 'tileObject',
-                                    x: tile['object']['x'],
-                                    y: 0.5,
-                                    z: tile['object']['z'],
-                                    ry: ry,
-                                    collisionShape: tile['object']['shape_name'],
-                                    collisionSize: tile['object']['shape_size'],
-                                    model: tile['object']['name'].toLowerCase()
-                                }
-                            );
-                        }
-
-                        break;
-                    }
-                }
             }
         }
     }
