@@ -57,6 +57,7 @@ class WebsocketProvider:
                 await asyncio.sleep(1)
 
             # Sending all bots to webservice
+            logging.debug(f"Sending bots to {display_client.name}")
             for bot in GameManager().bot_manager.get_bots():
                 await websocket.send_json(
                     BotCreateMessage(bot).json())
