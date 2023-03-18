@@ -1,5 +1,5 @@
 import BaseWsMessage from './baseWsMessage.js'
-import GameManager from '../gameManager.js';
+import MapManager from "../mapManager.js"
 import Object3DFactory from '../view/object3DFactory.js';
 
 
@@ -15,6 +15,6 @@ export default class MapCreateMessage extends BaseWsMessage {
 
     exec() {
         // On attend que le cache 3D soit généré pour créer la map
-        Object3DFactory.caching.then(() => GameManager().mapManager.loadMap(this.mapData));
+        Object3DFactory.caching.then(() => MapManager.loadMap(this.mapData));
     }
 }
