@@ -3,6 +3,10 @@ import logger from "../logger.js";
 import { GLTFLoader } from "loaders/GLTFLoader";
 import graphicObjects from "./graphicObjects.js";
 
+/**
+ * Singleton gérant la création des objets 3D.
+ */
+
 let instance;
 
 export class Object3DFactory {

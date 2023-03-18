@@ -3,6 +3,10 @@ import Object3DFactory from "./view/object3DFactory.js";
 import MapObject from "./gameObjects/mapObject.js";
 import { getRandomInt } from "./utils/utils.js";
 
+/**
+ * Singleton gérant la map.
+ */
+
 let instance;
 
 export class MapManager {

@@ -5,6 +5,11 @@ import View3DController from "./view/view3DController.js";
 import MapManager from "./mapManager.js";
 import BotManager from "./botManager.js";
 
+/**
+ * Singleton gérant le jeu.
+ * La config du jeu doit être initialisée avant de créer la 1ère instance de GameManager.
+ */
+
 let instance;
 
 export default function getInstance() {
@@ -167,6 +172,7 @@ class GameManager {
 
     /**
      * Détruit un GameObject à partir de son ID.
+     * L'objet supprime le modèle 3D et attend un peu avant de se supprimer du dictionnaire.
      * @param {string} id - L'identifiant du GameObject.
      */
     destroyGameObjectFromId(id) {
@@ -178,7 +184,7 @@ class GameManager {
     }
 
     /**
-     * Supprime un GameObject à partir de son ID.
+     * Supprime un GameObject de son dictionnaire à partir de son ID.
      * @param {string} id - L'identifiant du GameObject.
      */
     removeGameObjectFromId(id) {
@@ -188,7 +194,7 @@ class GameManager {
     }
 
     /**
-     * Supprime un GameObject.
+     * Supprime un GameObject de son dictionnaire.
      * @param {Object} gameObject - Le GameObject à supprimer.
      */
     removeGameObject(gameObject) {

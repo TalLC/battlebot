@@ -69,11 +69,11 @@ export default class Debug {
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        // update the picking ray with the camera and pointer position
+        // Tir d'un rayon de la caméra vers la position du curseur
         const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(pointer, this.view.camera);
 
-        // calculate objects intersecting the picking ray
+        // Récupération des objets touchés par le rayon
         this.raycastedObjects = raycaster.intersectObjects(this.view.scene.children);
     }
 
