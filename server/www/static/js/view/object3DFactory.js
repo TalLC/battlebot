@@ -1,23 +1,96 @@
 import * as THREE from 'three';
-import {GLTFLoader} from 'loaders/GLTFLoader';
+import logger from '../logger.js';
+import { GLTFLoader } from 'loaders/GLTFLoader';
 import graphicObjects from "./graphicObjects.js";
 
 
-class Object3DFactory {
-    constructor() {
-        this.loader = new GLTFLoader();
-    }
+let instance;
 
+export class Object3DFactory {
+    constructor() {
+        if (!instance) {
+            instance = this;
+            this.loader = new GLTFLoader();
+
+            // Cache des modèles 3D déjà chargés
+            this.loadedModels = {};
+            
+            // Constitution du cache
+            this.caching = this.preloadModels();
+        }
+
+        return instance;
+    }
 
     /*
         Fonction : Permet la création d'une Promise qui sera utilisé pour la création des Objets 3D.
-        Param : obj -> Nom de l'objet à ajouter à la scene.
+        Param : modelPath -> Nom de l'objet à ajouter à la scene.
         Return :  Une Promise qui servira à la création et ajout à la scène des Objets 3D
     */
-    modelLoader(obj) {
-        return new Promise((resolve, reject) => {
-            this.loader.load(obj, data=> resolve(data), null, reject);
-        });
+    loadModel(modelPath) {
+        if (this.loadedModels[modelPath]) {
+            // Si le modèle a déjà été chargé, retourne la référence à l'objet Group du modèle
+            return Promise.resolve(this.loadedModels[modelPath].clone());
+        } else {
+            // Sinon, charge le modèle en utilisant GLTFLoader et stocke la référence à l'objet Group du modèle dans le dictionnaire
+            return new Promise((resolve, reject) => {
+                this.loader.load(
+                    modelPath,
+                    gltf => {
+                        // Conversion du material Basic en Phong
+                        gltf.scene.traverse((o) => {
+                            if (o.isMesh) {
+                                let prevMaterial = o.material;
+                                o.material = new THREE.MeshPhongMaterial();
+                                THREE.MeshBasicMaterial.prototype.copy.call( o.material, prevMaterial );
+                                o.receiveShadow = true;
+                                o.castShadow = true;
+                            }
+                        });
+
+                        // Stockage de la référence vers le modèle 3D
+                        this.loadedModels[modelPath] = gltf.scene;
+                        
+                        const gltfInstance = this.loadedModels[modelPath].clone();
+                        resolve(gltfInstance);
+                    },
+                    undefined,
+                    function(error) {
+                        console.error(`Erreur lors du chargement du modèle ${modelPath}`, error);
+                        reject(error);
+                    }
+                );
+            });
+        }
+    }
+    // loadModel(obj) {
+    //     return new Promise((resolve, reject) => {
+    //         this.loader.load(obj, data => resolve(data.scene), null, reject);
+    //     });
+    // }
+
+
+
+    preloadModels() {
+        let loadModelPromises = [];
+        for (let modelPath of Object.values(graphicObjects)) {
+            if (typeof modelPath === 'object' && modelPath !== null) {
+                for (let subModelPath of Object.values(modelPath)) {
+                    loadModelPromises.push(this.loadModel(subModelPath));
+                }
+            } else {
+                loadModelPromises.push(this.loadModel(modelPath));
+            }
+        }
+
+        logger.debug(`Mise en cache de ${loadModelPromises.length} modèles 3D...`);
+
+        return Promise.all(loadModelPromises)
+        .then(
+            () => {
+                logger.debug("Cache 3D généré !");
+            }
+        )
     }
 
     /*
@@ -30,23 +103,13 @@ class Object3DFactory {
         Return :  Une Promise qui retournera à terme l'objet de la scene afin de pouvoir interagir avec en cas de destruction par exemple.
     */
     createObject(x, y, z, ry, modelPath) {
-        return this.modelLoader(modelPath).then(
-            (gltfData) => {
-                gltfData.scene.position.x = x;
-                gltfData.scene.position.y = y;
-                gltfData.scene.position.z = z;
-                gltfData.scene.rotation.y = ry;
-                gltfData.scene.traverse((o) => {
-                    if (o.isMesh) {
-                        // Conversion du material Basic en Phong
-                        let prevMaterial = o.material;
-                        o.material = new THREE.MeshPhongMaterial();
-                        THREE.MeshBasicMaterial.prototype.copy.call( o.material, prevMaterial );
-                        o.receiveShadow = true;
-                        o.castShadow = true;
-                    }
-                });
-                return(gltfData.scene);
+        return this.loadModel(modelPath).then(
+            (sceneObject) => {
+                sceneObject.position.x = x;
+                sceneObject.position.y = y;
+                sceneObject.position.z = z;
+                sceneObject.rotation.y = ry;
+                return(sceneObject);
             }
         );
     }
@@ -59,18 +122,17 @@ class Object3DFactory {
     createBot3D(bot) {
         const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar'][bot.modelName];
         return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then(sceneObject => {
-            // Peinture du bot de la couleur de l'équipe
+            // Clonage du material car chaque Bot doit avoir son propre material
             sceneObject.traverse((o) => {
-                if (o.isMesh && !o.material.map) {
-                    // On éclairci la peinture du Bot
-                    let botColor = new THREE.Color(bot.teamColor).add(new THREE.Color(0x202020));
-                    
-                    // Peinture des parties sans textures du bot
-                    o.material.color = botColor;
-                }
+                if (o.isMesh) o.material = o.material.clone();
             });
 
+            // Assignation du modèle 3D au Bot
             bot.sceneObject = sceneObject;
+
+            // On peint le Bot de la couleur de l'équipe
+            bot.setColor(new THREE.Color(bot.teamColor).add(new THREE.Color(0x323232)), false);
+            
             return sceneObject;
         });
     }
@@ -145,4 +207,4 @@ class Object3DFactory {
 
 }
 
-export default new Object3DFactory();
+export default new Object3DFactory;
