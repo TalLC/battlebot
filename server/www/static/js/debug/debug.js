@@ -3,7 +3,7 @@ import GameManager from '../gameManager.js';
 import DebugUi from "./debugUi.js";
 
 
-export default class Debug{
+export default class Debug {
 
     constructor(view3DController, debugContainerId) {
         this.container = document.getElementById(debugContainerId);
