@@ -8,7 +8,7 @@ import Object3DFactory from "../../view/object3DFactory.js";
     Param : message -> données reçu par le websocket pour le bot
     Return : un dictionnaire contenant les positions en x et en z "final" du bot
 */
-function eventwrapper(botState){
+function eventWrapper(botState){
     return {'id': botState.id, 'targets': botState.shoot};
 }
 
@@ -44,7 +44,7 @@ function action(parameters){
 /**
 * @param param
 */
-actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
+actions.shoot = new ActionDefinition(eventWrapper, actionSelector, action);
 
 
 function shootTo(bot, to) {
@@ -55,7 +55,7 @@ function shootTo(bot, to) {
     );
 
     //Add the mesh to the scene
-    GameManager().v.scene.add(laserMesh);
+    GameManager().viewController.scene.add(laserMesh);
 
     // Create a promise that resolves after 1 second
     const laserPromise = new Promise((resolve) => {
@@ -66,6 +66,6 @@ function shootTo(bot, to) {
 
     // Wait for the promise to resolve, then remove the mesh from the scene
     laserPromise.then(() => {
-        GameManager().v.disposeSceneObject(laserMesh);
+        GameManager().viewController.disposeSceneObject(laserMesh);
     });
 }

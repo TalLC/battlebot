@@ -1,6 +1,6 @@
 export class ActionDefinition{
-    constructor(eventwrapper, actionSelector, action){
-        this.eventwrapper = eventwrapper;
+    constructor(eventWrapper, actionSelector, action){
+        this.eventWrapper = eventWrapper;
         this.action = action;
         this.actionSelector = actionSelector;
     }

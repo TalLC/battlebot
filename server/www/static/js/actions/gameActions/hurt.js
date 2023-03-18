@@ -1,18 +1,19 @@
+import logger from '../../logger.js';
 import {ActionDefinition, actions} from "../actions.js";
 
 
-function eventwrapper(message){return message.id;}
+function eventWrapper(message){return message.id;}
 
 function actionSelector(message){
     return message.msg_type === "GameObjectHurtMessage" && message.id !== undefined;
 }
 
 function action(objectId){
-    console.log("HurtObject", objectId);
+    logger.debug("HurtObject", objectId);
     this.hurtObjectFromId(objectId);
 }
 
 /**
 * @param param
 */
-actions.hurt = new ActionDefinition(eventwrapper, actionSelector, action);
+actions.hurt = new ActionDefinition(eventWrapper, actionSelector, action);

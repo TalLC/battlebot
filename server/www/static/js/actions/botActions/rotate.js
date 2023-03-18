@@ -1,3 +1,4 @@
+import logger from '../../logger.js';
 import {ActionDefinition, actions} from "../actions.js";
 import TWEEN from 'tween';
 
@@ -6,7 +7,7 @@ import TWEEN from 'tween';
     Param : botState -> données reçu par le websocket pour le bot
     Return : la rotation autour de l'axe y 
 */
-function eventwrapper(botState){return botState.rotate.ry === undefined? this.ry: botState.rotate.ry;}
+function eventWrapper(botState){return botState.rotate.ry === undefined? this.ry: botState.rotate.ry;}
 
 /*
     Fonction : Qui permet de determiner si la rotation à eu lieu
@@ -32,7 +33,7 @@ function action(rotateCoordinate){
 
 function action(rotateCoordinate){
     const targetRotation = -1 * rotateCoordinate;
-    console.log("ry " + this.ry + " new " + targetRotation);
+    logger.debug("ry " + this.ry + " new " + targetRotation);
     if(Math.abs(targetRotation - this.ry) < 1){
         this.ry = targetRotation;
         const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
@@ -86,4 +87,4 @@ function action(rotateCoordinate){
 /**
 * @param param
 */
-actions.rotate = new ActionDefinition(eventwrapper, actionSelector, action);
+actions.rotate = new ActionDefinition(eventWrapper, actionSelector, action);

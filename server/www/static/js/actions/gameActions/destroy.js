@@ -1,7 +1,7 @@
 import {ActionDefinition, actions} from "../actions.js";
 
 
-function eventwrapper(message){return message.id;}
+function eventWrapper(message){return message.id;}
 
 function actionSelector(message){
     return message.msg_type === "GameObjectDestroyMessage" && message.id !== undefined;
@@ -14,4 +14,4 @@ function action(objectId){
 /**
 * @param param
 */
-actions.destroy = new ActionDefinition(eventwrapper, actionSelector, action);
+actions.destroy = new ActionDefinition(eventWrapper, actionSelector, action);
