@@ -1,7 +1,7 @@
 import "../actions/botActions/botActionDefinition.js"
-import {actions} from "../actions/actions.js"
+import { actions } from "../actions/actions.js"
 import GameObject from './gameObject.js';
-import {colorStrToNumber} from '../utils/utils.js'
+import { colorStrToNumber } from '../utils/utils.js'
 import * as THREE from 'three';
 
 
@@ -18,13 +18,13 @@ export default class Bot extends GameObject{
         this.enrolled = false;
     }
 
-    /* 
-        Fonction : Permet l'appel à une action interagissant avec le bot (action définit dans actionDefinition.js)
-        Param : key -> contient le nom de l'action.
-                param -> contient les paramètres nécessaire à la réalisation de l'action.
-        Return : N/A
+    /**
+     * Permet l'appel à une action interagissant avec le bot (actions définies dans botActionDefinition.js)
+     * @param {String} key - Nom de l'action.
+     * @param {Object} param - Paramètres de l'action.
+     * @return {Void} - N/A
     */
-    action(key,param){
+    action(key, param) {
         actions[key].action.call(this, param);
     }
 
@@ -36,7 +36,8 @@ export default class Bot extends GameObject{
                     transparent: true,
                     opacity: 0.7
                 }
-            )
+            ),
+            true
         );
     }
 

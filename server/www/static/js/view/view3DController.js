@@ -1,13 +1,17 @@
 import * as THREE from 'three';
+import * as TWEEN from 'tween';
+import logger from '../logger.js';
 import { OrbitControls } from 'controls/OrbitControls';
 import { FontLoader } from 'loaders/FontLoader';
 import { TextGeometry } from 'geometries/TextGeometry';
+import { updateMessageQueue } from '../messages/messageHandler.js'
 import GameConfig from '../config.js';
 import Debug from "../debug/debug.js";
 
 
 export default class View3DController {
-    constructor(viewContainerId, width = window.innerWidth, height = window.innerHeight){
+    constructor(gameManager, viewContainerId, width = window.innerWidth, height = window.innerHeight){
+        this.gameManager = gameManager;
         this.container = document.getElementById(viewContainerId);
         this.threejsCanvas = this.container.querySelector("#threejs-canvas");
         this.renderer = new THREE.WebGLRenderer( { canvas: this.threejsCanvas } );
@@ -45,6 +49,8 @@ export default class View3DController {
             this.container.ondblclick = this.debug.clickObject.bind(this.debug);
         }
 
+        // On bind l'instance courante à cette fonction car elle fait de l'appel récursif
+        this.animate = this.animate.bind(this);
     }
 
     render() {
@@ -64,6 +70,33 @@ export default class View3DController {
         this.container.hidden = false;
 
         if (GameConfig().isDebug) this.debug.start();
+    }
+
+    /*
+        Fonction : Permet l'affichage de la scene.
+        Param : N/A
+        Return : N/A
+    */
+    animate() {
+        if(updateMessageQueue[0] !== undefined && updateMessageQueue[0].messages !== undefined) {
+            let promises = [];
+            // logger.debug(updateMessageQueue[0].messages)
+            for(let i = 0; i < updateMessageQueue[0].messages.length; i++){
+                promises.push(
+                    this.gameManager.doAction(updateMessageQueue[0].messages[i])
+                );
+            }
+            Promise.all(promises).then(() => {
+                window.requestAnimationFrame( this.animate );
+                TWEEN.update();
+                this.gameManager.render();
+            });
+            updateMessageQueue.shift();
+        } else {
+            window.requestAnimationFrame( this.animate );
+            TWEEN.update();
+            this.gameManager.render();
+        }
     }
 
     showHurtMessageForObject(obj) {
@@ -126,7 +159,7 @@ export default class View3DController {
         Return : N/A
     */
     initLight(){
-        console.log('initialisation light');
+        logger.debug('initialisation light');
         //Création de la lumière ambiante
         const light = new THREE.AmbientLight(0xffffff, 0.9);
         this.scene.add( light );
@@ -169,7 +202,7 @@ export default class View3DController {
         Return : La caméra créé, afin de pouvoir à terme gérer plusieurs caméras.
     */
     createCamera(position, lookAt){
-        console.log('initialisation cam')
+        logger.debug('initialisation cam')
         const camera = new THREE.PerspectiveCamera(18, window.innerWidth / window.innerHeight, 1, 500);
         // const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
         camera.position.set(position.x, position.y, position.z);

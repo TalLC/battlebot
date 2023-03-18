@@ -10,13 +10,13 @@ export default class MapObject extends GameObject{
         this.sceneObject = null;
     }
 
-    /* 
-        Fonction : Permet l'appel à une action intéragissant avec les objets sur la map (action non définit pour l'instant)
-        Param : key -> contient le nom de l'action.
-                param -> contient les paramètres nécéssaire à la réalisation de l'action.
-        Return : N/A
-    */
-    action(key,param){
+    /**
+     * Permet l'appel à une action interagissant avec les objets sur la map
+     * @param {String} key - Nom de l'action.
+     * @param {Object} param - Paramètres de l'action.
+     * @return {Void} - N/A
+     */
+    action(key, param) {
         actions[key].action.call(this, param);
     }
 }

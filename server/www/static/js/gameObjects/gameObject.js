@@ -1,3 +1,4 @@
+import logger from '../logger.js';
 import GameManager from "../gameManager.js";
 import Object3DFactory from "../view/object3DFactory.js";
 
@@ -19,9 +20,9 @@ export default class GameObject{
 
     dispose() {
         // Suppression de l'objet de la scene Three.js
-        GameManager().v.disposeSceneObject(this.sceneObject);
+        GameManager().viewController.disposeSceneObject(this.sceneObject);
 
-        // Suppression du Gameobject
+        // Suppression du GameObject
         // On attend un peu avant d'effacer l'entrée du dictionnaire pour éviter que le tir ne se joue après la suppression
         new Promise((resolve) => setTimeout(() => resolve(), 1000))
             .then(() => GameManager().removeGameObject(this));
@@ -45,7 +46,7 @@ export default class GameObject{
     toggleCollisions() {
         if (this.sceneObject && this.type !== "tile") {
             if (this.collisionBox) {
-                GameManager().v.disposeSceneObject( this.collisionBox );
+                GameManager().viewController.disposeSceneObject( this.collisionBox );
                 this.collisionBox = undefined;
             } else {
                 this.collisionBox = Object3DFactory.createCollisionBoxForGameObject(this);
@@ -54,11 +55,20 @@ export default class GameObject{
         }
     }
 
-    applyMaterial(material) {
-        console.log("apply new material");
+    applyMaterial(material, overrideMap) {
+        logger.debug("Applying new material");
         this.sceneObject.traverse((o) => {
-            if (o.isMesh) {
+            if (o.isMesh && (!o.material.map || overrideMap)) {
                 o.material = material;
+            }
+        });
+    }
+
+    setColor(color, overrideMap) {
+        logger.debug("Setting new color");
+        this.sceneObject.traverse((o) => {
+            if (o.isMesh && (!o.material.map || overrideMap)) {
+                o.material.color = color;
             }
         });
     }
