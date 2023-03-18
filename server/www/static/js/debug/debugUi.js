@@ -62,10 +62,7 @@ export default class DebugUi {
     }
 
     toggleCollisions() {
-        for(const obj of Object.values(GameManager().bots)) {
-            obj.toggleCollisions();
-        }
-        for(const obj of Object.values(GameManager().mapObjects)) {
+        for(const obj of Object.values(GameManager().allGameObjects)) {
             obj.toggleCollisions();
         }
     }
