@@ -13,8 +13,8 @@ export function initGameConfig(gameInfo) {
 class Config {
     constructor(gameInfo) {
         // Game information
-        this.isDebug = gameInfo.is_debug;
-        this.mapId = gameInfo.map_id;
-        this.maxPlayers = gameInfo.max_players;
+        this.isDebug = gameInfo.isDebug;
+        this.mapId = gameInfo.mapId;
+        this.maxPlayers = gameInfo.maxPlayers;
     }
 }
