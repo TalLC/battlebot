@@ -1,90 +1,36 @@
-import logger from '../../logger.js';
-import {ActionDefinition, actions} from "../actions.js";
-import TWEEN from 'tween';
+import { ActionDefinition, actions } from "../actions.js";
 
-/*
-    Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action rotate.
-    Param : botState -> données reçu par le websocket pour le bot
-    Return : la rotation autour de l'axe y 
-*/
-function eventWrapper(botState){return botState.rotate.ry === undefined? this.ry: botState.rotate.ry;}
+/**
+ * Fonction qui crée les paramètres nécessaires pour l'action de rotation.
+ * @param {Object} botState - Les données reçues par le websocket pour le bot.
+ * @returns {number} La rotation autour de l'axe y.
+ */
+function eventWrapper(botState) {
+    return botState.rotate.ry === undefined ? this.ry : botState.rotate.ry;
+}
 
-/*
-    Fonction : Qui permet de determiner si la rotation à eu lieu
-    Param : botState -> données reçu par le websocket pour le bot
-    Return : un booléen qui determine si l'action a été, et doit être animée.
-*/
-function actionSelector(botState){return !(botState.rotate === undefined);}
+/**
+ * Fonction qui détermine si l'action "rotate" doit être exécutée.
+ * @param {Object} botState - Les données reçues par le websocket pour le bot.
+ * @returns {boolean} Un booléen qui détermine si l'action doit être exécutée.
+ */
+function actionSelector(botState) {
+    return !(botState.rotate === undefined);
+}
 
-/*
-    Fonction : Qui permet de rotate un bot 
-    Param : rotateCoordinate -> rotation autour de l'axe y du bot
-    Return : N/A
-*/
-function action(rotateCoordinate){
+/**
+ * Fonction qui permet de faire tourner un bot.
+ * @param {number} rotateCoordinate - La rotation autour de l'axe y du bot.
+ * @returns {void} Cette fonction ne retourne rien.
+ */
+function action(rotateCoordinate) {
     this.sceneObject.rotation.y = -1 * rotateCoordinate;
     this.ry = -1 * rotateCoordinate;
 }
 
-/*
-    Fonction : Qui permet de rotate un bot avec TWEEN
-    Param : rotateCoordinate -> rotation autour de l'axe y du bot
-    Return : N/A
-
-function action(rotateCoordinate){
-    const targetRotation = -1 * rotateCoordinate;
-    logger.debug("ry " + this.ry + " new " + targetRotation);
-    if(Math.abs(targetRotation - this.ry) < 1){
-        this.ry = targetRotation;
-        const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
-	    .to({rotation: targetRotation}, 100)
-	    .easing(TWEEN.Easing.Linear.None)
-    	.onUpdate((coords) => {
-            this.sceneObject.rotation.y = coords.rotation;
-        })
-	    .start()
-    }
-    else if (targetRotation > -0.5){
-        this.ry = targetRotation;
-        const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
-	    .to({rotation: Math.PI * 2 * -1}, 100)
-	    .easing(TWEEN.Easing.Linear.None)
-    	.onUpdate((coords) => {
-            this.sceneObject.rotation.y = coords.rotation;
-        })
-	    .start()
-        .onComplete(() => {
-            this.sceneObject.rotation.y = 0;
-            const last = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
-            .to({rotation: targetRotation}, 100)
-            .easing(TWEEN.Easing.Linear.None)
-            .onUpdate((coords) => {
-                this.sceneObject.rotation.y = coords.rotation;
-            })
-            .start()})
-    }
-    else{
-        this.ry = targetRotation;
-        const tween = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
-	    .to({rotation: 0}, 100)
-	    .easing(TWEEN.Easing.Linear.None)
-    	.onUpdate((coords) => {
-            this.sceneObject.rotation.y = coords.rotation;
-        })
-	    .start()
-        .onComplete(() => {
-            this.sceneObject.rotation.y = Math.PI * 2 * -1;
-            const last = new TWEEN.Tween({rotation: this.sceneObject.rotation.y})
-            .to({rotation: targetRotation}, 100)
-            .easing(TWEEN.Easing.Linear.None)
-            .onUpdate((coords) => {
-                this.sceneObject.rotation.y = coords.rotation;
-            })
-            .start()})
-    }
-}
-*/
 /**
-* @param param
-*/
+ * Définition de l'action "rotate".
+ * @type {ActionDefinition}
+ * @param {Object} param - Les paramètres de l'action.
+ */
 actions.rotate = new ActionDefinition(eventWrapper, actionSelector, action);

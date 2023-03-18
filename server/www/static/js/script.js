@@ -1,4 +1,4 @@
-import MessageHandler from './messages/messageHandler.js'
+import MessageHandler from "./messages/messageHandler.js";
 
 let ws = new WebSocket(`ws://${window.location.host}/ws`);
 let messageHandler = new MessageHandler();
@@ -8,7 +8,6 @@ let messageHandler = new MessageHandler();
  * @param {Object} event - L'événement de message WebSocket contenant les données du message.
  * @return {Promise<void>} - Une promesse qui se résout une fois que le message a été traité.
  */
-ws.onmessage = async function(event) {
+ws.onmessage = async function (event) {
     messageHandler.handle(JSON.parse(event.data));
 };
-

@@ -1,3 +1,6 @@
+/**
+ * Singleton gérant les bots dans le jeu.
+ */
 
 let instance;
 
@@ -10,6 +13,10 @@ export class Logger {
         return instance;
     }
 
+    /**
+     * Affiche un message de débogage dans la console si le mode débogage est activé.
+     * @param {string} msg - Le message à afficher.
+     */
     debug(msg) {
         if (this.isDebug) console.log(msg);
     }

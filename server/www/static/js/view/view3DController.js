@@ -5,6 +5,7 @@ import { OrbitControls } from 'controls/OrbitControls';
 import { FontLoader } from 'loaders/FontLoader';
 import { TextGeometry } from 'geometries/TextGeometry';
 import { updateMessageQueue } from '../messages/messageHandler.js'
+import Object3DFactory from "./object3DFactory.js";
 import GameConfig from '../config.js';
 import Debug from "../debug/debug.js";
 
@@ -152,6 +153,37 @@ export default class View3DController {
             this.disposeSceneObject(textMesh);
         });
     }
+
+    
+    /**
+     * Fonction qui affiche le tir du bot.
+     * @param {Object} bot - Le bot qui tire.
+     * @param {Object} to - Les coordonnées de la cible.
+     * @returns {void} Cette fonction ne retourne rien.
+     */
+    shootTo(bot, to) {
+        const laserMesh = Object3DFactory.createLaserMesh(
+            bot.teamColor,
+            [bot.x, 1.5, bot.z],
+            [to.x, 1.5, to.z]
+        );
+
+        // Ajout du mesh à la scène
+        this.gameManager.viewController.scene.add(laserMesh);
+
+        // Création d'une promesse qui se résout après 1 seconde
+        const laserPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 1000);
+        });
+
+        // Attente de la résolution de la promesse, puis suppression du mesh de la scène
+        laserPromise.then(() => {
+            this.gameManager.viewController.disposeSceneObject(laserMesh);
+        });
+    }
+
 
     /*
         Fonction : Permet la création/ajout à la scène de la Lumière d'ambiance, ainsi que la lumière orientée, afin de visualiser la scène

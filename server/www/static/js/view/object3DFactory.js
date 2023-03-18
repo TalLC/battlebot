@@ -1,8 +1,7 @@
-import * as THREE from 'three';
-import logger from '../logger.js';
-import { GLTFLoader } from 'loaders/GLTFLoader';
+import * as THREE from "three";
+import logger from "../logger.js";
+import { GLTFLoader } from "loaders/GLTFLoader";
 import graphicObjects from "./graphicObjects.js";
-
 
 let instance;
 
@@ -14,7 +13,7 @@ export class Object3DFactory {
 
             // Cache des modèles 3D déjà chargés
             this.loadedModels = {};
-            
+
             // Constitution du cache
             this.caching = this.preloadModels();
         }
@@ -36,13 +35,13 @@ export class Object3DFactory {
             return new Promise((resolve, reject) => {
                 this.loader.load(
                     modelPath,
-                    gltf => {
+                    (gltf) => {
                         // Conversion du material Basic en Phong
                         gltf.scene.traverse((o) => {
                             if (o.isMesh) {
                                 let prevMaterial = o.material;
                                 o.material = new THREE.MeshPhongMaterial();
-                                THREE.MeshBasicMaterial.prototype.copy.call( o.material, prevMaterial );
+                                THREE.MeshBasicMaterial.prototype.copy.call(o.material, prevMaterial);
                                 o.receiveShadow = true;
                                 o.castShadow = true;
                             }
@@ -50,12 +49,12 @@ export class Object3DFactory {
 
                         // Stockage de la référence vers le modèle 3D
                         this.loadedModels[modelPath] = gltf.scene;
-                        
+
                         const gltfInstance = this.loadedModels[modelPath].clone();
                         resolve(gltfInstance);
                     },
                     undefined,
-                    function(error) {
+                    function (error) {
                         console.error(`Erreur lors du chargement du modèle ${modelPath}`, error);
                         reject(error);
                     }
@@ -67,7 +66,7 @@ export class Object3DFactory {
     preloadModels() {
         let loadModelPromises = [];
         for (let modelPath of Object.values(graphicObjects)) {
-            if (typeof modelPath === 'object' && modelPath !== null) {
+            if (typeof modelPath === "object" && modelPath !== null) {
                 for (let subModelPath of Object.values(modelPath)) {
                     loadModelPromises.push(this.loadModel(subModelPath));
                 }
@@ -78,12 +77,9 @@ export class Object3DFactory {
 
         logger.debug(`Mise en cache de ${loadModelPromises.length} modèles 3D...`);
 
-        return Promise.all(loadModelPromises)
-        .then(
-            () => {
-                logger.debug("Cache 3D généré !");
-            }
-        )
+        return Promise.all(loadModelPromises).then(() => {
+            logger.debug("Cache 3D généré !");
+        });
     }
 
     /*
@@ -96,15 +92,13 @@ export class Object3DFactory {
         Return :  Une Promise qui retournera à terme l'objet de la scene afin de pouvoir interagir avec en cas de destruction par exemple.
     */
     createObject(x, y, z, ry, modelPath) {
-        return this.loadModel(modelPath).then(
-            (sceneObject) => {
-                sceneObject.position.x = x;
-                sceneObject.position.y = y;
-                sceneObject.position.z = z;
-                sceneObject.rotation.y = ry;
-                return(sceneObject);
-            }
-        );
+        return this.loadModel(modelPath).then((sceneObject) => {
+            sceneObject.position.x = x;
+            sceneObject.position.y = y;
+            sceneObject.position.z = z;
+            sceneObject.rotation.y = ry;
+            return sceneObject;
+        });
     }
 
     /*
@@ -113,8 +107,8 @@ export class Object3DFactory {
         Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir interagir avec.
     */
     createBot3D(bot) {
-        const modelPath = bot.modelName === undefined? graphicObjects['avatar']['default'] : graphicObjects['avatar'][bot.modelName];
-        return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then(sceneObject => {
+        const modelPath = bot.modelName === undefined ? graphicObjects["avatar"]["default"] : graphicObjects["avatar"][bot.modelName];
+        return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then((sceneObject) => {
             // Clonage du material car chaque Bot doit avoir son propre material
             sceneObject.traverse((o) => {
                 if (o.isMesh) o.material = o.material.clone();
@@ -125,7 +119,7 @@ export class Object3DFactory {
 
             // On peint le Bot de la couleur de l'équipe
             bot.setColor(new THREE.Color(bot.teamColor).add(new THREE.Color(0x323232)), false);
-            
+
             return sceneObject;
         });
     }
@@ -138,20 +132,19 @@ export class Object3DFactory {
     createMapObject3D(mapObject) {
         const modelPath = graphicObjects[mapObject.modelName];
         if (modelPath) {
-            return this.createObject(mapObject.x, mapObject.y, mapObject.z, mapObject.ry, modelPath).then(sceneObject => {
+            return this.createObject(mapObject.x, mapObject.y, mapObject.z, mapObject.ry, modelPath).then((sceneObject) => {
                 mapObject.sceneObject = sceneObject;
                 return sceneObject;
             });
         }
     }
 
-
     createLaserMesh(color, startArray, endArray) {
         const start = new THREE.Vector3(...startArray);
         const end = new THREE.Vector3(...endArray);
 
         // Create a material
-        const material = new THREE.MeshBasicMaterial({ "color": color });
+        const material = new THREE.MeshBasicMaterial({ color: color });
 
         // edge from X to Y
         var direction = new THREE.Vector3().subVectors(end, start);
@@ -176,28 +169,30 @@ export class Object3DFactory {
 
         return cylinderMesh;
     }
-    
-    
+
     createCollisionBoxForGameObject(gameObject) {
-        const objectBox = new THREE.Box3().setFromObject( gameObject.sceneObject );
+        const objectBox = new THREE.Box3().setFromObject(gameObject.sceneObject);
         const size = new THREE.Vector3();
         objectBox.getSize(size);
         const height = size.y;
 
         let geometry;
         if (gameObject.collisionShape === "circle") {
-            geometry = new THREE.CylinderGeometry( gameObject.collisionSize, gameObject.collisionSize, height, 8 );
+            geometry = new THREE.CylinderGeometry(gameObject.collisionSize, gameObject.collisionSize, height, 8);
         } else {
             geometry = new THREE.BoxGeometry(gameObject.collisionSize, height);
         }
 
-        const material = new THREE.MeshBasicMaterial( {color: 0xffff00, transparent: true, opacity: 0.5} );
-        const mesh = new THREE.Mesh( geometry, material );
+        const material = new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+            transparent: true,
+            opacity: 0.5
+        });
+        const mesh = new THREE.Mesh(geometry, material);
         mesh.position.y = height / 2;
         mesh.rotation.y = gameObject.ry;
         return mesh;
     }
-
 }
 
 export default new Object3DFactory();
