@@ -1,6 +1,7 @@
 import logger from '../logger.js';
 import BaseWsMessage from './baseWsMessage.js'
 import GameManager from '../gameManager.js';
+import BotManager from '../botManager.js';
 import sendRestMessage from '../utils/rest.js'
 import GameConfig from '../config.js';
 
@@ -38,7 +39,7 @@ export default class DisplayClientLoginMessage extends BaseWsMessage {
         return new Promise(function(resolve, reject) {
             const intervalId = setInterval(function() {
                 // On est prêt lorsque tous les bots attendus sont créés
-                const botsCount = Object.keys(GameManager().bots).length;
+                const botsCount = Object.keys(BotManager.bots).length;
                 if (botsCount >= GameConfig().maxPlayers) {
                     clearInterval(intervalId);
                     resolve(botsCount);

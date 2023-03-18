@@ -1,10 +1,11 @@
 import {ActionDefinition, actions} from "../actions.js";
 import GameManager from '../../gameManager.js';
+import BotManager from '../../botManager.js';
 import Object3DFactory from "../../view/object3DFactory.js";
 
 
 /*
-    Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
+    Fonction : Permet de créer les paramètres nécessaire à la réalisation de l'action move.
     Param : message -> données reçu par le websocket pour le bot
     Return : un dictionnaire contenant les positions en x et en z "final" du bot
 */
@@ -21,11 +22,11 @@ function actionSelector(botState){return !(botState.shoot === undefined);}
 
 /*
     Fonction : Qui affiche le tir du bot
-    Param : parameters -> dictionnaire avec les informations nécéssaire à l'action.
+    Param : parameters -> dictionnaire avec les informations nécessaire à l'action.
     Return : N/A
 */
 function action(parameters){
-    const bot = GameManager().bots[parameters.id];
+    const bot = BotManager.bots[parameters.id];
 
     for (let target of parameters.targets) {
         if (!target.id) {
