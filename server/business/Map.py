@@ -98,39 +98,6 @@ class TilesGrid:
 
         return tiles_list
 
-    def json2(self, alive_tile_objects_only: bool = False) -> list[dict]:
-        """
-        Dumps the tile list in a serializable format.
-        """
-        tiles_list = list()
-        for tile in self.tiles:
-            tile_dict = {
-                "id": tile.id,
-                "name": tile.name,
-                "x": tile.x,
-                "z": tile.z,
-                "shape_name": tile.shape_name.lower() if tile.shape_name else str(),
-                "shape_size": tile.shape_size
-            }
-
-            if tile.tile_object.is_alive:
-                tile_object_dict = {
-                    "object": {
-                        "id": tile.tile_object.id,
-                        "name": tile.tile_object.name,
-                        "x": tile.tile_object.x,
-                        "z": tile.tile_object.z,
-                        "ry": tile.tile_object.ry,
-                        "shape_name": tile.tile_object.shape_name.lower() if tile.tile_object.shape_name else str(),
-                        "shape_size": tile.tile_object.shape_size
-                    }
-                }
-                tile_dict |= tile_object_dict
-
-            tiles_list.append(tile_dict)
-
-        return tiles_list
-
 
 class Map:
 
