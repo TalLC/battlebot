@@ -24,6 +24,8 @@ from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
 from consumer.brokers.messages.stomp.BotHealthStatusMessage import BotHealthStatusMessage
+from consumer.brokers.messages.stomp.BotTurningSpeedStatusMessage import BotTurningSpeedStatusMessage
+from consumer.brokers.messages.stomp.BotMovingSpeedStatusMessage import BotMovingSpeedStatusMessage
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from consumer.webservices.messages.websocket.BotRotateMessage import BotRotateMessage
 from consumer.webservices.messages.websocket.GameObjectHurtMessage import GameObjectHurtMessage
@@ -337,15 +339,11 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Sending current health
         self.send_client_health_status()
 
-        # Todo : Envoyer les caractéristiques du bots (vitesse de déplacement, etc) au client
-        # Sending bot role
-        # self.role
-
         # Sending max moving speed
-        # self.moving_speed
+        self.send_client_moving_speed_status()
 
         # Sending max turning speed
-        # self.moving_speed
+        self.send_client_turning_speed_status()
 
     def send_client_health_status(self) -> None:
         """
@@ -355,6 +353,24 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Sending health status to the client
         ConsumerManager().stomp.send_message(BotHealthStatusMessage(self.id, self.health))
+
+    def send_client_moving_speed_status(self) -> None:
+        """
+        Send current moving speed to the client.
+        """
+        logging.debug(f"[BOT {self.name}] Moving speed: {self.moving_speed}")
+
+        # Sending health status to the client
+        ConsumerManager().stomp.send_message(BotMovingSpeedStatusMessage(self.id, self.moving_speed))
+
+    def send_client_turning_speed_status(self) -> None:
+        """
+        Send current turning speed to the client.
+        """
+        logging.debug(f"[BOT {self.name}] Turning speed: {self.turning_speed}")
+
+        # Sending health status to the client
+        ConsumerManager().stomp.send_message(BotTurningSpeedStatusMessage(self.id, self.turning_speed))
 
     def _on_death(self) -> None:
         """
