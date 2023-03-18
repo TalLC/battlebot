@@ -63,13 +63,6 @@ export class Object3DFactory {
             });
         }
     }
-    // loadModel(obj) {
-    //     return new Promise((resolve, reject) => {
-    //         this.loader.load(obj, data => resolve(data.scene), null, reject);
-    //     });
-    // }
-
-
 
     preloadModels() {
         let loadModelPromises = [];
@@ -207,4 +200,4 @@ export class Object3DFactory {
 
 }
 
-export default new Object3DFactory;
+export default new Object3DFactory();
