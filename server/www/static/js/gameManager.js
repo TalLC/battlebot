@@ -2,9 +2,8 @@ import GameConfig from './config.js';
 import "./actions/gameActions/gameActionDefinition.js"
 import { actions } from "./actions/actions.js"
 import View3DController from "./view/view3DController.js";
-import Object3DFactory from "./view/object3DFactory.js";
-import Bot from "./gameObjects/bot.js"
 import MapManager from "./mapManager.js"
+import BotManager from "./botManager.js"
 
 
 let instance;
@@ -19,9 +18,7 @@ export function initGameManager() {
 class GameManager {
     constructor() {
         this.viewController = new View3DController(this, "view-container");
-        this.mapManager = new MapManager(this);
         this.loginId;
-        this.bots = {};
 
         /* Page d'accueil */
         // Nombre de joueurs
@@ -46,8 +43,8 @@ class GameManager {
 
     get allGameObjects() {
         return {
-            ...this.bots,
-            ...this.mapManager.mapObjects
+            ...BotManager.bots,
+            ...MapManager.mapObjects
         };
     }
 
@@ -62,7 +59,7 @@ class GameManager {
     }
 
     render() {
-        for (let bot of Object.values(this.bots)) {
+        for (let bot of Object.values(BotManager.bots)) {
             bot.render();
         }
 
@@ -107,7 +104,7 @@ class GameManager {
         
         if (message.msg_type === "BotUpdateMessage") {
             // On vérifie si le bot existe
-            if (this.bots[message.id] && this.bots[message.id].sceneObject) {
+            if (BotManager.bots[message.id] && BotManager.bots[message.id].sceneObject) {
                 
                 // Parcours des actions enregistrées
                 for(let actionDef in actions) {
@@ -118,7 +115,7 @@ class GameManager {
                     if(selected){
                         let paramAction = actions[actionDef].eventWrapper(message);
                         promise = promise.then(() => {
-                            this.bots[message.id].action(actionDef, paramAction);
+                            BotManager.bots[message.id].action(actionDef, paramAction);
                         });
                     }
                 }
@@ -160,8 +157,8 @@ class GameManager {
     
     removeGameObjectFromId(id) {
         // Supprime un GameObject de son dictionnaire
-        delete this.mapManager.mapObjects[id];
-        delete this.bots[id];
+        delete MapManager.mapObjects[id];
+        delete BotManager.bots[id];
     }
 
     removeGameObject(gameObject) {
@@ -169,34 +166,7 @@ class GameManager {
         this.removeGameObjectFromId(gameObject.id);
     }
 
-    /*
-        Fonction : Permet la création de Bots dans le jeu.
-        Param : id -> ID unique du Bot
-                x -> Position en x
-                z -> Position en z
-                ry -> Rotation autour de l'axe y
-                team_color -> Couleur de l'équipe à laquelle appartient le Bot
-                model_name -> Nom du modèle 3D représentant le bot
-        Return : N/A
-    */
-    addBot(botData) {
-        this.bots[botData.id] = new Bot(
-            botData.id,
-            botData.x, botData.z, botData.ry,
-            botData.team_color,
-            botData.shape_name.toLowerCase(),
-            botData.shape_size,
-            botData.model_name
-        );
-        Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
-            this.viewController.scene.add(sceneObject);
-        });
-    }
 
-    killBot(id) {
-        const bot = this.getGameObjectFromId(id);
-        if (bot) bot.kill();
-    }
 
 
     /*
@@ -207,13 +177,13 @@ class GameManager {
     */
     getGameObjectFromSceneObject(sceneObject, checkFor) {
         if (checkFor === "bot") {
-            for(let obj of Object.values(this.bots)) {
+            for(let obj of Object.values(BotManager.bots)) {
                 if (obj.type === "bot" && obj.sceneObject === sceneObject) {
                     return obj;
                 }
             }
         } else if (checkFor === "tileObject" || checkFor === "tile") {
-            for(let obj of Object.values(this.mapManager.mapObjects)) {
+            for(let obj of Object.values(MapManager.mapObjects)) {
                 if (obj.sceneObject) {
                     if (obj.type === checkFor) {
                         if (obj.sceneObject === sceneObject) {
