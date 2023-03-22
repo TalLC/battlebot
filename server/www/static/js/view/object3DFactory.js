@@ -25,11 +25,11 @@ export class Object3DFactory {
         return instance;
     }
 
-    /*
-        Fonction : Permet la création d'une Promise qui sera utilisé pour la création des Objets 3D.
-        Param : modelPath -> Nom de l'objet à ajouter à la scene.
-        Return :  Une Promise qui servira à la création et ajout à la scène des Objets 3D
-    */
+    /**
+     * Charge un modèle 3D ou retourne une référence si déjà chargé.
+     * @param {string} modelPath - Chemin du fichier du modèle 3D.
+     * @returns {Promise<THREE.Group>} - Une promesse qui retourne l'objet 3D.
+     */
     loadModel(modelPath) {
         if (this.loadedModels[modelPath]) {
             // Si le modèle a déjà été chargé, retourne la référence à l'objet Group du modèle
@@ -67,6 +67,10 @@ export class Object3DFactory {
         }
     }
 
+    /**
+     * Précharge les modèles 3D pour les stocker en cache.
+     * @returns {Promise<void>} - Une promesse qui se résout lorsque tous les modèles sont chargés.
+     */
     preloadModels() {
         let loadModelPromises = [];
         for (let modelPath of Object.values(graphicObjects)) {
@@ -86,15 +90,15 @@ export class Object3DFactory {
         });
     }
 
-    /*
-        Fonction : Permet la création/ajout à la scène d'un objet. Est appelé à chaque nouvel objet (Arbre, Mur, Rocher, Sol, Eau...).
-        Param : x -> Position en x de l'objet
-                y -> Position en y de l'objet
-                z -> Position en z de l'objet
-                ry -> Rotation en y de l'objet
-                modelPath -> Chemin du fichier 3D à charger
-        Return :  Une Promise qui retournera à terme l'objet de la scene afin de pouvoir interagir avec en cas de destruction par exemple.
-    */
+    /**
+     * Crée un objet 3D et définit sa position et sa rotation.
+     * @param {number} x - Position en x de l'objet.
+     * @param {number} y - Position en y de l'objet.
+     * @param {number} z - Position en z de l'objet.
+     * @param {number} ry - Rotation en y de l'objet.
+     * @param {string} modelPath - Chemin du fichier 3D à charger.
+     * @returns {Promise<THREE.Object3D>} - Une promesse qui retourne l'objet de la scène.
+     */
     createObject(x, y, z, ry, modelPath) {
         return this.loadModel(modelPath).then((sceneObject) => {
             sceneObject.position.x = x;
@@ -105,11 +109,11 @@ export class Object3DFactory {
         });
     }
 
-    /*
-        Fonction : Permet la création/ajout d'un objet Bot à la scène.
-        Param : bot -> L'objet Bot dont on veut créer le modèle 3D
-        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir interagir avec.
-    */
+    /**
+     * Crée un objet 3D pour un bot.
+     * @param {Object} bot - L'objet Bot dont on veut créer le modèle 3D.
+     * @returns {Promise<THREE.Object3D>} - Une promesse qui retourne le modèle 3D du bot.
+     */
     createBot3D(bot) {
         const modelPath = bot.modelName === undefined ? graphicObjects["avatar"]["default"] : graphicObjects["avatar"][bot.modelName];
         return this.createObject(bot.x, bot.y, bot.z, bot.ry, modelPath).then((sceneObject) => {
@@ -128,11 +132,11 @@ export class Object3DFactory {
         });
     }
 
-    /*
-        Fonction : Permet la création/ajout d'un objet 3D à la scène (tile, tile object, ...).
-        Param : mapObject -> L'objet MapObject dont on veut créer le modèle 3D
-        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir interagir avec.
-    */
+    /**
+     * Crée un objet 3D pour un objet de carte (mapObject).
+     * @param {Object} mapObject - L'objet MapObject dont on veut créer le modèle 3D.
+     * @returns {Promise<THREE.Object3D>} - Une promesse qui retourne le modèle 3D de l'objet de carte.
+     */
     createMapObject3D(mapObject) {
         const modelPath = graphicObjects[mapObject.modelName];
         if (modelPath) {
@@ -143,6 +147,13 @@ export class Object3DFactory {
         }
     }
 
+    /**
+     * Crée un maillage pour un faisceau laser.
+     * @param {THREE.Color} color - Couleur du laser.
+     * @param {Array<number>} startArray - Position de départ du laser.
+     * @param {Array<number>} endArray - Position de fin du laser.
+     * @returns {THREE.Mesh} - Le maillage du laser.
+     */
     createLaserMesh(color, startArray, endArray) {
         const start = new THREE.Vector3(...startArray);
         const end = new THREE.Vector3(...endArray);
@@ -174,6 +185,11 @@ export class Object3DFactory {
         return cylinderMesh;
     }
 
+    /**
+     * Crée une boîte de collision pour un objet de jeu (gameObject).
+     * @param {Object} gameObject - L'objet de jeu pour lequel créer la boîte de collision.
+     * @returns {THREE.Mesh} - Le maillage de la boîte de collision.
+     */
     createCollisionBoxForGameObject(gameObject) {
         const objectBox = new THREE.Box3().setFromObject(gameObject.sceneObject);
         const size = new THREE.Vector3();

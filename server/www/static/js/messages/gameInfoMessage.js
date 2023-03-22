@@ -1,7 +1,7 @@
 import BaseWsMessage from "./baseWsMessage.js";
 import { initGameManager } from "../gameManager.js";
 import { initGameConfig } from "../config.js";
-import GameManager from "../gameManager.js";
+import Animator from "../view/animator.js";
 
 export default class GameInfoMessage extends BaseWsMessage {
     constructor(message) {
@@ -34,7 +34,7 @@ export default class GameInfoMessage extends BaseWsMessage {
         // On a besoin de la config du jeu pour déclarer le GameManager
         initGameManager();
 
-        // Déclenchement de la boucle d'update du visuel ThreeJs
-        GameManager().viewController.animate();
+        // Création de l'Animator qui va consulter les updateMessages
+        new Animator();
     }
 }

@@ -9,6 +9,8 @@ export let updateMessageQueue = [];
  * Classe MessageHandler qui gère les messages entrants et les transmet aux classes de traitement appropriées.
  */
 export default class MessageHandler {
+    constructor() {}
+
     /**
      * Méthode de gestion des messages qui analyse et traite les messages entrants.
      * @param {Object} message - L'objet message à traiter.
