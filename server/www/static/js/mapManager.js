@@ -53,7 +53,7 @@ export class MapManager {
      */
     randomRotation(isTile) {
         if (isTile) return this.tileRotations[Math.floor(Math.random() * this.tileRotations.length)];
-        else return getRandomInt(Math.floor(2 * Math.PI * 100)) / 100;
+        else return Math.random() * 2 * Math.PI;
     }
 
     /**
