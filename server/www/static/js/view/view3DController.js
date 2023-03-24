@@ -117,7 +117,7 @@ export default class View3DController {
             return textMesh;
         })
         .then((textMesh) => {
-            // Diminuer l'opcatier pour rendre le texte invisible
+            // Diminuer l'opacité pour rendre le texte invisible
             return new Promise((resolve) => {
                 let opacity = 1;
                 const interval = setInterval(() => {

@@ -65,48 +65,6 @@ class Webservices(metaclass=SingletonABCMeta):
                 self.dispatch_message_to_all_queues(message_list)
                 message_list = []
 
-    # def concatenate(self, e: Event):
-    #     # Message gathering interval
-    #     loop_wait_ms = 100
-    #
-    #     # Message gathered and concatenated in the interval
-    #     message_list: [IWebsocketMessage] = list()
-    #
-    #     while not e.is_set():
-    #         # End of this loop in Now + loop_wait_ms
-    #         timer_end = time() + timedelta(milliseconds=loop_wait_ms).total_seconds()
-    #
-    #         # Get all messages in this interval and concatenates the ones that can be
-    #         while time() < timer_end:
-    #
-    #             # Gathering a message
-    #             new_message = self.__ws_tmp_queue.get()
-    #             has_been_merged = False
-    #
-    #             # Checking type of message
-    #             if isinstance(new_message, BotUpdateMessage):
-    #
-    #                 # Checking if we had another message from the same bot in the past
-    #                 for prev_message in message_list:
-    #
-    #                     # If it was a message of type BotUpdateMessage, it can be concatenated
-    #                     if isinstance(prev_message, BotUpdateMessage):
-    #
-    #                         # We already had a message from this bot, let's add them
-    #                         if prev_message.id == new_message.id:
-    #                             prev_message += new_message
-    #                             has_been_merged = True
-    #                             continue
-    #
-    #             # We cannot merge this message with a previous one, adding it to the list
-    #             if not has_been_merged:
-    #                 message_list.append(new_message)
-    #
-    #         # Sending message to all displays
-    #         if len(message_list):
-    #             self.dispatch_message_to_all_queues(message_list)
-    #             message_list = []
-
     def close_thread(self):
         self._event.set()
 

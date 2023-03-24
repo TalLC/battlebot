@@ -30,5 +30,9 @@ class Config {
         this.isDebug = gameInfo.isDebug;
         this.mapId = gameInfo.mapId;
         this.maxPlayers = gameInfo.maxPlayers;
+        this.resetKey = 'c';
+        this.resetCtrlKey = true;
+        this.resetAltKey = false;
+        this.resetShiftKey = false;
     }
 }

@@ -1,9 +1,11 @@
 import GameConfig from "./config.js";
 import "./actions/gameActions/gameActionDefinition.js";
 import { actions } from "./actions/actions.js";
+import sendRestMessage from "./utils/rest.js";
 import View3DController from "./view/view3DController.js";
 import MapManager from "./mapManager.js";
 import BotManager from "./botManager.js";
+import logger from "./logger.js";
 
 /**
  * Singleton gérant le jeu.
@@ -51,6 +53,10 @@ class GameManager {
         this.endgameContainer = document.getElementById("endgame-container");
         this.endgameModal = document.getElementById("endgame-modal");
         this.endgameMessageL1 = this.endgameModal.querySelector("#endgame-message-l1");
+
+
+        /* Reset */
+        window.onkeydown = this.reset.bind(this);
     }
 
     /**
@@ -99,6 +105,24 @@ class GameManager {
         startgameScrollText.classList.remove("vertical-scrolling-text");
 
         this.viewController.start();
+    }
+
+    /**
+     * Reset la partie.
+     * @param {KeyboardEvent} event - Les touches appuyées
+     */
+    reset(event) {
+        if (event.ctrlKey === GameConfig().resetCtrlKey
+            && event.altKey === GameConfig().resetAltKey
+            && event.shiftKey === GameConfig().resetShiftKey
+            && event.key === GameConfig().resetKey) {
+            let resetPassword = prompt("Reset de la partie - Mot de passe administrateur", "");
+            if (resetPassword !== null && resetPassword !== '') {
+                sendRestMessage("POST", `/game/action/reset`, {
+                    api_password: resetPassword
+                });
+            }
+        }
     }
 
     /**
