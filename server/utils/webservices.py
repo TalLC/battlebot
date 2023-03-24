@@ -116,12 +116,12 @@ class Webservices(metaclass=SingletonABCMeta):
     def dispatch_message_to_all_queues(self, message_list: [IWebsocketMessage]):
         json_messages = [message.json() for message in message_list]
 
-        json_message = {
+        json_enveloppe = {
             'messages': json_messages,
             'count': len(json_messages)
         }
         for queue in self.__ws_client_queues:
-            queue.put(item=json_message)
+            queue.put(item=json_enveloppe)
 
     def add_ws_queue(self, queue: SimpleQueue):
         """
