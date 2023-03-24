@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from fastapi import WebSocket
 import starlette.datastructures
 from business.displays.DisplayClient import DisplayClient
 from typing import TYPE_CHECKING
@@ -28,7 +29,8 @@ class IDisplayManager(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def create_client(self, host: str, port: int, websocket_headers: starlette.datastructures.Headers) -> str:
+    def create_client(self, websocket: WebSocket, websocket_headers: starlette.datastructures.Headers,
+                      host: str, port: int) -> str:
         """
         Create a new display client.
         """
@@ -66,5 +68,19 @@ class IDisplayManager(ABC):
     def get_connected_clients_jsons(self) -> list:
         """
         Return connected  clients json information.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def disconnect_all_clients(self):
+        """
+        Disconnect all clients from their websocket.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def reset(self):
+        """
+        Disconnect and remove all clients.
         """
         raise NotImplementedError()

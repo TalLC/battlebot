@@ -39,7 +39,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     @property
     def is_full(self) -> bool:
-        return self.bot_manager.get_bots_count() >= self.max_players
+        return self.registered_players_count >= self.max_players
 
     @property
     def max_players(self) -> int:
@@ -63,18 +63,14 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
         # Thread auto starting the game when enough bot are connected
         self._event_stop_checking_starting_conditions = Event()
-        self._thread_game_start_conditions = Thread(
-            target=self._thread_check_starting_conditions,
-            args=(self._event_stop_checking_starting_conditions,)
-        ).start()
+        self._thread_game_start_conditions = None
 
         # Thread to stop the game on winning conditions
         # Must be started manually when the game starts
         self._event_stop_checking_stopping_conditions = Event()
-        self._thread_game_stop_conditions = Thread(
-            target=self._thread_check_stopping_conditions,
-            args=(self._event_stop_checking_stopping_conditions,)
-        )
+        self._thread_game_stop_conditions = None
+
+        self.init_threads()
 
     def load_map(self, map_id: str):
         """
@@ -84,6 +80,26 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             del self.map
 
         self.map = Map(self, map_id)
+
+    def reload_map(self):
+        self.map = Map(self, CONFIG_GAME.map_id)
+
+    def init_threads(self):
+        # Reset Events
+        self._event_stop_checking_starting_conditions.clear()
+        self._event_stop_checking_stopping_conditions.clear()
+
+        # Reset Threads
+        self._thread_game_start_conditions = Thread(
+            target=self._thread_check_starting_conditions,
+            args=(self._event_stop_checking_starting_conditions,)
+        )
+        self._thread_game_stop_conditions = Thread(
+            target=self._thread_check_stopping_conditions,
+            args=(self._event_stop_checking_stopping_conditions,)
+        )
+
+        self._thread_game_start_conditions.start()
 
     def stop_threads(self):
         """
@@ -200,8 +216,9 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         # Ensure the thread is stopped if we have aborted the game
         self._event_stop_checking_stopping_conditions.set()
         self._is_started = False
+        self._is_client_ready = False
 
-        # Dispatching starting message to all connected bots
+        # Dispatching stop message to all connected bots
         for bot in self.bot_manager.get_bots():
             bot.stop()
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
