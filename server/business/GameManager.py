@@ -216,6 +216,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         # Ensure the thread is stopped if we have aborted the game
         self._event_stop_checking_stopping_conditions.set()
         self._is_started = False
+        self._are_bots_ready = False
         self._is_client_ready = False
 
         # Dispatching stop message to all connected bots
