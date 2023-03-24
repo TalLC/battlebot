@@ -1,13 +1,28 @@
 import * as THREE from 'three';
+import logger from '../logger.js';
 import { OrbitControls } from 'controls/OrbitControls';
 import { FontLoader } from 'loaders/FontLoader';
 import { TextGeometry } from 'geometries/TextGeometry';
+import Object3DFactory from "./object3DFactory.js";
 import GameConfig from '../config.js';
 import Debug from "../debug/debug.js";
+import Bullet from "../gameObjects/bullet.js"
 
 
+
+/**
+ * Classe View3DController permettant de gérer l'affichage 3D du jeu.
+ */
 export default class View3DController {
-    constructor(viewContainerId, width = window.innerWidth, height = window.innerHeight){
+    /**
+     * Construit une instance de View3DController avec les dimensions spécifiées.
+     * @param {Object} gameManager - Gestionnaire de jeu.
+     * @param {string} viewContainerId - ID du conteneur HTML pour l'affichage 3D.
+     * @param {number} width - Largeur de la vue 3D.
+     * @param {number} height - Hauteur de la vue 3D.
+     */
+    constructor(gameManager, viewContainerId, width = window.innerWidth, height = window.innerHeight){
+        this.gameManager = gameManager;
         this.container = document.getElementById(viewContainerId);
         this.threejsCanvas = this.container.querySelector("#threejs-canvas");
         this.renderer = new THREE.WebGLRenderer( { canvas: this.threejsCanvas } );
@@ -23,13 +38,6 @@ export default class View3DController {
 
         this.initLight();
 
-        // Camera OrthographicCamera
-        // this.camera = this.createCamera(
-        //     {left: width / - 32, right: width / 32, top: height / 32, bottom: height / - 32, near: 1, far: 1000 },
-        //     {x: 32, y: 50, z: 32},
-        //     {x: 0, y: 0, z: 0}
-        // );
-
         // Création de la caméra
         this.camera = this.createCamera(
             {x: 64, y: 64, z: 64},
@@ -44,14 +52,19 @@ export default class View3DController {
             this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
             this.container.ondblclick = this.debug.clickObject.bind(this.debug);
         }
-
     }
 
+    /**
+     * Fonction pour le rendu de la scène.
+     */
     render() {
         if (GameConfig().isDebug) this.debug.render();
         this.renderer.render( this.scene, this.camera );
     }
 
+    /**
+     * Fonction pour ajuster la taille de la scène lors du redimensionnement de la fenêtre.
+     */
     resize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
@@ -59,6 +72,9 @@ export default class View3DController {
         this.render();
     }
 
+    /**
+     * Fonction pour démarrer l'affichage de la scène et des éléments de debug si besoin.
+     */
     start() {
         // Affichage du viewport Three.js
         this.container.hidden = false;
@@ -66,6 +82,10 @@ export default class View3DController {
         if (GameConfig().isDebug) this.debug.start();
     }
 
+    /**
+     * Fonction pour afficher un message de "hit" sur un objet donné.
+     * @param {Object} obj - L'objet pour lequel afficher le message de hit.
+     */
     showHurtMessageForObject(obj) {
         let font;
 
@@ -120,13 +140,25 @@ export default class View3DController {
         });
     }
 
-    /*
-        Fonction : Permet la création/ajout à la scène de la Lumière d'ambiance, ainsi que la lumière orientée, afin de visualiser la scène
-        Param : N/A
-        Return : N/A
-    */
+    /**
+     * Fonction pour afficher le tir d'un bot.
+     * @param {Object} bot - Le bot qui tire.
+     * @param {Object} target - Les coordonnées de la cible.
+     */
+    shootTo(bot, target) {
+        const bullet = new Bullet(bot.x, 2.5, bot.z, bot.ry, bot.teamColor)
+        Object3DFactory.createBullet3D(bullet)
+        .then(bulletSceneObject => {
+            this.scene.add(bulletSceneObject);
+            bullet.moveTo(target);
+        });
+    }
+
+    /**
+     * Fonction pour initialiser l'éclairage de la scène.
+     */
     initLight(){
-        console.log('initialisation light');
+        logger.debug('initialisation light');
         //Création de la lumière ambiante
         const light = new THREE.AmbientLight(0xffffff, 0.9);
         this.scene.add( light );
@@ -151,27 +183,17 @@ export default class View3DController {
         directionalLight.shadow.camera.far = 55;
         directionalLight.shadow.radius = 1;
         this.scene.add(directionalLight);
-
-        if (GameConfig().isDebug) {
-            const dlHelper = new THREE.DirectionalLightHelper(directionalLight, 3);
-            this.scene.add(dlHelper);
-
-            const shadowCameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
-            this.scene.add(shadowCameraHelper);
-        }
     }
 
-    /*
-        Fonction : Permet la création d'une camera afin de visualiser la scène
-        Param : frustrum -> dictionnaire definissant zone de la vision de la caméra
-                position -> dictionnaire contenant la position de la caméra en x, y et z.
-                lookAt -> dicitonnaire contenant le position de la ou regarde la camera en x, y et z
-        Return : La caméra créé, afin de pouvoir à terme gérer plusieurs caméras.
-    */
+    /**
+     * Fonction pour créer une caméra afin de visualiser la scène.
+     * @param {Object} position - Position de la caméra en x, y et z.
+     * @param {Object} lookAt - Position vers laquelle regarde la caméra en x, y et z.
+     * @returns {THREE.PerspectiveCamera} La caméra créée.
+     */
     createCamera(position, lookAt){
-        console.log('initialisation cam')
+        logger.debug('initialisation cam')
         const camera = new THREE.PerspectiveCamera(18, window.innerWidth / window.innerHeight, 1, 500);
-        // const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, frustum.near, frustum.far );
         camera.position.set(position.x, position.y, position.z);
         this.controls = new OrbitControls(camera, this.renderer.domElement);
         this.controls.target.set(lookAt.x, lookAt.y, lookAt.z);
@@ -180,23 +202,19 @@ export default class View3DController {
         return camera;
     }
 
-    /*
-        Fonction : Efface complètement un objet de la scène ThreeJs.
-        Param : sceneObject -> L'objet à supprimer.
-        Return : N/A
-    */
+    /**
+     * Fonction pour effacer complètement un objet de la scène ThreeJs.
+     * @param {THREE.Object3D} sceneObject - L'objet à supprimer.
+     */
     disposeSceneObject(sceneObject) {
         if (!(sceneObject instanceof THREE.Object3D)) return false;
 
-        // for better memory management and performance
         if (sceneObject.geometry) sceneObject.geometry.dispose();
 
         if (sceneObject.material) {
             if (sceneObject.material instanceof Array) {
-                // for better memory management and performance
                 sceneObject.material.forEach(material => material.dispose());
             } else {
-                // for better memory management and performance
                 sceneObject.material.dispose();
             }
         }

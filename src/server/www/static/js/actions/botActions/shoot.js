@@ -1,66 +1,40 @@
-import {ActionDefinition, actions} from "../actions.js";
-import GameManager from '../../gameManager.js';
-import TWEEN from 'tween';
-import object3DFactory from "../../view/object3DFactory.js";
+import { ActionDefinition, actions } from "../actions.js";
+import GameManager from "../../gameManager.js";
+import BotManager from "../../botManager.js";
+import Bullet from "../../gameObjects/bullet.js"
 
-/*
-    Fonction : Permet de créer les paramètres nécéssaire à la réalisation de l'action move.
-    Param : message -> données reçu par le websocket pour le bot
-    Return : un dictionnaire contenant les positions en x et en z "final" du bot
-*/
-function eventwrapper(botState){
-    return {'id': botState.id, 'targets': botState.shoot};
+/**
+ * Fonction qui crée les paramètres nécessaires pour l'action "shoot".
+ * @param {Object} botState - Les données reçues par le websocket pour l'action "shoot".
+ * @returns {Object} Un dictionnaire contenant l'identifiant du bot et les coordonnées des cibles du tir.
+ */
+function eventWrapper(botState) {
+    return { id: botState.id, targets: botState.shoot };
 }
 
-/*
-    Fonction : Qui permet de determiner si le tir a eu lieu
-    Param : message -> données reçu par le websocket
-    Return : un booléen qui determine si l'action a été, et doit être animée.
-*/
-function actionSelector(botState){return !(botState.shoot === undefined);}
+/**
+ * Fonction qui détermine si l'action "shoot" doit être exécutée.
+ * @param {Object} botState - Les données reçues par le websocket pour l'action "shoot".
+ * @returns {boolean} Un booléen qui détermine si l'action "shoot" doit être exécutée.
+ */
+function actionSelector(botState) {
+    return !(botState.shoot === undefined);
+}
 
-/*
-    Fonction : Qui affiche le tir du bot
-    Param : parameters -> dictionnaire avec les informations nécéssaire à l'action.
-    Return : N/A
-*/
-function action(parameters){
-    const bot = GameManager().bots[parameters.id];
-
+/**
+ * Fonction qui permet d'afficher le tir du bot.
+ * @param {Object} parameters - Un dictionnaire contenant l'identifiant du bot et les coordonnées des cibles du tir.
+ * @returns {void} Cette fonction ne retourne rien.
+ */
+function action(parameters) {
+    const bot = BotManager.bots[parameters.id];
     for (let target of parameters.targets) {
         if (!target.id) {
-            GameManager().addBullet(bot).then(bullet => {
-                console.log(bullet);
-                const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
-                .to({x: target.x , z: target.z}, 100)
-                .easing(TWEEN.Easing.Linear.None)
-                .onUpdate((coords) => {
-                    bullet.position.x = coords.x;
-                    bullet.position.z = coords.z;
-                    if (bullet.position.x === target.x && bullet.position.z === target.z){
-                        GameManager().removeBullet(bullet);
-                    }
-                })
-                .start()
-            });
-
+            GameManager().viewController.shootTo(bot, target);
         } else {
             const targetObject = GameManager().getGameObjectFromId(target.id);
             if (targetObject) {
-                GameManager().addBullet(bot).then(bullet => {
-                    console.log(bullet);
-                    const tween = new TWEEN.Tween({x: bullet.position.x , z: bullet.position.z})
-                    .to({x: targetObject.x , z: targetObject.z}, 100)
-                    .easing(TWEEN.Easing.Linear.None)
-                    .onUpdate((coords) => {
-                        bullet.position.x = coords.x;
-                        bullet.position.z = coords.z;
-                        if (bullet.position.x === targetObject.x && bullet.position.z === targetObject.z){
-                            GameManager().removeBullet(bullet);
-                        }
-                    })
-                    .start()
-                });
+                GameManager().viewController.shootTo(bot, targetObject.coordinates2D);
             } else {
                 console.error(`L'objet ayant pour ID ${target.id} n'a pas été trouvé`);
             }
@@ -69,6 +43,8 @@ function action(parameters){
 }
 
 /**
-* @param param
-*/
-actions.shoot = new ActionDefinition(eventwrapper, actionSelector, action);
+ * Définition de l'action "shoot".
+ * @type {ActionDefinition}
+ * @param {Object} param - Les paramètres de l'action.
+ */
+actions.shoot = new ActionDefinition(eventWrapper, actionSelector, action);

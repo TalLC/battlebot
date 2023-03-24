@@ -98,39 +98,6 @@ class TilesGrid:
 
         return tiles_list
 
-    def json2(self, alive_tile_objects_only: bool = False) -> list[dict]:
-        """
-        Dumps the tile list in a serializable format.
-        """
-        tiles_list = list()
-        for tile in self.tiles:
-            tile_dict = {
-                "id": tile.id,
-                "name": tile.name,
-                "x": tile.x,
-                "z": tile.z,
-                "shape_name": tile.shape_name.lower() if tile.shape_name else str(),
-                "shape_size": tile.shape_size
-            }
-
-            if tile.tile_object.is_alive:
-                tile_object_dict = {
-                    "object": {
-                        "id": tile.tile_object.id,
-                        "name": tile.tile_object.name,
-                        "x": tile.tile_object.x,
-                        "z": tile.tile_object.z,
-                        "ry": tile.tile_object.ry,
-                        "shape_name": tile.tile_object.shape_name.lower() if tile.tile_object.shape_name else str(),
-                        "shape_size": tile.tile_object.shape_size
-                    }
-                }
-                tile_dict |= tile_object_dict
-
-            tiles_list.append(tile_dict)
-
-        return tiles_list
-
 
 class Map:
 
@@ -212,14 +179,16 @@ class Map:
         Returns a random spawnable position.
         """
         rand = Random()
-        max_x = self.width - 1
-        max_z = self.height - 1
-        spawn_x = rand.randint(0, max_x)
-        spawn_z = rand.randint(0, max_z)
+        max_x = self.width - 3
+        max_z = self.height - 3
+        min_x = 2
+        min_z = 2
+        spawn_x = rand.randint(min_x, max_x)
+        spawn_z = rand.randint(min_z, max_z)
 
         while not self.is_walkable_at(spawn_x, spawn_z):
-            spawn_x = rand.randint(0, max_x)
-            spawn_z = rand.randint(0, max_z)
+            spawn_x = rand.randint(min_x, max_x)
+            spawn_z = rand.randint(min_z, max_z)
 
         return spawn_x, spawn_z
 

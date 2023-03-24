@@ -168,9 +168,14 @@ class ScannerModel(IScanner, ABC):
         """
         obj_in_fov = list()
 
-        detected_objects = self._bot.bot_manager.game_manager.get_map_objects(bots=True, tiles=True,
-                                                                              radius=self._distance,
-                                                                              origin=self._bot.coordinates)
+        detected_objects = self._bot.bot_manager.game_manager.get_map_objects(
+            bots=True,                      # Get all the bots
+            tiles=True,                     # Get all the tiles
+            tile_objects=True,              # Get all the tiles objects
+            collision_only=True,            # Restrict Tile objects to the ones with collisions only
+            radius=self._distance,
+            origin=self._bot.coordinates
+        )
         # Calculate the angles of the field of view
         min_angle, max_angle = self._get_fov_angles()
         # Init relative angle from bot
@@ -181,26 +186,27 @@ class ScannerModel(IScanner, ABC):
             ray = self.create_ray(a)
             # Check if collision between ray and elements on the map.
             for item in detected_objects:
-                # keep only TileObjects with collision and Bots
+                # Keeping Tiles we cannot walk on
                 if isinstance(item, Tile):
-                    tile = item
-                    tile_object = item.tile_object
-                    if not tile_object.has_collision or tile.is_walkable:
+                    if item.is_walkable:
                         continue
 
                 if item != self._bot:
                     if item.shape.intersection(ray):
                         # get all intersections points
                         points_list = item.shape.intersection(ray).boundary
-                        # get the nearest point from bot
-                        nearest_point = ShapesUtils.get_nearest_point(self._bot.shape.centroid, points_list)
-                        obj_in_fov.append({
-                            "distance": nearest_point.distance(self._bot.shape.centroid),
-                            "name": item.name,
-                            "object_type": item.object_type,
-                            "angle": relative_angle,
-                            "obj_id": item.id
-                        })
+                        
+                        # TODO: Parfois la liste de points renvoyée est vide alors qu'elle ne devrait pas
+                        if len(points_list):
+                            # get the nearest point from bot
+                            nearest_point = ShapesUtils.get_nearest_point(self._bot.shape.centroid, points_list)
+                            obj_in_fov.append({
+                                "distance": nearest_point.distance(self._bot.shape.centroid),
+                                "name": item.name,
+                                "object_type": item.object_type,
+                                "angle": relative_angle,
+                                "obj_id": item.id
+                            })
             relative_angle += self._precision
 
         # keep only objects in the foreground
