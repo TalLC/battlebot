@@ -1,5 +1,4 @@
 import GameObject from './gameObject.js'
-import { colorStrToNumber } from "../utils/utils.js";
 import TWEEN from 'tween';
 
 export default class Bullet extends GameObject {
@@ -14,16 +13,20 @@ export default class Bullet extends GameObject {
     constructor(x, y, z, ry, teamColor) {
         super(null, "bullet", x, y, z, ry, null, null);
         this.sceneObject;
-        this.teamColor = colorStrToNumber(teamColor);
+        this.teamColor = teamColor;
         this.x = x;
         this.y = y;
         this.z = z;
         this.ry = ry;
     }
 
+    /**
+     * Permet le deplacement de la bullet.
+     * @param {dict} target - La position de la cible.
+     */
     moveTo(target){
         new TWEEN.Tween({x: this.sceneObject.position.x , z: this.sceneObject.position.z})
-            .to({x: target.x , z: target.z}, 10000)
+            .to({x: target.x , z: target.z}, 100)
             .easing(TWEEN.Easing.Linear.None)
             .onUpdate((coords) => {
                 this.sceneObject.position.x = coords.x;

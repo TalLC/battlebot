@@ -109,13 +109,14 @@ export class Object3DFactory {
         });
     }
 
-    /*
-        Fonction : Permet la création/ajout d'un objet Bot à la scène.
-        Param : bot -> L'objet Bot dont on veut créer le modèle 3D
-        Return : Une Promise qui retournera à terme le modèle 3D afin de pouvoir intéragir avec.
-    */
+
+    /**
+     * Crée un objet 3D pour un bot.
+     * @param {Object} bullet - L'objet Bullet dont on veut créer le modèle 3D.
+     * @returns {Promise<THREE.Object3D>} - Une promesse qui retourne le modèle 3D du bullet.
+     */
     createBullet3D(bullet) {
-        const modelPath = graphicObjects['shoot'];
+        const modelPath = graphicObjects['bullet'];
         return this.createObject(bullet.x, bullet.y, bullet.z, bullet.ry, modelPath).then(sceneObject => {
 
             // Clonage du material car chaque Bot doit avoir son propre material

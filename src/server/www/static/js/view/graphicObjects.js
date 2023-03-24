@@ -8,5 +8,5 @@ export default {
     ground: "/static/models/ground.glb",
     water: "/static/models/water.glb",
     desintegrator: "/static/models/desintegrator.glb",
-    shoot: "/static/models/laser.glb"
+    bullet: "/static/models/bullet.glb"
 };
