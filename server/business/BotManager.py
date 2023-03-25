@@ -67,3 +67,9 @@ class BotManager(IBotManager):
         Return the total amount of connected bots.
         """
         return len(self.get_bots(connected_only))
+
+    def reset(self):
+        """
+        Removes all bots from the game.
+        """
+        self._BOTS.clear()

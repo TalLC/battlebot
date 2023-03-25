@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Configuration du serveur.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<link rel="stylesheet" type="text/css" href="../style/style.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-theme.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-code.css">
+<!-- Side navigation -->
+<div class="sidebar">
+  <h1>Sommaire</h1>
+<p><a href="../Manuel%20du%20participant.html">Manuel du participant</a>
+<br/>
+<span>Serveur</span></p>
+  <ul>
+    <li><a href="Installation%20du%20serveur.html">Installation du serveur</a></li>
+    <li><a href="Configuration%20du%20serveur.html">Configuration du serveur</a></li>
+  </ul>
+  <span>Technique</span>
+  <ul>
+    <li><a href="../tech/Contrats%20d'interfaces.html">Contrats d'interfaces</a></li>
+    <li><a href="../tech/Contrats%20d'interfaces%20-%20Admin.html">Contrats d'interfaces - Admin</a></li>
+  </ul>
+</div>
+<!-- Page content -->
+<div class="main">
+<h1 id="configuration-du-serveur">Configuration du serveur</h1>
+<ul>
+<li><a href="#configuration-du-serveur">Configuration du serveur</a>
+<ul>
+<li><a href="#nombre-de-joueurs-en-jeu">Nombre de joueurs en jeu</a></li>
+<li><a href="#carte-de-jeu">Carte de jeu</a></li>
+<li><a href="#mode-debug">Mode debug</a></li>
+<li><a href="#%C3%A9quipes">Équipes</a></li>
+<li><a href="#brokers-et-api-rest">Brokers et API Rest</a></li>
+<li><a href="#bots-factices">Bots factices</a>
+<ul>
+<li><a href="#ajouter-des-bots">Ajouter des bots</a></li>
+<li><a href="#contr%C3%B4ler-un-bot">Contrôler un bot</a></li>
+</ul>
+</li>
+<li><a href="#troubleshooting">Troubleshooting</a>
+<ul>
+<li><a href="#la-console-web-activemq-est-bloqu%C3%A9e-pour-probl%C3%A8me-de-certificat">La console web ActiveMQ est bloquée pour problème de certificat</a></li>
+<li><a href="#erreur-activemq--user-user-is-not-authorized-to-create">Erreur ActiveMQ : User user is not authorized to create...</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="nombre-de-joueurs-en-jeu">Nombre de joueurs en jeu</h2>
+<p>Le définition du nombre de joueurs se fait via le fichier <code>conf\game.json</code> et le champs <code>max_players</code>.</p>
+<p>Actuellement, le nombre maximum de joueurs est également le nombre de joueurs requis pour démarrer la partie.</p>
+<h2 id="carte-de-jeu">Carte de jeu</h2>
+<p>Le choix de la carte se fait via le fichier <code>conf\game.json</code> et le champs <code>map_id</code> (nom du fichier map).</p>
+<p>Pour être prise en compte, la carte doit être présente dans le dossier <code>data\maps\</code>.</p>
+<h2 id="mode-debug">Mode debug</h2>
+<p>En passant par les scripts de lancement, le mode debug set automatiquement.</p>
+<p>Pour l'activer/désactiver manuellement, il faut modifier le fichier <code>conf\game.json</code> et passer la valeur de <code>is_debug</code> à <code>true</code> ou <code>false.</code></p>
+<h2 id="%C3%A9quipes">Équipes</h2>
+<p>Les équipes sont déclarées dans le fichier <code>conf\teams.json</code>. L'ID d'une équipe peut être défini dans ce fichier, sinon il sera généré automatiquement au lancement du serveur.</p>
+<p>Vous les retrouverez tous dans la console au lancement du serveur, sous cette forme :</p>
+<pre class="hljs"><code><div>[INFO] 02/03/2023 05:41:23 - [MAIN] Created teams:
+[INFO] 02/03/2023 05:41:23 - Blue team (team-id-1) - COLOR: 0x0042aa, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Red team (team-id-2) - COLOR: 0xaa0000, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Green team (team-id-3) - COLOR: 0x00bb00, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Yellow team (f7e09fcc-73dc-466e-9ce6-3da97aaf5c15) - COLOR: 0xffcc00, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Black team (f873a159-518b-4db5-8598-5e859435e07a) - COLOR: 0x101010, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - White team (d6214344-e3d3-4b6f-925a-6e51936d8150) - COLOR: 0xdadada, BOTS: 0/1
+</div></code></pre>
+<h2 id="brokers-et-api-rest">Brokers et API Rest</h2>
+<p>Les informations de connexion aux brokers et le mot de passe admin de l'API Rest (par défaut : <code>password</code>) sont disponibles respectivement dans les fichiers :</p>
+<ul>
+<li><code>rest.json</code></li>
+<li><code>mqtt.conf</code></li>
+<li><code>stomp.conf</code></li>
+</ul>
+<h2 id="bots-factices">Bots factices</h2>
+<p>Des bots sans IA peuvent être ajoutés à votre partie. Ils permettent de remplir le nombre de joueurs requis sans avoir à connecter plusieurs IA.</p>
+<p>Le mode debug du serveur est indispensable pour ajouter et contrôler des bots factices.</p>
+<p>Ils peuvent également être contrôlés manuellement depuis l'interface Web, ce qui est pratique pour tirer sur sa propre IA et déclencher les messages de dégâts.</p>
+<h3 id="ajouter-des-bots">Ajouter des bots</h3>
+<p>Démarrez le serveur en mode debug et lancez l'interface du jeu (<a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>).</p>
+<p>Sur la page d'attente de Battlebots, vous remarquerez un bouton <code>Connecter un bot</code> en bas à droite. Ce bouton permet d'ajouter un bot sans IA à la partie :</p>
+<img src="../img/debug-add-bot.png"> 
+<p>Il prendra la première équipe disponible sans joueurs.</p>
+<p>Si vous n'avez pas ce bouton, c'est que le serveur n'est pas lancé en mode debug.</p>
+<h3 id="contr%C3%B4ler-un-bot">Contrôler un bot</h3>
+<p>Double cliquez sur un bot à l'écran, une télécommande va s'afficher sur la droite de l'écran pour prendre le contrôle du bot.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="la-console-web-activemq-est-bloqu%C3%A9e-pour-probl%C3%A8me-de-certificat">La console web ActiveMQ est bloquée pour problème de certificat</h3>
+<p>C'est souvent dû à l'utilisation d'un certificat auto signé pour héberger le site. Sous Firefox on peut continuer malgré le message mais pour les navigateurs basés sur Chromium, il faut taper <code>thisisunsafe</code> sur votre clavier pour passer à la suite.</p>
+<h3 id="erreur-activemq--user-user-is-not-authorized-to-create">Erreur ActiveMQ : User user is not authorized to create...</h3>
+<p>Vérifiez vos informations de connexion aux services STOMP et MQTT, il peut s'agir d'une mauvaise notation du nom de file à écouter (inversion entre les <code>.</code> utilisés par STOMP et les <code>/</code> utilisés par MQTT).</p>
+<hr>
+<p><a href="#top">⬆️ Retour</a> - <em>Configuration du serveur</em></p>
+</div>
+
+</body>
+</html>

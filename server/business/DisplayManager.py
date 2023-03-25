@@ -1,9 +1,12 @@
 import starlette.datastructures
+import websockets.connection
+from fastapi import WebSocket
 from business.interfaces.IDisplayManager import IDisplayManager
 from business.displays.DisplayClient import DisplayClient
 
 
 class DisplayManager(IDisplayManager):
+
     _DISPLAY_CLIENTS: dict[str, DisplayClient] = dict()
 
     def does_client_id_exists(self, id_num: int):
@@ -23,8 +26,10 @@ class DisplayManager(IDisplayManager):
             return True
         return False
 
-    def create_client(self, host: str, port: int, websocket_headers: starlette.datastructures.Headers) -> DisplayClient:
-        client = DisplayClient(self, len(self._DISPLAY_CLIENTS.keys()) + 1, host, port, websocket_headers)
+    def create_client(self, websocket: WebSocket, websocket_headers: starlette.datastructures.Headers,
+                      host: str, port: int) -> DisplayClient:
+        client = DisplayClient(display_manager=self, websocket=websocket, websocket_headers=websocket_headers,
+                               id_num=len(self._DISPLAY_CLIENTS.keys()) + 1, host=host, port=port)
         self._DISPLAY_CLIENTS[client.login_id] = client
         return client
 
@@ -55,3 +60,11 @@ class DisplayManager(IDisplayManager):
             if client.status == 'connected':
                 data.append(client.json())
         return data
+
+    async def disconnect_all_clients(self):
+        for client in self._DISPLAY_CLIENTS.values():
+            await client.disconnect()
+
+    async def reset(self):
+        await self.disconnect_all_clients()
+        self._DISPLAY_CLIENTS.clear()

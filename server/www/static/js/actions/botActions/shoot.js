@@ -28,6 +28,7 @@ function actionSelector(botState) {
  */
 function action(parameters) {
     const bot = BotManager.bots[parameters.id];
+
     for (let target of parameters.targets) {
         if (!target.id) {
             GameManager().viewController.shootTo(bot, target);

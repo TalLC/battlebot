@@ -133,7 +133,7 @@ export class Object3DFactory {
             return sceneObject;
         });
     }
-    
+
 
     /**
      * Crée un objet 3D pour un bot.

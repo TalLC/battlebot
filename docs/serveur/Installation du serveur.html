@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Installation du serveur.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<link rel="stylesheet" type="text/css" href="../style/style.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-theme.css">
+<link rel="stylesheet" type="text/css" href="../style/dark-code.css">
+<!-- Side navigation -->
+<div class="sidebar">
+  <h1>Sommaire</h1>
+<p><a href="../Manuel%20du%20participant.html">Manuel du participant</a>
+<br/>
+<span>Serveur</span></p>
+  <ul>
+    <li><a href="Installation%20du%20serveur.html">Installation du serveur</a></li>
+    <li><a href="Configuration%20du%20serveur.html">Configuration du serveur</a></li>
+  </ul>
+  <span>Technique</span>
+  <ul>
+    <li><a href="../tech/Contrats%20d'interfaces.html">Contrats d'interfaces</a></li>
+    <li><a href="../tech/Contrats%20d'interfaces%20-%20Admin.html">Contrats d'interfaces - Admin</a></li>
+  </ul>
+</div>
+<!-- Page content -->
+<div class="main">
+<h1 id="installation-du-serveur">Installation du serveur</h1>
+<ul>
+<li><a href="#installation-du-serveur">Installation du serveur</a>
+<ul>
+<li><a href="#installation-par-scripts">Installation par scripts</a></li>
+<li><a href="#installation-manuelle">Installation manuelle</a>
+<ul>
+<li><a href="#pr%C3%A9requis">Prérequis</a></li>
+<li><a href="#environnement-virtuel-python">Environnement virtuel Python</a></li>
+<li><a href="#d%C3%A9marrer-le-serveur">Démarrer le serveur</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Vous devez avoir obtenu le fichier <code>battlebots-server-package.zip</code> au préalable. Ce fichier contient tout ce qu'il faut pour faire tourner le serveur Battlebots en local.</p>
+<h2 id="installation-par-scripts">Installation par scripts</h2>
+<blockquote>
+<p>⚠️ L'installation par script n'est actuellement disponible que pour <strong>Windows</strong>.</p>
+</blockquote>
+<ul>
+<li>Décompressez le fichier <code>battlebots-server-package.zip</code> dans un dossier de votre choix</li>
+<li>Lancer le fichier <code>install-server.bat</code> qui se trouve dans le dossier décompressé</li>
+<li>Lancer les serveurs Python et ActiveMQ via <code>start-server.bat</code> ou <code>start-server-debug.bat</code> suivant si vous voulez lancer en mode debug ou non (le mode debug est largement recommandé pour le développement)</li>
+</ul>
+<p>Si tout fonctionne, vous devriez avoir 2 invites de commandes Windows de lancés :</p>
+<ul>
+<li>ActiveMQ démarré via Java</li>
+<li>Serveur python Battlebots</li>
+</ul>
+<p>A partir de là vous devriez accéder à l'interface web via <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.</p>
+<h2 id="installation-manuelle">Installation manuelle</h2>
+<p>Cette méthode d'installation n'est pas recommandée. Elle est principalement présente pour expliquer sur quoi repose le serveur et pour aider si il doit être installé sur un OS différent.</p>
+<h3 id="pr%C3%A9requis">Prérequis</h3>
+<h4 id="activemq-5166">ActiveMQ 5.16.6</h4>
+<p>ActiveMQ sert les brokers de messages utilisés par le serveur pour envoyer des informations aux IA clientes. Les deux brokers de messages utilisés sont <code>STOMP</code> et <code>MQTT</code>.</p>
+<p>ActiveMQ 5.16.6 est disponible ici (Windows et Linux) :</p>
+<ul>
+<li><a href="https://activemq.apache.org/components/classic/download/">https://activemq.apache.org/components/classic/download/</a></li>
+</ul>
+<p>C'est un zip à extraire dans le dossier de votre choix.</p>
+<h4 id="java-18">Java 1.8</h4>
+<p>Java 1.8 est nécessaire pour faire fonctionner les brokers de messages de ActiveMQ.</p>
+<p>Il peut être téléchargé ici en version installable (Windows, macOS et Linux) :</p>
+<ul>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-i586.rpm">jre-8u361-linux-i586.rpm</a></li>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-i586.tar.gz">jre-8u361-linux-i586.tar.gz</a></li>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-x64.rpm">jre-8u361-linux-x64.rpm</a></li>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-x64.tar.gz">jre-8u361-linux-x64.tar.gz</a></li>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-macosx-x64.dmg">jre-8u361-macosx-x64.dmg</a></li>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-solaris-sparcv9.tar.gz">jre-8u361-solaris-sparcv9.tar.gz</a></li>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-windows-i586.exe">jre-8u361-windows-i586.exe</a></li>
+<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-windows-x64.exe">jre-8u361-windows-x64.exe</a></li>
+</ul>
+<p>Ou en version portable (Windows uniquement) :</p>
+<ul>
+<li><a href="https://sourceforge.net/projects/portableapps/files/Java/">https://sourceforge.net/projects/portableapps/files/Java/</a></li>
+</ul>
+<h4 id="python-310">Python 3.10</h4>
+<p>Il vous faut disposer d'une installation Python complète version <strong>3.10</strong> minimum (les versions &quot;embeddable package&quot; officielles ne sont <strong>pas suffisantes</strong>).</p>
+<p>Il peut être téléchargé ici en version installable (Windows et macOS) :</p>
+<ul>
+<li><a href="https://www.python.org/downloads/release/python-31010/">https://www.python.org/downloads/release/python-31010/</a></li>
+</ul>
+<p>Ou en version portable (Windows uniquement) :</p>
+<ul>
+<li><a href="https://github.com/winpython/winpython/releases/tag/5.3.20221233">https://github.com/winpython/winpython/releases/tag/5.3.20221233</a> (la release <code>Winpython64-3.10.9.0dot</code> est suffisante)</li>
+</ul>
+<h3 id="environnement-virtuel-python">Environnement virtuel Python</h3>
+<ul>
+<li>Décompressez le fichier <code>battlebots-server-package.zip</code> dans un dossier de votre choix</li>
+<li>Ouvrez un terminal dans ce dossier (le dossier doit contenir le fichier <code>main.py</code>) et créez un nouvel environnement virtuel :
+<ul>
+<li>Windows :
+<ul>
+<li><code>&lt;chemin vers votre binaire&gt;\python.exe -m venv venv</code></li>
+</ul>
+</li>
+<li>Unix :
+<ul>
+<li><code>&lt;chemin vers votre binaire&gt;/python -m venv venv</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Installer les libs nécessaires dans le venv créé :
+<ul>
+<li>Recopiez le dossier <code>site-packages</code> qui se trouve dans <code>third-party\python_venv_libs\</code> vers <code>venv\Lib\</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="d%C3%A9marrer-le-serveur">Démarrer le serveur</h3>
+<h4 id="activemq">ActiveMQ</h4>
+<p>On commence par démarrer le serveur ActiveMQ.</p>
+<ul>
+<li>Définir la variable <code>JAVA_HOME</code> sur votre installation de Java 1.8 :
+<ul>
+<li>Windows :
+<ul>
+<li><code>set JAVA_HOME=&quot;&lt;chemin absolu vers le dossier du JRE 1.8&gt;&quot;</code></li>
+</ul>
+</li>
+<li>Unix :
+<ul>
+<li><code>export JAVA_HOME=&lt;chemin absolu vers le dossier du JRE 1.8&gt;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Lancer le serveur :
+<ul>
+<li>Windows :
+<ul>
+<li><code>third-party\activemq\bin\activemq.bat start</code></li>
+</ul>
+</li>
+<li>Unix :
+<ul>
+<li><code>third-party/activemq/bin/activemq start</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="python">Python</h4>
+<p>Une fois ActiveMQ lancé, on peut démarrer le serveur Python.</p>
+<ul>
+<li>Windows :
+<ul>
+<li><code>venv\Scripts\python.exe -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30</code></li>
+</ul>
+</li>
+<li>Unix :
+<ul>
+<li><code>venv/Scripts/python -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30</code></li>
+</ul>
+</li>
+</ul>
+<p>A partir de là vous devriez accéder à l'interface web via <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.</p>
+<hr>
+<p><a href="#top">⬆️ Retour</a> - <em>Installation du serveur</em></p>
+</div>
+
+</body>
+</html>

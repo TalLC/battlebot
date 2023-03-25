@@ -1,7 +1,8 @@
 import logging
+from time import sleep
 from fastapi import FastAPI, Request
 from common.ErrorCode import *
-from common.config import CONFIG_REST
+from common.config import CONFIG_REST, refresh_config
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
@@ -24,6 +25,7 @@ from provider.webservices.rest.models.BotsIdActionShootModel import BotsIdAction
 from provider.webservices.rest.models.BotsIdActionTurnModel import BotsIdActionTurnModel
 from provider.webservices.rest.models.BotsIdActionMoveModel import BotsIdActionMoveModel
 from provider.webservices.rest.models.AdminActionSelectMapModel import AdminActionSelectMapModel
+from consumer.webservices.messages.websocket.DisplayRefreshMessage import DisplayRefreshMessage
 
 
 class RestProvider:
@@ -37,6 +39,7 @@ class RestProvider:
         self.__admin_action_ban()
         self.__admin_action_unban()
         self.__admin_game_action_start()
+        self.__admin_game_action_reset()
         self.__admin_game_action_select_map()
         self.__admin_display_clients_action_list()
         self.__admin_display_clients_action_get_by_id()
@@ -98,6 +101,48 @@ class RestProvider:
 
             GameManager().start_game()
             return {'status': 'ok', 'message': 'Game is started'}
+
+    def __admin_game_action_reset(self):
+        """
+        Reset the current game.
+        """
+        @self.__app.post("/game/action/reset")
+        @NetworkSecurityDecorators.rest_ban_check
+        async def action(model: AdminBaseModel, _: Request):
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Stop the game
+            GameManager().stop_game()
+            while GameManager().is_started:
+                sleep(100/1000)
+
+            # Remove the bots
+            GameManager().bot_manager.reset()
+
+            # Send a refresh page message to display clients
+            for client in GameManager().display_manager.get_clients():
+                await client.websocket.send_json(DisplayRefreshMessage().json())
+
+            sleep(1)
+
+            # Disconnect and remove all clients
+            await GameManager().display_manager.reset()
+
+            # Reload config files
+            refresh_config()
+
+            # Reset and reload teams
+            GameManager().team_manager.reload_teams()
+
+            # Reload the map
+            GameManager().reload_map()
+
+            # Restarting game threads
+            GameManager().init_threads()
+
+            return {'status': 'ok', 'message': 'Game has been reset'}
 
     def __admin_game_action_select_map(self):
         """

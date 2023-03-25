@@ -8,8 +8,6 @@ import GameConfig from '../config.js';
 import Debug from "../debug/debug.js";
 import Bullet from "../gameObjects/bullet.js"
 
-
-
 /**
  * Classe View3DController permettant de gérer l'affichage 3D du jeu.
  */
@@ -120,7 +118,7 @@ export default class View3DController {
             return textMesh;
         })
         .then((textMesh) => {
-            // Diminuer l'opcatier pour rendre le texte invisible
+            // Diminuer l'opacité pour rendre le texte invisible
             return new Promise((resolve) => {
                 let opacity = 1;
                 const interval = setInterval(() => {

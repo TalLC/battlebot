@@ -1,6 +1,6 @@
 import logging
 from fastapi import FastAPI
-from common.config import CONFIG_GAME, CONFIG_TEAMS
+from common.config import CONFIG_GAME
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
 from provider.security.NetworkSecurity import NetworkSecurity
@@ -26,14 +26,6 @@ app = FastAPI()  # Entry point for Uvicorn
 
 @app.on_event('startup')
 async def startup() -> None:
-    # Teams
-    for team in CONFIG_TEAMS:
-        GameManager().team_manager.create_team(team.size, team.name, team.color, team.id)
-
-    logging.info("[MAIN] Created teams:")
-    for team in GameManager().team_manager.get_teams():
-        logging.info(team)
-
     # Services
     # # Starting consumer services
     logging.info("[MAIN] Starting consumer services")

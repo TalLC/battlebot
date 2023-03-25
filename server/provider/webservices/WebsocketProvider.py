@@ -33,31 +33,35 @@ class WebsocketProvider:
 
             # Creating a Display Client object to log websocket connection
             display_client = GameManager().display_manager.create_client(
-                host=websocket.client.host, port=websocket.client.port, websocket_headers=websocket.headers
+                websocket=websocket, websocket_headers=websocket.headers,
+                host=websocket.client.host, port=websocket.client.port
             )
-            logging.debug(f"Display {display_client.name} connected")
+            logging.debug(f"[WEBSOCKET] Display {display_client.name} connected")
 
             # Sending game information
-            logging.debug(f"Sending game information to {display_client.name}")
-            game_info_message = GameInfoMessage(is_debug=GameManager().is_debug, map_id=GameManager().map.id,
-                                                max_players=GameManager().max_players)
+            logging.debug(f"[WEBSOCKET] Sending game information to {display_client.name}")
+            game_info_message = GameInfoMessage(
+                is_debug=GameManager().is_debug, map_id=GameManager().map.id,
+                max_players=GameManager().max_players
+            )
             await websocket.send_json(game_info_message.json())
 
             # Sending map information
-            logging.debug(f"Sending map to {display_client.name}")
+            logging.debug(f"[WEBSOCKET] Sending map to {display_client.name}")
             current_map = GameManager().map
-            map_create_message = MapCreateMessage(map_id=current_map.id, height=current_map.height,
-                                                  width=current_map.width, tiles_grid=current_map.tiles_grid)
+            map_create_message = MapCreateMessage(
+                map_id=current_map.id, height=current_map.height,
+                width=current_map.width, tiles_grid=current_map.tiles_grid
+            )
             await websocket.send_json(map_create_message.json())
 
             # Waiting for all the bots to be ready
             while not GameManager().are_bots_ready:
-
                 # Waiting for bots to connect
                 await asyncio.sleep(1)
 
             # Sending all bots to webservice
-            logging.debug(f"Sending bots to {display_client.name}")
+            logging.debug(f"[WEBSOCKET] Sending bots to {display_client.name}")
             for bot in GameManager().bot_manager.get_bots():
                 await websocket.send_json(BotCreateMessage(bot).json())
 
@@ -87,7 +91,7 @@ class WebsocketProvider:
 
             # Disconnecting the display
             display_client.set_connection_closed()
-            logging.debug(f"Display {display_client.name} disconnected")
+            logging.debug(f"[WEBSOCKET] Display {display_client.name} disconnected")
 
             # Removing the queue to avoid receiving messages
             self.__webservices.remove_ws_queue(client_queue)

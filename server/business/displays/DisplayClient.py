@@ -3,6 +3,7 @@ import uuid
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from fastapi import WebSocket
 import starlette.datastructures
 from random import Random
 from common.config import DATETIME_STR_FORMAT, WORDS_GERUNDS_LIST, WORDS_COLORS_LIST, WORDS_ANIMALS_LIST
@@ -85,9 +86,14 @@ class DisplayClient:
     def headers(self) -> Headers:
         return self._headers
 
-    def __init__(self, display_manager: DisplayManager, id_num: int, host: str, port: int,
-                 websocket_headers: starlette.datastructures.Headers):
+    @property
+    def websocket(self) -> WebSocket:
+        return self._websocket
+
+    def __init__(self, display_manager: DisplayManager, websocket: WebSocket,
+                 websocket_headers: starlette.datastructures.Headers, id_num: int, host: str, port: int):
         self._display_manager = display_manager
+        self._websocket = websocket
         self._id = id_num
         self._name = self.__generate_name(seed=host)
         self._timestamp_start = datetime.now()
@@ -140,6 +146,9 @@ class DisplayClient:
     def set_ready(self):
         logging.debug(f"Display client {self.name} is ready")
         self._is_ready = True
+
+    async def disconnect(self):
+        await self._websocket.close()
 
     def set_connection_closed(self):
         self._status = False

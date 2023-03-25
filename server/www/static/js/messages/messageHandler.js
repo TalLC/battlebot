@@ -1,7 +1,9 @@
+import logger from "../logger.js";
 import BotCreateMessage from "./botCreateMessage.js";
 import GameInfoMessage from "./gameInfoMessage.js";
 import MapCreateMessage from "./mapCreateMessage.js";
 import DisplayClientLoginMessage from "./displayClientLoginMessage.js";
+import DisplayRefreshMessage from "./DisplayRefreshMessage.js";
 
 export let updateMessageQueue = [];
 
@@ -25,6 +27,7 @@ export default class MessageHandler {
             }
             // Messages de connexion (envois uniques)
             else {
+                logger.debug(`Message reçu : ${message.msg_type}`)
                 if (message.msg_type) {
                     switch (message.msg_type) {
                         case "BotCreateMessage":
@@ -41,6 +44,10 @@ export default class MessageHandler {
                             break;
                         case "DisplayClientLoginMessage":
                             new DisplayClientLoginMessage(message).exec();
+                            resolve();
+                            break;
+                        case "DisplayRefreshMessage":
+                            new DisplayRefreshMessage(message).exec();
                             resolve();
                             break;
                         default:

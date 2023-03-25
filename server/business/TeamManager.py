@@ -1,3 +1,5 @@
+import logging
+from common.config import CONFIG_TEAMS
 from business.interfaces.ITeamManager import ITeamManager
 from business.teams.Team import Team
 
@@ -23,9 +25,6 @@ class TeamManager(ITeamManager):
             return tuple(self._TEAMS.values())
 
     def get_bot_team(self, bot_id) -> None | Team:
-        """
-        Returns the team containing the specified bot.
-        """
         for team in self._TEAMS.values():
             if team.get_bot(bot_id) is not None:
                 return team
@@ -38,10 +37,20 @@ class TeamManager(ITeamManager):
         return t.id
 
     def bot_count(self, alive_only: bool = False) -> int:
-        """
-        Get the total number of bots in the teams.
-        """
         bot_count = 0
         for team in self.get_teams():
             bot_count += team.bot_count(alive_only=alive_only)
         return bot_count
+
+    def reload_teams(self):
+        self._TEAMS.clear()
+
+        for team in CONFIG_TEAMS:
+            self.create_team(team.size, team.name, team.color, team.id)
+
+        logging.info("[TEAMMANAGER] Created teams:")
+        self.print_teams()
+
+    def print_teams(self):
+        for team in self.get_teams():
+            logging.info(team)
