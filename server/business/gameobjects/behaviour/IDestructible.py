@@ -54,7 +54,7 @@ class IDestructible(ABC):
         """
         Apply delay for animation front bullet.
         """
-        sleep(0.1)
+        sleep(0.2)
         if self._health > 0:
             self._health -= damage
             if self._health <= 0:
