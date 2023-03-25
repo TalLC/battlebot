@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from time import sleep
 from typing import TYPE_CHECKING
 
 from shapely.geometry import Polygon
@@ -49,8 +50,10 @@ class TileObject(OrientedGameObject, IDestructible, ABC):
     def _on_death(self) -> None:
         # Removing object on the display side
         self.tile.set_tile_object("air")
+        sleep(0.1)
         ConsumerManager().websocket.send_message(GameObjectDestroyMessage(self.id))
 
     def _on_hurt(self) -> None:
         # Sending hurt message for display animation
+        sleep(0.1)
         ConsumerManager().websocket.send_message(GameObjectHurtMessage(self.id))
