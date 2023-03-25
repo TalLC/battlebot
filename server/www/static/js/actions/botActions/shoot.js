@@ -1,6 +1,7 @@
 import { ActionDefinition, actions } from "../actions.js";
 import GameManager from "../../gameManager.js";
 import BotManager from "../../botManager.js";
+import Bullet from "../../gameObjects/bullet.js"
 
 /**
  * Fonction qui crée les paramètres nécessaires pour l'action "shoot".

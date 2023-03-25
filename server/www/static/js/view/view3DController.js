@@ -6,6 +6,7 @@ import { TextGeometry } from 'geometries/TextGeometry';
 import Object3DFactory from "./object3DFactory.js";
 import GameConfig from '../config.js';
 import Debug from "../debug/debug.js";
+import Bullet from "../gameObjects/bullet.js"
 
 /**
  * Classe View3DController permettant de gérer l'affichage 3D du jeu.
@@ -140,28 +141,14 @@ export default class View3DController {
     /**
      * Fonction pour afficher le tir d'un bot.
      * @param {Object} bot - Le bot qui tire.
-     * @param {Object} to - Les coordonnées de la cible.
+     * @param {Object} target - Les coordonnées de la cible.
      */
-    shootTo(bot, to) {
-        const laserMesh = Object3DFactory.createLaserMesh(
-            bot.teamColor,
-            [bot.x, 1.5, bot.z],
-            [to.x, 1.5, to.z]
-        );
-
-        // Ajout du mesh à la scène
-        this.gameManager.viewController.scene.add(laserMesh);
-
-        // Création d'une promesse qui se résout après 1 seconde
-        const laserPromise = new Promise((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 1000);
-        });
-
-        // Attente de la résolution de la promesse, puis suppression du mesh de la scène
-        laserPromise.then(() => {
-            this.gameManager.viewController.disposeSceneObject(laserMesh);
+    shootTo(bot, target) {
+        const bullet = new Bullet(bot.x, 2.5, bot.z, bot.ry, bot.teamColor)
+        Object3DFactory.createBullet3D(bullet)
+        .then(bulletSceneObject => {
+            this.scene.add(bulletSceneObject);
+            bullet.moveTo(target);
         });
     }
 

@@ -391,12 +391,14 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             logging.debug(f"[BOT {self.name}] Collisions disabled")
 
             # Send death information to display
+            sleep(0.1)
             ConsumerManager().websocket.send_message(BotDeathMessage(self.id))
 
     def _on_hurt(self) -> None:
         """
         Callback when the bot is hurt.
         """
+        sleep(0.1)
         ConsumerManager().websocket.send_message(GameObjectHurtMessage(self.id))
 
     def stun(self, duration_ms: float) -> None:

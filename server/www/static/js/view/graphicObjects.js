@@ -7,5 +7,6 @@ export default {
     rock: "/static/models/rock.glb",
     ground: "/static/models/ground.glb",
     water: "/static/models/water.glb",
-    desintegrator: "/static/models/desintegrator.glb"
+    desintegrator: "/static/models/desintegrator.glb",
+    bullet: "/static/models/bullet.glb"
 };
