@@ -24,7 +24,7 @@ function actionSelector(botState) {
  * @returns {void} Cette fonction ne retourne rien.
  */
 function action(rotateCoordinate) {
-    this.sceneObject.rotation.y = -1 * rotateCoordinate;
+    // this.sceneObject.rotation.y = -1 * rotateCoordinate;
     this.ry = -1 * rotateCoordinate;
 }
 
