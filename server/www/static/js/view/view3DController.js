@@ -144,9 +144,13 @@ export default class View3DController {
      * @param {Object} target - Les coordonnées de la cible.
      */
     shootTo(bot, target) {
-        const bullet = new Bullet(bot.x, 2.5, bot.z, bot.ry, bot.teamColor)
+        const bulletY = 2.5;
+        const vTarget = new THREE.Vector3(target.x, bulletY, target.z);
+        const bullet = new Bullet(bot.x, bulletY, bot.z, 0.0, bot.teamColor)
         Object3DFactory.createBullet3D(bullet)
         .then(bulletSceneObject => {
+            bulletSceneObject.lookAt(vTarget);
+            bulletSceneObject.rotation.y += Math.PI/2;
             this.scene.add(bulletSceneObject);
             bullet.moveTo(target);
         });

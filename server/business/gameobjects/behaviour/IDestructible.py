@@ -48,9 +48,9 @@ class IDestructible(ABC):
         """
         Apply damages to the entity.
         """
-        Thread(target=self.thread_hurt, args=(damage,)).start()
+        Thread(target=self.thread_hurt_delay, args=(damage,)).start()
 
-    def thread_hurt(self, damage: int) -> None:
+    def thread_hurt_delay(self, damage: int) -> None:
         """
         Apply delay for animation front bullet.
         """

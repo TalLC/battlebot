@@ -17,11 +17,11 @@ export default class GameObject {
     constructor(id, type, x, y, z, ry, collisionShape, collisionSize) {
         this.id = id;
         this.type = type;
-        this.sceneObject;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.ry = ry;
+        this._sceneObject;
+        this._x = x;
+        this._y = y;
+        this._z = z;
+        this._ry = ry;
         this.collisionShape = collisionShape;
         this.collisionSize = collisionSize;
         this.collisionBox;
@@ -38,6 +38,100 @@ export default class GameObject {
         // Suppression du GameObject
         // On attend un peu avant d'effacer l'entrée du dictionnaire pour éviter que le tir ne se joue après la suppression
         new Promise((resolve) => setTimeout(() => resolve(), 1000)).then(() => GameManager().removeGameObject(this));
+    }
+
+    /**
+     * Obtient la position x de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, retourne la valeur stockée dans la variable _x.
+     * @type {number}
+     */
+    get x() {
+        if (this.sceneObject) return this.sceneObject.position.x;
+        else return this._x;
+    }
+
+    /**
+     * Définit la position x de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, stocke la valeur dans la variable _x.
+     * @type {number}
+     */
+    set x(newValue) {
+        if (this.sceneObject) this.sceneObject.position.x = newValue;
+        this._x = newValue;
+    }
+
+    /**
+     * Obtient la position y de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, retourne la valeur stockée dans la variable _y.
+     * @type {number}
+     */
+    get y() {
+        if (this.sceneObject) return this.sceneObject.position.y;
+        else return this._y;
+    }
+
+    /**
+     * Définit la position y de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, stocke la valeur dans la variable _y.
+     * @type {number}
+     */
+    set y(newValue) {
+        if (this.sceneObject) this.sceneObject.position.y = newValue;
+        this._y = newValue;
+    }
+
+    /**
+     * Obtient la position z de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, retourne la valeur stockée dans la variable _z.
+     * @type {number}
+     */
+    get z() {
+        if (this.sceneObject) return this.sceneObject.position.z;
+        else return this._z;
+    }
+
+    /**
+     * Définit la position z de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, stocke la valeur dans la variable _z.
+     * @type {number}
+     */
+    set z(newValue) {
+        if (this.sceneObject) this.sceneObject.position.z = newValue;
+        this._z = newValue;
+    }
+
+    /**
+     * Obtient la rotation y de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, retourne la valeur stockée dans la variable _ry.
+     * @type {number}
+     */
+    get ry() {
+        if (this.sceneObject) return this.sceneObject.rotation.y;
+        else return this._ry;
+    }
+
+    /**
+     * Définit la rotation y de l'objet dans la scène. Si l'objet n'a pas encore été ajouté à la scène, stocke la valeur dans la variable _ry.
+     * @type {number}
+     */
+    set ry(newValue) {
+        if (this.sceneObject) this.sceneObject.rotation.y = newValue;
+        this._ry = newValue;
+    }
+
+    /**
+     * Définit l'objet dans la scène en positionnant sa position x, y, z et sa rotation y si les variables sont définies.
+     * @type {THREE.Object3D}
+     */
+    set sceneObject(newValue) {
+        if (newValue) {
+            newValue.position.x = this._x;
+            newValue.position.y = this._y;
+            newValue.position.z = this._z;
+            newValue.rotation.y = this._ry;
+        }
+        this._sceneObject = newValue;
+    }
+
+    /**
+     * Obtient l'objet dans la scène.
+     * @type {number}
+     */
+    get sceneObject() {
+        return this._sceneObject;
     }
 
     /**
