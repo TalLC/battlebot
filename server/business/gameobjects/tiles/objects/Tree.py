@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 class Tree(TileObject):
+    _FRIENDLY_NAME: str = "Tree"
     _NAME = 'Tree'
     _HEALTH_MAX: int = 3
 
@@ -30,7 +31,7 @@ class Tree(TileObject):
 
     def __init__(self, parent_tile: Tile, x: float = 0.0, z: float = 0.0):
         super().__init__(
-            parent_tile=parent_tile, name=self._NAME, object_type="tree", x=x, z=z, health=self._HEALTH_MAX,
-            has_collision=True,
+            parent_tile=parent_tile, name=self._NAME, friendly_name=self._FRIENDLY_NAME, object_type="tree",
+            x=x, z=z, health=self._HEALTH_MAX, has_collision=True,
             shape=ShapeFactory().create_shape(Shape.CIRCLE, o=(x, z), radius=self._shape_size, resolution=4)
         )

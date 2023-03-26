@@ -1,3 +1,4 @@
+import GameConfig from "../config.js";
 import GameManager from "../gameManager.js";
 import sendRestMessage from "../utils/rest.js";
 
@@ -57,7 +58,7 @@ export default class DebugUi {
      */
     addBot() {
         sendRestMessage("PATCH", "/bots/action/add", {
-            api_password: "password"
+            api_password: GameConfig().debugAdminPassword
         });
     }
 
@@ -68,7 +69,7 @@ export default class DebugUi {
         let botId = prompt("ID du bot :", "0-0-0-0-0");
         if (botId !== null && botId !== "") {
             sendRestMessage("PATCH", `/bots/${botId}/action/kill`, {
-                api_password: "password"
+                api_password: GameConfig().debugAdminPassword
             });
         }
     }
@@ -136,7 +137,7 @@ export default class DebugUi {
      */
     remoteKill() {
         if (this.debug.selectedObject.id) {
-            sendRestMessage("PATCH", `/bots/${this.debug.selectedObject.id}/action/kill`, { api_password: "password" });
+            sendRestMessage("PATCH", `/bots/${this.debug.selectedObject.id}/action/kill`, { api_password: GameConfig().debugAdminPassword });
         }
     }
 }

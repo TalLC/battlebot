@@ -5,6 +5,7 @@ from business.gameobjects.tiles.objects.Air import Air
 from business.gameobjects.tiles.objects.Rock import Rock
 from business.gameobjects.tiles.objects.Tree import Tree
 from business.gameobjects.tiles.objects.Wall import Wall
+from business.gameobjects.tiles.objects.WaterMine import WaterMine
 
 if TYPE_CHECKING:
     from business.gameobjects.tiles.Tile import Tile
@@ -18,8 +19,14 @@ class TileObjectFactory:
         if tile_object_name.lower() == "air":
             return Air(parent_tile=parent_tile, x=x, z=z)
         elif tile_object_name.lower() == "rock":
-            return Rock(parent_tile=parent_tile, x=x, z=z)
+            return Rock(parent_tile=parent_tile, modelname="rock", x=x, z=z)
+        elif tile_object_name.lower() == "rock2":
+            return Rock(parent_tile=parent_tile, modelname="rock2", x=x, z=z)
+        elif tile_object_name.lower() == "rock3":
+            return Rock(parent_tile=parent_tile, modelname="rock3", x=x, z=z)
         elif tile_object_name.lower() == "tree":
             return Tree(parent_tile=parent_tile, x=x, z=z)
         elif tile_object_name.lower() == "wall":
             return Wall(parent_tile=parent_tile, x=x, z=z)
+        elif tile_object_name.lower() == "watermine":
+            return WaterMine(parent_tile=parent_tile, x=x, z=z)

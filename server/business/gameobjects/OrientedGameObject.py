@@ -23,9 +23,10 @@ class OrientedGameObject(GameObject):
         """
         self._ry = value % (2*pi)
 
-    def __init__(self, name: str = 'oriented_game_object', object_type: str = 'object',
-                 ry: float = 0.0, x: float = 0.0, z: float = 0.0, shape: Polygon or None = None):
-        super().__init__(name, object_type, x, z, shape)
+    def __init__(self, name: str = 'oriented_game_object', friendly_name: str = 'Oriented game object',
+                 object_type: str = 'object', ry: float = 0.0, x: float = 0.0, z: float = 0.0,
+                 shape: Polygon or None = None):
+        super().__init__(name=name, friendly_name=friendly_name, object_type=object_type, x=x, z=z, shape=shape)
         self._ry = ry
 
     def set_position(self, x: float, z: float, ry: float = 0.0):

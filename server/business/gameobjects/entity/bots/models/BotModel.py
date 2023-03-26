@@ -123,7 +123,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self._equipment: Equipment = Equipment()
 
         # Parents initializations
-        OrientedGameObject.__init__(self, name=name, object_type="bot")
+        OrientedGameObject.__init__(self, name=name, friendly_name=name, object_type="bot")
         IMoving.__init__(self, entity=self, moving_speed=moving_speed, turning_speed=turning_speed)
         IDestructible.__init__(self, health, True)
 

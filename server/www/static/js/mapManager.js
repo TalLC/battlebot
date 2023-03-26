@@ -1,7 +1,7 @@
 import GameManager from "./gameManager.js";
 import Object3DFactory from "./view/object3DFactory.js";
 import MapObject from "./gameObjects/mapObject.js";
-import { getRandomInt } from "./utils/utils.js";
+import logger from "./logger.js";
 
 /**
  * Singleton gérant la map.
@@ -56,6 +56,39 @@ export class MapManager {
         else return Math.random() * 2 * Math.PI;
     }
 
+
+    getRotationForMapObject(objectName) {
+        let ry = 0.0;
+        switch (objectName) {
+            case "tree":
+                ry = this.randomRotation(false);
+                break;
+            case "rock":
+            case "rock2":
+            case "rock3":
+                ry = this.randomRotation(false);
+                break;
+            case "ground":
+                ry = this.randomRotation(true);
+                break;
+            case "groundwater":
+                ry = 0.0;
+                break;
+            case "water":
+                ry = this.randomRotation(true);
+                break;
+            case "desintegrator":
+                ry = 0.0;
+                break;
+            case "watermine":
+                ry = this.randomRotation(false);
+                break;      
+            default:
+                ry = 0.0;
+        }
+        return ry;
+    }
+
     /**
      * Ajoute un MapObject au jeu
      * @param {Object} mapObjectData - Les données du MapObject
@@ -87,29 +120,29 @@ export class MapManager {
         for (let tile of tilesGrid) {
             // Ajout de la Tile
             this.addMapObject({
-                id: tile["id"],
+                id: tile.id,
                 type: "tile",
-                x: tile["x"],
+                x: tile.x,
                 y: 0.0,
-                z: tile["z"],
-                ry: this.randomRotation(true),
-                collisionShape: tile["shape_name"].toLowerCase(),
-                collisionSize: tile["shape_size"],
-                model: tile["name"].toLowerCase()
+                z: tile.z,
+                ry: this.getRotationForMapObject(tile.name.toLowerCase()),
+                collisionShape: tile.shape_name.toLowerCase(),
+                collisionSize: tile.shape_size,
+                model: tile.name.toLowerCase()
             });
-
+            
             // Ajout du TileObject si présent
             if (tile.object) {
                 this.addMapObject({
-                    id: tile["object"]["id"],
+                    id: tile.object.id,
                     type: "tileObject",
-                    x: tile["object"]["x"],
+                    x: tile.object.x,
                     y: 0.5,
-                    z: tile["object"]["z"],
-                    ry: this.randomRotation(false),
-                    collisionShape: tile["object"]["shape_name"].toLowerCase(),
-                    collisionSize: tile["object"]["shape_size"],
-                    model: tile["object"]["name"].toLowerCase()
+                    z: tile.object.z,
+                    ry: this.getRotationForMapObject(tile.object.name.toLowerCase()),
+                    collisionShape: tile.object.shape_name.toLowerCase(),
+                    collisionSize: tile.object.shape_size,
+                    model: tile.object.name.toLowerCase()
                 });
             }
         }

@@ -20,6 +20,10 @@ class GameObject:
         return self._name
 
     @property
+    def friendly_name(self) -> str:
+        return self._friendly_name
+
+    @property
     def object_type(self) -> str:
         return self._object_type
 
@@ -35,10 +39,11 @@ class GameObject:
     def shape(self, value):
         self._shape = value
 
-    def __init__(self, name: str = 'game_object', object_type: str = 'object', x: float = 0.0, z: float = 0.0,
-                 shape: BaseGeometry or None = None):
+    def __init__(self, name: str = 'game_object', friendly_name: str = 'GameObject', object_type: str = 'object',
+                 x: float = 0.0, z: float = 0.0, shape: BaseGeometry or None = None):
         self._id = str(uuid.uuid4())
         self._name = name
+        self._friendly_name = friendly_name
         self._object_type = object_type
         self.x = x
         self.z = z

@@ -124,7 +124,7 @@ export class Object3DFactory {
 
             // Assignation du modèle 3D au Bot
             bot.sceneObject = sceneObject;
-
+            
             // On peint le Bot de la couleur de l'équipe
             bot.setColor(new THREE.Color(bot.teamColor).add(new THREE.Color(0x323232)), false);
 
@@ -194,7 +194,8 @@ export class Object3DFactory {
         const objectBox = new THREE.Box3().setFromObject(gameObject.sceneObject);
         const size = new THREE.Vector3();
         objectBox.getSize(size);
-        const height = size.y;
+        const height = size.y;        
+        const color = gameObject.type === 'bot' ? gameObject.teamColor : 0xffff00;
 
         let geometry;
         if (gameObject.collisionShape === "circle") {
@@ -204,12 +205,12 @@ export class Object3DFactory {
         }
 
         const material = new THREE.MeshBasicMaterial({
-            color: 0xffff00,
+            color: color,
             transparent: true,
             opacity: 0.5
         });
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.y = height / 2;
+        mesh.position.y += height / 2;
         mesh.rotation.y = gameObject.ry;
         return mesh;
     }

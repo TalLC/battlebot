@@ -122,13 +122,20 @@ class RestProvider:
             GameManager().bot_manager.reset()
 
             # Send a refresh page message to display clients
-            for client in GameManager().display_manager.get_clients():
-                await client.websocket.send_json(DisplayRefreshMessage().json())
+            try:
 
-            sleep(1)
+                for client in GameManager().display_manager.get_clients():
+                    if client.websocket.client_state.CONNECTED:
+                        await client.websocket.send_json(DisplayRefreshMessage().json())
 
-            # Disconnect and remove all clients
-            await GameManager().display_manager.reset()
+                sleep(1)
+
+                # Disconnect and remove all clients
+                await GameManager().display_manager.reset()
+            except RuntimeError:
+                logging.exception("Socket was closed before it could send refresh message")
+            except:
+                logging.exception("Error while closing socket or sending the refresh message")
 
             # Reload config files
             refresh_config()

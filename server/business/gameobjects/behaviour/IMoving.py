@@ -91,6 +91,11 @@ class IMoving(ABC):
         # Envoyer un message pour dire que le bot n'est plus stun
         ConsumerManager().stomp.send_message(BotStunningStatusMessage(self.entity.id, self.is_stunned))
 
+    @staticmethod
+    def thread_delayed_function(duration_ms: int, callback, *args, **kwargs):
+        sleep(duration_ms)
+        callback(*args, **kwargs)
+
     def set_moving(self, state: bool):
         """
         Set the entity to moving or stopped.

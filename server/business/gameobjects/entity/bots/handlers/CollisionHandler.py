@@ -8,6 +8,8 @@ from business.gameobjects.tiles.Tile import Tile
 from business.shapes.ShapesUtils import ShapesUtils
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
+from business.gameobjects.tiles.Desintegrator import Desintegrator
+from business.gameobjects.tiles.objects.WaterMine import WaterMine
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
@@ -21,7 +23,8 @@ class CollisionHandler:
 
     def check_env_collision(self, other):
         try:
-            if other.name == "Desintegrator":
+            #  other.name in ["Desintegrator", "Water mine"]
+            if isinstance(other, (Desintegrator, WaterMine)):
                 logging.debug("Boum ! Ciao robot !")
                 self._bot.kill()
         except AttributeError:

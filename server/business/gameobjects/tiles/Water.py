@@ -4,6 +4,7 @@ from business.gameobjects.tiles.objects.Air import Air
 
 
 class Water(Tile):
+    _FRIENDLY_NAME: str = "Water"
     _NAME: str = "Water"
 
     @property
@@ -11,6 +12,5 @@ class Water(Tile):
         return False
 
     def __init__(self, x: int, z: int, tile_object: TileObject = None):
-        super().__init__(
-            name=self._NAME, x=x, z=z, tile_object=Air(parent_tile=self) if tile_object is None else tile_object
-        )
+        super().__init__(name=self._NAME, friendly_name=self._FRIENDLY_NAME, x=x, z=z,
+                         tile_object=Air(parent_tile=self) if tile_object is None else tile_object)
