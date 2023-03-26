@@ -54,8 +54,8 @@ export default class GameObject {
      * @type {number}
      */
     set x(newValue) {
-        if (this.sceneObject) return (this.sceneObject.position.x = newValue);
-        else return (this._x = newValue);
+        if (this.sceneObject) this.sceneObject.position.x = newValue;
+        this._x = newValue;
     }
 
     /**
@@ -72,8 +72,8 @@ export default class GameObject {
      * @type {number}
      */
     set y(newValue) {
-        if (this.sceneObject) return (this.sceneObject.position.y = newValue);
-        else return (this._y = newValue);
+        if (this.sceneObject) this.sceneObject.position.y = newValue;
+        this._y = newValue;
     }
 
     /**
@@ -90,8 +90,8 @@ export default class GameObject {
      * @type {number}
      */
     set z(newValue) {
-        if (this.sceneObject) return (this.sceneObject.position.z = newValue);
-        else return (this._z = newValue);
+        if (this.sceneObject) this.sceneObject.position.z = newValue;
+        this._z = newValue;
     }
 
     /**
@@ -108,8 +108,8 @@ export default class GameObject {
      * @type {number}
      */
     set ry(newValue) {
-        if (this.sceneObject) return (this.sceneObject.rotation.y = newValue);
-        else return (this._ry = newValue);
+        if (this.sceneObject) this.sceneObject.rotation.y = newValue;
+        this._ry = newValue;
     }
 
     /**
