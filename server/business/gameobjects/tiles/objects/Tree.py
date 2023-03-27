@@ -29,7 +29,8 @@ class Tree(TileObject):
     def radius(self):
         return self._shape_size
 
-    def __init__(self, parent_tile: Tile, x: float = 0.0, z: float = 0.0):
+    def __init__(self, parent_tile: Tile, model_name: str = str(), x: float = 0.0, z: float = 0.0):
+        self._NAME = model_name
         super().__init__(
             parent_tile=parent_tile, name=self._NAME, friendly_name=self._FRIENDLY_NAME, object_type="tree",
             x=x, z=z, health=self._HEALTH_MAX, has_collision=True,

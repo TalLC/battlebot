@@ -19,13 +19,15 @@ class TileObjectFactory:
         if tile_object_name.lower() == "air":
             return Air(parent_tile=parent_tile, x=x, z=z)
         elif tile_object_name.lower() == "rock":
-            return Rock(parent_tile=parent_tile, modelname="rock", x=x, z=z)
+            return Rock(parent_tile=parent_tile, model_name="rock", x=x, z=z)
         elif tile_object_name.lower() == "rock2":
-            return Rock(parent_tile=parent_tile, modelname="rock2", x=x, z=z)
+            return Rock(parent_tile=parent_tile, model_name="rock2", x=x, z=z)
         elif tile_object_name.lower() == "rock3":
-            return Rock(parent_tile=parent_tile, modelname="rock3", x=x, z=z)
+            return Rock(parent_tile=parent_tile, model_name="rock3", x=x, z=z)
         elif tile_object_name.lower() == "tree":
-            return Tree(parent_tile=parent_tile, x=x, z=z)
+            return Tree(parent_tile=parent_tile, model_name="tree_small", x=x, z=z)
+        elif tile_object_name.lower() == "tree2":
+            return Tree(parent_tile=parent_tile, model_name="tree_big", x=x, z=z)
         elif tile_object_name.lower() == "wall":
             return Wall(parent_tile=parent_tile, x=x, z=z)
         elif tile_object_name.lower() == "watermine":
