@@ -416,6 +416,7 @@ code {
 <li><a href="#botmovingstatusmessage">BotMovingStatusMessage</a></li>
 <li><a href="#botturningstatusmessage">BotTurningStatusMessage</a></li>
 <li><a href="#botweaponstatusmessage">BotWeaponStatusMessage</a></li>
+<li><a href="#botweaponcooldownmessage">BotWeaponCooldownMessage</a></li>
 </ul>
 </li>
 </ul>
@@ -1420,6 +1421,52 @@ code {
         <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
         <span class="hljs-attr">"data"</span>: {
             <span class="hljs-attr">"value"</span>: <span class="hljs-literal">true</span>
+        }
+    }]
+}
+</div></code></pre>
+<h2 id="botweaponcooldownmessage">BotWeaponCooldownMessage</h2>
+<p>Temps de recharge de l'arme entre chaque tir.</p>
+<ul>
+<li>Queue: <strong>BATTLEBOT.BOT.{bot_id}</strong></li>
+<li>Producer: <strong>server</strong></li>
+<li>Consumer: <strong>client</strong></li>
+<li>Payload:</li>
+</ul>
+<pre class="hljs"><code><div>{
+    <span class="hljs-attr">"$schema"</span>: <span class="hljs-string">"https://json-schema.org/draft/2020-12/schema"</span>,
+    <span class="hljs-attr">"required"</span>: [
+        <span class="hljs-string">"msg_type"</span>,
+        <span class="hljs-string">"source"</span>,
+        <span class="hljs-string">"data"</span>
+    ],
+    <span class="hljs-attr">"properties"</span>: {
+        <span class="hljs-attr">"msg_type"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Type of information"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"weapon_cooldown_ms"</span>,
+        },
+        <span class="hljs-attr">"source"</span>: {
+            <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Where does the information comes from"</span>,
+            <span class="hljs-attr">"const"</span>: <span class="hljs-string">"bot"</span>
+        },
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"type"</span>: <span class="hljs-string">"object"</span>,
+            <span class="hljs-attr">"required"</span>: [
+                <span class="hljs-string">"value"</span>
+            ],
+            <span class="hljs-attr">"properties"</span>: {
+                <span class="hljs-attr">"value"</span>: {
+                    <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Time between shots in milliseconds"</span>,
+                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"int"</span>
+                }
+            }
+        }
+    },
+    <span class="hljs-attr">"examples"</span>: [{
+        <span class="hljs-attr">"msg_type"</span>: <span class="hljs-string">"weapon_cooldown_ms"</span>,
+        <span class="hljs-attr">"source"</span>: <span class="hljs-string">"bot"</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"value"</span>: <span class="hljs-number">1000</span>
         }
     }]
 }

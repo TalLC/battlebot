@@ -33,6 +33,11 @@ class IWeapon(ABC):
         """ Weapon availability """
         raise NotImplementedError()
 
+    @property
+    def cooldown_ms(self) -> int:
+        """ Cooldown between shots """
+        raise NotImplementedError()
+
     def reload(self):
         raise NotImplementedError()
 

@@ -46,6 +46,7 @@
   - [BotMovingStatusMessage](#botmovingstatusmessage)
   - [BotTurningStatusMessage](#botturningstatusmessage)
   - [BotWeaponStatusMessage](#botweaponstatusmessage)
+  - [BotWeaponCooldownMessage](#botweaponcooldownmessage)
 
 
 Voici les endpoints disponibles via l'API Rest.
@@ -1077,6 +1078,55 @@ Donne la vitesse de rotation max actuelle du bot.
         "source": "bot",
         "data": {
             "value": true
+        }
+    }]
+}
+```
+
+## BotWeaponCooldownMessage
+
+Temps de recharge de l'arme entre chaque tir.
+
+  * Queue: **BATTLEBOT.BOT.{bot_id}**
+  * Producer: **server**
+  * Consumer: **client**
+  * Payload:
+
+```json
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "required": [
+        "msg_type",
+        "source",
+        "data"
+    ],
+    "properties": {
+        "msg_type": {
+            "description": "Type of information",
+            "const": "weapon_cooldown_ms",
+        },
+        "source": {
+            "description": "Where does the information comes from",
+            "const": "bot"
+        },
+        "data": {
+            "type": "object",
+            "required": [
+                "value"
+            ],
+            "properties": {
+                "value": {
+                    "description": "Time between shots in milliseconds",
+                    "type": "int"
+                }
+            }
+        }
+    },
+    "examples": [{
+        "msg_type": "weapon_cooldown_ms",
+        "source": "bot",
+        "data": {
+            "value": 1000
         }
     }]
 }
