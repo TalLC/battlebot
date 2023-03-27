@@ -60,7 +60,8 @@ export class MapManager {
     getRotationForMapObject(objectName) {
         let ry = 0.0;
         switch (objectName) {
-            case "tree":
+            case "treesmall":
+            case "treebig":
                 ry = this.randomRotation(false);
                 break;
             case "rock":
@@ -106,6 +107,8 @@ export class MapManager {
             mapObjectData.model
         );
         if (mapObjectData.model !== "air") {
+            console.log(mapObjectData.model);
+            console.log(mapObjectData.id);
             Object3DFactory.createMapObject3D(this.mapObjects[mapObjectData.id]).then((sceneObject) => {
                 GameManager().viewController.scene.add(sceneObject);
             });

@@ -3,7 +3,8 @@ export default {
     avatar: {
         default: "/static/models/robot_1.glb"
     },
-    tree: "/static/models/tree_small.glb",
+    treesmall: "/static/models/tree_small.glb",
+    treebig: "/static/models/tree_big.glb",
     rock: "/static/models/rock.glb",
     rock2: "/static/models/rock2.glb",
     rock3: "/static/models/rock3.glb",
