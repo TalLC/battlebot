@@ -30,9 +30,10 @@ class TileObject(OrientedGameObject, IDestructible, ABC):
     def shape_size(self) -> float:
         return 0.0
 
-    def __init__(self, parent_tile: Tile, name: str, x: float, z: float, object_type="tile_object",
+    def __init__(self, parent_tile: Tile, name: str, friendly_name: str, x: float, z: float, object_type="tile_object",
                  heading: float = 0.0, health: int = 0, has_collision: bool = False, shape: Polygon or None = None):
-        OrientedGameObject.__init__(self, name=name, object_type=object_type, ry=heading, x=x, z=z, shape=shape)
+        OrientedGameObject.__init__(self, name=name, friendly_name=friendly_name, object_type=object_type,
+                                    ry=heading, x=x, z=z, shape=shape)
         IDestructible.__init__(self, health, has_collision)
 
         self._HEALTH_MAX = health

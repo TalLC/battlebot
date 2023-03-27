@@ -82,7 +82,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self.map = Map(self, map_id)
 
     def reload_map(self):
-        self.map = Map(self, CONFIG_GAME.map_id)
+        self.load_map(CONFIG_GAME.map_id)
 
     def init_threads(self):
         # Reset Events

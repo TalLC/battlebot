@@ -235,7 +235,7 @@ class GameManager {
     getGameObjectFromSceneObject(sceneObject, checkFor) {
         if (checkFor === "bot") {
             for (let obj of Object.values(BotManager.bots)) {
-                if (obj.type === "bot" && obj.sceneObject === sceneObject) {
+                if (obj.sceneObject === sceneObject) {
                     return obj;
                 }
             }

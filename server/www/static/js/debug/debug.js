@@ -91,7 +91,7 @@ export default class Debug {
         for (const hit of this.raycastedObjects) {
             if (hit.object.type === "BoxHelper" || hit.object.type === "GridHelper") continue;
             let clickedObject;
-
+            
             // On cherche si c'est un bot qui est sélectionné
             clickedObject = GameManager().getGameObjectFromSceneObject(hit.object.parent.parent, "bot");
             if (clickedObject) {

@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 
 class Air(TileObject):
+    _FRIENDLY_NAME: str = "Air"
     _NAME = 'Air'
     _HEALTH_MAX: int = 0
 
@@ -25,7 +26,7 @@ class Air(TileObject):
 
     def __init__(self, parent_tile: Tile, x: float = 0.0, z: float = 0.0):
         super().__init__(
-            parent_tile=parent_tile, object_type="air", name=self._NAME, x=x, z=z, health=self._HEALTH_MAX,
+            parent_tile=parent_tile, object_type="air", name=self._NAME, friendly_name=self._FRIENDLY_NAME, x=x, z=z, health=self._HEALTH_MAX,
             has_collision=False
         )
 

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 class Wall(TileObject):
+    _FRIENDLY_NAME: str = "Wall"
     _NAME = 'Wall'
     _HEALTH_MAX: int = 100000
 
@@ -26,7 +27,7 @@ class Wall(TileObject):
 
     def __init__(self, parent_tile: Tile, x: float = 0.0, z: float = 0.0):
         super().__init__(
-            parent_tile=parent_tile, name=self._NAME, object_type="wall", x=x, z=z, health=self._HEALTH_MAX,
-            has_collision=True,
+            parent_tile=parent_tile, name=self._NAME, friendly_name=self._FRIENDLY_NAME, object_type="wall",
+            x=x, z=z, health=self._HEALTH_MAX, has_collision=True,
             shape=ShapeFactory().create_shape(shape=Shape.SQUARE, o=(self.x, self.z), width=self._shape_size)
         )

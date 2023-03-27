@@ -61,7 +61,7 @@ class ScannerModel(IScanner, ABC):
         self._fov = fov
         self._precision = precision
         self._activated = activated
-        super().__init__()
+        super().__init__()  # Todo : besoin de cet appel ?
 
         # Thread's scanner
         self._thread_scanner = Thread(
@@ -202,7 +202,7 @@ class ScannerModel(IScanner, ABC):
                             nearest_point = ShapesUtils.get_nearest_point(self._bot.shape.centroid, points_list)
                             obj_in_fov.append({
                                 "distance": nearest_point.distance(self._bot.shape.centroid),
-                                "name": item.name,
+                                "name": item.friendly_name,
                                 "object_type": item.object_type,
                                 "angle": relative_angle,
                                 "obj_id": item.id

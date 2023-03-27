@@ -34,5 +34,6 @@ class Config {
         this.resetCtrlKey = true;
         this.resetAltKey = false;
         this.resetShiftKey = false;
+        this.debugAdminPassword = 'password';
     }
 }

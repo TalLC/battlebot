@@ -37,16 +37,15 @@ class Tile(GameObject, ABC):
     def shape_size(self) -> float:
         return self._shape_size
 
-    def __init__(self, name: str, x: float, z: float, tile_object: TileObject):
+    def __init__(self, name: str, friendly_name: str, x: float, z: float, tile_object: TileObject):
         self._tile_object = tile_object
 
         # Collision Shape
         self._shape_name = "SQUARE"
         self._shape_size = 1.0
 
-        super().__init__(
-            name, "tile", x, z, ShapeFactory().create_shape(Shape.SQUARE, o=(x, z), width=self._shape_size)
-        )
+        super().__init__(name=name, friendly_name=friendly_name, object_type="tile", x=x, z=z,
+                         shape=ShapeFactory().create_shape(Shape.SQUARE, o=(x, z), width=self._shape_size))
 
     def set_tile_object(self, tile_object_name: str):
         """

@@ -32,8 +32,12 @@ class WeaponModel(IWeapon, ABC):
         return self._reach_distance
 
     @property
-    def can_shoot(self):
+    def can_shoot(self) -> bool:
         return self._can_shoot
+
+    @property
+    def cooldown_ms(self) -> int:
+        return self._cooldown_ms
 
     def __init__(self, bot: BotModel, name: str, damages: int, reach_distance: int, cooldown_ms: int):
         self._bot = bot
