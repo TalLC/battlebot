@@ -35,10 +35,10 @@ function action(moveCoordinate) {
         .to({ x: moveCoordinate.x, z: moveCoordinate.z }, 100)
         .easing(TWEEN.Easing.Linear.None)
         .onUpdate((coords) => {
-            this.sceneObject.position.x = coords.x;
-            this.sceneObject.position.z = coords.z;
-            this.x = this.sceneObject.position.x;
-            this.z = this.sceneObject.position.z;
+            // this.sceneObject.position.x = coords.x;
+            // this.sceneObject.position.z = coords.z;
+            this.x = coords.x;
+            this.z = coords.z;
         })
         .start();
 }

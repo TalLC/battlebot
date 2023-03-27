@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from threading import Thread
+from time import sleep
 
 
 class IDestructible(ABC):
@@ -46,6 +48,13 @@ class IDestructible(ABC):
         """
         Apply damages to the entity.
         """
+        Thread(target=self.thread_hurt_delay, args=(damage,)).start()
+
+    def thread_hurt_delay(self, damage: int) -> None:
+        """
+        Apply delay for animation front bullet.
+        """
+        sleep(0.2)
         if self._health > 0:
             self._health -= damage
             if self._health <= 0:

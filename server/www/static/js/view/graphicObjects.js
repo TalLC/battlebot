@@ -1,7 +1,7 @@
 // Dictionnaire des différents liens entre un nom d'objet et son modèle 3D.
 export default {
     avatar: {
-        default: "/static/models/boat1.glb"
+        default: "/static/models/robot_1.glb"
     },
     tree: "/static/models/tree_small.glb",
     rock: "/static/models/rock.glb",
@@ -11,5 +11,6 @@ export default {
     groundwater: "/static/models/ground_water.glb",
     water: "/static/models/water.glb",
     desintegrator: "/static/models/desintegrator.glb",
-    watermine: "/static/models/water_mine.glb"
+    watermine: "/static/models/water_mine.glb",
+    bullet: "/static/models/bullet.glb"
 };

@@ -109,6 +109,32 @@ export class Object3DFactory {
         });
     }
 
+
+    /**
+     * Crée un objet 3D pour un bot.
+     * @param {Object} bullet - L'objet Bullet dont on veut créer le modèle 3D.
+     * @returns {Promise<THREE.Object3D>} - Une promesse qui retourne le modèle 3D du bullet.
+     */
+    createBullet3D(bullet) {
+        const modelPath = graphicObjects['bullet'];
+        return this.createObject(bullet.x, bullet.y, bullet.z, bullet.ry, modelPath).then(sceneObject => {
+
+            // Clonage du material car chaque Bot doit avoir son propre material
+            sceneObject.traverse((o) => {
+                if (o.isMesh) o.material = o.material.clone();
+            });
+
+            // Assignation du modèle 3D au Bot
+            bullet.sceneObject = sceneObject;
+
+            // On peint le Bot de la couleur de l'équipe
+            bullet.setColor(new THREE.Color(bullet.teamColor).add(new THREE.Color(0x323232)), false);
+
+            return sceneObject;
+        });
+    }
+
+
     /**
      * Crée un objet 3D pour un bot.
      * @param {Object} bot - L'objet Bot dont on veut créer le modèle 3D.
