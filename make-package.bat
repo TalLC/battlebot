@@ -93,8 +93,10 @@ robocopy /E server %tmp_server% > nul
 
 rem Suppression des dossiers inutiles
 echo - Suppression des dossiers inutiles
+for /d /r "%tmp_server%" %%d in (__pycache__) do (
+    rmdir /S /Q "%%d" 2> nul
+)
 rmdir /S /Q %tmp_server%\.idea 2> nul
-rmdir /S /Q %tmp_server%\__pycache__ 2> nul
 rmdir /S /Q %tmp_server%\activemq 2> nul
 rmdir /S /Q %tmp_server%\activemq_config 2> nul
 del /Q %tmp_server%\activemq\data\*.log 2> nul
