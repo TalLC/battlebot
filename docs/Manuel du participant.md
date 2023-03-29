@@ -117,6 +117,8 @@ Description des messages envoyés vers le serveur et reçu par celui-ci.
 
 ### Tests
 
+Pour relancer une partie sans avoir à relancer tous les exécutables, faire `Ctrl` + `C` dans le navigateur et taper le mot de passe admin du serveur (`password` par défaut).
+
 N'oubliez pas que pour tester votre IA, vous pouvez démarrer une partie avec de faux joueurs sans IA : [Bots factices](serveur/Configuration%20du%20serveur.html#bots-factices)
 
 ---
