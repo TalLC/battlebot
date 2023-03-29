@@ -20,8 +20,3 @@ Plateforme de gestion de combat de robots virtuels.
 - [Interface du jeu](http://127.0.0.1:8000)
 - [Web console ActiveMQ](https://127.0.0.1:8162/) : admin/admin
   - Pour les navigateurs basés sur Chromium, taper `thisisunsafe` sur votre clavier si la page est bloquée à cause du certificat auto signé
-  
-## Lib client
-- [Installation de la lib](docs/client/Installation%20de%20la%20lib%20Python.md)
-- [Utilisation de la classe BotAi](docs/tech/battlebotslib%20-%20BotAi.md)
-
