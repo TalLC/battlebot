@@ -18,6 +18,11 @@ export class MapManager {
             this.width;
             this.mapObjects = [];
             this.tileRotations = [-Math.PI, -Math.PI / 2, 0.0, Math.PI / 2];
+
+            // Création de la promesse résolue par la fonction loadMap
+            this.mapLoadedPromise = new Promise((resolve) => {
+                this.mapLoadedPromiseResolve = resolve;
+            });
         }
 
         return instance;
@@ -33,7 +38,11 @@ export class MapManager {
         this.id = mapData.id;
         this.height = mapData.height;
         this.width = mapData.width;
+        
         this.createMap(mapData.tilesGrid);
+
+        // Résolution de la promesse une fois que la map est chargée
+        this.mapLoadedPromiseResolve();
     }
 
     /**

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import GameManager from "../gameManager.js";
+import MapManager from "../mapManager.js";
 import DebugUi from "./debugUi.js";
 
 export default class Debug {
@@ -14,13 +15,21 @@ export default class Debug {
         this.view = view3DController;
         this.debugUi = new DebugUi(this);
 
-        // Helpers
-        // this.createCameraHelper();
-        this.createDebugGrid();
-
         // Raycasting pour sélectionner un objet
         this.raycastedObjects = [];
         this.selectedObject;
+
+        // A exécuter après le chargement de la map
+        this.waitForMapLoaded();
+    }
+
+    /**
+     * Fonction dont le contenu est exécuté lorsque la carte a été chargée par le MapManager.
+     */
+    waitForMapLoaded() {
+        MapManager.mapLoadedPromise.then(() => {
+            this.createDebugGrid();
+        });
     }
 
     /**
@@ -55,8 +64,8 @@ export default class Debug {
      * Fonction pour créer une grille de débogage dans la scène.
      */
     createDebugGrid() {
-        const grid = new THREE.GridHelper(32, 32);
-        grid.position.set(15.5, 0.55, 15.5);
+        const grid = new THREE.GridHelper(MapManager.height, MapManager.width);
+        grid.position.set((MapManager.height - 1) / 2, 0.55, (MapManager.width - 1) / 2);
         this.view.scene.add(grid);
     }
 
