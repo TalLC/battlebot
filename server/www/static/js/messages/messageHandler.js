@@ -3,7 +3,7 @@ import BotCreateMessage from "./botCreateMessage.js";
 import GameInfoMessage from "./gameInfoMessage.js";
 import MapCreateMessage from "./mapCreateMessage.js";
 import DisplayClientLoginMessage from "./displayClientLoginMessage.js";
-import DisplayRefreshMessage from "./DisplayRefreshMessage.js";
+import DisplayRefreshMessage from "./displayRefreshMessage.js";
 
 export let updateMessageQueue = [];
 
