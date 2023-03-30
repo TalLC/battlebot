@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class Warrior(BotModel):
     _role = "Warrior"
     _model_name = "default"
-    _health_max: int = 100
+    _health_max: int = 15
     _moving_speed = 1.0
     _turning_speed = math.pi / 6  # 30°
     _shape_name = "CIRCLE"

@@ -34,6 +34,7 @@
   - [Et maintenant, par où commencer ?](#et-maintenant-par-où-commencer-)
     - [Configuration des connexions](#configuration-des-connexions)
     - [Documentation](#documentation)
+      - [Contrats d'interfaces](#contrats-dinterfaces)
     - [Tests](#tests)
 
 
@@ -51,9 +52,9 @@ Suivez les procédures [Installation du serveur](serveur/Installation%20du%20ser
 
 Une bibliothèque permettant d'inscrire et d’interagir avec votre IA a été écrite : `battlebotslib`
 
-Parmi les éléments qui vous ont été fournis, vous devez avoir le package `battlebotslib.zip`
+Parmi les éléments qui vous ont été fournis, vous devez avoir le package `battlebotslib-python.zip`
 
-Suivez la procédure [Installation de la lib Python](client/Installation%20de%20la%20lib%20Python.html).
+Suivez la procédure `Installation de la lib Python`.
 
 ## Et maintenant, par où commencer ?
 
@@ -101,12 +102,6 @@ Voici les fichiers avec les informations pour vous connecter à votre serveur lo
 ```
 
 ### Documentation
-
-#### Documentation technique de la lib Python
-
-Description de toutes les fonctions et exemple de code pour créer une IA avec cette bibliothèque.
-
-- [battlebotslib - BotAi](tech/battlebotslib%20-%20BotAi.html)
 
 #### Contrats d'interfaces
 

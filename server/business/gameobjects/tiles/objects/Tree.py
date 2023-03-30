@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class Tree(TileObject):
     _FRIENDLY_NAME: str = "Tree"
     _NAME = 'Tree'
-    _HEALTH_MAX: int = 3
+    _HEALTH_MAX: int = 5
 
     # Collision Shape
     _shape_name = "CIRCLE"
