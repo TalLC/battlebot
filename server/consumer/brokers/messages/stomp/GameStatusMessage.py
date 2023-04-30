@@ -10,5 +10,7 @@ class GameStatusMessage(IMessage):
         return {
             'msg_type': self.msg_type,
             'source': self.source,
-            'data': self.data
+            'data': {
+                'value': self.data
+            }
         }
