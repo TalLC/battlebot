@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 class SimpleScanner(ScannerModel):
     _name = "Simple scanner"
-    _interval = 1.0
+    _interval = 0.250
     _distance = 10
     _fov = 90.0
 
