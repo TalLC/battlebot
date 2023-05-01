@@ -186,7 +186,8 @@ class Map:
         spawn_x = rand.randint(min_x, max_x)
         spawn_z = rand.randint(min_z, max_z)
 
-        while not self.is_walkable_at(spawn_x, spawn_z):
+        while not self.is_walkable_at(spawn_x, spawn_z) \
+                or len(self.game_manager.bot_manager.get_bots_in_radius(origin=(spawn_x, spawn_z), radius=6.0)):
             spawn_x = rand.randint(min_x, max_x)
             spawn_z = rand.randint(min_z, max_z)
 
