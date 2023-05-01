@@ -18,5 +18,5 @@ ping 127.0.0.1 -n 10 > nul
 
 rem Lancement du serveur Battlebots
 echo Lancement du serveur
-venv\Scripts\python.exe -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30
+venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload --timeout-keep-alive 30
 pause

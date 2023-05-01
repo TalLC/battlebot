@@ -179,15 +179,19 @@ class Map:
         Returns a random spawnable position.
         """
         rand = Random()
-        max_x = self.width - 3
-        max_z = self.height - 3
-        min_x = 2
-        min_z = 2
+        max_x = self.width - 4
+        max_z = self.height - 4
+        min_x = 3
+        min_z = 3
         spawn_x = rand.randint(min_x, max_x)
         spawn_z = rand.randint(min_z, max_z)
 
         while not self.is_walkable_at(spawn_x, spawn_z) \
-                or len(self.game_manager.bot_manager.get_bots_in_radius(origin=(spawn_x, spawn_z), radius=6.0)):
+                or len(self.game_manager.bot_manager.get_bots_in_radius(
+                    origin=(spawn_x, spawn_z),
+                    radius=max_x / self.game_manager.max_players
+                )
+        ):
             spawn_x = rand.randint(min_x, max_x)
             spawn_z = rand.randint(min_z, max_z)
 

@@ -31,6 +31,7 @@ set amq_config_dir=activemq_config
 
 rem Création du dossier de package temporaire
 set tmp_server=_tmp_server
+set tmp_server_third_party=_tmp_server\third-party
 rmdir /S /Q %tmp_server% 2> nul
 mkdir %tmp_server%
 
@@ -97,11 +98,10 @@ for /d /r "%tmp_server%" %%d in (__pycache__) do (
     rmdir /S /Q "%%d" 2> nul
 )
 rmdir /S /Q %tmp_server%\.idea 2> nul
-rmdir /S /Q %tmp_server%\activemq 2> nul
-rmdir /S /Q %tmp_server%\activemq_config 2> nul
-del /Q %tmp_server%\activemq\data\*.log 2> nul
-rmdir /S /Q %tmp_server%\activemq\data\kahadb 2> nul
-rmdir /S /Q %tmp_server%\activemq\data\tmp 2> nul
+rmdir /S /Q %tmp_server_third_party%\activemq_config 2> nul
+del /Q %tmp_server_third_party%\activemq\data\*.log 2> nul
+rmdir /S /Q %tmp_server_third_party%\activemq\data\kahadb 2> nul
+rmdir /S /Q %tmp_server_third_party%\activemq\data\tmp 2> nul
 rmdir /S /Q %tmp_server%\venv 2> nul
 del /Q %tmp_server%\*.bak 2> nul
 
