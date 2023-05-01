@@ -18,16 +18,19 @@
       "color": "0x00bb00"
   },
   {
+      "id": "team-id-4",
       "size": 1,
       "name": "Yellow team",
       "color": "0xffcc00"
   },
   {
+      "id": "team-id-5",
       "size": 1,
       "name": "Black team",
       "color": "0x101010"
   },
   {
+      "id": "team-id-6",
       "size": 1,
       "name": "White team",
       "color": "0xdadada"
