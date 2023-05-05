@@ -9,7 +9,6 @@ from consumer.webservices.messages.websocket.DisplayClientLoginMessage import Di
 from consumer.webservices.messages.websocket.MapCreateMessage import MapCreateMessage
 from consumer.webservices.messages.websocket.BotCreateMessage import BotCreateMessage
 from consumer.webservices.messages.websocket.GameInfoMessage import GameInfoMessage
-from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from utils.webservices import Webservices
 
 
@@ -23,8 +22,6 @@ class WebsocketProvider:
     def __register_websocket(self):
 
         @self.__app.websocket("/ws")
-        @NetworkSecurityDecorators.websocket_ban_check
-        @NetworkSecurityDecorators.websocket_autoban
         async def websocket_endpoint(websocket: WebSocket):
 
             # Websocket message queue

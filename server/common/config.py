@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 from conf.models.GameConfig import GameConfig
 from conf.models.TeamsConfig import TeamsConfig
-from conf.models.NetworkSecurityConfig import NetworkSecurityConfig
 from conf.models.RestConfig import RestConfig
 from conf.models.MQTTConfig import MQTTConfig
 from conf.models.STOMPConfig import STOMPConfig
@@ -13,7 +12,6 @@ DATETIME_STR_FORMAT = '%d/%m/%Y %H:%M:%S'
 # Config files
 CONFIG_GAME: GameConfig
 CONFIG_TEAMS: [TeamsConfig]
-CONFIG_NETWORK_SECURITY: NetworkSecurityConfig
 CONFIG_REST: RestConfig
 CONFIG_MQTT: MQTTConfig
 CONFIG_STOMP: STOMPConfig
@@ -40,8 +38,6 @@ def refresh_config():
     for team in __teams:
         CONFIG_TEAMS.append(TeamsConfig(**team))
 
-    global CONFIG_NETWORK_SECURITY
-    CONFIG_NETWORK_SECURITY = NetworkSecurityConfig(**json.loads(Path('conf', 'ban_config.json').read_text()))
     global CONFIG_REST
     CONFIG_REST = RestConfig(**json.loads(Path('conf', 'rest.json').read_text()))
     global CONFIG_MQTT
@@ -65,6 +61,7 @@ def refresh_config():
     global WORDS_ANIMALS_LIST
     WORDS_ANIMALS_LIST = Path('conf', 'dictionaries', 'english-animals.txt') \
         .read_text().replace('\r\n', '\n').split('\n')
+
 
 # Reading config files
 refresh_config()
