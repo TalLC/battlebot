@@ -24,6 +24,9 @@ class WebsocketProvider:
         @self.__app.websocket("/ws")
         async def websocket_endpoint(websocket: WebSocket):
 
+            # Accept incoming connection
+            await websocket.accept()
+
             # Websocket message queue
             client_queue = SimpleQueue()
             self.__webservices.add_ws_queue(client_queue)
