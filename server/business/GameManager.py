@@ -4,7 +4,6 @@ from time import sleep
 from threading import Thread, Event
 from typing import TYPE_CHECKING
 
-from common.config import CONFIG_GAME
 from common.Singleton import SingletonABCMeta
 from business.interfaces.IGameManager import IGameManager
 from business.TeamManager import TeamManager
@@ -53,13 +52,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._is_client_ready = False
         self._are_bots_ready = False
         self._is_started = False
-        self._is_debug = CONFIG_GAME.is_debug
-        self._max_players = CONFIG_GAME.max_players
         self.team_manager = TeamManager(self)
         self.bot_manager = BotManager(self)
         self.display_manager = DisplayManager(self)
+
+        # Loading config
+        self._is_debug = False
+        self._max_players = 0
         self.map = None
-        self.load_map(CONFIG_GAME.map_id)
+        self.load_config()
 
         # Thread auto starting the game when enough bot are connected
         self._event_stop_checking_starting_conditions = Event()
@@ -72,6 +73,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
         self.init_threads()
 
+    def load_config(self):
+        # Importing config variable here everytime we call the function in order to refresh it.
+        from common.config import CONFIG_GAME
+
+        # Reloading config
+        self._is_debug = CONFIG_GAME.is_debug
+        self._max_players = CONFIG_GAME.max_players
+        self.load_map(CONFIG_GAME.map_id)
+
     def load_map(self, map_id: str):
         """
         Loads a new map.
@@ -80,9 +90,6 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             del self.map
 
         self.map = Map(self, map_id)
-
-    def reload_map(self):
-        self.load_map(CONFIG_GAME.map_id)
 
     def init_threads(self):
         # Reset Events

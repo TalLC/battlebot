@@ -31,7 +31,7 @@ def refresh_config():
     # Config files
     global CONFIG_GAME
     CONFIG_GAME = GameConfig(**json.loads(Path('conf', 'game.json').read_text()))
-
+    print(CONFIG_GAME)
     global CONFIG_TEAMS
     CONFIG_TEAMS = list()
     __teams = json.loads(Path('conf', 'teams.json').read_text())
