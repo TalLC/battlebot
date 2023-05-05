@@ -1,8 +1,9 @@
 import logging
 from fastapi import FastAPI
-from common.config import CONFIG_GAME
+from common.config import *
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
+from business.GameManager import GameManager
 
 """
     Main script that starts all services.
@@ -33,6 +34,9 @@ async def startup() -> None:
     logging.info("[MAIN] Starting provider services")
     provider_manager = ProviderManager(app)
     provider_manager.start_all()
+
+    # Init GameManager Singleton
+    GameManager()
 
 
 @app.on_event('shutdown')
