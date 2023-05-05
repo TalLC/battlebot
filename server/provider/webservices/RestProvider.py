@@ -107,7 +107,7 @@ class RestProvider:
             GameManager().team_manager.reload_teams()
 
             # Reload the map
-            GameManager().reload_map()
+            GameManager().load_config()
 
             # Restarting game threads
             GameManager().init_threads()
