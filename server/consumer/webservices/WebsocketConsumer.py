@@ -9,4 +9,3 @@ class WebsocketConsumer:
 
     def send_message(self, message: IWebsocketMessage):
         self.__webservices.send_tmp_queue(message)
-
