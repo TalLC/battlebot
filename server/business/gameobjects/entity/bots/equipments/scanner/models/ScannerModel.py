@@ -7,6 +7,7 @@ from threading import Thread, Event
 from time import sleep
 from typing import TYPE_CHECKING, List
 
+from common.config import CONFIG_GAME
 from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner import IScanner
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
 from business.shapes.ShapeFactory import Shape, ShapeFactory
@@ -14,6 +15,7 @@ from business.shapes.ShapesUtils import ShapesUtils
 from business.gameobjects.tiles.Tile import Tile
 from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
+from consumer.webservices.messages.websocket.DebugBotDetectedObjects import DebugBotDetectedObjects
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
@@ -77,7 +79,12 @@ class ScannerModel(IScanner, ABC):
                 detected_objects = self.scanning()
                 if detected_objects:
                     ConsumerManager().mqtt.send_message(
-                        BotScannerDetectionMessage(self.bot.id, detected_object_list=detected_objects))
+                        BotScannerDetectionMessage(self.bot.id, detected_objects=detected_objects))
+                    if CONFIG_GAME.is_debug:
+                        ConsumerManager().websocket.send_message(
+                            DebugBotDetectedObjects(self.bot.id, detected_objects=detected_objects,
+                                                    interval=self.interval)
+                        )
                 sleep(self.interval)
             else:
                 sleep(loop_wait_ms / 1000)
@@ -133,7 +140,9 @@ class ScannerModel(IScanner, ABC):
                 object_type=hits_list[0]['object_type'],
                 a_from=min([hit["angle"] for hit in hits_list]),
                 a_to=max([hit["angle"] for hit in hits_list]),
-                distance=sum([hit["distance"] for hit in hits_list])/len(hits_list)
+                distance=sum([hit["distance"] for hit in hits_list])/len(hits_list),
+                origin=hits_list[0]['origin'],
+                origin_ry=hits_list[0]['origin_ry']
             ))
 
         return list_detected_obj
@@ -205,7 +214,9 @@ class ScannerModel(IScanner, ABC):
                                 "name": item.friendly_name,
                                 "object_type": item.object_type,
                                 "angle": relative_angle,
-                                "obj_id": item.id
+                                "obj_id": item.id,
+                                "origin": self.bot.shape.centroid.coords.xy,
+                                "origin_ry": self.bot.ry,
                             })
             relative_angle += self._precision
 
