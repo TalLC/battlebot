@@ -4,6 +4,7 @@ from time import sleep
 from threading import Thread, Event
 from typing import TYPE_CHECKING
 
+from common.PerformanceCounter import PerformanceCounter
 from common.Singleton import SingletonABCMeta
 from business.interfaces.IGameManager import IGameManager
 from business.TeamManager import TeamManager
@@ -231,6 +232,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             bot.stop()
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
 
+    @PerformanceCounter.count
     def get_map_objects(self, bots: bool = True, tiles: bool = True, tile_objects: bool = True,
                         collision_only: bool = True, radius: int = 0, origin: tuple[float, float] = (0, 0)
                         ) -> list[GameObject]:
@@ -268,6 +270,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
         return game_objects
 
+    @PerformanceCounter.count
     def get_map_object_from_id(self, object_id: str) -> GameObject | None:
         """
         Return the game object corresponding to the specified id.

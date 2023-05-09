@@ -1,6 +1,9 @@
 import logging
 from consumer.brokers.STOMPConsumer import STOMPConsumer
 from consumer.brokers.MQTTConsumer import MQTTConsumer
+
+from multiprocessing import Process, Event as ProcessEvent
+
 from consumer.webservices.WebsocketConsumer import WebsocketConsumer
 from common.Singleton import SingletonABCMeta
 

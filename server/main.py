@@ -1,9 +1,11 @@
 import logging
 from fastapi import FastAPI
 from common.config import *
+from common.PerformanceCounter import PerformanceCounter
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
 from business.GameManager import GameManager
+
 
 """
     Main script that starts all services.
@@ -25,6 +27,9 @@ app = FastAPI()  # Entry point for Uvicorn
 
 @app.on_event('startup')
 async def startup() -> None:
+    # Performance counter
+    PerformanceCounter()
+
     # Services
     # # Starting consumer services
     logging.info("[MAIN] Starting consumer services")
@@ -41,4 +46,4 @@ async def startup() -> None:
 
 @app.on_event('shutdown')
 def shutdown() -> None:
-    pass
+    PerformanceCounter().stop()

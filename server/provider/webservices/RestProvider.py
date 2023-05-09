@@ -3,6 +3,7 @@ from time import sleep
 from fastapi import FastAPI, Request
 from common.ErrorCode import *
 from common.config import CONFIG_REST, refresh_config
+from common.PerformanceCounter import PerformanceCounter
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
@@ -384,6 +385,7 @@ class RestProvider:
         Make the bot shoot to the desired relative angle.
         """
         @self.__app.patch("/bots/{bot_id}/action/shoot")
+        @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionShootModel, _: Request):
 
             # Check if the game is not started
@@ -419,6 +421,7 @@ class RestProvider:
         Start to turn the specified bot to its left or right.
         """
         @self.__app.patch("/bots/{bot_id}/action/turn")
+        @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionTurnModel, _: Request):
 
             # Check if the game is not started
@@ -453,6 +456,7 @@ class RestProvider:
         Start to move the specified bot forward.
         """
         @self.__app.patch("/bots/{bot_id}/action/move")
+        @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionMoveModel, _: Request):
 
             # Check if the game is not started

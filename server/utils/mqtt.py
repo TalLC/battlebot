@@ -2,6 +2,8 @@ import logging
 import json
 from time import sleep
 from paho.mqtt import client as mqtt_client
+
+from common.PerformanceCounter import PerformanceCounter
 from common.config import CONFIG_MQTT
 from common.Singleton import SingletonABCMeta
 
@@ -28,6 +30,7 @@ class MQTT(metaclass=SingletonABCMeta):
     def destination_root(self) -> str:
         return self.__destination_root
 
+    @PerformanceCounter.count
     def __init__(self):
         self.__connected = False
         self.__host = CONFIG_MQTT.host
@@ -85,6 +88,7 @@ class MQTT(metaclass=SingletonABCMeta):
         """
         self.__client.on_message = func
 
+    @PerformanceCounter.count
     def send_message(self, topic: str, message: dict, retain: bool = False):
         """
         Send a message to a topic.

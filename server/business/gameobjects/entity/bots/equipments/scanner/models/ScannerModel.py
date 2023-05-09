@@ -17,6 +17,8 @@ from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
 from consumer.webservices.messages.websocket.DebugBotDetectedObjects import DebugBotDetectedObjects
 
+from common.PerformanceCounter import PerformanceCounter
+
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
     from shapely.geometry import LineString
@@ -171,6 +173,7 @@ class ScannerModel(IScanner, ABC):
         # Create ray
         return ShapeFactory().create_shape(shape=Shape.LINE, coords=[self._bot.coordinates, end_coords])
 
+    @PerformanceCounter.count
     def scanning(self) -> List[DetectedObject]:
         """
             Supra magic power +++ infinite mega racasting the revange of the return !

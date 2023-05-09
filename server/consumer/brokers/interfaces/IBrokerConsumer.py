@@ -1,10 +1,13 @@
 import logging
 from abc import abstractmethod, ABC
+
+from common.PerformanceCounter import PerformanceCounter
 from consumer.brokers.messages.interfaces.IMessage import IMessage
 
 
 class IBrokerConsumer(ABC):
 
+    @PerformanceCounter.count
     def send_message(self, message: IMessage):
         """
         Send an action to the correct topic or queue.

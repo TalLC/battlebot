@@ -1,7 +1,10 @@
 from time import time, sleep
 from datetime import timedelta
 from queue import SimpleQueue
-from threading import Thread, Event
+from threading import Thread, Event as ThreadEvent
+from multiprocessing import Process, Event as ProcessEvent
+
+from common.PerformanceCounter import PerformanceCounter
 from common.Singleton import SingletonABCMeta
 from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
 from consumer.webservices.messages.websocket.BotUpdateMessage import BotUpdateMessage
@@ -12,11 +15,12 @@ class Webservices(metaclass=SingletonABCMeta):
     __ws_tmp_queue = SimpleQueue()
 
     def __init__(self):
-        self._event = Event()
+        self._event = ThreadEvent()
         self._thread = Thread(target=self.concatenate, args=[self._event])
         self._thread.start()
 
-    def concatenate(self, e: Event):
+    @PerformanceCounter.count
+    def concatenate(self, e: ThreadEvent):
         # We concatenate loop_wait_ms of incoming messages
         loop_wait_ms = 100
 
@@ -71,6 +75,7 @@ class Webservices(metaclass=SingletonABCMeta):
     def send_tmp_queue(self, message: IWebsocketMessage):
         self.__ws_tmp_queue.put(message)
 
+    @PerformanceCounter.count
     def dispatch_message_to_all_queues(self, message_list: [IWebsocketMessage]):
         json_messages = [message.json() for message in message_list]
 
