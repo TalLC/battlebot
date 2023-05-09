@@ -1,7 +1,7 @@
 import asyncio
 from time import time, sleep
 from pathlib import Path
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Dict
 from common.Singleton import SingletonABCMeta
 
@@ -11,7 +11,7 @@ from contextlib import contextmanager
 import functools
 
 # Monitoring a whole file:
-# while [ 1 ]; do clear; date; cat perfs.log; sleep 1 ;done
+# while [ 1 ]; do clear; printf 'Current time:\t%(%d/%m/%Y %H:%M:%S)T\n'; cat perfs.log; sleep 1 ;done
 
 
 class Counter:
@@ -39,8 +39,8 @@ class Counter:
     def __init__(self, func, uid: str):
         self._function = func
         self._uid = uid
-        self._last_time = timedelta(milliseconds=0)
-        self._added_times = timedelta(milliseconds=0)
+        self._last_time = timedelta()
+        self._added_times = timedelta()
         self._iteration = 0
 
     def update(self, value: timedelta):
@@ -61,6 +61,7 @@ class PerformanceCounter(metaclass=SingletonABCMeta):
 
     def __init__(self):
         self._REPORT_FILE.write_text('')
+        self._start_time = datetime.now()
         self._reporting_thread_event = ThreadEvent()
         self._reporting_thread = Thread(
             target=self._thread_reporting,
@@ -82,8 +83,8 @@ class PerformanceCounter(metaclass=SingletonABCMeta):
 
     def report(self) -> str:
         stats = '\n\n'.join([c.stats() for c in self._COUNTERS.values()])
-        return f"PERFORMANCES REPORT\n"\
-               f"===================\n"\
+        return f"Started at:\t{self._start_time.strftime('%d/%m/%Y %H:%M:%S')}\n"\
+               f"===================================\n"\
                f"{stats}"
 
     def write_report(self):
