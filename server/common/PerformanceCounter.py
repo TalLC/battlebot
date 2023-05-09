@@ -26,30 +26,30 @@ class Counter:
 
     @property
     def average_time(self) -> timedelta:
-        return self._added_times / self._iteration
+        return self._added_times / self._iterations
 
     @property
     def total_time(self) -> timedelta:
         return self._added_times
 
     @property
-    def iteration(self) -> int:
-        return self._iteration
+    def iterations(self) -> int:
+        return self._iterations
 
     def __init__(self, func, uid: str):
         self._function = func
         self._uid = uid
         self._last_time = timedelta()
         self._added_times = timedelta()
-        self._iteration = 0
+        self._iterations = 0
 
     def update(self, value: timedelta):
         self._last_time = value
         self._added_times += value
-        self._iteration += 1
+        self._iterations += 1
 
     def stats(self) -> str:
-        return f"Function: {self._function.__qualname__} (x{self.iteration})\n" \
+        return f"Function: {self._function.__qualname__} (x{self.iterations})\n" \
                f"Last time: {self.last_time}\n" \
                f"Avg time: {self.average_time}\n" \
                f"Total time: {self.total_time}"
@@ -82,7 +82,8 @@ class PerformanceCounter(metaclass=SingletonABCMeta):
         self._COUNTERS[func_hash].update(value)
 
     def report(self) -> str:
-        stats = '\n\n'.join([c.stats() for c in self._COUNTERS.values()])
+        counters = sorted(self._COUNTERS.values(), key=lambda c: c.iterations, reverse=True)
+        stats = '\n\n'.join([c.stats() for c in counters])
         return f"Started at:\t{self._start_time.strftime('%d/%m/%Y %H:%M:%S')}\n"\
                f"===================================\n"\
                f"{stats}"
