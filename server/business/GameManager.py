@@ -233,9 +233,9 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
 
     @PerformanceCounter.count
-    def get_map_objects(self, bots: bool = True, tiles: bool = True, tile_objects: bool = True,
-                        collision_only: bool = True, radius: int = 0, origin: tuple[float, float] = (0, 0)
-                        ) -> list[GameObject]:
+    def get_map_objects(self, bots: bool = True, tiles: bool = True, non_walkable_only: bool = False,
+                        tile_objects: bool = True, collision_only: bool = True, radius: int = 0,
+                        origin: tuple[float, float] = (0, 0)) -> list[GameObject]:
         """
         Return objects from the map. Parameters define what should be returned.
         """
@@ -248,7 +248,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
                 game_objects += self.map.tiles_grid.get_all_tiles_objects(collision_only=collision_only)
             if tiles:
                 # return Tile
-                game_objects += self.map.tiles_grid.get_all_tiles()
+                game_objects += self.map.tiles_grid.get_all_tiles(non_walkable_only=non_walkable_only)
             if bots:
                 # Add bots to the list
                 game_objects += self.bot_manager.get_bots(connected_only=True)
@@ -261,7 +261,9 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
                 )
             if tiles:
                 # return Tile
-                game_objects += self.map.tiles_grid.get_tiles_in_radius(origin=origin, radius=radius)
+                game_objects += self.map.tiles_grid.get_tiles_in_radius(
+                    non_walkable_only=non_walkable_only, origin=origin, radius=radius
+                )
             if bots:
                 # Add bots to the list
                 game_objects += self.bot_manager.get_bots_in_radius(
