@@ -96,7 +96,7 @@ class PerformanceCounter(metaclass=SingletonABCMeta):
         self._COUNTERS[func_hash].update(value)
 
     def report(self) -> str:
-        counters = sorted(self._COUNTERS.values(), key=lambda c: c.average_time, reverse=True)
+        counters = sorted(self._COUNTERS.values(), key=lambda c: c.total_time, reverse=True)
         stats = '\n\n'.join([c.stats() for c in counters])
         return f"Started at:\t{self._start_time.strftime('%d/%m/%Y %H:%M:%S')}\n"\
                f"===================================\n"\
