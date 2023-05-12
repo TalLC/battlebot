@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import math
+import numpy as np
 from math import radians, cos, sin
 from typing import TYPE_CHECKING
+
+from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.shapes.ShapeFactory import ShapeFactory, Shape
+from common.PerformanceCounter import PerformanceCounter
 
 if TYPE_CHECKING:
     from business.gameobjects.GameObject import GameObject
@@ -19,6 +23,7 @@ class ShapesUtils:
         return math.dist(point1, point2)
 
     @staticmethod
+    @PerformanceCounter.count
     def get_nearest_point(point, list_points: list):
         # Find the distances between each point and point A
         distances = [point.distance(p) for p in list_points]
@@ -61,3 +66,27 @@ class ShapesUtils:
                 result.append(obj)
 
         return result
+
+    @staticmethod
+    def get_vector_between(game_object1: OrientedGameObject, game_object2: OrientedGameObject) -> tuple:
+        return game_object1.x - game_object2.x, game_object1.z - game_object2.z
+
+    @staticmethod
+    def scalar(v1: tuple, v2: tuple) -> float:
+        return v1[0] * v2[0] + v1[1] * v2[1]
+
+    @staticmethod
+    def unit_vector(vector):
+        """
+        Returns the unit vector of the vector (normalization).
+        """
+        return vector / np.linalg.norm(vector)
+
+    @staticmethod
+    def angle_between(v1, v2):
+        """
+        Returns the angle in radians between vectors 'v1' and 'v2'
+        """
+        v1_u = ShapesUtils.unit_vector(v1)
+        v2_u = ShapesUtils.unit_vector(v2)
+        return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
