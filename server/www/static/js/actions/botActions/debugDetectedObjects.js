@@ -87,11 +87,4 @@ function createTemporaryModelsFromObjects(scene, objects, materialColor, interva
     return Promise.all(promises);
 }
 
-actions.move = new ActionDefinition(eventWrapper, actionSelector, action);
-
-// case "DebugBotDetectedObjects":
-//     if (GameConfig().isDebug) {
-//         new DebugBotDetectedObjects(message).exec();
-//     }
-//     resolve();
-//     break;
+actions.debugDetectedObjects = new ActionDefinition(eventWrapper, actionSelector, action);
