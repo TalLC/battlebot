@@ -35,19 +35,20 @@ class TilesGrid:
         found_tiles = [tile for tile in self.tiles if tile.x == x and tile.z == z]
         return found_tiles[0] if len(found_tiles) > 0 else None
 
-    def get_all_tiles(self) -> list[Tile]:
+    def get_all_tiles(self, non_walkable_only: bool = False) -> list[Tile]:
         """
         Get all tile objects from the map.
         """
-        return [tile for tile in self.tiles]
+        return [tile for tile in self.tiles
+                if not non_walkable_only or (non_walkable_only and not tile.is_walkable)]
 
-    def get_tiles_in_radius(self, origin: tuple = (0.0, 0.0), radius: int = 1) -> list[Tile]:
+    def get_tiles_in_radius(self, non_walkable_only: bool = False, origin: tuple = (0.0, 0.0), radius: int = 1) -> list[Tile]:
         """
         Get all tile objects from the map.
         """
         # Filtering on radius
         in_range_tiles = list()
-        for tile in self.get_all_tiles():
+        for tile in self.get_all_tiles(non_walkable_only=non_walkable_only):
             if ShapesUtils.get_2d_distance_between(origin, (tile.x, tile.z)) <= radius:
                 in_range_tiles.append(tile)
 
