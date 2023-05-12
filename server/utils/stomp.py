@@ -32,7 +32,6 @@ class STOMP(metaclass=SingletonABCMeta):
     def destination_root(self) -> str:
         return self.__destination_root
 
-    @PerformanceCounter.count
     def __init__(self):
         self.__connected = False
         self.__host = CONFIG_STOMP.host
