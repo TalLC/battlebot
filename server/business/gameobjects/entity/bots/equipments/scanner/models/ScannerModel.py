@@ -12,9 +12,7 @@ from business.gameobjects.GameObject import GameObject
 from common.config import CONFIG_GAME
 from business.gameobjects.entity.bots.equipments.scanner.interfaces.IScanner import IScanner
 from business.gameobjects.entity.bots.equipments.scanner.DetectedObject import DetectedObject
-from business.shapes.ShapeFactory import Shape, ShapeFactory
 from business.shapes.ShapesUtils import ShapesUtils
-from business.gameobjects.tiles.Tile import Tile
 from consumer.ConsumerManager import ConsumerManager
 from consumer.brokers.messages.mqtt.BotScannerDetectionMessage import BotScannerDetectionMessage
 from consumer.webservices.messages.websocket.DebugBotDetectedObjects import DebugBotDetectedObjects
@@ -97,7 +95,9 @@ class ScannerModel(IScanner, ABC):
 
     @PerformanceCounter.count
     def _get_fov_angles(self) -> (float, float):
-
+        """
+        Return absolutes max and min angles for scanning in degrees.
+        """
         min_angle = (self._bot.ry_deg - self._fov / 2) % 360
         max_angle = (self._bot.ry_deg + self._fov / 2) % 360
 
@@ -109,8 +109,8 @@ class ScannerModel(IScanner, ABC):
     @PerformanceCounter.count
     def _keep_nearest_elements(elements: list[dict]) -> list[dict]:
         """
-            Keep only the nearest value of detected objects by angle. (Delete the object or part of object in the
-            background)
+        Keep only the nearest value of detected objects by angle. (Delete the object or part of object in the
+        background)
         """
         foreground_elements = []
         for elem1 in elements:
@@ -129,15 +129,15 @@ class ScannerModel(IScanner, ABC):
     @PerformanceCounter.count
     def _create_detected_objects(elements: List[dict]) -> List[DetectedObject]:
         """
-            Return list of DetectedObject from raycasting's result.
+        Return list of DetectedObject from raycasting's result.
         """
-        def key_func(k):
-            return k['obj_id']
+        def by_object_id(element: dict) -> str:
+            return element['obj_id']
 
         list_detected_obj = list()
-        r_raycast = sorted(elements, key=key_func)
+        r_raycast = sorted(elements, key=by_object_id)
 
-        for obj_id, hits_group in groupby(r_raycast, key_func):
+        for obj_id, hits_group in groupby(r_raycast, by_object_id):
             hits_list = list(hits_group)
 
             list_detected_obj.append(DetectedObject(
@@ -156,28 +156,16 @@ class ScannerModel(IScanner, ABC):
     @PerformanceCounter.count
     def _iterate_fov_angle(self, min_angle: float, max_angle: float) -> List[float]:
         """
-            Return list of angles in fov.
+        Return list of angles in fov.
         """
         angles = list()
         tmp_angle = min_angle
-        for i in range(0, int((self._fov/self._precision))):
+        for i in range(0, int(self._fov/self._precision)):
             if min_angle > max_angle and tmp_angle >= 360:
                 tmp_angle = 0.0
             angles.append(tmp_angle)
             tmp_angle += self._precision
         return angles
-
-    @PerformanceCounter.count
-    def create_ray(self, angle: float) -> LineString:
-        """
-            Return linestring that represents a ray starting from the bot at an angle "angle"
-        """
-        # Calculate the end point of the ray
-        end_coords = ShapesUtils.get_coordinates_at_distance(
-            self._bot.coordinates, self.distance, angle, is_degrees=True
-        )
-        # Create ray
-        return ShapeFactory().create_shape(shape=Shape.LINE, coords=[self._bot.coordinates, end_coords])
 
     @PerformanceCounter.count
     def scanning(self) -> List[DetectedObject]:
@@ -199,14 +187,15 @@ class ScannerModel(IScanner, ABC):
         detected_objects = [o for o in detected_objects if o != self.bot]
 
         # Removing objects outside fov
-        detected_objects = list(filter(self.filter_object_in_fov, detected_objects))
+        detected_objects = list(filter(self._filter_object_in_fov, detected_objects))
 
         # Calculate the angles of the field of view
-        min_angle, max_angle = self._get_fov_angles()
+        min_fov, max_fov = self._get_fov_angles()
         # Init relative angle from bot
-        relative_angle = 0 - (self._fov / 2)
+        relative_angle = -1 * (self._fov / 2)
 
-        obj_in_fov = self.get_objects_from_angles(relative_angle, min_angle, max_angle, detected_objects)
+        # Get objects in FOV
+        obj_in_fov = self._get_objects_from_fov(relative_angle, min_fov, max_fov, detected_objects)
 
         # keep only objects in the foreground
         visible_objects = self._keep_nearest_elements(obj_in_fov)
@@ -214,7 +203,7 @@ class ScannerModel(IScanner, ABC):
         return self._create_detected_objects(visible_objects)
 
     @PerformanceCounter.count
-    def filter_object_in_fov(self, game_object: GameObject) -> bool:
+    def _filter_object_in_fov(self, game_object: GameObject) -> bool:
         """
         Remove objects outside the fov.
         """
@@ -231,22 +220,23 @@ class ScannerModel(IScanner, ABC):
         return False
 
     @PerformanceCounter.count
-    def get_objects_from_angles(self, relative_angle: float, min_angle: float, max_angle: float, detected_objects: list):
+    def _get_objects_from_fov(self, relative_angle: float, min_fov: float, max_fov: float,
+                              detected_objects: list) -> List[dict]:
         obj_in_fov = list()
 
         # Shoot ray every [precision value] degree
-        for a in self._iterate_fov_angle(min_angle, max_angle):
-            ray = self.create_ray(a)
+        for a in self._iterate_fov_angle(min_fov, max_fov):
+            ray = ShapesUtils.create_ray_to_angle(self.bot.coordinates, a, self.distance)
             # Check if collision between ray and elements on the map.
             for item in detected_objects:
-                object_in_ray = self.check_raycasting(relative_angle, item, ray)
+                object_in_ray = self._check_raycasting(relative_angle, item, ray)
                 obj_in_fov.append(object_in_ray) if object_in_ray != dict() else None
 
             relative_angle += self._precision
         return obj_in_fov
 
     @PerformanceCounter.count
-    def check_raycasting(self, relative_angle, item, ray) -> dict:
+    def _check_raycasting(self, relative_angle, item, ray) -> dict:
         if item.shape.intersection(ray):
             # get all intersections points
             points_list = item.shape.intersection(ray).boundary
