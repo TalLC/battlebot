@@ -14,8 +14,7 @@ function actionSelector(message) {
 function action(message) {
     let scene = GameManager().viewController.scene;
     let bot = BotManager.getBotObjectFromId(message.id);
-
-    createTemporaryModelsFromObjects(scene, message.objects, bot.teamColor, message.interval * 1000);
+    if (bot !== undefined) createTemporaryModelsFromObjects(scene, message.objects, bot.teamColor, message.interval * 1000);
 }
 
 function createTemporaryModel(scene, object, materialColor, interval) {
