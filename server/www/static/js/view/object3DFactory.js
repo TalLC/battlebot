@@ -109,7 +109,6 @@ export class Object3DFactory {
         });
     }
 
-
     /**
      * Crée un objet 3D pour une balle.
      * @param {Object} bullet - L'objet Bullet dont on veut créer le modèle 3D.
@@ -133,7 +132,6 @@ export class Object3DFactory {
             return sceneObject;
         });
     }
-
 
     /**
      * Crée un objet 3D pour un bot.
