@@ -3,9 +3,9 @@ from __future__ import annotations
 import math
 import numpy as np
 from math import radians, cos, sin
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
+from shapely.geometry import LineString
 
-from business.gameobjects.OrientedGameObject import OrientedGameObject
 from business.shapes.ShapeFactory import ShapeFactory, Shape
 from common.PerformanceCounter import PerformanceCounter
 
@@ -52,7 +52,21 @@ class ShapesUtils:
         return element.exterior.distance(element.centroid)
 
     @staticmethod
-    def cast_ray_on_objects(start_coordinates: tuple, end_coordinates: tuple, objects: list[GameObject]):
+    def create_ray_to_angle(start_coordinates: tuple, angle: float, distance: float) -> LineString:
+        """
+        Return linestring that represents a ray starting from coordinates at an angle "angle"
+        """
+        # Calculate the end point of the ray
+        end_coordinates = ShapesUtils.get_coordinates_at_distance(
+            start_coordinates, distance, angle, is_degrees=True
+        )
+
+        # Create ray
+        return ShapeFactory().create_shape(shape=Shape.LINE, coords=[start_coordinates, end_coordinates])
+
+    @staticmethod
+    def cast_ray_on_objects(start_coordinates: tuple, end_coordinates: tuple,
+                            objects: List[GameObject]) -> List[GameObject]:
         """
         Cast a ray and return the objects that are in the way.
         """
@@ -68,11 +82,10 @@ class ShapesUtils:
         return result
 
     @staticmethod
-    def get_vector_between(game_object1: OrientedGameObject, game_object2: OrientedGameObject) -> tuple:
-        return game_object1.x - game_object2.x, game_object1.z - game_object2.z
-
-    @staticmethod
     def scalar(v1: tuple, v2: tuple) -> float:
+        """
+        Scalar product of two vectors.
+        """
         return v1[0] * v2[0] + v1[1] * v2[1]
 
     @staticmethod
