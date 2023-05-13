@@ -1,3 +1,4 @@
+import GameConfig from "./config.js";
 import GameManager from "./gameManager.js";
 import Object3DFactory from "./view/object3DFactory.js";
 import Bot from "./gameObjects/bot.js";
@@ -41,6 +42,11 @@ export class BotManager {
         );
         Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
             GameManager().viewController.scene.add(sceneObject);
+        }).then(() => {
+            if (GameConfig().isDebug) {
+                // Affichage du cône de vision
+                this.bots[botData.id].showFov();
+            }
         });
     }
 
