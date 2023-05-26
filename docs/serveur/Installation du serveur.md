@@ -1,6 +1,4 @@
 <link rel="stylesheet" type="text/css" href="../style/style.css">
-<link rel="stylesheet" type="text/css" href="../style/dark-theme.css">
-<link rel="stylesheet" type="text/css" href="../style/dark-code.css">
 
 <!-- Side navigation -->
 <div class="sidebar">
