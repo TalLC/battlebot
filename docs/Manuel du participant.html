@@ -389,71 +389,28 @@ code {
 <ul>
 <li><a href="#manuel-du-participant">Manuel du participant</a>
 <ul>
-<li><a href="#pr%C3%A9requis">Prérequis</a>
-<ul>
 <li><a href="#installer-le-serveur">Installer le serveur</a></li>
-<li><a href="#installer-la-biblioth%C3%A8que-python">Installer la bibliothèque Python</a></li>
+<li><a href="#documentation">Documentation</a>
+<ul>
+<li><a href="#contrats-dinterfaces">Contrats d'interfaces</a></li>
 </ul>
 </li>
-<li><a href="#et-maintenant-par-o%C3%B9-commencer-">Et maintenant, par où commencer ?</a>
-<ul>
-<li><a href="#configuration-des-connexions">Configuration des connexions</a></li>
-<li><a href="#documentation">Documentation</a></li>
 <li><a href="#tests">Tests</a></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-<h2 id="pr%C3%A9requis">Prérequis</h2>
-<h3 id="installer-le-serveur">Installer le serveur</h3>
+<h2 id="installer-le-serveur">Installer le serveur</h2>
 <p>Pour permettre de tester l'IA, il faut commencer par installer et faire fonctionner le serveur Battlebots en local.</p>
 <p>Parmi les éléments qui vous ont été fournis, vous devez avoir le package <code>battlebots-server-package.zip</code></p>
 <p>Suivez les procédures <a href="serveur/Installation%20du%20serveur.html">Installation du serveur</a> et <a href="serveur/Configuration%20du%20serveur.html">Configuration du serveur</a></p>
-<h3 id="installer-la-biblioth%C3%A8que-python">Installer la bibliothèque Python</h3>
-<p>Une bibliothèque permettant d'inscrire et d’interagir avec votre IA a été écrite : <code>battlebotslib</code></p>
-<p>Parmi les éléments qui vous ont été fournis, vous devez avoir le package <code>battlebotslib-python.zip</code></p>
-<p>Suivez la procédure <code>Installation de la lib Python</code>.</p>
-<h2 id="et-maintenant-par-o%C3%B9-commencer">Et maintenant, par où commencer ?</h2>
-<p>A ce stade vous devez avoir un serveur qui démarre et un nouveau projet Python avec la bibliothèque <code>battlebotslib</code> installée.</p>
-<h3 id="configuration-des-connexions">Configuration des connexions</h3>
-<p>Pour que la lib fonctionne, il faut créer 3 fichiers de configuration qui vont donner les informations de connexions aux différents services.</p>
-<p>Ils sont à créer dans votre projet Python, dans un sous-dossier <code>conf</code>.</p>
-<p>Voici les fichiers avec les informations pour vous connecter à votre serveur local :</p>
-<p><strong>conf/rest.json</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"host"</span>: <span class="hljs-string">"localhost"</span>,
-  <span class="hljs-attr">"port"</span>: <span class="hljs-number">8000</span>,
-  <span class="hljs-attr">"protocol"</span>: <span class="hljs-string">"http"</span>
-}
-</div></code></pre>
-<p><strong>conf/mqtt.json</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"destination_root"</span>: <span class="hljs-string">"BATTLEBOT/BOT/"</span>,
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"user"</span>,
-  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"password"</span>,
-  <span class="hljs-attr">"host"</span>: <span class="hljs-string">"localhost"</span>,
-  <span class="hljs-attr">"port"</span>: <span class="hljs-number">1883</span>,
-  <span class="hljs-attr">"connect_timeout"</span>: <span class="hljs-number">5</span>
-}
-</div></code></pre>
-<p><strong>conf/stomp.json</strong></p>
-<pre class="hljs"><code><div>{
-  <span class="hljs-attr">"destination_root"</span>: <span class="hljs-string">"BATTLEBOT.BOT."</span>,
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"user"</span>,
-  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"password"</span>,
-  <span class="hljs-attr">"host"</span>: <span class="hljs-string">"localhost"</span>,
-  <span class="hljs-attr">"port"</span>: <span class="hljs-number">61613</span>
-}
-</div></code></pre>
-<h3 id="documentation">Documentation</h3>
-<h4 id="contrats-dinterfaces">Contrats d'interfaces</h4>
+<h2 id="documentation">Documentation</h2>
+<h3 id="contrats-dinterfaces">Contrats d'interfaces</h3>
 <p>Description des messages envoyés vers le serveur et reçu par celui-ci.</p>
 <ul>
 <li><a href="tech/Contrats%20d'interfaces.html">Contrats d'interfaces</a></li>
 <li><a href="tech/Contrats%20d'interfaces%20-%20Admin.html">Contrats d'interfaces - Admin</a></li>
 </ul>
-<h3 id="tests">Tests</h3>
+<h2 id="tests">Tests</h2>
 <p>Pour relancer une partie sans avoir à relancer tous les exécutables, faire <code>Ctrl</code> + <code>C</code> dans le navigateur et taper le mot de passe admin du serveur (<code>password</code> par défaut).  Au bout de 5 secondes, le navigateur rechargera la page pour afficher l'écran d'attente. Si ce n'est pas le cas vous pouvez recharger la page manuellement.</p>
 <p>N'oubliez pas que pour tester votre IA, vous pouvez démarrer une partie avec de faux joueurs sans IA : <a href="serveur/Configuration%20du%20serveur.html#bots-factices">Bots factices</a></p>
 <hr>
