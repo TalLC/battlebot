@@ -1,6 +1,3 @@
-/**
- * Singleton gérant les bots dans le jeu.
- */
 
 let instance;
 

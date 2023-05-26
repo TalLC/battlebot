@@ -1,10 +1,11 @@
 import logging
 from fastapi import FastAPI
-from common.config import CONFIG_GAME
+from common.config import *
+from common.PerformanceCounter import PerformanceCounter
 from consumer.ConsumerManager import ConsumerManager
 from provider.ProviderManager import ProviderManager
-from provider.security.NetworkSecurity import NetworkSecurity
 from business.GameManager import GameManager
+
 
 """
     Main script that starts all services.
@@ -26,6 +27,9 @@ app = FastAPI()  # Entry point for Uvicorn
 
 @app.on_event('startup')
 async def startup() -> None:
+    # Performance counter
+    PerformanceCounter()
+
     # Services
     # # Starting consumer services
     logging.info("[MAIN] Starting consumer services")
@@ -33,12 +37,13 @@ async def startup() -> None:
 
     # # Starting provider services
     logging.info("[MAIN] Starting provider services")
-    NetworkSecurity()  # Initializing ban ip module
     provider_manager = ProviderManager(app)
     provider_manager.start_all()
+
+    # Init GameManager Singleton
+    GameManager()
 
 
 @app.on_event('shutdown')
 def shutdown() -> None:
-    NetworkSecurity().stop_thread()
-
+    PerformanceCounter().stop()

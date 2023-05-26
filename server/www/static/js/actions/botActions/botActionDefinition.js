@@ -2,3 +2,4 @@
 import "./move.js";
 import "./rotate.js";
 import "./shoot.js";
+import "./debugDetectedObjects.js";

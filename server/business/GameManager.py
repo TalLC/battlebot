@@ -4,7 +4,7 @@ from time import sleep
 from threading import Thread, Event
 from typing import TYPE_CHECKING
 
-from common.config import CONFIG_GAME
+from common.PerformanceCounter import PerformanceCounter
 from common.Singleton import SingletonABCMeta
 from business.interfaces.IGameManager import IGameManager
 from business.TeamManager import TeamManager
@@ -53,13 +53,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._is_client_ready = False
         self._are_bots_ready = False
         self._is_started = False
-        self._is_debug = CONFIG_GAME.is_debug
-        self._max_players = CONFIG_GAME.max_players
         self.team_manager = TeamManager(self)
         self.bot_manager = BotManager(self)
         self.display_manager = DisplayManager(self)
+
+        # Loading config
+        self._is_debug = False
+        self._max_players = 0
         self.map = None
-        self.load_map(CONFIG_GAME.map_id)
+        self.load_config()
 
         # Thread auto starting the game when enough bot are connected
         self._event_stop_checking_starting_conditions = Event()
@@ -72,6 +74,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
         self.init_threads()
 
+    def load_config(self):
+        # Importing config variable here everytime we call the function in order to refresh it.
+        from common.config import CONFIG_GAME
+
+        # Reloading config
+        self._is_debug = CONFIG_GAME.is_debug
+        self._max_players = CONFIG_GAME.max_players
+        self.load_map(CONFIG_GAME.map_id)
+
     def load_map(self, map_id: str):
         """
         Loads a new map.
@@ -80,9 +91,6 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             del self.map
 
         self.map = Map(self, map_id)
-
-    def reload_map(self):
-        self.load_map(CONFIG_GAME.map_id)
 
     def init_threads(self):
         # Reset Events
@@ -224,9 +232,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             bot.stop()
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
 
-    def get_map_objects(self, bots: bool = True, tiles: bool = True, tile_objects: bool = True,
-                        collision_only: bool = True, radius: int = 0, origin: tuple[float, float] = (0, 0)
-                        ) -> list[GameObject]:
+    @PerformanceCounter.count
+    def get_map_objects(self, bots: bool = True, tiles: bool = True, non_walkable_only: bool = False,
+                        tile_objects: bool = True, collision_only: bool = True, radius: int = 0,
+                        origin: tuple[float, float] = (0, 0)) -> list[GameObject]:
         """
         Return objects from the map. Parameters define what should be returned.
         """
@@ -239,7 +248,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
                 game_objects += self.map.tiles_grid.get_all_tiles_objects(collision_only=collision_only)
             if tiles:
                 # return Tile
-                game_objects += self.map.tiles_grid.get_all_tiles()
+                game_objects += self.map.tiles_grid.get_all_tiles(non_walkable_only=non_walkable_only)
             if bots:
                 # Add bots to the list
                 game_objects += self.bot_manager.get_bots(connected_only=True)
@@ -252,7 +261,9 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
                 )
             if tiles:
                 # return Tile
-                game_objects += self.map.tiles_grid.get_tiles_in_radius(origin=origin, radius=radius)
+                game_objects += self.map.tiles_grid.get_tiles_in_radius(
+                    non_walkable_only=non_walkable_only, origin=origin, radius=radius
+                )
             if bots:
                 # Add bots to the list
                 game_objects += self.bot_manager.get_bots_in_radius(
@@ -261,6 +272,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
         return game_objects
 
+    @PerformanceCounter.count
     def get_map_object_from_id(self, object_id: str) -> GameObject | None:
         """
         Return the game object corresponding to the specified id.

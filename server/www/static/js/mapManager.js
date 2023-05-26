@@ -116,8 +116,6 @@ export class MapManager {
             mapObjectData.model
         );
         if (mapObjectData.model !== "air") {
-            console.log(mapObjectData.model);
-            console.log(mapObjectData.id);
             Object3DFactory.createMapObject3D(this.mapObjects[mapObjectData.id]).then((sceneObject) => {
                 GameManager().viewController.scene.add(sceneObject);
             });

@@ -28,7 +28,7 @@ export default class Bot extends GameObject {
         this.enrolled = false;
         this.bullet = null;
     }
-
+    
     /**
      * Permet l'appel à une action interagissant avec le bot (actions définies dans botActionDefinition.js)
      * @param {String} key - Nom de l'action.
@@ -50,5 +50,26 @@ export default class Bot extends GameObject {
             }),
             true
         );
+    }
+
+    /**
+     * Affiche le champs de vision du bot.
+     */
+    showFov() {
+        // Affichage du cône de vision
+        const triangleGeometry = new THREE.BufferGeometry();
+        const vertices = new Float32Array([
+            0, 0, 0,
+            10, 0, -10,
+            -10, 0, -10
+        ]);
+        triangleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    
+        const triangleMaterial = new THREE.LineBasicMaterial({ color: this.teamColor });
+        let triangleMesh = new THREE.LineLoop(triangleGeometry, triangleMaterial);
+        triangleMesh.position.y = 1.0;
+        triangleMesh.rotation.y = -Math.PI / 2;
+
+        this.sceneObject.add(triangleMesh);
     }
 }

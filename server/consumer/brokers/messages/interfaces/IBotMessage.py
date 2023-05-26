@@ -1,3 +1,4 @@
+from time import time
 from typing import Any
 from consumer.brokers.messages.interfaces.IMessage import IMessage
 
@@ -10,6 +11,7 @@ class IBotMessage(IMessage):
     def json(self) -> dict:
         return {
             'msg_type': self.msg_type,
+            'timestamp': time(),
             'source': self.source,
             'data': self.data
         }

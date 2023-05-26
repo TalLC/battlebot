@@ -3,6 +3,7 @@ from time import sleep
 from fastapi import FastAPI, Request
 from common.ErrorCode import *
 from common.config import CONFIG_REST, refresh_config
+from common.PerformanceCounter import PerformanceCounter
 from business.GameManager import GameManager
 from consumer.ConsumerManager import ConsumerManager
 from business.gameobjects.entity.bots.commands.BotMoveCommand import BotMoveCommand
@@ -10,11 +11,7 @@ from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnComm
 from business.gameobjects.entity.bots.commands.BotShootCommand import BotShootCommand
 from consumer.brokers.messages.mqtt.ServerMqttIdMessage import ServerMqttIdMessage
 from consumer.brokers.messages.stomp.ServerStompIdMessage import ServerStompIdMessage
-from provider.security.NetworkSecurity import NetworkSecurity
-from provider.security.NetworkSecurityDecorators import NetworkSecurityDecorators
 from provider.webservices.rest.models.AdminBaseModel import AdminBaseModel
-from provider.webservices.rest.models.AdminActionBanModel import AdminActionBanModel
-from provider.webservices.rest.models.AdminActionUnbanModel import AdminActionUnbanModel
 from provider.webservices.rest.models.AdminDisplayClientsActionListModel import AdminDisplayClientsActionListModel
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByIdModel import AdminDisplayClientsActionGetByIdModel
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByTokenModel import AdminDisplayClientsActionGetByTokenModel
@@ -36,8 +33,6 @@ class RestProvider:
         self.__admin_password = CONFIG_REST.admin_password
 
     def __register_endpoints(self):
-        self.__admin_action_ban()
-        self.__admin_action_unban()
         self.__admin_game_action_start()
         self.__admin_game_action_reset()
         self.__admin_game_action_select_map()
@@ -55,41 +50,11 @@ class RestProvider:
         self.__bots_id_action_move()
         logging.info("[REST] All endpoints registered")
 
-    def __admin_action_ban(self):
-        """
-        Ban the specified IP from a specific source.
-        """
-        @self.__app.patch("/admin/action/ban")
-        @NetworkSecurityDecorators.rest_ban_check
-        async def action(model: AdminActionBanModel, _: Request):
-            # Check the admin password
-            if model.api_password != self.__admin_password:
-                ErrorCode.throw(ADMIN_BAD_PASSWORD)
-
-            # Ban ip address
-            banned_ip = NetworkSecurity().ban_ip(model.host, model.source, model.reason, model.definitive)
-            return {'status': 'ok', 'banned': banned_ip.json()}
-
-    def __admin_action_unban(self):
-        """
-        Unban the specified IP for a specific source.
-        """
-        @self.__app.patch("/admin/action/unban")
-        async def action(model: AdminActionUnbanModel, _: Request):
-            # Check the admin password
-            if model.api_password != self.__admin_password:
-                ErrorCode.throw(ADMIN_BAD_PASSWORD)
-
-            # Ban ip address
-            NetworkSecurity().unban_ip(model.host, model.source)
-            return {'status': 'ok', 'message': f'{model.host} unbanned'}
-
     def __admin_game_action_start(self):
         """
         Start the current game.
         """
         @self.__app.patch("/game/action/start")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: AdminBaseModel, _: Request):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -107,7 +72,6 @@ class RestProvider:
         Reset the current game.
         """
         @self.__app.post("/game/action/reset")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: AdminBaseModel, _: Request):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -144,7 +108,7 @@ class RestProvider:
             GameManager().team_manager.reload_teams()
 
             # Reload the map
-            GameManager().reload_map()
+            GameManager().load_config()
 
             # Restarting game threads
             GameManager().init_threads()
@@ -156,7 +120,6 @@ class RestProvider:
         Select the map.
         """
         @self.__app.patch("/game/action/select_map")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: AdminActionSelectMapModel, _: Request):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -175,7 +138,6 @@ class RestProvider:
         !!Do not use "client_token" as Path parameter to avoid clients to set ready for others!!
         """
         @self.__app.patch("/display/clients/action/ready")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: DisplayClientsActionReadyModel, _: Request):
             # Checking if the token exists
             if not GameManager().display_manager.does_client_token_exists(model.login_id):
@@ -194,7 +156,6 @@ class RestProvider:
         List all present and past display clients.
         """
         @self.__app.get("/display/clients/action/list")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: AdminDisplayClientsActionListModel, _: Request):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -213,7 +174,6 @@ class RestProvider:
         Find a display client by its id.
         """
         @self.__app.get("/display/clients/action/get_by_id")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: AdminDisplayClientsActionGetByIdModel, _: Request):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -233,7 +193,6 @@ class RestProvider:
         Find a display client by its token.
         """
         @self.__app.get("/display/clients/action/get_by_token")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: AdminDisplayClientsActionGetByTokenModel, _: Request):
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -317,7 +276,6 @@ class RestProvider:
         Create a new bot object and adds it to the specified team.
         """
         @self.__app.post("/bots/action/register")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(model: BotsActionRegisterModel, _: Request):
 
             # Check if the game is full
@@ -357,7 +315,6 @@ class RestProvider:
         The client must send back these ids to the server to validate the connection.
         """
         @self.__app.get("/bots/{bot_id}/action/request_connection")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, _: Request):
             logging.info(f"[REST] Bot {bot_id} is requesting a connection")
 
@@ -393,7 +350,6 @@ class RestProvider:
         our services.
         """
         @self.__app.patch("/bots/{bot_id}/action/check_connection")
-        @NetworkSecurityDecorators.rest_ban_check
         async def action(bot_id: str, model: BotsIdActionCheckConnectionModel, _: Request):
 
             # Check if the game is already started
@@ -429,7 +385,7 @@ class RestProvider:
         Make the bot shoot to the desired relative angle.
         """
         @self.__app.patch("/bots/{bot_id}/action/shoot")
-        @NetworkSecurityDecorators.rest_ban_check
+        @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionShootModel, _: Request):
 
             # Check if the game is not started
@@ -465,7 +421,7 @@ class RestProvider:
         Start to turn the specified bot to its left or right.
         """
         @self.__app.patch("/bots/{bot_id}/action/turn")
-        @NetworkSecurityDecorators.rest_ban_check
+        @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionTurnModel, _: Request):
 
             # Check if the game is not started
@@ -500,7 +456,7 @@ class RestProvider:
         Start to move the specified bot forward.
         """
         @self.__app.patch("/bots/{bot_id}/action/move")
-        @NetworkSecurityDecorators.rest_ban_check
+        @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionMoveModel, _: Request):
 
             # Check if the game is not started

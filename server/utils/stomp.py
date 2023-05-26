@@ -3,6 +3,8 @@ import logging
 import stomp
 from stomp import ConnectionListener
 from stomp.utils import Frame
+
+from common.PerformanceCounter import PerformanceCounter
 from common.config import CONFIG_STOMP
 from common.Singleton import SingletonABCMeta
 
@@ -48,6 +50,7 @@ class STOMP(metaclass=SingletonABCMeta):
     def __del__(self):
         self.close()
 
+    @PerformanceCounter.count
     def send_message(self, topic: str, message: dict):
         """
         Send a message to a topic.

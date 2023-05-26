@@ -27,8 +27,8 @@ export default class MessageHandler {
             }
             // Messages de connexion (envois uniques)
             else {
-                logger.debug(`Message reçu : ${message.msg_type}`)
                 if (message.msg_type) {
+                    logger.debug(`Message reçu : ${message.msg_type}`)
                     switch (message.msg_type) {
                         case "BotCreateMessage":
                             new BotCreateMessage(message).exec();
