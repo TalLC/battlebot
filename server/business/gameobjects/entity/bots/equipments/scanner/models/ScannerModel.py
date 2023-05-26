@@ -21,7 +21,6 @@ from common.PerformanceCounter import PerformanceCounter
 
 if TYPE_CHECKING:
     from business.gameobjects.entity.bots.models.BotModel import BotModel
-    from shapely.geometry import LineString
 
 
 class ScannerModel(IScanner, ABC):
