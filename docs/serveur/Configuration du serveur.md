@@ -68,9 +68,9 @@ Vous les retrouverez tous dans la console au lancement du serveur, sous cette fo
 [INFO] 02/03/2023 05:41:23 - Blue team (team-id-1) - COLOR: 0x0042aa, BOTS: 0/1
 [INFO] 02/03/2023 05:41:23 - Red team (team-id-2) - COLOR: 0xaa0000, BOTS: 0/1
 [INFO] 02/03/2023 05:41:23 - Green team (team-id-3) - COLOR: 0x00bb00, BOTS: 0/1
-[INFO] 02/03/2023 05:41:23 - Yellow team (f7e09fcc-73dc-466e-9ce6-3da97aaf5c15) - COLOR: 0xffcc00, BOTS: 0/1
-[INFO] 02/03/2023 05:41:23 - Black team (f873a159-518b-4db5-8598-5e859435e07a) - COLOR: 0x101010, BOTS: 0/1
-[INFO] 02/03/2023 05:41:23 - White team (d6214344-e3d3-4b6f-925a-6e51936d8150) - COLOR: 0xdadada, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Yellow team (team-id-4) - COLOR: 0xffcc00, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - Black team (team-id-5) - COLOR: 0x101010, BOTS: 0/1
+[INFO] 02/03/2023 05:41:23 - White team (team-id-6) - COLOR: 0xdadada, BOTS: 0/1
 ```
 
 
@@ -105,6 +105,8 @@ Si vous n'avez pas ce bouton, c'est que le serveur n'est pas lancé en mode debu
 ### Contrôler un bot
 
 Double cliquez sur un bot à l'écran, une télécommande va s'afficher sur la droite de l'écran pour prendre le contrôle du bot.
+
+<img src="../img/debug_remote.png">
 
 ## Troubleshooting
 
