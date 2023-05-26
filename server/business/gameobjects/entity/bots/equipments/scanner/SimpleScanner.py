@@ -9,11 +9,12 @@ if TYPE_CHECKING:
 
 
 class SimpleScanner(ScannerModel):
-    _name = "Simple scanner"
-    _interval = 0.250
-    _distance = 10
-    _fov = 90.0
+    _name: str = "Simple scanner"
+    _interval: float = 0.500
+    _distance: int = 10
+    _fov: float = 90.0
+    _precision: float = 1.0
 
     def __init__(self, bot: BotModel):
         super().__init__(bot=bot, name=self._name, interval=self._interval, distance=self._distance,
-                         fov=self._fov, activated=True)
+                         fov=self._fov, precision=self._precision, activated=True)
