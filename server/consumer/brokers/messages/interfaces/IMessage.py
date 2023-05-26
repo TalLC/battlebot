@@ -1,4 +1,5 @@
-from abc import abstractmethod, ABC
+from abc import ABC
+from time import time
 from typing import Any
 
 
@@ -31,6 +32,7 @@ class IMessage(ABC):
         self._data = data
         self._retain = retain
 
-    @abstractmethod
     def json(self) -> dict:
-        raise NotImplementedError()
+        return {
+           'timestamp': time()
+        }
