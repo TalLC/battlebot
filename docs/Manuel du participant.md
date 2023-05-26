@@ -1,6 +1,4 @@
 <link rel="stylesheet" type="text/css" href="style/style.css">
-<link rel="stylesheet" type="text/css" href="style/dark-theme.css">
-<link rel="stylesheet" type="text/css" href="style/dark-code.css">
 
 <!-- Side navigation -->
 <div class="sidebar">
@@ -23,7 +21,7 @@
 <!-- Page content -->
 <div class="main">
 
-<center><img src="img/logo.png" style="max-height: 30vh;"></center>
+<center><img src="img/logo.png" style="max-height: 30vh; filter: drop-shadow(0 0 2rem #c05090);"></center>
 
 # Manuel du participant
 
@@ -34,7 +32,6 @@
   - [Et maintenant, par où commencer ?](#et-maintenant-par-où-commencer-)
     - [Configuration des connexions](#configuration-des-connexions)
     - [Documentation](#documentation)
-      - [Contrats d'interfaces](#contrats-dinterfaces)
     - [Tests](#tests)
 
 

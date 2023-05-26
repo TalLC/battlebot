@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e95131b3-f451-447c-aa3e-f7b792ddaa2a",
+		"_postman_id": "c8f790cd-f2da-4ddc-9cfc-4b55cfb8caf4",
 		"name": "Battlebot",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -23,10 +23,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/display/clients/action/ready",
+							"raw": "http://127.0.0.1:8000/display/clients/action/ready",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -35,7 +38,8 @@
 								"action",
 								"ready"
 							]
-						}
+						},
+						"description": "Set the display client to ready if the token match."
 					},
 					"response": []
 				}
@@ -45,13 +49,13 @@
 			"name": "Admin",
 			"item": [
 				{
-					"name": "admin - /admin/action/ban",
+					"name": "admin - /game/action/start",
 					"request": {
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"source\": \"websocket\",\r\n    \"reason\": \"Ban de test\",\r\n    \"definitive\": true\r\n}",
+							"raw": "{\r\n    \"api_password\": \"password\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -59,78 +63,56 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/admin/action/ban",
+							"raw": "http://127.0.0.1:8000/game/action/start",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
-							],
-							"port": "8000",
-							"path": [
-								"admin",
-								"action",
-								"ban"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "admin - /admin/action/unban",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"source\": \"websocket\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://{{host}}:8000/admin/action/unban",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"port": "8000",
-							"path": [
-								"admin",
-								"action",
-								"unban"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "admin - /game/action/select_map",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"api_password\": \"password\",\r\n    \"map_name\": \"lake_32_32\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://{{host}}:8000/game/action/select_map",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
 								"game",
 								"action",
-								"select_map"
+								"start"
 							]
-						}
+						},
+						"description": "Start the current game."
+					},
+					"response": []
+				},
+				{
+					"name": "admin - /game/action/reset",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"api_password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/game/action/reset",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"game",
+								"action",
+								"reset"
+							]
+						},
+						"description": "Reset the game and starts a new one."
 					},
 					"response": []
 				},
@@ -152,10 +134,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/display/clients/action/list",
+							"raw": "http://127.0.0.1:8000/display/clients/action/list",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -164,7 +149,8 @@
 								"action",
 								"list"
 							]
-						}
+						},
+						"description": "List all present and past display clients."
 					},
 					"response": []
 				},
@@ -186,10 +172,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/display/clients/action/get_by_id",
+							"raw": "http://127.0.0.1:8000/display/clients/action/get_by_id",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -198,7 +187,8 @@
 								"action",
 								"get_by_id"
 							]
-						}
+						},
+						"description": "Find a display client by its id."
 					},
 					"response": []
 				},
@@ -220,10 +210,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/display/clients/action/get_by_token",
+							"raw": "http://127.0.0.1:8000/display/clients/action/get_by_token",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -232,7 +225,8 @@
 								"action",
 								"get_by_token"
 							]
-						}
+						},
+						"description": "Find a display client by its token."
 					},
 					"response": []
 				},
@@ -251,10 +245,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/bots/:bot_id/action/kill",
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/kill",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -269,7 +266,8 @@
 									"value": "0-0-0-0-0"
 								}
 							]
-						}
+						},
+						"description": "Kills the specified bot."
 					},
 					"response": []
 				},
@@ -288,10 +286,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/bots/action/add",
+							"raw": "http://127.0.0.1:8000/bots/action/add",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -299,7 +300,8 @@
 								"action",
 								"add"
 							]
-						}
+						},
+						"description": "Adds an ai-less bot in the game."
 					},
 					"response": []
 				}
@@ -323,10 +325,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/bots/action/register",
+							"raw": "http://127.0.0.1:8000/bots/action/register",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -334,69 +339,78 @@
 								"action",
 								"register"
 							]
-						}
+						},
+						"description": "Create a new bot object and adds it to the specified team."
 					},
 					"response": []
 				},
 				{
-					"name": "request connection",
+					"name": "/bots/{bot_id}/action/request_connection",
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://{{host}}:8000/request_connection?bot_id=VIBB11ST",
+							"raw": "http://127.0.0.1:8000/bots/{bot_id}/action/request_connection",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
+								"bots",
+								"{bot_id}",
+								"action",
 								"request_connection"
-							],
-							"query": [
-								{
-									"key": "bot_id",
-									"value": "VIBB11ST"
-								}
 							]
-						}
+						},
+						"description": "Request connection ids to validate the connection to all the services.\nIt sends 3 ids to the client using Rest, STOMP and MQTT.\nThe client must send back these ids to the server to validate the connection."
 					},
 					"response": []
 				},
 				{
-					"name": "check connection",
+					"name": "/bots/{bot_id}/action/check_connection",
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rest_id\": \"8f7f14fd-5ef8-408f-bd58-14d8240c8950\",\r\n    \"stomp_id\": \"9c69f371-29a2-4e7e-8ba5-fc40b789b3b2\",\r\n    \"mqtt_id\": \"ab81dd34-a171-4fd3-a676-b739a2e71297\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://{{host}}:8000/check_connection?bot_id=VIBB11ST&request_id=Y03KJPA0&stomp_id&mqtt_id",
+							"raw": "http://127.0.0.1:8000/bots/{bot_id}/action/check_connection",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
+								"bots",
+								"{bot_id}",
+								"action",
 								"check_connection"
-							],
-							"query": [
-								{
-									"key": "bot_id",
-									"value": "VIBB11ST"
-								},
-								{
-									"key": "request_id",
-									"value": "Y03KJPA0"
-								},
-								{
-									"key": "stomp_id",
-									"value": null
-								},
-								{
-									"key": "mqtt_id",
-									"value": null
-								}
 							]
-						}
+						},
+						"description": "Check if the ids found by the client are the expected ones in order to validate the client connection to all our services."
 					},
 					"response": []
 				},
@@ -415,10 +429,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/bots/:bot_id/action/shoot",
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/shoot",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -433,7 +450,8 @@
 									"value": "0-0-0-0-0"
 								}
 							]
-						}
+						},
+						"description": "Make the bot shoot to the desired relative angle."
 					},
 					"response": []
 				},
@@ -452,10 +470,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/bots/:bot_id/action/move",
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/move",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -470,7 +491,8 @@
 									"value": "0-0-0-0-2"
 								}
 							]
-						}
+						},
+						"description": "Start to move the specified bot forward.\n\nValid action values are: \"start\", \"stop\""
 					},
 					"response": []
 				},
@@ -489,10 +511,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{host}}:8000/bots/:bot_id/action/turn",
+							"raw": "http://127.0.0.1:8000/bots/:bot_id/action/turn",
 							"protocol": "http",
 							"host": [
-								"{{host}}"
+								"127",
+								"0",
+								"0",
+								"1"
 							],
 							"port": "8000",
 							"path": [
@@ -507,72 +532,12 @@
 									"value": "0-0-0-0-0"
 								}
 							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Game",
-			"item": [
-				{
-					"name": "/game/action/start",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"api_password\": \"password\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
 						},
-						"url": {
-							"raw": "http://{{host}}:8000/game/action/start",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"port": "8000",
-							"path": [
-								"game",
-								"action",
-								"start"
-							]
-						}
+						"description": "Start to turn the specified bot to its left or right.\nValid direction values are: \"left\", \"right\", \"stop\""
 					},
 					"response": []
 				}
 			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "host",
-			"value": "127.0.0.1"
 		}
 	]
 }
