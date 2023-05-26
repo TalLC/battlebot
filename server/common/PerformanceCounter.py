@@ -143,5 +143,7 @@ class PerformanceCounter(metaclass=SingletonABCMeta):
     def _thread_reporting(self, e: ThreadEvent, interval_ms: int):
         while not e.is_set():
             sleep(interval_ms / 1000)
-            if len(self._COUNTERS.keys()):
-                self.write_report()
+            from common.config import CONFIG_GAME
+            if CONFIG_GAME.is_debug:
+                if len(self._COUNTERS.keys()):
+                    self.write_report()
