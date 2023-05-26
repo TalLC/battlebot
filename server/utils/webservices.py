@@ -2,7 +2,6 @@ from time import time, sleep
 from datetime import timedelta
 from queue import SimpleQueue
 from threading import Thread, Event as ThreadEvent
-from multiprocessing import Process, Event as ProcessEvent
 
 from common.PerformanceCounter import PerformanceCounter
 from common.Singleton import SingletonABCMeta
