@@ -366,8 +366,6 @@ code {
     });
   </script>
 <link rel="stylesheet" type="text/css" href="../style/style.css">
-<link rel="stylesheet" type="text/css" href="../style/dark-theme.css">
-<link rel="stylesheet" type="text/css" href="../style/dark-code.css">
 <!-- Side navigation -->
 <div class="sidebar">
   <h1>Sommaire</h1>
@@ -390,6 +388,14 @@ code {
 <ul>
 <li><a href="#installation-du-serveur">Installation du serveur</a>
 <ul>
+<li><a href="#installation-par-docker">Installation par Docker</a>
+<ul>
+<li><a href="#chargement-du-fichier-image">Chargement du fichier image</a></li>
+<li><a href="#d%C3%A9marrage-dun-conteneur-en-ligne-de-commande">Démarrage d'un conteneur en ligne de commande</a></li>
+<li><a href="#d%C3%A9marrage-dun-conteneur-avec-docker-compose">Démarrage d'un conteneur avec docker compose</a></li>
+<li><a href="#debug">Debug</a></li>
+</ul>
+</li>
 <li><a href="#installation-par-scripts">Installation par scripts</a></li>
 <li><a href="#installation-manuelle">Installation manuelle</a>
 <ul>
@@ -401,8 +407,62 @@ code {
 </ul>
 </li>
 </ul>
-<p>Vous devez avoir obtenu le fichier <code>battlebots-server-package.zip</code> au préalable. Ce fichier contient tout ce qu'il faut pour faire tourner le serveur Battlebots en local.</p>
+<h2 id="installation-par-docker">Installation par Docker</h2>
+<p>Vous devez disposer d'une installation Docker permettant de lancer des conteneurs Linux au préalable.</p>
+<h3 id="chargement-du-fichier-image">Chargement du fichier image</h3>
+<p>Importez l'image Docker à partir du fichier tar en utilisant la commande <code>docker load</code> :</p>
+<pre class="hljs"><code><div>docker load -i battlebots-0.5.2.tar
+</div></code></pre>
+<h3 id="d%C3%A9marrage-dun-conteneur-en-ligne-de-commande">Démarrage d'un conteneur en ligne de commande</h3>
+<p>Pour démarrer un conteneur à partir de l'image Docker, utilisez la commande <code>docker run</code> :</p>
+<pre class="hljs"><code><div>docker run -d --rm -p 8000:8000 -p 61613:61613 -p 1883:1883 battlebots:0.5.2
+</div></code></pre>
+<p>Explication des options utilisées :</p>
+<ul>
+<li>-d : Détache le conteneur et le fait s'exécuter en arrière-plan.</li>
+<li>-p 8000:8000 : (serveur web + REST) Mappe le port local 8000 sur le port 8000 du conteneur.</li>
+<li>-p 61613:61613 : (serveur STOMP) Mappe le port local 61613 sur le port 61613 du conteneur.</li>
+<li>-p 1883:1883 : (serveur MQTT) Mappe le port local 1883 sur le port 1883 du conteneur.</li>
+<li>battlebots:0.5.2 : Spécifie le nom et le tag de l'image à utiliser pour démarrer le conteneur.</li>
+</ul>
+<h3 id="d%C3%A9marrage-dun-conteneur-avec-docker-compose">Démarrage d'un conteneur avec docker compose</h3>
+<p>Si vous avez Docker compose et souhaitez l'utiliser :</p>
+<ul>
+<li>Créez un fichier nommé <code>docker-compose.yml</code> dans un répertoire de votre choix :</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-attr">version:</span> <span class="hljs-string">'3'</span>
+<span class="hljs-attr">services:</span>
+  <span class="hljs-attr">battlebots:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">battlebots:0.5.2</span>
+    <span class="hljs-attr">ports:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-number">8000</span><span class="hljs-string">:8000</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-number">61613</span><span class="hljs-string">:61613</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-number">1883</span><span class="hljs-string">:1883</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">BATTLEBOTS_DEBUG=false</span>
+</div></code></pre>
+<ul>
+<li>Placez-vous dans le répertoire où se trouve le fichier <code>docker-compose.yml</code></li>
+<li>Exécutez la commande suivante pour démarrer le conteneur en utilisant Docker Compose :</li>
+</ul>
+<pre class="hljs"><code><div>docker-compose up -d
+</div></code></pre>
+<p>Explication des options utilisées :</p>
+<ul>
+<li>-d : Détache le conteneur et le fait s'exécuter en arrière-plan.</li>
+</ul>
+<h3 id="debug">Debug</h3>
+<p>Pour activer le mode débug, passer la variable d'environnement <code>BATTLEBOTS_DEBUG</code> à <code>true</code>.</p>
+<p>En ligne de commande :</p>
+<pre class="hljs"><code><div>docker run -d --rm -p 8000:8000 -p 61613:61613 -p 1883:1883 -e BATTLEBOTS_DEBUG=<span class="hljs-literal">true</span> battlebots:0.5.2
+</div></code></pre>
+<p>Dans le fichier <code>docker-compose.yml</code></p>
+<pre class="hljs"><code><div>    <span class="hljs-string">...</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">BATTLEBOTS_DEBUG=true</span>
+</div></code></pre>
 <h2 id="installation-par-scripts">Installation par scripts</h2>
+<p>Vous devez avoir obtenu le fichier <code>battlebots-server-package.zip</code> au préalable. Ce fichier contient tout ce qu'il faut pour faire tourner le serveur Battlebots en local.</p>
 <blockquote>
 <p>⚠️ L'installation par script n'est actuellement disponible que pour <strong>Windows</strong>.</p>
 </blockquote>
@@ -418,6 +478,7 @@ code {
 </ul>
 <p>A partir de là vous devriez accéder à l'interface web via <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>.</p>
 <h2 id="installation-manuelle">Installation manuelle</h2>
+<p>Vous devez avoir obtenu le fichier <code>battlebots-server-package.zip</code> au préalable. Ce fichier contient tout ce qu'il faut pour faire tourner le serveur Battlebots en local.</p>
 <p>Cette méthode d'installation n'est pas recommandée. Elle est principalement présente pour expliquer sur quoi repose le serveur et pour aider si il doit être installé sur un OS différent.</p>
 <h3 id="pr%C3%A9requis">Prérequis</h3>
 <h4 id="activemq-5166">ActiveMQ 5.16.6</h4>
@@ -431,28 +492,26 @@ code {
 <p>Java 1.8 est nécessaire pour faire fonctionner les brokers de messages de ActiveMQ.</p>
 <p>Il peut être téléchargé ici en version installable (Windows, macOS et Linux) :</p>
 <ul>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-i586.rpm">jre-8u361-linux-i586.rpm</a></li>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-i586.tar.gz">jre-8u361-linux-i586.tar.gz</a></li>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-x64.rpm">jre-8u361-linux-x64.rpm</a></li>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-x64.tar.gz">jre-8u361-linux-x64.tar.gz</a></li>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-macosx-x64.dmg">jre-8u361-macosx-x64.dmg</a></li>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-solaris-sparcv9.tar.gz">jre-8u361-solaris-sparcv9.tar.gz</a></li>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-windows-i586.exe">jre-8u361-windows-i586.exe</a></li>
-<li><a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-windows-x64.exe">jre-8u361-windows-x64.exe</a></li>
+<li>Windows <a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-windows-x64.exe">jre-8u361-windows-x64.exe</a></li>
+<li>Linux <a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-x64.rpm">jre-8u361-linux-x64.rpm</a></li>
+<li>MacOs <a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-macosx-x64.dmg">jre-8u361-macosx-x64.dmg</a></li>
 </ul>
-<p>Ou en version portable (Windows uniquement) :</p>
+<p>Ou en version portable :</p>
 <ul>
-<li><a href="https://sourceforge.net/projects/portableapps/files/Java/">https://sourceforge.net/projects/portableapps/files/Java/</a></li>
+<li>Windows <a href="https://sourceforge.net/projects/portableapps/files/Java/">jre-8u371-windows-x64.tar.gz</a></li>
+<li>Linux  <a href="https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java8/java8u361/jre/jre-8u361-linux-x64.tar.gz">jre-8u361-linux-x64.tar.gz</a></li>
 </ul>
 <h4 id="python-310">Python 3.10</h4>
 <p>Il vous faut disposer d'une installation Python complète version <strong>3.10</strong> minimum (les versions &quot;embeddable package&quot; officielles ne sont <strong>pas suffisantes</strong>).</p>
 <p>Il peut être téléchargé ici en version installable (Windows et macOS) :</p>
 <ul>
-<li><a href="https://www.python.org/downloads/release/python-31010/">https://www.python.org/downloads/release/python-31010/</a></li>
+<li>Multi-plateformes <a href="https://www.python.org/downloads/release/python-31010/">https://www.python.org/downloads/release/python-31010/</a></li>
 </ul>
-<p>Ou en version portable (Windows uniquement) :</p>
+<p>Ou en version portable :</p>
 <ul>
-<li><a href="https://github.com/winpython/winpython/releases/tag/5.3.20221233">https://github.com/winpython/winpython/releases/tag/5.3.20221233</a> (la release <code>Winpython64-3.10.9.0dot</code> est suffisante)</li>
+<li>Windows <a href="https://github.com/winpython/winpython/releases/tag/5.3.20221233">https://github.com/winpython/winpython/releases/tag/5.3.20221233</a> (la release <code>Winpython64-3.10.9.0dot</code> est suffisante)</li>
+<li>MacOs <a href="https://github.com/indygreg/python-build-standalone/releases/tag/20230507">https://github.com/indygreg/python-build-standalone/releases/tag/20230507</a> (release <code>cpython-3.10.11+20230507-&lt;architecture&gt;-apple-darwin-install_only.tar.gz</code>)</li>
+<li>Linux <a href="https://github.com/indygreg/python-build-standalone/releases/tag/20230507">https://github.com/indygreg/python-build-standalone/releases/tag/20230507</a> (release <code>cpython-3.10.11+20230507-&lt;architecture&gt;-unknown-linux-gnu-install_only.tar.gz</code>)</li>
 </ul>
 <h3 id="environnement-virtuel-python">Environnement virtuel Python</h3>
 <ul>
@@ -464,7 +523,7 @@ code {
 <li><code>&lt;chemin vers votre binaire&gt;\python.exe -m venv venv</code></li>
 </ul>
 </li>
-<li>Unix :
+<li>Linux :
 <ul>
 <li><code>&lt;chemin vers votre binaire&gt;/python -m venv venv</code></li>
 </ul>
@@ -473,13 +532,23 @@ code {
 </li>
 <li>Installer les libs nécessaires dans le venv créé :
 <ul>
-<li>Recopiez le dossier <code>site-packages</code> qui se trouve dans <code>third-party\python_venv_libs\</code> vers <code>venv\Lib\</code></li>
+<li>Windows :
+<ul>
+<li><code>venv\Scripts\pip install -r requirements.txt</code></li>
+</ul>
+</li>
+<li>Linux :
+<ul>
+<li><code>venv/bin/pip install -r requirements.txt</code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 <h3 id="d%C3%A9marrer-le-serveur">Démarrer le serveur</h3>
 <h4 id="activemq">ActiveMQ</h4>
-<p>On commence par démarrer le serveur ActiveMQ.</p>
+<p>On commence par démarrer le serveur ActiveMQ.
+Toujours dans le dossier principal de Battlebots, ouvrez un nouveau terminal.</p>
 <ul>
 <li>Définir la variable <code>JAVA_HOME</code> sur votre installation de Java 1.8 :
 <ul>
@@ -488,7 +557,7 @@ code {
 <li><code>set JAVA_HOME=&quot;&lt;chemin absolu vers le dossier du JRE 1.8&gt;&quot;</code></li>
 </ul>
 </li>
-<li>Unix :
+<li>Linux :
 <ul>
 <li><code>export JAVA_HOME=&lt;chemin absolu vers le dossier du JRE 1.8&gt;</code></li>
 </ul>
@@ -502,9 +571,9 @@ code {
 <li><code>third-party\activemq\bin\activemq.bat start</code></li>
 </ul>
 </li>
-<li>Unix :
+<li>Linux :
 <ul>
-<li><code>third-party/activemq/bin/activemq start</code></li>
+<li><code>third-party/activemq/bin/activemq start</code> (ajoutez le droit d'exécution sur le fichier si nécessaire)</li>
 </ul>
 </li>
 </ul>
@@ -520,7 +589,7 @@ code {
 </li>
 <li>Unix :
 <ul>
-<li><code>venv/Scripts/python -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30</code></li>
+<li><code>venv/bin/python -m uvicorn main:app --port 8000 --reload --timeout-keep-alive 30</code></li>
 </ul>
 </li>
 </ul>
