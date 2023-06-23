@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from business.gameobjects.tiles.Tile import Tile
 from business.shapes.ShapesUtils import ShapesUtils
+from common.PerformanceCounter import PerformanceCounter
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.BotMoveMessage import BotMoveMessage
 from business.gameobjects.tiles.Desintegrator import Desintegrator
@@ -43,6 +44,7 @@ class CollisionHandler:
             if other.has_collision and other != self._bot and other.shape.intersection(self._bot.shape):
                 return other.name
 
+    @PerformanceCounter.count
     def check_collision(self):
         self._collision_entity = None
         neared_items = self._bot.bot_manager.game_manager.get_map_objects(
@@ -56,6 +58,7 @@ class CollisionHandler:
 
         return False
 
+    @PerformanceCounter.count
     def handle_collision(self):
         logging.debug(f'-------------{self._bot.name} collides with {self._collision_entity} -------------')
         self.knockback()

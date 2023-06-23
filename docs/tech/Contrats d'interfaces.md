@@ -1,6 +1,4 @@
 <link rel="stylesheet" type="text/css" href="../style/style.css">
-<link rel="stylesheet" type="text/css" href="../style/dark-theme.css">
-<link rel="stylesheet" type="text/css" href="../style/dark-code.css">
 
 <!-- Side navigation -->
 <div class="sidebar">
@@ -307,13 +305,13 @@ Fait tirer le robot à l'angle relatif désiré.
   ],
   "properties": {
     "angle": {
-      "type": "int",
+      "type": "float",
       "description": "L'angle auquel le robot doit tirer, en degrés."
     }
   },
   "examples": [
     {
-      "angle": 42
+      "angle": 42.0
     }
   ]
 }
@@ -344,7 +342,7 @@ Fait tirer le robot à l'angle relatif désiré.
   "examples": [
     {
       "status": "ok",
-      "message": "Fired at 42°"
+      "message": "Fired at 42.0°"
     }
   ]
 }

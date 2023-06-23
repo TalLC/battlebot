@@ -1,6 +1,4 @@
 <link rel="stylesheet" type="text/css" href="style/style.css">
-<link rel="stylesheet" type="text/css" href="style/dark-theme.css">
-<link rel="stylesheet" type="text/css" href="style/dark-code.css">
 
 <!-- Side navigation -->
 <div class="sidebar">
@@ -23,24 +21,18 @@
 <!-- Page content -->
 <div class="main">
 
-<center><img src="img/logo.png" style="max-height: 30vh;"></center>
+<center><img src="img/logo.png" style="max-height: 30vh; filter: drop-shadow(0 0 2rem #c05090);"></center>
 
 # Manuel du participant
 
 - [Manuel du participant](#manuel-du-participant)
-  - [Prérequis](#prérequis)
-    - [Installer le serveur](#installer-le-serveur)
-    - [Installer la bibliothèque Python](#installer-la-bibliothèque-python)
-  - [Et maintenant, par où commencer ?](#et-maintenant-par-où-commencer-)
-    - [Configuration des connexions](#configuration-des-connexions)
-    - [Documentation](#documentation)
-      - [Contrats d'interfaces](#contrats-dinterfaces)
-    - [Tests](#tests)
+  - [Installer le serveur](#installer-le-serveur)
+  - [Documentation](#documentation)
+    - [Contrats d'interfaces](#contrats-dinterfaces)
+  - [Tests](#tests)
 
 
-## Prérequis
-
-### Installer le serveur
+## Installer le serveur
 
 Pour permettre de tester l'IA, il faut commencer par installer et faire fonctionner le serveur Battlebots en local.
 
@@ -48,69 +40,17 @@ Parmi les éléments qui vous ont été fournis, vous devez avoir le package `ba
 
 Suivez les procédures [Installation du serveur](serveur/Installation%20du%20serveur.html) et [Configuration du serveur](serveur/Configuration%20du%20serveur.html)
 
-### Installer la bibliothèque Python
 
-Une bibliothèque permettant d'inscrire et d’interagir avec votre IA a été écrite : `battlebotslib`
+## Documentation
 
-Parmi les éléments qui vous ont été fournis, vous devez avoir le package `battlebotslib-python.zip`
-
-Suivez la procédure `Installation de la lib Python`.
-
-## Et maintenant, par où commencer ?
-
-A ce stade vous devez avoir un serveur qui démarre et un nouveau projet Python avec la bibliothèque `battlebotslib` installée.
-
-### Configuration des connexions
-
-Pour que la lib fonctionne, il faut créer 3 fichiers de configuration qui vont donner les informations de connexions aux différents services.
-
-Ils sont à créer dans votre projet Python, dans un sous-dossier `conf`.
-
-Voici les fichiers avec les informations pour vous connecter à votre serveur local :
-
-**conf/rest.json**
-```json
-{
-  "host": "localhost",
-  "port": 8000,
-  "protocol": "http"
-}
-```
-
-**conf/mqtt.json**
-```json
-{
-  "destination_root": "BATTLEBOT/BOT/",
-  "username": "user",
-  "password": "password",
-  "host": "localhost",
-  "port": 1883,
-  "connect_timeout": 5
-}
-```
-
-
-**conf/stomp.json**
-```json
-{
-  "destination_root": "BATTLEBOT.BOT.",
-  "username": "user",
-  "password": "password",
-  "host": "localhost",
-  "port": 61613
-}
-```
-
-### Documentation
-
-#### Contrats d'interfaces
+### Contrats d'interfaces
 
 Description des messages envoyés vers le serveur et reçu par celui-ci.
 
 - [Contrats d'interfaces](tech/Contrats%20d'interfaces.html)
 - [Contrats d'interfaces - Admin](tech/Contrats%20d'interfaces%20-%20Admin.html)
 
-### Tests
+## Tests
 
 Pour relancer une partie sans avoir à relancer tous les exécutables, faire `Ctrl` + `C` dans le navigateur et taper le mot de passe admin du serveur (`password` par défaut).  Au bout de 5 secondes, le navigateur rechargera la page pour afficher l'écran d'attente. Si ce n'est pas le cas vous pouvez recharger la page manuellement.
 

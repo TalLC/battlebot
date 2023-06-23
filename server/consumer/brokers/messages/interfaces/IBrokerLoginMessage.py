@@ -1,3 +1,4 @@
+from time import time
 from consumer.brokers.messages.interfaces.IMessage import IMessage
 
 
@@ -21,8 +22,10 @@ class IBrokerLoginMessage(IMessage):
         super().__init__(bot_id=bot_id, source='server', msg_type=f"{broker_name.lower()}_id", data=data, retain=retain)
 
     def json(self) -> dict:
-        return {
+        json = super().json()
+        json |= {
             'msg_type': self.msg_type,
             'source': self.source,
             'data': self.data
         }
+        return json

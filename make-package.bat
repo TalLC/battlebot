@@ -102,8 +102,11 @@ rmdir /S /Q %tmp_server_third_party%\activemq_config 2> nul
 del /Q %tmp_server_third_party%\activemq\data\*.log 2> nul
 rmdir /S /Q %tmp_server_third_party%\activemq\data\kahadb 2> nul
 rmdir /S /Q %tmp_server_third_party%\activemq\data\tmp 2> nul
+del /Q %tmp_server_third_party%\jre1.8.0\bin\jfxwebkit.dll 2> nul
 rmdir /S /Q %tmp_server%\venv 2> nul
 del /Q %tmp_server%\*.bak 2> nul
+del /Q %tmp_server%\*.log 2> nul
+
 
 rem Zip du package serveur
 echo - Zip du package serveur

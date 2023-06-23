@@ -17,7 +17,7 @@ export default class Animator {
             instance = this;
 
             // Limitation du framerate
-            this.targetFPS = 60; // Nombre de FPS ciblé
+            this.targetFPS = 25; // Nombre de FPS ciblé
             this.targetDeltaTime = 1000 / this.targetFPS;
             this.lastFrameTime = null;
 

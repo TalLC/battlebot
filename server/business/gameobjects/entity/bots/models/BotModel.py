@@ -20,6 +20,7 @@ from business.shapes.ShapeFactory import Shape
 from business.gameobjects.entity.bots.commands.BotTurnCommand import BotTurnCommand
 from business.gameobjects.entity.bots.equipments.Equipment import Equipment
 from business.shapes.ShapesUtils import ShapesUtils, ShapeFactory
+from common.PerformanceCounter import PerformanceCounter
 from consumer.ConsumerManager import ConsumerManager
 
 from business.gameobjects.entity.bots.commands.IBotCommand import IBotCommand
@@ -263,6 +264,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         self._commands_queue.put(command)
 
+    @PerformanceCounter.count
     def shoot(self, angle: float) -> Target:
         """
         Called by Rest when the bot is ordered to shoot.
@@ -304,6 +306,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
             # No object was harmed
             return Target(x=shoot_end_x, z=shoot_end_z)
 
+    @PerformanceCounter.count
     def turn(self, radians: float):
         """
         Turn the bot on Y axis of the specified amount of radians.
@@ -316,6 +319,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         # Sending new rotation over websocket
         ConsumerManager().websocket.send_message(BotRotateMessage(self.id, self.ry))
 
+    @PerformanceCounter.count
     def move(self, distance: float):
         """
         Move the bot forward on X and Z axis using its current rotation.
