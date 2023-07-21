@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import math
 from random import Random
-from math import pi
+from math import pi, radians
 import logging
 from time import time, sleep
 from datetime import timedelta
@@ -133,11 +132,6 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         self._shape_name = shape_name
         self._shape_size = shape_size
         self._collision_handler = CollisionHandler(self)
-
-        # Random starting point
-        self.x, self.z = bot_manager.game_manager.map.get_random_spawn_coordinates()
-        # Random starting rotation
-        self.ry = Random().randint(0, math.floor(2 * pi * 100)) / 100
 
         # Initialize client communication object
         self._client_connection = ClientConnection(self.id)
@@ -278,7 +272,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
 
         # Maximum end coordinate of the shoot
         shoot_end_x, shoot_end_z = ShapesUtils.get_coordinates_at_distance(
-            (self.x, self.z), shoot_max_distance, self.ry + math.radians(shoot_angle)
+            (self.x, self.z), shoot_max_distance, self.ry + radians(shoot_angle)
         )
 
         # Gathering map objects

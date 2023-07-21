@@ -109,6 +109,7 @@ class RestProvider:
 
             # Reload the map
             GameManager().load_config()
+            GameManager().plugin_manager.load_config_plugins()
 
             # Restarting game threads
             GameManager().init_threads()

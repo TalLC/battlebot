@@ -182,7 +182,7 @@ export default class Debug {
         botZ.innerHTML = `Z (Bot) = ${bot.z?.toFixed(3)}`;
 
         let botRy = document.createElement("p");
-        botRy.innerHTML = `Ry (Bot) = ${bot.ry?.toFixed(3)}`;
+        botRy.innerHTML = `Ry (Bot) = ${-bot.ry?.toFixed(3)}`;
 
         let botObjX = document.createElement("p");
         botObjX.innerHTML = `X (obj) = ${bot.sceneObject?.position.x?.toFixed(3)}`;
@@ -191,7 +191,7 @@ export default class Debug {
         botObjZ.innerHTML = `Z (obj) = ${bot.sceneObject?.position.z?.toFixed(3)}`;
 
         let botObjRy = document.createElement("p");
-        botObjRy.innerHTML = `Ry (obj) = ${bot.sceneObject?.rotation.y?.toFixed(3)}`;
+        botObjRy.innerHTML = `Ry (obj) = ${-bot.sceneObject?.rotation.y?.toFixed(3)}`;
 
         // Ajout des éléments HTML au conteneur d'informations
         this.infoContainer.appendChild(header);
@@ -221,7 +221,7 @@ export default class Debug {
         objectZ.innerHTML = `Z = ${object.z?.toFixed(3)}`;
 
         let objectRy = document.createElement("p");
-        objectRy.innerHTML = `Ry = ${object.ry?.toFixed(3)}`;
+        objectRy.innerHTML = `Ry = ${-object.ry?.toFixed(3)}`;
 
         // Ajout des données au conteneur
         this.infoContainer.appendChild(header);

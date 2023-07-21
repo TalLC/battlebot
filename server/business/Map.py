@@ -4,6 +4,7 @@ import logging
 from random import Random
 from pathlib import Path
 from typing import TYPE_CHECKING
+import importlib
 
 from business.shapes.ShapesUtils import ShapesUtils
 from business.gameobjects.tiles.TileFactory import TileFactory
@@ -131,6 +132,10 @@ class Map:
     def tiles_grid(self) -> TilesGrid:
         return self._tiles_grid
 
+    @property
+    def spawners(self) -> TilesGrid:
+        return self._spawners
+
     def __init__(self, game_manager: GameManager, map_id: str):
         self._game_manager = game_manager
 
@@ -139,6 +144,10 @@ class Map:
             self._id = map_id
             self._width = saved_map['width']
             self._height = saved_map['height']
+            try:
+                self._spawners = saved_map['spawners']
+            except:
+                self._spawners = None
             self._tiles_grid = TilesGrid(
                 self.load(
                     width=self._width,
@@ -174,29 +183,6 @@ class Map:
         cell = self._tiles_grid.get_tile_at(int(x), int(z))
 
         return cell.is_walkable and not cell.tile_object.has_collision
-
-    def get_random_spawn_coordinates(self) -> tuple:
-        """
-        Returns a random spawnable position.
-        """
-        rand = Random()
-        max_x = self.width - 4
-        max_z = self.height - 4
-        min_x = 3
-        min_z = 3
-        spawn_x = rand.randint(min_x, max_x)
-        spawn_z = rand.randint(min_z, max_z)
-
-        while not self.is_walkable_at(spawn_x, spawn_z) \
-                or len(self.game_manager.bot_manager.get_bots_in_radius(
-                    origin=(spawn_x, spawn_z),
-                    radius=max_x / self.game_manager.max_players
-                )
-        ):
-            spawn_x = rand.randint(min_x, max_x)
-            spawn_z = rand.randint(min_z, max_z)
-
-        return spawn_x, spawn_z
 
     @staticmethod
     def load(width: int, height: int, tiles_data: list[dict]) -> [[Tile]]:
