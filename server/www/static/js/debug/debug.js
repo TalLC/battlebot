@@ -13,7 +13,7 @@ export default class Debug {
         this.container = document.getElementById(debugContainerId);
         this.infoContainer = this.container.querySelector("#info-container-text");
         this.view = view3DController;
-        this.debugUi = new DebugUi(this);
+        this.debugUi = new DebugUi(this, view3DController);
 
         // Raycasting pour sélectionner un objet
         this.raycastedObjects = [];
@@ -57,7 +57,7 @@ export default class Debug {
      * Non utilisée pour l'instant.
      */
     createCameraHelper() {
-        this.view.scene.add(new THREE.CameraHelper(this.view.camera));
+        this.view.scene.add(new THREE.CameraHelper(this.view.globalCamera));
     }
 
     /**
@@ -75,12 +75,12 @@ export default class Debug {
      */
     updateRaycastedObjects(event) {
         const pointer = new THREE.Vector2();
-        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        pointer.x = (event.clientX / this.view.container.offsetWidth) * 2 - 1;
+        pointer.y = -(event.clientY / this.view.container.offsetHeight) * 2 + 1;
 
         // Tir d'un rayon de la caméra vers la position du curseur
         const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(pointer, this.view.camera);
+        raycaster.setFromCamera(pointer, this.view.getCurrentCamera());
 
         // Récupération des objets touchés par le rayon
         this.raycastedObjects = raycaster.intersectObjects(this.view.scene.children);

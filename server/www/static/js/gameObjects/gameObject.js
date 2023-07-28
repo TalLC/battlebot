@@ -1,4 +1,5 @@
 import logger from "../logger.js";
+import * as THREE from "three";
 import GameManager from "../gameManager.js";
 import Object3DFactory from "../view/object3DFactory.js";
 
@@ -26,6 +27,7 @@ export default class GameObject {
         this.collisionSize = collisionSize;
         this.collisionBox;
         this.debugBoxHelper;
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 10);
     }
 
     /**
@@ -55,6 +57,7 @@ export default class GameObject {
      */
     set x(newValue) {
         if (this.sceneObject) this.sceneObject.position.x = newValue;
+        if (this.camera) this.camera.position.x = newValue;
         this._x = newValue;
     }
 
@@ -73,6 +76,7 @@ export default class GameObject {
      */
     set y(newValue) {
         if (this.sceneObject) this.sceneObject.position.y = newValue;
+        if (this.camera) this.camera.position.y = newValue + 1.5;
         this._y = newValue;
     }
 
@@ -91,6 +95,7 @@ export default class GameObject {
      */
     set z(newValue) {
         if (this.sceneObject) this.sceneObject.position.z = newValue;
+        if (this.camera) this.camera.position.z = newValue;
         this._z = newValue;
     }
 
@@ -109,6 +114,7 @@ export default class GameObject {
      */
     set ry(newValue) {
         if (this.sceneObject) this.sceneObject.rotation.y = newValue;
+        if (this.camera) this.camera.rotation.y = newValue + (-1 * Math.PI) / 2;
         this._ry = newValue;
     }
 
@@ -119,9 +125,13 @@ export default class GameObject {
     set sceneObject(newValue) {
         if (newValue) {
             newValue.position.x = this._x;
+            this.camera.position.x = this._x;
             newValue.position.y = this._y;
+            this.camera.position.y = this._y + 1.5;
             newValue.position.z = this._z;
+            this.camera.position.z = this._z;
             newValue.rotation.y = this._ry;
+            this.camera.rotation.y = this._ry + (-1 * Math.PI) / 2;
         }
         this._sceneObject = newValue;
     }

@@ -19,6 +19,7 @@ export default class BotCreateMessage extends BaseWsMessage {
         super();
         this.botData = {
             id: message.id,
+            name: message.name,
             x: message.x,
             z: message.z,
             ry: -1 * message.ry,

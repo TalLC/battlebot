@@ -32,20 +32,23 @@ export class BotManager {
      *                             {String} modelName - Le nom du modèle 3D représentant le bot.
      */
     addBot(botData) {
-        this.bots[botData.id] = new Bot(
+        const newBot = new Bot(
             botData.id,
+            botData.name,
             botData.x, botData.z, botData.ry,
             botData.teamColor,
             botData.shapeName.toLowerCase(),
             botData.shapeSize,
             botData.modelName
         );
-        Object3DFactory.createBot3D(this.bots[botData.id]).then(sceneObject => {
+        this.bots[botData.id] = newBot;
+        Object3DFactory.createBot3D(newBot).then(sceneObject => {
             GameManager().viewController.scene.add(sceneObject);
         }).then(() => {
+            GameManager().viewController.registerNewBotCamera(newBot);
             if (GameConfig().isDebug) {
                 // Affichage du cône de vision
-                this.bots[botData.id].showFov();
+                newBot.showFov();
             }
         });
     }

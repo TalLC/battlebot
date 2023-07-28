@@ -35,5 +35,6 @@ class Config {
         this.resetAltKey = false;
         this.resetShiftKey = false;
         this.debugAdminPassword = 'password';
+        this.showCameraPreview = true;
     }
 }
