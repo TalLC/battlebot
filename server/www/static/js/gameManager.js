@@ -103,6 +103,14 @@ class GameManager {
         // Suppression du défilement de texte
         const startgameScrollText = startgameScrollContainer.querySelector("#startgame-scroll-text");
         startgameScrollText.classList.remove("vertical-scrolling-text");
+        
+        // Affichage du menu latéral
+        const sideMenuContainer = document.getElementById("menu-container");
+        sideMenuContainer.hidden = false;
+        
+        // Affichage du canvas ThreeJS
+        const mainCanvasContainer = document.getElementById("view-container");
+        mainCanvasContainer.hidden = false;
 
         this.viewController.start();
     }

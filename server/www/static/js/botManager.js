@@ -10,6 +10,7 @@ import Bot from "./gameObjects/bot.js";
 let instance;
 
 export class BotManager {
+    
     constructor() {
         if (!instance) {
             instance = this;
@@ -45,12 +46,15 @@ export class BotManager {
         Object3DFactory.createBot3D(newBot).then(sceneObject => {
             GameManager().viewController.scene.add(sceneObject);
         }).then(() => {
-            GameManager().viewController.registerNewBotCamera(newBot);
             if (GameConfig().isDebug) {
                 // Affichage du cône de vision
                 newBot.showFov();
             }
         });
+    }
+
+    getBotsArray() {
+        return Object.values(this.bots);
     }
 
     /**

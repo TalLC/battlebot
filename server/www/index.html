@@ -15,7 +15,7 @@
 
   <body data-bs-theme="dark">
     <!-- Fenêtre de fin de jeu avec le récap de la partie -->
-    <div id="endgame-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none" aria-hidden="true">
+    <div id="endgame-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
@@ -119,8 +119,8 @@
     </div>
 
 
-    <!-- Menu latéral -->
-    <div id="menu-container" class="col-sm-2">
+    <!-- Menu latéral caméras -->
+    <div id="menu-container" class="col-sm-2" hidden>
       <div class="row g-0">
         <button id="button-menu-toggle" type="button" class="btn col-sm-12"><i class="bi bi-chevron-double-right"></i></button>
         <!-- <div class="col-sm-1"></div> -->
@@ -129,7 +129,7 @@
     </div>
 
     <!-- Contient l'affichage de la partie -->
-    <div id="view-container"hidden>
+    <div id="view-container" hidden>
       <canvas id="threejs-canvas"></canvas>
     </div>
 

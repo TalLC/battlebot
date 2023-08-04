@@ -3,6 +3,7 @@ import logger from "../logger.js";
 import { OrbitControls } from "controls/OrbitControls";
 import { FontLoader } from "loaders/FontLoader";
 import { TextGeometry } from "geometries/TextGeometry";
+import BotManager from "../botManager.js";
 import Object3DFactory from "./object3DFactory.js";
 import GameConfig from "../config.js";
 import Debug from "../debug/debug.js";
@@ -33,25 +34,17 @@ export default class View3DController {
     this.threejsCanvas = this.container.querySelector("#threejs-canvas");
     
     this.renderers = [];
-    
     this.renderer = new THREE.WebGLRenderer({ canvas: this.threejsCanvas });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-
+    
+    // Création de la scene principale
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xa0d0da);
     this.scene.fog = new THREE.Fog(0xa0d0da, 0.5, 500);
 
-    this.initLight();
-
-    // Création de la caméra
-    this.globalCamera = this.createCamera({ x: 64, y: 64, z: 64 }, { x: 16, y: 0, z: 16 });
-    
-    
-    // Caméra courante
-    this.renderers.push(new CameraRenderer('main', this.globalCamera, this.renderer));
+    this.initLight(this.scene);
 
     // Prise en charge du redimensionnement de fenêtre
     window.onresize = this.resize.bind(this);
@@ -71,6 +64,16 @@ export default class View3DController {
     this.renderers.forEach(cr => {
       cr.renderer.render(this.scene, cr.camera);
     })
+  }
+
+  createCameraPreviews() {
+    // Ajout de la preview principale
+    this.registerMainPreviewCamera();
+
+    // Ajout des previews pour chaque Bot
+    Object.values(BotManager.bots).forEach(bot => {
+      this.registerBotPreviewCamera(bot);
+    });
   }
 
   /**
@@ -101,6 +104,15 @@ export default class View3DController {
    * Fonction pour démarrer l'affichage de la scène et des éléments de debug si besoin.
    */
   start() {
+    // Création de la caméra
+    this.globalCamera = this.createCamera({ x: 64, y: 64, z: 64 }, { x: 16, y: 0, z: 16 });
+
+    // Caméra courante
+    this.renderers.push(new CameraRenderer('main', this.globalCamera, this.renderer));
+
+    // Création des previews clickable de caméras
+    this.createCameraPreviews();
+    
     // Affichage du viewport Three.js
     this.container.hidden = false;
 
@@ -181,11 +193,11 @@ export default class View3DController {
   /**
    * Fonction pour initialiser l'éclairage de la scène.
    */
-  initLight() {
+  initLight(scene) {
     logger.debug("initialisation light");
     //Création de la lumière ambiante
     const light = new THREE.AmbientLight(0xffffff, 0.9);
-    this.scene.add(light);
+    scene.add(light);
 
     //Création de la lumière orientée
     const directionalLight = new THREE.DirectionalLight(0xe6faff, 1.0);
@@ -206,7 +218,7 @@ export default class View3DController {
     directionalLight.shadow.camera.near = 0.001; // default
     directionalLight.shadow.camera.far = 55;
     directionalLight.shadow.radius = 1;
-    this.scene.add(directionalLight);
+    scene.add(directionalLight);
   }
 
   /**
@@ -216,42 +228,37 @@ export default class View3DController {
    * @returns {THREE.PerspectiveCamera} La caméra créée.
    */
   createCamera(position, lookAt) {
-    const [cameraPreview, cameraPreviewCanvas] = this.createHtmlCameraPreview();
-    const renderer = new THREE.WebGLRenderer({ canvas: cameraPreviewCanvas });
-    renderer.setSize(cameraPreview.offsetWidth, cameraPreview.offsetHeight);
-    renderer.shadowMap.enabled = true;
-
     const camera = new THREE.PerspectiveCamera(18, window.innerWidth / window.innerHeight, 1, 500);
     camera.position.set(position.x, position.y, position.z);
     this.controls = new OrbitControls(camera, this.renderer.domElement);
     this.controls.target.set(lookAt.x, lookAt.y, lookAt.z);
     this.controls.update();
 
-    cameraPreview.onclick = this.setCameraToDefault.bind(this);
-    
-    this.renderers.push(new CameraRenderer(
-     "main-preview",
-     camera,
-      renderer
-    ))
     return camera;
   }
 
-  registerNewBotCamera(bot) {
-    const [cameraPreview, cameraPreviewCanvas] = this.createHtmlCameraPreview('#' + bot.teamColor.getHexString());
+  registerMainPreviewCamera() {    
+    const cameraPreview = this.registerPreviewCamera("main-preview", this.globalCamera);
+    cameraPreview.onclick = this.setCameraToDefault.bind(this);
+  }
+
+  registerBotPreviewCamera(bot) {    
+    const cameraPreview = this.registerPreviewCamera(bot.id, bot.camera, '#' + bot.teamColor.getHexString());
     cameraPreview.onclick = this.setCameraFromPreview.bind(this, bot);
+  }
+
+  registerPreviewCamera(id, camera, borderColor) {
+    const [cameraPreview, cameraPreviewCanvas] = this.createHtmlCameraPreview(borderColor);
 
     const renderer = new THREE.WebGLRenderer({ canvas: cameraPreviewCanvas });
     renderer.setSize(cameraPreview.offsetWidth, cameraPreview.offsetHeight);
     renderer.shadowMap.enabled = true;
 
-    this.renderers.push(new CameraRenderer(
-      bot.id,
-      bot.camera,
-      renderer
-    ))
-  }
+    this.renderers.push(new CameraRenderer(id, camera, renderer));
 
+    return cameraPreview;
+  }
+  
   createHtmlCameraPreview(borderColor) {
     const cameraContainer = document.getElementById('cameras-container');
     const cameraPreview = document.createElement('div');
@@ -271,6 +278,7 @@ export default class View3DController {
   }
 
   setCameraToDefault() {
+    // this.scene.fog = new THREE.Fog(0xa0d0da, 0.5, 500);
     this.setCurrentCamera(this.globalCamera);
 
     if (GameConfig().isDebug) {
@@ -279,6 +287,7 @@ export default class View3DController {
   }
 
   setCameraFromPreview(bot) {
+    // this.scene.fog = new THREE.Fog(0xa0d0da, 9, 10);
     this.setCurrentCamera(bot.camera);
 
     if (GameConfig().isDebug) {
