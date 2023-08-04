@@ -9,28 +9,71 @@ body {
     overflow: hidden;
 }
 
-.btn-remote {
-    margin: 5px;
+#main-container {
+    height: 100vh;
+    width: 100vw;
 }
 
-.input-action {
-    margin: 5px;
-    max-width: 100px;
-}
-
-.btn-action {
-    width: 100%;
-}
-
-.sep-remote > hr {
-    margin: 15px;
+#view-container {
+    height: 100vh;
 }
 
 #threejs-canvas {
-    height: 100%;
-    width: 100%;
+    width: 100% !important;
+    height: 100% !important;
     outline: none;
     display: block;
+}
+
+#menu-container {
+    position: fixed;
+    min-width: 430px;
+    width: 430px;
+    right: 0;
+    top: 0;
+}
+
+#button-preview-toggle {
+    text-align: right;
+    font-size: xx-large;
+    font-weight: 900;
+    width: 64px;
+    height: 64px;
+    margin: 20px;
+}
+
+#cameras-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 100vh;
+    padding: 15px;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+#cameras-container > h3 {
+    color: #1a1a1a;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.camera-preview {
+    background-color: #cccccccc;
+    min-width: 400px;
+    width: 400px;
+    min-height: 250px;
+    height: 250px;
+    border: thick solid;
+    border-radius: 15px;
+}
+
+
+
+.canvas-preview {
+    padding: 5px;
+    padding-bottom: 15px;
 }
 
 .unselectable {

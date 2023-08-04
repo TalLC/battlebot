@@ -1,21 +1,38 @@
 
-#debug-container {
+/* #debug-container {
     position: fixed;
     top: 1vh;
     right: 0px;
     min-width: 9vw;
-}
+} */
 
-#info-container {
+.default-container {
     background-color: #aaaaaacc;
-    border-radius: 15px 0 0 15px;
+    border-radius: 15px;
     color: black;
-    padding: 5px 5px 15px 15px;
 }
 
-#remote-container {
-    background-color: #aaaaaacc;
-    border-radius: 15px 0 0 15px;
-    margin-top: 15px;
-    padding: 30px;
+.top-middle-container {
+    position: fixed;
+    border-radius: 0 0 15px 15px;
+    width: 250px;
+    padding: 15px;
+    top: 0;
+    left: calc(50% - 110px);
+}
+
+.bottom-middle-container {
+    position: fixed;
+    border-radius: 15px 15px 0 0;
+    width: 500px;
+    padding: 15px;
+    bottom: 0;
+    left: calc(50% - 265px);
+}
+
+.top-left-container {
+    position: fixed;
+    border-radius: 0 0 15px 0;
+    padding: 15px;
+    left: 0;
 }

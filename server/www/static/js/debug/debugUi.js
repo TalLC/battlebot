@@ -2,9 +2,13 @@ import GameConfig from "../config.js";
 import GameManager from "../gameManager.js";
 import sendRestMessage from "../utils/rest.js";
 
+/**
+ * @param {View3DController} view3DController - Contrôleur de la vue 3D.
+ */
 export default class DebugUi {
-    constructor(debug) {
+    constructor(debug, view3DController) {
         this.debug = debug;
+        this.view3DController = view3DController;
 
         // Startgame
         const startGameContainer = document.getElementById("startgame-container");
@@ -13,16 +17,16 @@ export default class DebugUi {
         buttonAddBot.onclick = this.addBot.bind(this);
 
         // Debug info
-        const headerContainer = document.getElementById("info-container-buttons");
+        const topMiddleContainer = document.getElementById("info-container-buttons");
 
-        const buttonKillBot = headerContainer.querySelector("#button-kill-bot");
-        buttonKillBot.onclick = this.killBot.bind(this);
-
-        const buttonToggleCollisions = headerContainer.querySelector("#button-collisions");
+        const buttonToggleCollisions = topMiddleContainer.querySelector("#button-collisions");
         buttonToggleCollisions.onclick = this.toggleCollisions.bind(this);
 
         // Remote
         this.remoteContainer = document.getElementById("remote-container");
+
+        const buttonRemoteSetCamera = this.remoteContainer.querySelector("#button-remote-camera");
+        buttonRemoteSetCamera.onclick = this.remoteSetCamera.bind(this);
 
         const buttonRemoteStartMove = this.remoteContainer.querySelector("#button-remote-up");
         buttonRemoteStartMove.onclick = this.remoteStartMove.bind(this);
@@ -63,23 +67,21 @@ export default class DebugUi {
     }
 
     /**
-     * Tue un bot spécifié par l'utilisateur
-     */
-    killBot() {
-        let botId = prompt("ID du bot :", "0-0-0-0-0");
-        if (botId !== null && botId !== "") {
-            sendRestMessage("PATCH", `/bots/${botId}/action/kill`, {
-                api_password: GameConfig().debugAdminPassword
-            });
-        }
-    }
-
-    /**
      * Active ou désactive l'affichage des collisions pour tous les GameObjects
      */
     toggleCollisions() {
         for (const obj of Object.values(GameManager().allGameObjects)) {
             obj.toggleCollisions();
+        }
+    }
+
+    // Remote camera
+    /**
+     * Passe la caméra principale sur le bot
+     */
+    remoteSetCamera() {
+        if (this.debug.selectedObject.id) {
+            this.view3DController.setCurrentCamera(this.debug.selectedObject.camera);
         }
     }
 
@@ -89,6 +91,7 @@ export default class DebugUi {
      */
     remoteStartMove() {
         if (this.debug.selectedObject.id) {
+            sendRestMessage("PATCH", `/bots/${this.debug.selectedObject.id}/action/turn`, { direction: "stop" });
             sendRestMessage("PATCH", `/bots/${this.debug.selectedObject.id}/action/move`, { action: "start" });
         }
     }
