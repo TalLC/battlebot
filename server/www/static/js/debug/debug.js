@@ -203,6 +203,8 @@ export default class Debug {
         this.infoContainer.appendChild(botObjX);
         this.infoContainer.appendChild(botObjZ);
         this.infoContainer.appendChild(botObjRy);
+        
+        this.infoContainer.hidden = false;
     }
 
     /**
@@ -229,6 +231,8 @@ export default class Debug {
         this.infoContainer.appendChild(objectX);
         this.infoContainer.appendChild(objectZ);
         this.infoContainer.appendChild(objectRy);
+
+        this.infoContainer.hidden = false;
     }
 
     /**
@@ -236,6 +240,7 @@ export default class Debug {
      */
     resetInformationsContainer() {
         // Clear du conteneur
+        this.infoContainer.hidden = true;
         this.infoContainer.innerHTML = "";
     }
 }

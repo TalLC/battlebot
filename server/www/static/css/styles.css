@@ -33,10 +33,13 @@ body {
     top: 0;
 }
 
-#button-menu-toggle {
+#button-preview-toggle {
     text-align: right;
     font-size: xx-large;
     font-weight: 900;
+    width: 64px;
+    height: 64px;
+    margin: 20px;
 }
 
 #cameras-container {
@@ -49,6 +52,13 @@ body {
     overflow-y: auto;
 }
 
+#cameras-container > h3 {
+    color: #1a1a1a;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
 .camera-preview {
     background-color: #cccccccc;
     min-width: 400px;
@@ -58,6 +68,8 @@ body {
     border: thick solid;
     border-radius: 15px;
 }
+
+
 
 .canvas-preview {
     padding: 5px;

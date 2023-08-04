@@ -32,7 +32,10 @@ export default class View3DController {
     this.gameManager = gameManager;
     this.container = document.getElementById(viewContainerId);
     this.threejsCanvas = this.container.querySelector("#threejs-canvas");
-    
+    this.previewButton = document.getElementById("button-preview-toggle");
+    this.previewButton.onclick = this.togglePreview.bind(this, this.previewButton);
+    this.cameraContainer = document.getElementById('cameras-container');
+
     this.renderers = [];
     this.renderer = new THREE.WebGLRenderer({ canvas: this.threejsCanvas });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -53,6 +56,17 @@ export default class View3DController {
       this.debug = new Debug(this, "debug-container");
       this.container.onpointermove = this.debug.updateRaycastedObjects.bind(this.debug);
       this.container.ondblclick = this.debug.clickObject.bind(this.debug);
+    }
+  }
+
+  togglePreview(button) {
+    const isHidden = this.cameraContainer.hidden;
+    if (isHidden) {
+      button.innerHTML = '<i class="bi bi-chevron-double-right"></i>';
+      this.cameraContainer.hidden = false;
+    } else {
+      button.innerHTML = '<i class="bi bi-chevron-double-left"></i>';
+      this.cameraContainer.hidden = true;
     }
   }
 
@@ -238,17 +252,17 @@ export default class View3DController {
   }
 
   registerMainPreviewCamera() {    
-    const cameraPreview = this.registerPreviewCamera("main-preview", this.globalCamera);
+    const cameraPreview = this.registerPreviewCamera("Vue globale", "main-preview", this.globalCamera);
     cameraPreview.onclick = this.setCameraToDefault.bind(this);
   }
 
   registerBotPreviewCamera(bot) {    
-    const cameraPreview = this.registerPreviewCamera(bot.id, bot.camera, '#' + bot.teamColor.getHexString());
+    const cameraPreview = this.registerPreviewCamera(bot.name, bot.id, bot.camera, '#' + bot.teamColor.getHexString());
     cameraPreview.onclick = this.setCameraFromPreview.bind(this, bot);
   }
 
-  registerPreviewCamera(id, camera, borderColor) {
-    const [cameraPreview, cameraPreviewCanvas] = this.createHtmlCameraPreview(borderColor);
+  registerPreviewCamera(name, id, camera, borderColor) {
+    const [cameraPreview, cameraPreviewCanvas] = this.createHtmlCameraPreview(name, borderColor);
 
     const renderer = new THREE.WebGLRenderer({ canvas: cameraPreviewCanvas });
     renderer.setSize(cameraPreview.offsetWidth, cameraPreview.offsetHeight);
@@ -259,9 +273,12 @@ export default class View3DController {
     return cameraPreview;
   }
   
-  createHtmlCameraPreview(borderColor) {
-    const cameraContainer = document.getElementById('cameras-container');
+  createHtmlCameraPreview(name, borderColor) {
     const cameraPreview = document.createElement('div');
+    
+    const cameraPreviewName = document.createElement('h3');
+    cameraPreviewName.innerText = name;
+
     cameraPreview.classList.add('camera-preview');
     cameraPreview.classList.add('row');
     cameraPreview.classList.add('g-0');
@@ -272,7 +289,9 @@ export default class View3DController {
     const cameraPreviewCanvas = document.createElement('canvas');
     cameraPreviewCanvas.classList.add('canvas-preview');
     cameraPreview.appendChild(cameraPreviewCanvas);
-    cameraContainer.appendChild(cameraPreview);
+
+    this.cameraContainer.appendChild(cameraPreviewName);
+    this.cameraContainer.appendChild(cameraPreview);
 
     return [cameraPreview, cameraPreviewCanvas];
   }

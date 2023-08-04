@@ -58,7 +58,7 @@
       <button id="debug-button-add-bot" class="btn btn-dark" type="button" hidden>Connecter un bot 🤖</button>
     </div>
 
-    <!-- Données de débug sur la droite -->
+    <!-- Données de débug en haut à gauche -->
     <div id="debug-container" class="unselectable" hidden>
       <div id="info-container-buttons" class="default-container top-middle-container">
         <div class="d-grid">
@@ -66,7 +66,7 @@
         </div>
       </div>
 
-      <div id="info-container-text" class="default-container top-left-container"></div>
+      <div id="info-container-text" class="default-container top-left-container" hidden></div>
 
       <div id="remote-container" class="default-container bottom-middle-container" hidden>
         <div class="row align-items-center">
@@ -121,9 +121,12 @@
 
     <!-- Menu latéral caméras -->
     <div id="menu-container" class="col-sm-2" hidden>
+      <div class="row g-0 align-items-center justify-content-end">
+        <button id="button-preview-toggle" type="button" class="btn btn-primary rounded-circle">
+          <i class="bi bi-chevron-double-right"></i>
+        </button>
+      </div>
       <div class="row g-0">
-        <button id="button-menu-toggle" type="button" class="btn col-sm-12"><i class="bi bi-chevron-double-right"></i></button>
-        <!-- <div class="col-sm-1"></div> -->
         <div id="cameras-container" class="col"></div>
       </div>
     </div>
