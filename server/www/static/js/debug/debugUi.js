@@ -91,6 +91,7 @@ export default class DebugUi {
      */
     remoteStartMove() {
         if (this.debug.selectedObject.id) {
+            sendRestMessage("PATCH", `/bots/${this.debug.selectedObject.id}/action/turn`, { direction: "stop" });
             sendRestMessage("PATCH", `/bots/${this.debug.selectedObject.id}/action/move`, { action: "start" });
         }
     }

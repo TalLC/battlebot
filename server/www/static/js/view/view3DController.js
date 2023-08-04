@@ -297,7 +297,6 @@ export default class View3DController {
   }
 
   setCameraToDefault() {
-    // this.scene.fog = new THREE.Fog(0xa0d0da, 0.5, 500);
     this.setCurrentCamera(this.globalCamera);
 
     if (GameConfig().isDebug) {
@@ -306,11 +305,10 @@ export default class View3DController {
   }
 
   setCameraFromPreview(bot) {
-    // this.scene.fog = new THREE.Fog(0xa0d0da, 9, 10);
     this.setCurrentCamera(bot.camera);
 
     if (GameConfig().isDebug) {
-      this.debug.setSelectedObject(bot.sceneObject, bot);
+      this.debug.setSelectedObject(bot.sceneObject.children[0], bot);
       this.debug.writeBotInformations(bot);
       this.debug.debugUi.setRemoteHidden(false);
     }
@@ -332,6 +330,6 @@ export default class View3DController {
         sceneObject.material.dispose();
       }
     }
-    sceneObject.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
+    sceneObject.removeFromParent();
   }
 }
