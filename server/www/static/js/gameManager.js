@@ -124,21 +124,13 @@ class GameManager {
             && event.altKey === GameConfig().resetAltKey
             && event.shiftKey === GameConfig().resetShiftKey
             && event.key === GameConfig().resetKey) {
-
+            
             // On demande un mot de passe pour reset la partie seulement en mode Prod
-            if (!GameConfig().isDebug) {
-                let resetPassword = prompt("Reset de la partie - Mot de passe administrateur", "");
-                if (resetPassword !== null && resetPassword !== '') {
-                    sendRestMessage("POST", `/game/action/reset`, {
-                        api_password: resetPassword
-                    });
-                }
-            } else {
-                // En mode debug on donne le mdp debug
-                sendRestMessage("POST", `/game/action/reset`, {
-                    api_password: 'password'
-                });
-            }
+            // En mode debug on donne le mdp debug
+            sendRestMessage("POST", `/game/action/reset`, {
+                api_password: GameConfig().isDebug ?
+                GameConfig().debugAdminPassword : prompt("Reset de la partie - Mot de passe administrateur", "")
+            });
         }
     }
 
