@@ -27,8 +27,8 @@ from consumer.webservices.messages.websocket.DisplayRefreshMessage import Displa
 
 class RestProvider:
     tags_metadata = [
-        {"name": "unused", "description": "[🚧 Unused]"},
-        {"name": "admin", "description": "[🛡️ Requires API password]"},
+        # {"name": "unused", "description": "🚧 Unused or WIP"},
+        {"name": "admin", "description": "🛡️ Requires API password"},
         {"name": "game", "description": "Game"},
         {"name": "display", "description": "Display"},
         {"name": "bots", "description": "Bots"},
@@ -36,7 +36,7 @@ class RestProvider:
 
     def __init__(self, app: FastAPI):
         self.__app = app
-        self.__app.openapi_tags = self.tags_metadata
+        self.__app.openapi_tags += self.tags_metadata
         self.__register_endpoints()
         self.__admin_password = CONFIG_REST.admin_password
 
@@ -125,7 +125,7 @@ class RestProvider:
             return {'status': 'ok', 'message': 'Game has been reset'}
 
     def __admin_game_action_select_map(self):
-        @self.__app.patch("/game/action/select_map", tags=['unused', 'admin', 'game'])
+        @self.__app.patch("/game/action/select_map", tags=['unused', 'admin', 'game'], include_in_schema=False)
         async def action(model: AdminActionSelectMapModel, _: Request):
             """
             Selects the map.
