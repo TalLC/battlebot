@@ -47,7 +47,10 @@
   - [BotWeaponCooldownMessage](#botweaponcooldownmessage)
 
 
-Voici les endpoints disponibles via l'API Rest.
+Vous trouverez ici les endpoints disponibles via l'API Rest. Une documentation automatique est également disponible sous deux formats :
+- Swagger : [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- ReDoc : [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
 
 ## `PATCH /display/clients/action/ready`
 Définir le client d'affichage comme prêt si les jetons correspondent.
