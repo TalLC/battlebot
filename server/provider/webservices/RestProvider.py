@@ -26,9 +26,17 @@ from consumer.webservices.messages.websocket.DisplayRefreshMessage import Displa
 
 
 class RestProvider:
+    tags_metadata = [
+        {"name": "unused", "description": "[🚧 Unused]"},
+        {"name": "admin", "description": "[🛡️ Requires API password]"},
+        {"name": "game", "description": "Game"},
+        {"name": "display", "description": "Display"},
+        {"name": "bots", "description": "Bots"},
+    ]
 
     def __init__(self, app: FastAPI):
         self.__app = app
+        self.__app.openapi_tags = self.tags_metadata
         self.__register_endpoints()
         self.__admin_password = CONFIG_REST.admin_password
 
@@ -51,11 +59,11 @@ class RestProvider:
         logging.info("[REST] All endpoints registered")
 
     def __admin_game_action_start(self):
-        """
-        Start the current game.
-        """
-        @self.__app.patch("/game/action/start")
+        @self.__app.patch("/game/action/start", tags=['admin', 'game'])
         async def action(model: AdminBaseModel, _: Request):
+            """
+            Forces the game to start.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -68,11 +76,12 @@ class RestProvider:
             return {'status': 'ok', 'message': 'Game is started'}
 
     def __admin_game_action_reset(self):
-        """
-        Reset the current game.
-        """
-        @self.__app.post("/game/action/reset")
+        @self.__app.post("/game/action/reset", tags=['admin', 'game'])
         async def action(model: AdminBaseModel, _: Request):
+            """
+            Resets the game as if the server was restarted.
+            This is usually called from the frontend using some key combination.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -116,11 +125,11 @@ class RestProvider:
             return {'status': 'ok', 'message': 'Game has been reset'}
 
     def __admin_game_action_select_map(self):
-        """
-        Select the map.
-        """
-        @self.__app.patch("/game/action/select_map")
+        @self.__app.patch("/game/action/select_map", tags=['unused', 'admin', 'game'])
         async def action(model: AdminActionSelectMapModel, _: Request):
+            """
+            Selects the map.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -134,11 +143,13 @@ class RestProvider:
 
     def __display_action_ready(self):
         """
-        Set the display client to ready if the tokens matches.
         !!Do not use "client_token" as Path parameter to avoid clients to set ready for others!!
         """
-        @self.__app.patch("/display/clients/action/ready")
+        @self.__app.patch("/display/clients/action/ready", tags=['display'])
         async def action(model: DisplayClientsActionReadyModel, _: Request):
+            """
+            Set the display client to ready if the tokens matches.
+            """
             # Checking if the token exists
             if not GameManager().display_manager.does_client_token_exists(model.login_id):
                 ErrorCode.throw(DISPLAY_CLIENT_ID_DOES_NOT_EXISTS)
@@ -152,11 +163,11 @@ class RestProvider:
             return {'status': 'ok', 'message': 'Tokens are matching'}
 
     def __admin_display_clients_action_list(self):
-        """
-        List all present and past display clients.
-        """
-        @self.__app.get("/display/clients/action/list")
+        @self.__app.get("/display/clients/action/list", tags=['admin', 'display'])
         async def action(model: AdminDisplayClientsActionListModel, _: Request):
+            """
+            List all present and past display clients.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -170,11 +181,11 @@ class RestProvider:
             return {'status': 'ok', 'clients': clients}
 
     def __admin_display_clients_action_get_by_id(self):
-        """
-        Find a display client by its id.
-        """
-        @self.__app.get("/display/clients/action/get_by_id")
+        @self.__app.get("/display/clients/action/get_by_id", tags=['admin', 'display'])
         async def action(model: AdminDisplayClientsActionGetByIdModel, _: Request):
+            """
+            Find a display client by its id.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -189,11 +200,11 @@ class RestProvider:
             return {'status': 'ok', 'client': client.json()}
 
     def __admin_display_clients_action_get_by_token(self):
-        """
-        Find a display client by its token.
-        """
-        @self.__app.get("/display/clients/action/get_by_token")
+        @self.__app.get("/display/clients/action/get_by_token", tags=['admin', 'display'])
         async def action(model: AdminDisplayClientsActionGetByTokenModel, _: Request):
+            """
+            Find a display client by its token.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -208,11 +219,11 @@ class RestProvider:
             return {'status': 'ok', 'client': client.json()}
 
     def __admin_bots_id_action_kill(self):
-        """
-        Kills the specified bot.
-        """
-        @self.__app.patch("/bots/{bot_id}/action/kill")
+        @self.__app.patch("/bots/{bot_id}/action/kill", tags=['admin', 'bots'])
         async def action(bot_id: str, model: AdminBaseModel, _: Request):
+            """
+            Kills the specified bot.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -233,11 +244,11 @@ class RestProvider:
             return {"status": "ok", "message": "The bot has been killed", "bot_id": bot.id}
 
     def __admin_bots_action_add(self):
-        """
-        Adds an ai-less bot in the game.
-        """
-        @self.__app.patch("/bots/action/add")
+        @self.__app.patch("/bots/action/add", tags=['admin', 'bots'])
         async def action(model: AdminBaseModel, _: Request):
+            """
+            Adds an ai-less bot in the game.
+            """
             # Check the admin password
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
@@ -272,12 +283,11 @@ class RestProvider:
             return {"status": "ok", "message": "The bot has been added", "bot_id": bot.id}
 
     def __bots_action_register(self):
-        """
-        Create a new bot object and adds it to the specified team.
-        """
-        @self.__app.post("/bots/action/register")
+        @self.__app.post("/bots/action/register", tags=['bots'])
         async def action(model: BotsActionRegisterModel, _: Request):
-
+            """
+            Create a new bot object and adds it to the specified team.
+            """
             # Check if the game is full
             if GameManager().is_full:
                 ErrorCode.throw(GAME_IS_FULL)
@@ -309,13 +319,13 @@ class RestProvider:
             return {"status": "ok", "message": "The bot has been successfully registered", "bot_id": bot.id}
 
     def __bots_id_action_request_connection(self):
-        """
-        Request connection ids to validate the connection to all the services.
-        It sends 3 ids to the client using Rest, STOMP and MQTT.
-        The client must send back these ids to the server to validate the connection.
-        """
-        @self.__app.get("/bots/{bot_id}/action/request_connection")
+        @self.__app.get("/bots/{bot_id}/action/request_connection", tags=['bots'])
         async def action(bot_id: str, _: Request):
+            """
+            Request connection ids to validate the connection to all the services.
+            It sends 3 ids to the client using Rest, STOMP and MQTT.
+            The client must send back these ids to the server to validate the connection.
+            """
             logging.info(f"[REST] Bot {bot_id} is requesting a connection")
 
             # Check if the game is already started
@@ -345,13 +355,12 @@ class RestProvider:
             }
 
     def __bots_id_action_check_connection(self):
-        """
-        Check if the ids found by the client are the expected ones in order to validate the client connection to all
-        our services.
-        """
-        @self.__app.patch("/bots/{bot_id}/action/check_connection")
+        @self.__app.patch("/bots/{bot_id}/action/check_connection", tags=['bots'])
         async def action(bot_id: str, model: BotsIdActionCheckConnectionModel, _: Request):
-
+            """
+            Check if the ids found by the client are the expected ones in order to validate the client connection to all
+            our services.
+            """
             # Check if the game is already started
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
@@ -381,13 +390,12 @@ class RestProvider:
             return {"status": "ok", "message": "Your bot is successfully connected"}
 
     def __bots_id_action_shoot(self):
-        """
-        Make the bot shoot to the desired relative angle.
-        """
-        @self.__app.patch("/bots/{bot_id}/action/shoot")
+        @self.__app.patch("/bots/{bot_id}/action/shoot", tags=['bots'])
         @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionShootModel, _: Request):
-
+            """
+            Make the bot shoot to the desired relative angle.
+            """
             # Check if the game is not started
             if not GameManager().is_started:
                 ErrorCode.throw(GAME_NOT_STARTED)
@@ -417,13 +425,12 @@ class RestProvider:
             return {"status": "ok", "message": f"Fired at {model.angle}°"}
 
     def __bots_id_action_turn(self):
-        """
-        Start to turn the specified bot to its left or right.
-        """
-        @self.__app.patch("/bots/{bot_id}/action/turn")
+        @self.__app.patch("/bots/{bot_id}/action/turn", tags=['bots'])
         @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionTurnModel, _: Request):
-
+            """
+            Start to turn the specified bot to its left or right.
+            """
             # Check if the game is not started
             if not GameManager().is_started:
                 ErrorCode.throw(GAME_NOT_STARTED)
@@ -452,13 +459,12 @@ class RestProvider:
                 return {"status": "ok", "message": "Bot has stopped turning"}
 
     def __bots_id_action_move(self):
-        """
-        Start to move the specified bot forward.
-        """
-        @self.__app.patch("/bots/{bot_id}/action/move")
+        @self.__app.patch("/bots/{bot_id}/action/move", tags=['bots'])
         @PerformanceCounter.count
         async def action(bot_id: str, model: BotsIdActionMoveModel, _: Request):
-
+            """
+            Start to move the specified bot forward.
+            """
             # Check if the game is not started
             if not GameManager().is_started:
                 ErrorCode.throw(GAME_NOT_STARTED)
