@@ -20,4 +20,4 @@ class BotHurtCommand(IBotCommand):
         Contains the function to execute.
         """
         arg.hurt(self.value)
-        ConsumerManager().stomp.send_message(BotHealthStatusMessage(arg.id, arg.health))
+        arg.send_client_health_status()

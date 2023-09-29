@@ -408,6 +408,7 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         Callback when the bot is hurt.
         """
+        self.send_client_health_status()
         ConsumerManager().websocket.send_message(GameObjectHurtMessage(self.id))
 
     def stun(self, duration_ms: float) -> None:

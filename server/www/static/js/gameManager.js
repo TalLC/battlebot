@@ -103,6 +103,14 @@ class GameManager {
         // Suppression du défilement de texte
         const startgameScrollText = startgameScrollContainer.querySelector("#startgame-scroll-text");
         startgameScrollText.classList.remove("vertical-scrolling-text");
+        
+        // Affichage du menu latéral
+        const sideMenuContainer = document.getElementById("menu-container");
+        sideMenuContainer.hidden = false;
+        
+        // Affichage du canvas ThreeJS
+        const mainCanvasContainer = document.getElementById("view-container");
+        mainCanvasContainer.hidden = false;
 
         this.viewController.start();
     }
@@ -116,12 +124,13 @@ class GameManager {
             && event.altKey === GameConfig().resetAltKey
             && event.shiftKey === GameConfig().resetShiftKey
             && event.key === GameConfig().resetKey) {
-            let resetPassword = prompt("Reset de la partie - Mot de passe administrateur", "");
-            if (resetPassword !== null && resetPassword !== '') {
-                sendRestMessage("POST", `/game/action/reset`, {
-                    api_password: resetPassword
-                });
-            }
+            
+            // On demande un mot de passe pour reset la partie seulement en mode Prod
+            // En mode debug on donne le mdp debug
+            sendRestMessage("POST", `/game/action/reset`, {
+                api_password: GameConfig().isDebug ?
+                GameConfig().debugAdminPassword : prompt("Reset de la partie - Mot de passe administrateur", "")
+            });
         }
     }
 

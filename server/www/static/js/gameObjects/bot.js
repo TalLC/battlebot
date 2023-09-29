@@ -8,6 +8,7 @@ export default class Bot extends GameObject {
     /**
      * Crée une instance de Bot.
      * @param {number} id - L'ID du bot.
+     * @param {string} name - Le nom du bot.
      * @param {number} x - La coordonnée X du bot.
      * @param {number} z - La coordonnée Z du bot.
      * @param {number} ry - L'angle de rotation en Y du bot.
@@ -16,8 +17,9 @@ export default class Bot extends GameObject {
      * @param {number} collisionSize - La taille de la boîte de collision.
      * @param {string} modelName - Le nom du modèle de bot.
      */
-    constructor(id, x, z, ry, teamColor, collisionShape, collisionSize, modelName) {
+    constructor(id, name, x, z, ry, teamColor, collisionShape, collisionSize, modelName) {
         super(id, "bot", x, 0.5, z, ry, collisionShape, collisionSize);
+        this.name = name;
         this.teamColor = colorStrToNumber(teamColor);
         this.modelName = modelName;
         this.sceneObject = null;
@@ -28,7 +30,7 @@ export default class Bot extends GameObject {
         this.enrolled = false;
         this.bullet = null;
     }
-    
+
     /**
      * Permet l'appel à une action interagissant avec le bot (actions définies dans botActionDefinition.js)
      * @param {String} key - Nom de l'action.
@@ -58,16 +60,14 @@ export default class Bot extends GameObject {
     showFov() {
         // Affichage du cône de vision
         const triangleGeometry = new THREE.BufferGeometry();
-        const vertices = new Float32Array([
-            0, 0, 0,
-            10, 0, -10,
-            -10, 0, -10
-        ]);
-        triangleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    
-        const triangleMaterial = new THREE.LineBasicMaterial({ color: this.teamColor });
+        const vertices = new Float32Array([0, 0, 0, 10, 0, -10, -10, 0, -10]);
+        triangleGeometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+
+        const triangleMaterial = new THREE.LineBasicMaterial({
+            color: this.teamColor
+        });
         let triangleMesh = new THREE.LineLoop(triangleGeometry, triangleMaterial);
-        triangleMesh.position.y = 1.0;
+        triangleMesh.position.y = 0.2;
         triangleMesh.rotation.y = -Math.PI / 2;
 
         this.sceneObject.add(triangleMesh);

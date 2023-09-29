@@ -21,8 +21,8 @@ uvicorn_logger.removeHandler(uvicorn_logger.handlers[0])
 logging.basicConfig(level=logging.DEBUG if CONFIG_GAME.is_debug else logging.INFO,
                     datefmt='%d/%m/%Y %I:%M:%S', format='[%(levelname)s] %(asctime)s - %(message)s')
 
-
 app = FastAPI()  # Entry point for Uvicorn
+app.openapi_tags = list()
 
 
 @app.on_event('startup')

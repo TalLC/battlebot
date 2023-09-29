@@ -18,6 +18,7 @@ class BotCreateMessage(IObjectMessage):
     def json(self) -> dict:
         json = super().json()
         json |= {
+            "name": self.bot.name,
             "x": self.bot.x,
             "z": self.bot.z,
             "ry": self.bot.ry,
