@@ -41,14 +41,14 @@ class WebsocketProvider:
             # Sending game information
             logging.debug(f"[WEBSOCKET] Sending game information to {display_client.name}")
             game_info_message = GameInfoMessage(
-                is_debug=GameManager().is_debug, map_id=GameManager().map.id,
+                is_debug=GameManager().is_debug, map_id=GameManager().game_map.id,
                 max_players=GameManager().max_players
             )
             await websocket.send_json(game_info_message.json())
 
             # Sending map information
             logging.debug(f"[WEBSOCKET] Sending map to {display_client.name}")
-            current_map = GameManager().map
+            current_map = GameManager().game_map
             map_create_message = MapCreateMessage(
                 map_id=current_map.id, height=current_map.height,
                 width=current_map.width, tiles_grid=current_map.tiles_grid

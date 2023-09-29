@@ -3,6 +3,7 @@ server/activemq/
 server/third-party/activemq/
 server/third-party/jre1.8.0/
 server/third-party/python3.10/
+server/third-party/python_venv_libs/
 
 battlebots-server-doc.zip
 battlebots-documentation.zip

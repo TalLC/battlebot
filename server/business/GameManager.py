@@ -3,13 +3,15 @@ import logging
 from time import sleep
 from threading import Thread, Event
 from typing import TYPE_CHECKING
+
+from business.MapManager import MapManager
 from common.PerformanceCounter import PerformanceCounter
 from common.Singleton import SingletonABCMeta
 from business.interfaces.IGameManager import IGameManager
 from business.TeamManager import TeamManager
 from business.BotManager import BotManager
 from business.DisplayManager import DisplayManager
-from business.Map import Map
+from business.maps.Map import Map
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.GameEndMessage import GameEndMessage
 from consumer.brokers.messages.stomp.GameStatusMessage import GameStatusMessage
@@ -46,6 +48,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         return self.registered_players_count >= self.max_players
 
     @property
+    def game_map(self) -> Map:
+        return self._game_map
+
+    @property
     def max_players(self) -> int:
         return self._max_players
 
@@ -59,16 +65,17 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._is_started = False
         self.team_manager = TeamManager(self)
         self.bot_manager = BotManager(self)
+        self.map_manager = MapManager(self)
         self.display_manager = DisplayManager(self)
 
         # Loading config
         self._is_debug = False
         self._max_players = 0
-        self.map = None
+        self._game_map = None
         self._plugins_spawn = None
         self.load_config()
 
-        self.plugin_manager = PluginManager(self.map)
+        self.plugin_manager = PluginManager(self.game_map)
         self.plugin_manager.load_config_plugins()
 
         # Thread auto starting the game when enough bot are connected
@@ -81,6 +88,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._thread_game_stop_conditions = None
 
         self.init_threads()
+
     def load_config(self):
         # Importing config variable here everytime we call the function in order to refresh it.
         from common.config import CONFIG_GAME
@@ -94,10 +102,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         """
         Loads a new map.
         """
-        if self.map:
-            del self.map
+        if self._game_map:
+            del self._game_map
 
-        self.map = Map(self, map_id)
+        self._game_map = self.map_manager.get_map(map_id)
 
     def init_threads(self):
         # Reset Events
@@ -143,7 +151,6 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
                               f"\n{connected_bots_names}")
             else:
                 sleep(1)
-
 
     def _wait_for_display_clients(self, e: Event):
         """
@@ -255,10 +262,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             # All map
             if tile_objects:
                 # return TileObject
-                game_objects += self.map.tiles_grid.get_all_tiles_objects(collision_only=collision_only)
+                game_objects += self.game_map.tiles_grid.get_all_tiles_objects(collision_only=collision_only)
             if tiles:
                 # return Tile
-                game_objects += self.map.tiles_grid.get_all_tiles(non_walkable_only=non_walkable_only)
+                game_objects += self.game_map.tiles_grid.get_all_tiles(non_walkable_only=non_walkable_only)
             if bots:
                 # Add bots to the list
                 game_objects += self.bot_manager.get_bots(connected_only=True)
@@ -266,12 +273,12 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             # Part of map
             if tile_objects:
                 # return TileObject
-                game_objects += self.map.tiles_grid.get_tiles_objects_in_radius(
+                game_objects += self.game_map.tiles_grid.get_tiles_objects_in_radius(
                     collision_only=collision_only, origin=origin, radius=radius
                 )
             if tiles:
                 # return Tile
-                game_objects += self.map.tiles_grid.get_tiles_in_radius(
+                game_objects += self.game_map.tiles_grid.get_tiles_in_radius(
                     non_walkable_only=non_walkable_only, origin=origin, radius=radius
                 )
             if bots:

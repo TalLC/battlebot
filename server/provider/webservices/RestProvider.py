@@ -16,6 +16,7 @@ from provider.webservices.rest.models.AdminDisplayClientsActionListModel import 
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByIdModel import AdminDisplayClientsActionGetByIdModel
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByTokenModel import AdminDisplayClientsActionGetByTokenModel
 from provider.webservices.rest.models.DisplayClientsActionReadyModel import DisplayClientsActionReadyModel
+from provider.webservices.rest.models.MapsIdInfo import MapsIdInfo
 from provider.webservices.rest.models.BotsActionRegisterModel import BotsActionRegisterModel
 from provider.webservices.rest.models.BotsIdActionCheckConnectionModel import BotsIdActionCheckConnectionModel
 from provider.webservices.rest.models.BotsIdActionShootModel import BotsIdActionShootModel
@@ -43,13 +44,13 @@ class RestProvider:
     def __register_endpoints(self):
         self.__admin_game_action_start()
         self.__admin_game_action_reset()
-        self.__admin_game_action_select_map()
+        self.__game_maps_info()
         self.__admin_display_clients_action_list()
         self.__admin_display_clients_action_get_by_id()
         self.__admin_display_clients_action_get_by_token()
+        self.__display_action_ready()
         self.__admin_bots_id_action_kill()
         self.__admin_bots_action_add()
-        self.__display_action_ready()
         self.__bots_action_register()
         self.__bots_id_action_request_connection()
         self.__bots_id_action_check_connection()
@@ -125,22 +126,30 @@ class RestProvider:
 
             return {'status': 'ok', 'message': 'Game has been reset'}
 
-    def __admin_game_action_select_map(self):
-        @self.__app.patch("/game/action/select_map", tags=['unused', 'admin', 'game'], include_in_schema=False)
-        async def action(model: AdminActionSelectMapModel, _: Request):
-            """
-            Selects the map.
-            """
-            # Check the admin password
-            if model.api_password != self.__admin_password:
-                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+    # def __admin_game_action_select_map(self):
+    #     @self.__app.patch("/game/action/select_map", tags=['unused', 'admin', 'game'], include_in_schema=False)
+    #     async def action(model: AdminActionSelectMapModel, _: Request):
+    #         """
+    #         Selects the map.
+    #         """
+    #         # Check the admin password
+    #         if model.api_password != self.__admin_password:
+    #             ErrorCode.throw(ADMIN_BAD_PASSWORD)
+    #
+    #         # Check if the game is already started
+    #         if GameManager().is_started:
+    #             ErrorCode.throw(GAME_ALREADY_STARTED)
+    #
+    #         GameManager().load_map(map_id=model.map_name)
+    #         return {'status': 'ok', 'message': 'Map is loaded.'}
 
-            # Check if the game is already started
-            if GameManager().is_started:
-                ErrorCode.throw(GAME_ALREADY_STARTED)
-
-            GameManager().load_map(map_id=model.map_name)
-            return {'status': 'ok', 'message': 'Map is loaded.'}
+    def __game_maps_info(self):
+        @self.__app.get("/game/maps/{map_id}/info", tags=['game'])
+        async def action(map_id: str, _: Request):
+            """
+            Get map information.
+            """
+            return GameManager().map_manager.get_map(map_id).metadata
 
     def __display_action_ready(self):
         """

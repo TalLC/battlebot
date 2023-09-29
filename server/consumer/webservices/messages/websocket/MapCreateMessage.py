@@ -1,5 +1,5 @@
 from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
-from business.Map import TilesGrid
+from business.maps.Map import TilesGrid
 
 
 class MapCreateMessage(IWebsocketMessage):
