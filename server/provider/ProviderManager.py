@@ -4,8 +4,6 @@ from common.Singleton import SingletonABCMeta
 from provider.webservices.RestProvider import RestProvider
 from provider.webservices.WebsocketProvider import WebsocketProvider
 from provider.webservices.WebsiteProvider import WebsiteProvider
-from provider.brokers.MQTTProvider import MQTTProvider
-from provider.brokers.STOMPProvider import STOMPProvider
 
 
 class ProviderManager(metaclass=SingletonABCMeta):

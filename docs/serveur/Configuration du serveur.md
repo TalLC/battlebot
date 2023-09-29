@@ -104,7 +104,7 @@ Si vous n'avez pas ce bouton, c'est que le serveur n'est pas lancé en mode debu
 
 ### Contrôler un bot
 
-Double cliquez sur un bot à l'écran, une télécommande va s'afficher sur la droite de l'écran pour prendre le contrôle du bot.
+Double cliquez sur un bot à l'écran, une télécommande va s'afficher en bas de l'écran pour prendre le contrôle du bot.
 
 <img src="../img/debug_remote.png">
 
