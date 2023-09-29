@@ -3,7 +3,6 @@ import logging
 from time import sleep
 from threading import Thread, Event
 from typing import TYPE_CHECKING
-
 from common.PerformanceCounter import PerformanceCounter
 from common.Singleton import SingletonABCMeta
 from business.interfaces.IGameManager import IGameManager
@@ -14,6 +13,7 @@ from business.Map import Map
 from consumer.ConsumerManager import ConsumerManager
 from consumer.webservices.messages.websocket.GameEndMessage import GameEndMessage
 from consumer.brokers.messages.stomp.GameStatusMessage import GameStatusMessage
+from business.PluginManager import PluginManager
 
 if TYPE_CHECKING:
     from business.gameobjects.GameObject import GameObject
@@ -24,6 +24,10 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
     @property
     def is_debug(self) -> bool:
         return self._is_debug
+
+    @property
+    def plugins_spawn(self) -> bool:
+        return self._plugins_spawn
 
     @property
     def is_client_ready(self) -> bool:
@@ -61,7 +65,11 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._is_debug = False
         self._max_players = 0
         self.map = None
+        self._plugins_spawn = None
         self.load_config()
+
+        self.plugin_manager = PluginManager(self.map)
+        self.plugin_manager.load_config_plugins()
 
         # Thread auto starting the game when enough bot are connected
         self._event_stop_checking_starting_conditions = Event()
@@ -73,7 +81,6 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._thread_game_stop_conditions = None
 
         self.init_threads()
-
     def load_config(self):
         # Importing config variable here everytime we call the function in order to refresh it.
         from common.config import CONFIG_GAME
@@ -130,12 +137,13 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
                 # Announcing new player
                 current_players_count = __tmp_p_count
                 connected_bots_names = '\n'.join(
-                    [f'{bot.team.name} : "{bot.name}"' for bot in self.bot_manager.get_bots()]
+                    [f'{bot.team.id} : "{bot.name}"' for bot in self.bot_manager.get_bots()]
                 )
                 logging.debug(f"{current_players_count}/{self._max_players} players connected:"
                               f"\n{connected_bots_names}")
             else:
                 sleep(1)
+
 
     def _wait_for_display_clients(self, e: Event):
         """
@@ -158,6 +166,8 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         # Waiting until all players are connected
         logging.debug("Waiting for bots to join the game...")
         self._wait_for_players(e)
+        for bot in self.bot_manager.get_bots():
+            bot.x, bot.z, bot.ry = self.set_spawn_coordinates(bot.team.id)
 
         # Check if the thread is aborting
         if not e.is_set():
@@ -281,3 +291,6 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             if game_object.id == object_id:
                 return game_object
         return None
+
+    def set_spawn_coordinates(self, team_id):
+        return self.plugin_manager.my_plugin_spawn().process(team_id)
