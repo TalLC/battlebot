@@ -11,9 +11,47 @@
     <link rel="stylesheet" href="static/css/debug.css" />
     <link rel="stylesheet" href="static/css/startgame.css" />
     <link rel="stylesheet" href="static/css/scroll-text.css" />
+    <link rel="stylesheet" href="static/css/select_map.css" />
   </head>
 
+
   <body data-bs-theme="dark">
+    <!--Fenêtre de début du jeu-->
+    <div id="choice-game-container" class="mx-auto">
+      <div class="row justify-content-md-center">
+        <div class="col-md-auto">
+          <img class="startgame-logo unselectable" src="static/img/logo.png" />
+        </div>
+      </div>
+      <div class="col-md-auto" style="height: 10vh"></div>
+      <div class="padding-row row">
+        <div class="col-md-3">
+          <input class="form-check-input" type="checkbox" value="Debug Mode" id="flexCheckDefault" disabled /> Debug Mode
+        <br></br>
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" disabled/> Training Mode
+        </div>
+        <div class="col-md-6">
+          <div id="choice-game-maplist" class="list-group">
+            <!--Complété par le JS mapSelector.js-->
+          </div>
+        </div>
+        <div class="col-md-3" >
+          <div class= "row justify-content-md-center choice-game-info" id="choice-game-map-preview">
+            <!--Complété par le JS mapSelector.js-->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-auto" style="height: 5vh"></div>
+      <div class="row justify-content-md-center">
+        <div class="col-md-auto">     
+          <button type="button" class="btn btn-outline-danger btn-block" id="choice-game-start-button">
+            START
+          </button>
+        </div>
+      </div>
+    </div>
+
+
     <!-- Fenêtre de fin de jeu avec le récap de la partie -->
     <div id="endgame-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="display: none;" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -37,7 +75,7 @@
     <div id="startgame-scroll-container">
       <pre id="startgame-scroll-text" class="vertical-scrolling-text unselectable"></pre>
     </div>
-    <div id="startgame-container" class="container-fluid unselectable">
+    <div id="startgame-container" class="container-fluid unselectable" hidden>
       <div class="row justify-content-md-center">
         <div class="col-md-auto">
           <img class="startgame-logo unselectable" src="static/img/logo.png" />

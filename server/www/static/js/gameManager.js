@@ -35,9 +35,13 @@ class GameManager {
         this.loginId;
 
         /* Page d'accueil */
+        this.waitgameContainer = document.getElementById("choice-game-container");
+        const startbouton = this.waitgameContainer.querySelector("#choice-game-start-button");
+        startbouton.onclick = this.testStart.bind(this);
+        /* Page d'attente */
         // Nombre de joueurs
-        const startgameContainer = document.getElementById("startgame-container");
-        let startgameMessagesRules = startgameContainer.querySelector("#startgame-messages-rules");
+        this.startgameContainer = document.getElementById("startgame-container");
+        const startgameMessagesRules = this.startgameContainer.querySelector("#startgame-messages-rules");
         startgameMessagesRules.innerHTML = `LA PARTIE DÉMARRE À PARTIR DE ${GameConfig().maxPlayers} BOTS ET SE TERMINE LORSQU'IL NE RESTE QU'1 ÉQUIPE EN VIE`;
 
         // Scroll text
@@ -90,15 +94,55 @@ class GameManager {
         this.viewController.render();
     }
 
+    testStart() {
+        const maplist = document.getElementById("choice-game-maplist");
+        Array.from(maplist.children).forEach(button => {
+            if(button.classList.contains("active")){
+                const mapSelectId = button.value;
+                this.selectMap(mapSelectId);
+                return;
+            }
+        })
+    }
+
+    selectMap(mapSelectId) {
+        //envoi de info de lancement de partie au back
+        const password = GameConfig().isDebug ? GameConfig().debugAdminPassword : prompt("Mot de passe administrateur", "")
+        sendRestMessage("POST", `/game/maps/${mapSelectId}/select`, {
+            api_password: password
+        }).then((reponse) => {
+            if(reponse.ok){
+                sendRestMessage("POST", `/game/action/new`, {
+                    api_password: password
+                }).then((reponse) => {
+                    if(reponse.ok){
+                        //Masquer la page de selection
+                        this.waitgameContainer.hidden = true;
+
+                        //Affichage de la page d'attente
+                        this.startgameContainer.hidden = false;
+                    }
+                    else{
+                        console.error("Mauvaise réponse suite au lancement de la partie");
+                    }
+                });
+            }
+            else{
+                console.error("Mauvaise réponse suite à la selection de map");
+            }
+        }).catch(function (error) {
+            console.error("Il y a eu un problème avec l'opération fetch : " + error.message);
+        });
+    }
+
     /**
      * Masque l'écran d'attente et affiche le jeu.
      */
     start() {
         // Masquer la page d'attente
-        const startgameContainer = document.getElementById("startgame-container");
         const startgameScrollContainer = document.getElementById("startgame-scroll-container");
         startgameScrollContainer.hidden = true;
-        startgameContainer.hidden = true;
+        this.startgameContainer.hidden = true;
 
         // Suppression du défilement de texte
         const startgameScrollText = startgameScrollContainer.querySelector("#startgame-scroll-text");

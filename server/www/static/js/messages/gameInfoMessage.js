@@ -1,5 +1,6 @@
 import BaseWsMessage from "./baseWsMessage.js";
 import { initGameManager } from "../gameManager.js";
+import MapSelector from "../mapSelector.js";
 import { initGameConfig } from "../config.js";
 import Animator from "../view/animator.js";
 
@@ -30,6 +31,9 @@ export default class GameInfoMessage extends BaseWsMessage {
     exec() {
         // Création de la config du jeu
         initGameConfig(this.gameInfo);
+
+        // Création des boutons
+        MapSelector.createChoiceGameMapButtons(this.gameInfo.maps);
 
         // On a besoin de la config du jeu pour déclarer le GameManager
         initGameManager();
