@@ -38,6 +38,7 @@ class GameManager {
         this.waitgameContainer = document.getElementById("choice-game-container");
         const startbouton = this.waitgameContainer.querySelector("#choice-game-start-button");
         startbouton.onclick = this.testStart.bind(this);
+
         /* Page d'attente */
         // Nombre de joueurs
         this.startgameContainer = document.getElementById("startgame-container");
@@ -143,6 +144,9 @@ class GameManager {
         const startgameScrollContainer = document.getElementById("startgame-scroll-container");
         startgameScrollContainer.hidden = true;
         this.startgameContainer.hidden = true;
+
+        // Masquer la page de selection
+        this.waitgameContainer.hidden = true;
 
         // Suppression du défilement de texte
         const startgameScrollText = startgameScrollContainer.querySelector("#startgame-scroll-text");
