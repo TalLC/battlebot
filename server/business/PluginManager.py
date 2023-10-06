@@ -3,7 +3,6 @@ import importlib
 import logging
 import sys
 from typing import TYPE_CHECKING, List
-from common.Singleton import SingletonABCMeta
 
 from business.interfaces.IPluginManager import IPluginManager
 
@@ -12,7 +11,7 @@ if TYPE_CHECKING:
     from business.interfaces.IPluginSpawn import IPluginSpawn
 
 
-class PluginManager(IPluginManager, metaclass=SingletonABCMeta):
+class PluginManager(IPluginManager):
 
     DEFAULT_SPAWN_PLUGIN_NAME = "RandomSpawn"
 

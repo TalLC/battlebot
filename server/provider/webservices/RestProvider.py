@@ -73,6 +73,12 @@ class RestProvider:
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
 
+            if GameManager().game_map is None:
+                ErrorCode.throw(GAME_NO_MAP_SELECTED)
+
+            if not GameManager().map_manager.does_map_exists(map_id=GameManager().game_map.id):
+                ErrorCode.throw(GAME_MAP_DOES_NOT_EXISTS)
+
             GameManager().new_game()
             return {'status': 'ok', 'message': 'Game is starting'}
 
