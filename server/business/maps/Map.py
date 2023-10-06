@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 class Map:
 
+    DEFAULT_PREVIEW = "/9j/7gAOQWRvYmUAZEAAAAAB/9sAhAABAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAgICAgICAgICAgIDAwMDAwMDAwMDAQEBAQEBAQEBAQECAgECAgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwP/wAARCAAQABADAREAAhEBAxEB/90ABAAC/8QAYwABAQAAAAAAAAAAAAAAAAAAAAkBAQEBAQAAAAAAAAAAAAAAAAAFBgcQAAIDAQEBAQAAAAAAAAAAAAYHAwQFCAIJAREAAgICAgIDAQAAAAAAAAAAAgMBBBEFEwYSByFBIxT/2gAMAwEAAhEDEQA/AJF989t9FHfT3YEQL2L0vz0XJZyusBrL8ab7ECuezMYTpUQDgjEF6OEf5lFdNvdABCT3Ng2MySgUbGbZtVdGPT1IMn1W5evXFpqBbGpvxrmfEU5XYFWJIwMjkluKJn85GVmQzxkEkKo5pFH3R1bYbHsNrrr+yem7O6q1v70Lgb2ldsJYKq9qsmsCLmsU0AiLwOC7UruibyLKq7tkTgbtvooE6e4/iOuxel+hS50uVKANlfkrfYhrz2GDDiKh8cLojTR3T/TosVt4QAXx+4cGvmR0BfY0q1q1oyaeXPk+XL16mt1Q7Y29+VcD4hnC64tzImZicExwxEfnAwsCKOQjkSVKaPujtOw13YavXX9b9N1t1arf3vXBXt07XysW16tZ1Y0U9Y1pnE3jcd23XTM0UVlWE7If/9CV/wBG/l8zsLv/AKrP6SF6ybqYPSLy6wCik18RHZE0C5yx2iI4ya7IDVgcL9Ujq7aFncjmg3qM5J+ZMObHBn3otD1tQUdcnUyT7W1afisMAtfw1kl9QwgMFgOIIyKCKcCIgWZIMN3fZ+yFp1Oh9da+rD71mCsXbs8lCgpEZ5G0lWqtu9acLDTUSliVL8nOsW0isEW3zk+XzO3e/wDlQ/uoXrJRJgCIvTrP6LsXxECESvLk1HVIgfJsMgyWAOv2sOsRoVsOOGDBowEn7kzaUc+fRiz/ADtTtinUwSLWqafiwMGtny1cj9SwQAGAWZICGBKMkJAOII3SNn7IYnbaH2Lr6svo2ZKvdpTx0L6nxnkVSbatW6NpIrBNtLmOUzxS6vbcLDRU/9k="
+
     @property
     def infos(self):
         """
@@ -32,9 +34,11 @@ class Map:
         return {
             "id": self.id,
             "name": self.name,
+            "preview": self.preview,
             "height": self.height,
             "width": self.width,
-            "environment": self.environment
+            "environment": self.environment,
+            "spawners": len(self.spawners)
         }
 
     @property
@@ -48,6 +52,10 @@ class Map:
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def preview(self) -> str:
+        return self._preview
 
     @property
     def height(self) -> int:
@@ -76,6 +84,7 @@ class Map:
             saved_map = self.map_manager.read_map_data(map_id)
             self._id = map_id
             self._name = saved_map['name']
+            self._preview = saved_map['preview'] if 'preview' in saved_map else self.DEFAULT_PREVIEW
             self._width = saved_map['width']
             self._height = saved_map['height']
             self._environment = saved_map['environment'] if 'environment' in saved_map else str()
