@@ -1,53 +1,60 @@
+from __future__ import annotations
 import importlib
 import logging
 import sys
+from typing import TYPE_CHECKING, List
+from common.Singleton import SingletonABCMeta
 
-from business.interfaces import IPluginSpawn
+from business.interfaces.IPluginManager import IPluginManager
+
+if TYPE_CHECKING:
+    from business.maps.Map import Map
+    from business.interfaces.IPluginSpawn import IPluginSpawn
 
 
-class PluginManager:
+class PluginManager(IPluginManager, metaclass=SingletonABCMeta):
 
-    def my_plugin_spawn(self) -> IPluginSpawn:
-        return self._my_plugin_spawn
+    DEFAULT_SPAWN_PLUGIN_NAME = "RandomSpawn"
 
-    def plugins_spawn(self):
-        return self._plugins_spawn
+    @classmethod
+    def get_plugin_spawn_for_map(cls, game_map: Map) -> IPluginSpawn:
+        logging.debug(f"Recherche du plugin disponible pour la map {game_map.id}")
+        spawn_plugins = PluginManager.__get_available_spawn_plugins()
+        selected_plugin = None
 
-    # We are going to receive a list of plugins as parameter
-    def __init__(self, map):
-        self._plugins_spawn = None
-        self._my_plugin_spawn = None
-        self.load_config_plugins()
-        self.plugin_spawn_selector(map)
-
-    def load_config_plugins(self):
-        from common.config import CONFIG_GAME
-
-        self._plugins_spawn = CONFIG_GAME.plugins_spawn
-
-    def plugin_spawn_selector(self, map):
-        if self._plugins_spawn is None:
-            self._plugins_spawn = []
-        if self._plugins_spawn:
-            for plugin_spawn in self._plugins_spawn:
-                try :
-                    logging.info('import du plugin ' + plugin_spawn)
-                    self._my_plugin_spawn = importlib.import_module('plugins.spawn.' + plugin_spawn)
-                    self._my_plugin_spawn = eval('self._my_plugin_spawn.' + plugin_spawn + '(map)')
-                    logging.info('Le plugin ' + plugin_spawn + ' est importé !')
-                    if not self._my_plugin_spawn.required():
-                        logging.warning('Les conditions pour utiliser le plugin ' + plugin_spawn + ' ne sont pas remplies')
-                        self._my_plugin_spawn = None
-                    else:
+        # On parcourt les plugins pour trouver le premier compatible
+        if len(spawn_plugins):
+            for plugin_spawn_name in spawn_plugins:
+                try:
+                    logging.info(f'Import du plugin {plugin_spawn_name}')
+                    selected_plugin = importlib.import_module('plugins.spawn.' + plugin_spawn_name)
+                    selected_plugin = eval('selected_plugin.' + plugin_spawn_name + '(game_map)')
+                    if not selected_plugin.required():
+                        logging.warning(f'Les conditions pour utiliser le plugin "{plugin_spawn_name}" ne sont '
+                                        f'pas remplies')
+                        selected_plugin = None
                         break
-                except :
-                    logging.error('Le plugin ' + plugin_spawn + ' est introuvable !')
-        if not self._my_plugin_spawn:
+                    else:
+                        logging.info(f'Le plugin "{plugin_spawn_name}" est importé !')
+                        break
+                except:
+                    logging.error(f'Le plugin "{plugin_spawn_name}" est introuvable !')
+
+        # Aucun plugin ne correspondait, on prend le plugin random par défaut
+        if selected_plugin is None:
             try:
-                logging.info('import du plugin RandomSpawn')
-                self._my_plugin_spawn = importlib.import_module('plugins.spawn.' + 'RandomSpawn')
-                self._my_plugin_spawn = eval('self._my_plugin_spawn.' + 'RandomSpawn' + '(map)')
-                logging.info('Le plugin RandomSpawn est importé !')
-            except :
-                logging.error('Le plugin RandomSpawn qui est le plugin_spawn par default est introuvable ! Merci de le remettre pour le bon fonctionnement du jeu.')
+                logging.info(f'Import du plugin {cls.DEFAULT_SPAWN_PLUGIN_NAME}')
+                selected_plugin = importlib.import_module(f'plugins.spawn.{cls.DEFAULT_SPAWN_PLUGIN_NAME}')
+                selected_plugin = eval(f'selected_plugin.{cls.DEFAULT_SPAWN_PLUGIN_NAME}(game_map)')
+                logging.info(f'Le plugin {cls.DEFAULT_SPAWN_PLUGIN_NAME} est importé !')
+            except:
+                logging.error(f'Le plugin de spawn par défaut {cls.DEFAULT_SPAWN_PLUGIN_NAME} est introuvable ! '
+                              f'Merci de le remettre pour le bon fonctionnement du jeu.')
                 sys.exit()
+        return selected_plugin
+
+    @staticmethod
+    def __get_available_spawn_plugins() -> List[str]:
+        from common.config import CONFIG_GAME
+        plugins_spawn_config = CONFIG_GAME.plugins_spawn
+        return plugins_spawn_config if plugins_spawn_config is not None else list()

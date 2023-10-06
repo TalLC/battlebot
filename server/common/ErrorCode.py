@@ -86,6 +86,8 @@ GAME_ALREADY_STARTED = ErrorCode(name='GAME_ALREADY_STARTED', internal_code=0x00
                                  label="The game is already started")
 GAME_IS_FULL = ErrorCode(name='GAME_IS_FULL', internal_code=0x00000604, http_code=500,
                          label="The game is full")
+GAME_MAP_DOES_NOT_EXISTS = ErrorCode(name='GAME_MAP_DOES_NOT_EXISTS', internal_code=0x00000605, http_code=404,
+                                     label="The requested map does not exists")
 
 # Network Errors
 NETWORK_BANNED_IP_TEMP = ErrorCode(name='NETWORK_BANNED_IP_TEMP', internal_code=0x00000701, http_code=401,

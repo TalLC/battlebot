@@ -16,7 +16,6 @@ from provider.webservices.rest.models.AdminDisplayClientsActionListModel import 
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByIdModel import AdminDisplayClientsActionGetByIdModel
 from provider.webservices.rest.models.AdminDisplayClientsActionGetByTokenModel import AdminDisplayClientsActionGetByTokenModel
 from provider.webservices.rest.models.DisplayClientsActionReadyModel import DisplayClientsActionReadyModel
-from provider.webservices.rest.models.MapsIdInfo import MapsIdInfo
 from provider.webservices.rest.models.BotsActionRegisterModel import BotsActionRegisterModel
 from provider.webservices.rest.models.BotsIdActionCheckConnectionModel import BotsIdActionCheckConnectionModel
 from provider.webservices.rest.models.BotsIdActionShootModel import BotsIdActionShootModel
@@ -42,8 +41,9 @@ class RestProvider:
         self.__admin_password = CONFIG_REST.admin_password
 
     def __register_endpoints(self):
-        self.__admin_game_action_start()
+        self.__admin_game_action_new()
         self.__admin_game_action_reset()
+        self.__admin_game_action_select_map()
         self.__game_maps_info()
         self.__admin_display_clients_action_list()
         self.__admin_display_clients_action_get_by_id()
@@ -59,11 +59,11 @@ class RestProvider:
         self.__bots_id_action_move()
         logging.info("[REST] All endpoints registered")
 
-    def __admin_game_action_start(self):
-        @self.__app.patch("/game/action/start", tags=['admin', 'game'])
+    def __admin_game_action_new(self):
+        @self.__app.post("/game/action/new", tags=['admin', 'game'])
         async def action(model: AdminBaseModel, _: Request):
             """
-            Forces the game to start.
+            Start the game.
             """
             # Check the admin password
             if model.api_password != self.__admin_password:
@@ -73,8 +73,8 @@ class RestProvider:
             if GameManager().is_started:
                 ErrorCode.throw(GAME_ALREADY_STARTED)
 
-            GameManager().start_game()
-            return {'status': 'ok', 'message': 'Game is started'}
+            GameManager().new_game()
+            return {'status': 'ok', 'message': 'Game is starting'}
 
     def __admin_game_action_reset(self):
         @self.__app.post("/game/action/reset", tags=['admin', 'game'])
@@ -96,20 +96,17 @@ class RestProvider:
             GameManager().bot_manager.reset()
 
             # Send a refresh page message to display clients
-            try:
-
-                for client in GameManager().display_manager.get_clients():
+            for client in GameManager().display_manager.get_clients():
+                try:
                     if client.websocket.client_state.CONNECTED:
                         await client.websocket.send_json(DisplayRefreshMessage().json())
-
-                sleep(1)
-
-                # Disconnect and remove all clients
-                await GameManager().display_manager.reset()
-            except RuntimeError:
-                logging.exception("Socket was closed before it could send refresh message")
-            except:
-                logging.exception("Error while closing socket or sending the refresh message")
+                    # Disconnect and remove all clients
+                    await GameManager().display_manager.reset()
+                except RuntimeError:
+                    logging.exception("Socket was closed before it could send refresh message")
+                except:
+                    logging.exception("Error while closing socket or sending the refresh message")
+            sleep(1)
 
             # Reload config files
             refresh_config()
@@ -119,29 +116,31 @@ class RestProvider:
 
             # Reload the map
             GameManager().load_config()
-            GameManager().plugin_manager.load_config_plugins()
 
             # Restarting game threads
             GameManager().init_threads()
 
             return {'status': 'ok', 'message': 'Game has been reset'}
 
-    # def __admin_game_action_select_map(self):
-    #     @self.__app.patch("/game/action/select_map", tags=['unused', 'admin', 'game'], include_in_schema=False)
-    #     async def action(model: AdminActionSelectMapModel, _: Request):
-    #         """
-    #         Selects the map.
-    #         """
-    #         # Check the admin password
-    #         if model.api_password != self.__admin_password:
-    #             ErrorCode.throw(ADMIN_BAD_PASSWORD)
-    #
-    #         # Check if the game is already started
-    #         if GameManager().is_started:
-    #             ErrorCode.throw(GAME_ALREADY_STARTED)
-    #
-    #         GameManager().load_map(map_id=model.map_name)
-    #         return {'status': 'ok', 'message': 'Map is loaded.'}
+    def __admin_game_action_select_map(self):
+        @self.__app.post("/game/maps/{map_id}/select", tags=['admin', 'game'])
+        async def action(map_id: str, model: AdminBaseModel, _: Request):
+            """
+            Set the game map.
+            """
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Check if the game is already started
+            if GameManager().is_started:
+                ErrorCode.throw(GAME_ALREADY_STARTED)
+
+            if not GameManager().map_manager.does_map_exists(map_id=map_id):
+                ErrorCode.throw(GAME_MAP_DOES_NOT_EXISTS)
+
+            GameManager().load_map(map_id=map_id)
+            return {'status': 'ok', 'message': 'Map is loaded.'}
 
     def __game_maps_info(self):
         @self.__app.get("/game/maps/{map_id}/info", tags=['game'])

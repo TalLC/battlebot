@@ -3,10 +3,10 @@ import logging
 from time import sleep
 from threading import Thread, Event
 from typing import TYPE_CHECKING
+from common.Singleton import SingletonABCMeta
 
 from business.MapManager import MapManager
 from common.PerformanceCounter import PerformanceCounter
-from common.Singleton import SingletonABCMeta
 from business.interfaces.IGameManager import IGameManager
 from business.TeamManager import TeamManager
 from business.BotManager import BotManager
@@ -19,6 +19,7 @@ from business.PluginManager import PluginManager
 
 if TYPE_CHECKING:
     from business.gameobjects.GameObject import GameObject
+    from business.interfaces.IPluginSpawn import IPluginSpawn
 
 
 class GameManager(IGameManager, metaclass=SingletonABCMeta):
@@ -72,11 +73,8 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._is_debug = False
         self._max_players = 0
         self._game_map = None
-        self._plugins_spawn = None
+        self._plugins_spawn: IPluginSpawn | None = None
         self.load_config()
-
-        self.plugin_manager = PluginManager(self.game_map)
-        self.plugin_manager.load_config_plugins()
 
         # Thread auto starting the game when enough bot are connected
         self._event_stop_checking_starting_conditions = Event()
@@ -87,25 +85,25 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         self._event_stop_checking_stopping_conditions = Event()
         self._thread_game_stop_conditions = None
 
-        self.init_threads()
-
     def load_config(self):
-        # Importing config variable here everytime we call the function in order to refresh it.
+        # Importing config variable here everytime we call the function in order to refresh it
         from common.config import CONFIG_GAME
 
         # Reloading config
         self._is_debug = CONFIG_GAME.is_debug
         self._max_players = CONFIG_GAME.max_players
-        self.load_map(CONFIG_GAME.map_id)
 
     def load_map(self, map_id: str):
         """
-        Loads a new map.
+        Loads a new map
         """
         if self._game_map:
+            logging.debug(f"Unloading previous map: {self._game_map.id}")
             del self._game_map
 
+        logging.debug(f"Loading new map: {map_id}")
         self._game_map = self.map_manager.get_map(map_id)
+        self._plugins_spawn = PluginManager.get_plugin_spawn_for_map(self.game_map)
 
     def init_threads(self):
         # Reset Events
@@ -126,7 +124,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     def stop_threads(self):
         """
-        Stop all the GameManager's threads.
+        Stop all the GameManager's threads
         """
         # Set the events to stop the threads
         self._event_stop_checking_starting_conditions.set()
@@ -134,7 +132,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     def _wait_for_players(self, e: Event):
         """
-        Thread blocking operation. Waiting until all players are connected or until the event is triggered.
+        Thread blocking operation. Waiting until all players are connected or until the event is triggered
         """
         current_players_count = self.registered_players_count
         while not self.is_full and not e.is_set():
@@ -154,7 +152,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     def _wait_for_display_clients(self, e: Event):
         """
-        Thread blocking operation. Waiting until at least one display client is connected.
+        Thread blocking operation. Waiting until at least one display client is connected
         """
         while not self._is_client_ready and not e.is_set():
             # Check if a client is ready
@@ -217,9 +215,29 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         else:
             logging.debug("Game has been aborted")
 
+    def new_game(self):
+        """
+        Starts a new game
+        """
+        # Check if a map has been set
+        if self.game_map is None:
+            logging.error("No map selected!")
+            return
+
+        # Stop the current game if any
+        if self.is_started:
+            self.stop_game()
+            while self.is_started:
+                sleep(100/1000)
+
+            self.bot_manager.reset()
+            self.team_manager.reload_teams()
+
+        self.init_threads()
+
     def start_game(self):
         """
-        Set the boolean to "started".
+        Set the boolean to "started"
         """
         # Ensure the thread is stopped if we started the game from API
         self._event_stop_checking_starting_conditions.set()
@@ -254,7 +272,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
                         tile_objects: bool = True, collision_only: bool = True, radius: int = 0,
                         origin: tuple[float, float] = (0, 0)) -> list[GameObject]:
         """
-        Return objects from the map. Parameters define what should be returned.
+        Return objects from the map. Parameters define what should be returned
         """
         game_objects = list()
 
@@ -292,7 +310,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
     @PerformanceCounter.count
     def get_map_object_from_id(self, object_id: str) -> GameObject | None:
         """
-        Return the game object corresponding to the specified id.
+        Return the game object corresponding to the specified id
         """
         for game_object in self.get_map_objects(bots=True, tiles=True, tile_objects=True, collision_only=False):
             if game_object.id == object_id:
@@ -300,4 +318,4 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         return None
 
     def set_spawn_coordinates(self, team_id):
-        return self.plugin_manager.my_plugin_spawn().process(team_id)
+        return self._plugins_spawn.process(team_id)
