@@ -25,12 +25,12 @@ class PluginManager(IPluginManager):
         if len(spawn_plugins):
             for plugin_spawn_name in spawn_plugins:
                 try:
-                    logging.info(f'Import du plugin {plugin_spawn_name}')
+                    logging.debug(f'Import du plugin {plugin_spawn_name}')
                     selected_plugin = importlib.import_module('plugins.spawn.' + plugin_spawn_name)
                     selected_plugin = eval('selected_plugin.' + plugin_spawn_name + '(game_map)')
                     if not selected_plugin.required():
-                        logging.warning(f'Les conditions pour utiliser le plugin "{plugin_spawn_name}" ne sont '
-                                        f'pas remplies')
+                        logging.debug(f'Les conditions pour utiliser le plugin "{plugin_spawn_name}" ne sont '
+                                      f'pas remplies')
                         selected_plugin = None
                         break
                     else:
@@ -42,7 +42,7 @@ class PluginManager(IPluginManager):
         # Aucun plugin ne correspondait, on prend le plugin random par défaut
         if selected_plugin is None:
             try:
-                logging.info(f'Import du plugin {cls.DEFAULT_SPAWN_PLUGIN_NAME}')
+                logging.debug(f'Import du plugin {cls.DEFAULT_SPAWN_PLUGIN_NAME}')
                 selected_plugin = importlib.import_module(f'plugins.spawn.{cls.DEFAULT_SPAWN_PLUGIN_NAME}')
                 selected_plugin = eval(f'selected_plugin.{cls.DEFAULT_SPAWN_PLUGIN_NAME}(game_map)')
                 logging.info(f'Le plugin {cls.DEFAULT_SPAWN_PLUGIN_NAME} est importé !')
