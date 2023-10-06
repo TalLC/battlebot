@@ -46,6 +46,10 @@ class WebsocketProvider:
             )
             await websocket.send_json(game_info_message.json())
 
+            # Waiting for the game to start
+            while not GameManager().is_started:
+                await asyncio.sleep(1)
+
             # Sending map information
             logging.debug(f"[WEBSOCKET] Sending map to {display_client.name}")
             current_map = GameManager().game_map
