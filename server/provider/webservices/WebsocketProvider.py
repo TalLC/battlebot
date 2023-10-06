@@ -46,6 +46,11 @@ class WebsocketProvider:
             )
             await websocket.send_json(game_info_message.json())
 
+            # Waiting for all the bots to be ready
+            while not GameManager().are_bots_ready:
+                # Waiting for bots to connect
+                await asyncio.sleep(1)
+
             # Sending map information
             logging.debug(f"[WEBSOCKET] Sending map to {display_client.name}")
             current_map = GameManager().game_map
@@ -54,11 +59,6 @@ class WebsocketProvider:
                 width=current_map.width, tiles_grid=current_map.tiles_grid
             )
             await websocket.send_json(map_create_message.json())
-
-            # Waiting for all the bots to be ready
-            while not GameManager().are_bots_ready:
-                # Waiting for bots to connect
-                await asyncio.sleep(1)
 
             # Sending all bots to webservice
             logging.debug(f"[WEBSOCKET] Sending bots to {display_client.name}")
