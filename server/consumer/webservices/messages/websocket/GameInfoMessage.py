@@ -1,4 +1,7 @@
+from typing import List
+
 from consumer.webservices.messages.interfaces.IWebsocketMessage import IWebsocketMessage
+from business.maps.MapName import MapName
 
 
 class GameInfoMessage(IWebsocketMessage):
@@ -8,17 +11,17 @@ class GameInfoMessage(IWebsocketMessage):
         return self._is_debug
 
     @property
-    def map_id(self) -> str:
-        return self._map_id
+    def maps(self) -> List[MapName]:
+        return self._maps
 
     @property
     def max_players(self) -> int:
         return self._max_players
 
-    def __init__(self, is_debug: bool, map_id: str, max_players: int):
+    def __init__(self, is_debug: bool, maps: List[MapName], max_players: int):
         super().__init__(msg_type="GameInfoMessage")
         self._is_debug = is_debug
-        self._map_id = map_id
+        self._maps = maps
         self._max_players = max_players
 
     def __add__(self, other):
@@ -28,7 +31,7 @@ class GameInfoMessage(IWebsocketMessage):
         json = super().json()
         json |= {
             "is_debug": self.is_debug,
-            "map_id": self.map_id,
+            "maps": list([map_name.json() for map_name in self.maps]),
             "max_players": self.max_players
         }
         return json

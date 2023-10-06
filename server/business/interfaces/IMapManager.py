@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from business.maps.Map import Map
 from typing import TYPE_CHECKING, List
 
+from business.maps.MapName import MapName
+
 if TYPE_CHECKING:
     from business.GameManager import GameManager
 
@@ -24,6 +26,13 @@ class IMapManager(ABC):
     def get_maps_ids(self) -> List[str]:
         """
         Returns all maps id.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_map_names(self) -> List[MapName]:
+        """
+        Returns all maps names and ids.
         """
         raise NotImplementedError()
 

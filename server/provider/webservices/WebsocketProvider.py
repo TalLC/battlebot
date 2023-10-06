@@ -41,7 +41,7 @@ class WebsocketProvider:
             # Sending game information
             logging.debug(f"[WEBSOCKET] Sending game information to {display_client.name}")
             game_info_message = GameInfoMessage(
-                is_debug=GameManager().is_debug, map_id=GameManager().game_map.id,
+                is_debug=GameManager().is_debug, maps=GameManager().map_manager.get_map_names(),
                 max_players=GameManager().max_players
             )
             await websocket.send_json(game_info_message.json())

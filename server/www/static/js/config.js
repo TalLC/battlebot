@@ -28,7 +28,7 @@ class Config {
     constructor(gameInfo) {
         // Game information
         this.isDebug = gameInfo.isDebug;
-        this.mapId = gameInfo.mapId;
+        this.maps = gameInfo.maps;
         this.maxPlayers = gameInfo.maxPlayers;
         this.resetKey = 'c';
         this.resetCtrlKey = true;

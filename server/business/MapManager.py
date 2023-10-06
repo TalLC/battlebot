@@ -4,6 +4,7 @@ from typing import List
 
 from business.maps.Map import Map
 from business.interfaces.IMapManager import IMapManager
+from business.maps.MapName import MapName
 from common.Singleton import SingletonABCMeta
 
 
@@ -21,6 +22,17 @@ class MapManager(IMapManager, metaclass=SingletonABCMeta):
                 maps_list.append(save_map.stem)
 
         return maps_list
+
+    def get_map_names(self) -> List[MapName]:
+        """
+        Returns all maps names and ids.
+        """
+        result = list()
+        for map_id in self.get_maps_ids():
+            map_name = self.read_map_data(map_id)['name']
+            result.append(MapName(id=map_id, name=map_name))
+
+        return result
 
     def read_map_data(self, map_id) -> dict:
         """

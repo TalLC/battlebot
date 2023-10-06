@@ -11,14 +11,14 @@ export default class GameInfoMessage extends BaseWsMessage {
          * Informations du jeu
          * @typedef {Object} GameInfo
          * @property {Boolean} isDebug - Indique si le jeu est en mode debug.
-         * @property {String} mapId - L'ID de la carte du jeu.
+         * @property {String} maps - Liste des noms et id des maps disponibles.
          * @property {Number} maxPlayers - Le nombre maximum de joueurs autorisés.
          */
 
         /** @type {GameInfo} */
         this.gameInfo = {
             isDebug: message.is_debug,
-            mapId: message.map_id,
+            maps: message.maps,
             maxPlayers: message.max_players
         };
     }
