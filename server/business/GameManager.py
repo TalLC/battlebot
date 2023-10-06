@@ -4,6 +4,7 @@ from time import sleep
 from threading import Thread, Event
 from typing import TYPE_CHECKING
 from common.Singleton import SingletonABCMeta
+from enum import Enum
 
 from business.MapManager import MapManager
 from common.PerformanceCounter import PerformanceCounter
@@ -22,6 +23,14 @@ if TYPE_CHECKING:
     from business.interfaces.IPluginSpawn import IPluginSpawn
 
 
+class GameStatus(Enum):
+    NON_INITIALIZED = 0
+    STARTING = 1
+    STARTED = 2
+    STOPPING = 3
+    STOPPED = 4
+
+
 class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     @property
@@ -29,7 +38,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         return self._is_debug
 
     @property
-    def plugins_spawn(self) -> bool:
+    def plugins_spawn(self) -> IPluginSpawn:
         return self._plugins_spawn
 
     @property
@@ -42,7 +51,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
 
     @property
     def is_started(self) -> bool:
-        return self._is_started
+        return self._status == GameStatus.STARTED
+
+    @property
+    def is_starting(self) -> bool:
+        return self._status == GameStatus.STARTING
+
+    @property
+    def status(self) -> GameStatus:
+        return self._status
 
     @property
     def is_full(self) -> bool:
@@ -63,7 +80,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
     def __init__(self):
         self._is_client_ready = False
         self._are_bots_ready = False
-        self._is_started = False
+        self._status = GameStatus.NON_INITIALIZED
         self.team_manager = TeamManager(self)
         self.bot_manager = BotManager(self)
         self.map_manager = MapManager(self)
@@ -180,6 +197,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             self._are_bots_ready = True
         else:
             logging.debug("Auto game start has been aborted")
+            self._status = GameStatus.STOPPED
             return
 
         # Waiting until at least one client display is connected
@@ -192,6 +210,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             self.start_game()
         else:
             logging.debug("Auto game start has been aborted")
+            self._status = GameStatus.STOPPED
             return
 
     def _thread_check_stopping_conditions(self, e: Event):
@@ -214,6 +233,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             ConsumerManager().websocket.send_message(GameEndMessage(winner_name=winner_name))
         else:
             logging.debug("Game has been aborted")
+            self._status = GameStatus.STOPPED
 
     def new_game(self):
         """
@@ -225,14 +245,15 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
             return
 
         # Stop the current game if any
-        if self.is_started:
+        if self._status == GameStatus.STARTED:
             self.stop_game()
-            while self.is_started:
+            while self._status == GameStatus.STARTED:
                 sleep(100/1000)
 
             self.bot_manager.reset()
             self.team_manager.reload_teams()
 
+        self._status = GameStatus.STARTING
         self.init_threads()
 
     def start_game(self):
@@ -242,7 +263,7 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         # Ensure the thread is stopped if we started the game from API
         self._event_stop_checking_starting_conditions.set()
 
-        self._is_started = True
+        self._status = GameStatus.STARTED
         logging.info(f"Game has been started with {self.registered_players_count} players!")
 
         # Dispatching starting message to all connected bots
@@ -257,8 +278,8 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         Stops the game.
         """
         # Ensure the thread is stopped if we have aborted the game
+        self._status = GameStatus.STOPPING
         self._event_stop_checking_stopping_conditions.set()
-        self._is_started = False
         self._are_bots_ready = False
         self._is_client_ready = False
 
@@ -266,6 +287,8 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         for bot in self.bot_manager.get_bots():
             bot.stop()
             ConsumerManager().stomp.send_message(GameStatusMessage(bot_id=bot.id, is_started=False))
+
+        self._status = GameStatus.STOPPED
 
     @PerformanceCounter.count
     def get_map_objects(self, bots: bool = True, tiles: bool = True, non_walkable_only: bool = False,
@@ -318,4 +341,4 @@ class GameManager(IGameManager, metaclass=SingletonABCMeta):
         return None
 
     def set_spawn_coordinates(self, team_id):
-        return self._plugins_spawn.process(team_id)
+        return self.plugins_spawn.process(team_id)
