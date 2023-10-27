@@ -55,3 +55,9 @@ class ClientConnection:
             self._is_mqtt_connected = True
 
         return self.is_connected
+
+    def json(self) -> dict:
+        return {
+            "bot_id": self.bot_id,
+            "is_connected": self.is_connected
+        }

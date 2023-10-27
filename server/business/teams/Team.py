@@ -54,6 +54,25 @@ class Team:
                f"COLOR: {self.color}, " \
                f"BOTS: {self.bot_count()}/{self.size}"
 
+    def json(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "is_alive": self.is_alive,
+            "color": self.color,
+            "bot_count": self.bot_count(),
+            "size": self.size,
+            "bots": list(
+                [
+                    {
+                        "id": bot.id,
+                        "name": bot.name,
+                        "is_alive": bot.is_alive
+                    } for bot in self._bots.values()
+                ]
+            )
+        }
+
     def bot_count(self, alive_only: bool = False) -> int:
         """
         Get the number of bot in the team.

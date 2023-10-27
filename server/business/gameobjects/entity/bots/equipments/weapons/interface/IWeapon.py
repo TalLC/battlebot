@@ -43,3 +43,11 @@ class IWeapon(ABC):
 
     def __str__(self) -> str:
         raise NotImplementedError()
+
+    def json(self) -> dict:
+        return {
+            "name": self.name,
+            "damages": self.damages,
+            "reach_distance": self.reach_distance,
+            "cooldown_ms": self.cooldown_ms
+        }

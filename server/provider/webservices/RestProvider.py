@@ -32,6 +32,7 @@ class RestProvider:
         {"name": "game", "description": "Game"},
         {"name": "display", "description": "Display"},
         {"name": "bots", "description": "Bots"},
+        {"name": "teams", "description": "Teams"},
     ]
 
     def __init__(self, app: FastAPI):
@@ -49,7 +50,8 @@ class RestProvider:
         self.__admin_display_clients_action_get_by_id()
         self.__admin_display_clients_action_get_by_token()
         self.__display_action_ready()
-        self.__admin_bots_id_action_kill()
+        self.__admin_bot_id_action_kill()
+        self.__admin_bots_action_list()
         self.__admin_bots_action_add()
         self.__bots_action_register()
         self.__bots_id_action_request_connection()
@@ -57,6 +59,8 @@ class RestProvider:
         self.__bots_id_action_shoot()
         self.__bots_id_action_turn()
         self.__bots_id_action_move()
+        self.__admin_team_id_action_get_by_id()
+        self.__admin_teams_action_list()
         logging.info("[REST] All endpoints registered")
 
     def __admin_game_action_new(self):
@@ -93,21 +97,17 @@ class RestProvider:
             if model.api_password != self.__admin_password:
                 ErrorCode.throw(ADMIN_BAD_PASSWORD)
 
-            # Stop the game
-            GameManager().stop_game()
-            while GameManager().is_started:
-                sleep(100/1000)
-
-            # Remove the bots
-            GameManager().bot_manager.reset()
+            # Stop the game if started
+            if GameManager().is_started:
+                GameManager().stop_game()
+                while GameManager().is_started:
+                    sleep(100/1000)
 
             # Send a refresh page message to display clients
             for client in GameManager().display_manager.get_clients():
                 try:
                     if client.websocket.client_state.CONNECTED:
                         await client.websocket.send_json(DisplayRefreshMessage().json())
-                    # Disconnect and remove all clients
-                    await GameManager().display_manager.reset()
                 except RuntimeError:
                     logging.exception("Socket was closed before it could send refresh message")
                 except:
@@ -117,14 +117,8 @@ class RestProvider:
             # Reload config files
             refresh_config()
 
-            # Reset and reload teams
-            GameManager().team_manager.reload_teams()
-
-            # Reload the map
-            GameManager().load_config()
-
-            # Restarting game threads
-            GameManager().init_threads()
+            # Disconnect and remove all display clients
+            await GameManager().display_manager.reset()
 
             return {'status': 'ok', 'message': 'Game has been reset'}
 
@@ -233,7 +227,7 @@ class RestProvider:
 
             return {'status': 'ok', 'client': client.json()}
 
-    def __admin_bots_id_action_kill(self):
+    def __admin_bot_id_action_kill(self):
         @self.__app.patch("/bots/{bot_id}/action/kill", tags=['admin', 'bots'])
         async def action(bot_id: str, model: AdminBaseModel, _: Request):
             """
@@ -257,6 +251,22 @@ class RestProvider:
             bot.kill()
 
             return {"status": "ok", "message": "The bot has been killed", "bot_id": bot.id}
+
+    def __admin_bots_action_list(self):
+        @self.__app.get("/bots/action/list", tags=['admin', 'bots'])
+        async def action(model: AdminBaseModel, _: Request):
+            """
+            List all bots in the game.
+            """
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            result = list()
+            for bot in GameManager().bot_manager.get_bots(connected_only=False, alive_only=False):
+                result.append(bot.json())
+
+            return {"status": "ok", "bots": result}
 
     def __admin_bots_action_add(self):
         @self.__app.patch("/bots/action/add", tags=['admin', 'bots'])
@@ -506,3 +516,38 @@ class RestProvider:
                 return {"status": "ok", "message": "Bot is starting to move"}
             elif model.action == 'stop':
                 return {"status": "ok", "message": "Bot has stopped moving"}
+
+    def __admin_team_id_action_get_by_id(self):
+        @self.__app.get("/teams/{team_id}", tags=['admin', 'teams'])
+        async def action(team_id: str, model: AdminBaseModel, _: Request):
+            """
+            Find a team by its id.
+            """
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            # Does team exists
+            if GameManager().team_manager.get_team(team_id=team_id) is None:
+                ErrorCode.throw(DISPLAY_CLIENT_ID_DOES_NOT_EXISTS)
+
+            # Fetching corresponding team
+            team = GameManager().team_manager.get_team(team_id=team_id)
+
+            return {'status': 'ok', 'team': team.json()}
+
+    def __admin_teams_action_list(self):
+        @self.__app.get("/teams/action/list", tags=['admin', 'teams'])
+        async def action(model: AdminBaseModel, _: Request):
+            """
+            List all teams in the game.
+            """
+            # Check the admin password
+            if model.api_password != self.__admin_password:
+                ErrorCode.throw(ADMIN_BAD_PASSWORD)
+
+            result = list()
+            for team in GameManager().team_manager.get_teams(alive_only=False):
+                result.append(team.json())
+
+            return {"status": "ok", "teams": result}

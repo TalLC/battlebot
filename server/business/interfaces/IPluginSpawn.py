@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from business.maps.Map import Map
@@ -16,15 +16,15 @@ class IPluginSpawn(ABC):
         self._game_map = game_map
 
     @abstractmethod
-    def process(self, team_id) -> tuple:
+    def process(self, team_id) -> Tuple[float, float, float]:
         """
-        Method of spawn.
+        Return x, ry and z coordinates.
         """
         raise NotImplementedError()
 
     @abstractmethod
     def required(self) -> bool:
         """
-        Verification for usage method of spawn.
+        Check prerequisites for spawn method.
         """
         raise NotImplementedError()

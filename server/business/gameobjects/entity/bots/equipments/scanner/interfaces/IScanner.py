@@ -44,3 +44,11 @@ class IScanner(ABC):
 
     def __str__(self) -> str:
         raise NotImplementedError()
+
+    def json(self) -> dict:
+        return {
+            "interval": self.interval,
+            "distance": self.distance,
+            "fov": self.fov,
+            "activated": self.activated
+        }

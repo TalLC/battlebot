@@ -113,6 +113,31 @@ class BotModel(OrientedGameObject, IMoving, IDestructible, ABC):
         """
         raise NotImplementedError
 
+    def json(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "role": self.role,
+            "health": self.health,
+            "is_alive": self.is_alive,
+            "team": {
+                "id": self.team.id,
+                "name": self.team.name,
+                "color": self.team.color
+            },
+            "equipment": self.equipment.json(),
+            "client_connection": self.client_connection.json(),
+            "shape": {
+                "name": self.shape_name,
+                "size": self.shape_size
+            },
+            "position": {
+                "x": self.x,
+                "ry": self.ry,
+                "z": self.z
+            }
+        }
+
     def __init__(self, bot_manager: BotManager, name: str, role: str, health: int, moving_speed: float,
                  turning_speed: float, shape_name: str, shape_size: float):
         self.bot_manager = bot_manager

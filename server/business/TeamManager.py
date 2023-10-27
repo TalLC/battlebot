@@ -18,8 +18,8 @@ class TeamManager(ITeamManager):
         else:
             return None
 
-    def get_teams(self, still_alive_only: bool = False) -> (Team,):
-        if still_alive_only:
+    def get_teams(self, alive_only: bool = False) -> (Team,):
+        if alive_only:
             return tuple([team for team in self._TEAMS.values() if team.is_alive])
         else:
             return tuple(self._TEAMS.values())
@@ -48,9 +48,14 @@ class TeamManager(ITeamManager):
         for team in CONFIG_TEAMS:
             self.create_team(team.size, team.name, team.color, team.id)
 
-        logging.info("[TEAMMANAGER] Created teams:")
+        logging.info("[TEAM_MANAGER] Created teams:")
         self.print_teams()
 
     def print_teams(self):
         for team in self.get_teams():
             logging.info(team)
+
+    def team_count(self, alive_only=True) -> int:
+        return len([
+            team for team in self._TEAMS.values() if not alive_only or (alive_only and team.is_alive)]
+        )

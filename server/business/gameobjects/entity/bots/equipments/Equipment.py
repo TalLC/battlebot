@@ -18,3 +18,9 @@ class Equipment:
 
         # Weapon to shoot the enemy
         self._weapon = weapon
+
+    def json(self) -> dict:
+        return {
+            "scanner": self.scanner.json(),
+            "weapon": self.weapon.json()
+        }
