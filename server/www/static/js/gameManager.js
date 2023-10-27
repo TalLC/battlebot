@@ -36,8 +36,8 @@ class GameManager {
 
         /* Page d'accueil */
         this.waitgameContainer = document.getElementById("choice-game-container");
-        const startbouton = this.waitgameContainer.querySelector("#choice-game-start-button");
-        startbouton.onclick = this.testStart.bind(this);
+        const startButton = this.waitgameContainer.querySelector("#choice-game-start-button");
+        startButton.onclick = this.selectMap.bind(this);
 
         /* Page d'attente */
         // Nombre de joueurs
@@ -58,7 +58,6 @@ class GameManager {
         this.endgameContainer = document.getElementById("endgame-container");
         this.endgameModal = document.getElementById("endgame-modal");
         this.endgameMessageL1 = this.endgameModal.querySelector("#endgame-message-l1");
-
 
         /* Reset */
         window.onkeydown = this.reset.bind(this);
@@ -95,28 +94,28 @@ class GameManager {
         this.viewController.render();
     }
 
-    testStart() {
+    selectMap() {
         const maplist = document.getElementById("choice-game-maplist");
         Array.from(maplist.children).forEach(button => {
             if(button.classList.contains("active")){
                 const mapSelectId = button.value;
-                this.selectMap(mapSelectId);
+                this.newGame(mapSelectId);
                 return;
             }
         })
     }
 
-    selectMap(mapSelectId) {
-        //envoi de info de lancement de partie au back
+    newGame(selectedMapId) {
+        // Envoi de info de lancement de partie au back
         const password = GameConfig().isDebug ? GameConfig().debugAdminPassword : prompt("Mot de passe administrateur", "")
-        sendRestMessage("POST", `/game/maps/${mapSelectId}/select`, {
+        sendRestMessage("POST", `/game/maps/${selectedMapId}/select`, {
             api_password: password
-        }).then((reponse) => {
-            if(reponse.ok){
+        }).then((mapResponse) => {
+            if(mapResponse.ok){
                 sendRestMessage("POST", `/game/action/new`, {
                     api_password: password
-                }).then((reponse) => {
-                    if(reponse.ok){
+                }).then((newGameResponse) => {
+                    if(newGameResponse.ok){
                         //Masquer la page de selection
                         this.waitgameContainer.hidden = true;
 
@@ -124,15 +123,15 @@ class GameManager {
                         this.startgameContainer.hidden = false;
                     }
                     else{
-                        console.error("Mauvaise réponse suite au lancement de la partie");
+                        console.error("Erreur lors du lancement de la partie");
                     }
                 });
             }
             else{
-                console.error("Mauvaise réponse suite à la selection de map");
+                console.error("Erreur lors de la selection de map");
             }
         }).catch(function (error) {
-            console.error("Il y a eu un problème avec l'opération fetch : " + error.message);
+            console.error("Problème avec l'opération fetch : " + error.message);
         });
     }
 

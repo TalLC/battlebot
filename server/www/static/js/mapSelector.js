@@ -20,7 +20,7 @@ export class MapSelector {
      * Crée la liste des boutons en fonction des maps disponible pour l'html
      */
     createChoiceGameMapButtons(maps){
-        const maplist = document.getElementById("choice-game-maplist");
+        const mapList = document.getElementById("choice-game-maplist");
         maps.forEach(element => {
             const button = document.createElement("button");
             button.type = "button";
@@ -29,24 +29,26 @@ export class MapSelector {
             button.textContent = element.name;
             button.value = element.id;
             button.onclick = this.selectMap.bind(this, button, element);
-            maplist.appendChild(button);
+            mapList.appendChild(button);
         });
     }
 
-    desactiveAllButtons(){
-        const maplist = document.getElementById("choice-game-maplist");
-        Array.from(maplist.children).forEach(button => {
+    deactivateAllButtons(){
+        const mapList = document.getElementById("choice-game-maplist");
+        Array.from(mapList.children).forEach(button => {
             button.classList.remove("active");
         })
+        document.getElementById("choice-game-start-button").disabled = true;
     }
 
     selectMap(button, mapName){
-        this.desactiveAllButtons();
+        this.deactivateAllButtons();
         button.classList.add("active");
         console.log(mapName.id, mapName.name);
         sendRestMessage("GET", `/game/maps/${mapName.id}/info`).then((response) => response.json()).then((mapInfo) => {
             this.createPreviewInfoMap(mapInfo);
         })
+        document.getElementById("choice-game-start-button").disabled = false;
     }
 
     createPreviewInfoMap(mapInfo){
@@ -54,25 +56,29 @@ export class MapSelector {
         mapPreview.innerHTML = "";
 
         const preview = document.createElement("img");
-        preview.classList.add("choice-game-preview");
+        preview.classList.add("choice-game-img-preview");
         preview.src = `data:image/jpeg;base64,${mapInfo.preview}`;
         mapPreview.appendChild(preview);
         
-        const name = document.createElement("h4");
+        const name = document.createElement("h3");
         name.textContent = mapInfo.name;
         mapPreview.appendChild(name);
 
 
-        const info = document.createElement("p");
+        const infos = document.createElement("ul");
+        infos.classList.add("decorationless");
         const infoArray = [
-            `Taille MAP : ${mapInfo.height} * ${mapInfo.width}`,
-            `Nombre de Spawn : ${mapInfo.spawners}`,
+            `Taille : ${mapInfo.height} * ${mapInfo.width}`,
+            `Points d'apparition : ${mapInfo.spawners > 0 ? mapInfo.spawners : "aléatoire"}`,
             `Environnement : ${mapInfo.environment}`
         ]
-        const tmp = infoArray.join('\ni');
-        console.log(tmp);
-        info.textContent = tmp;
-        mapPreview.appendChild(info);
+        infoArray.forEach(info => {
+            const li = document.createElement("li");
+            li.innerText = info;
+            infos.appendChild(li);
+        })
+        
+        mapPreview.appendChild(infos);
     }
 }
 

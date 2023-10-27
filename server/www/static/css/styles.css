@@ -5,7 +5,8 @@ html {
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'VT323';
+    font-size: x-large;
     overflow: hidden;
 }
 
@@ -69,8 +70,6 @@ body {
     border-radius: 15px;
 }
 
-
-
 .canvas-preview {
     padding: 5px;
     padding-bottom: 15px;
@@ -91,3 +90,9 @@ body {
 [hidden] {
     display: none !important;
 } 
+
+.decorationless {
+    text-decoration: none;
+    list-style: none;
+    padding: 0;
+}
